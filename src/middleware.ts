@@ -32,7 +32,7 @@ export default function middleware(req: NextRequest) {
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
   if (isPublicPage) {
-    return intlMiddleware(req);
+    return intlMiddleware(req as any);
   } else {
     return (authMiddleware as any)(req);
   }
