@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Word {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  meanings       Meaning[]
+  root           String?
+  phonetics      String?
+  audio          String?
+  prefix         String?
+  suffix         String?
+  attributes     String[]
+  relatedWords   String[]
+  relatedPhrases String[]
+}
+
+model Meaning {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  partOfSpeech PartOfSpeech
+  definition   Definition
+  attributes   String[]     @default([])
+  Word         Word         @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  wordId       String       @db.ObjectId
+}
+
+type Definition {
+  definition String
+  example    Example?
+}
+
+type Example {
+  sentence String
+  author   String?
+}
+
+enum PartOfSpeech {
+  noun
+  verb
+  adjective
+  adverb
+  preposition
+  conjunction
+  interjection
+}
