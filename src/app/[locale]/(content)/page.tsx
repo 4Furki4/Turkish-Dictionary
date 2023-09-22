@@ -7,7 +7,7 @@ export default function Index() {
   return (
     <div>
       <h1>{t("title")}</h1>
-      <Link href={"protected"}>Protected</Link>
+      <Link href={"protected"}>Protected Page</Link>
     </div>
   );
 }
