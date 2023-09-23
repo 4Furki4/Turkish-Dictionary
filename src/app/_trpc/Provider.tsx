@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { trpc } from "./client";
 import { httpBatchLink } from "@trpc/client";
 import { NextUIProvider } from "@nextui-org/react";
-export default function Provider({ children }: { children: React.ReactNode }) {
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -18,7 +19,11 @@ export default function Provider({ children }: { children: React.ReactNode }) {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <NextUIProvider>{children}</NextUIProvider>
+        <NextUIProvider>
+          <NextThemesProvider attribute="class" defaultTheme="dark">
+            {children}
+          </NextThemesProvider>
+        </NextUIProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );
