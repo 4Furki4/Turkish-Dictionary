@@ -20,7 +20,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "next-intl/client";
 import { useRouter } from "next-intl/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 
@@ -67,11 +67,15 @@ export default function Navbar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent className="hidden sm:flex" justify="center">
-        <NavbarItem>
-          <Link href={"/word-list"}>Word List</Link>
+        <NavbarItem isActive={pathName.includes("/word-list")}>
+          <Link as={NextLink} href={"/word-list"}>
+            Word List
+          </Link>
         </NavbarItem>
         <NavbarItem isActive={pathName.includes("/protected")}>
-          <Link href={"/protected"}>Protected Page</Link>
+          <Link as={NextLink} href={"/protected"}>
+            Protected Page
+          </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
@@ -152,13 +156,31 @@ export default function Navbar() {
       </NavbarContent>
       <NavbarMenu>
         <NavbarMenuItem>
-          <Link href={"/"}>Home</Link>
+          <Link
+            as={NextLink}
+            href={"/"}
+            className={pathName === "/" ? "underline" : ""}
+          >
+            Home
+          </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link href={"/word-list"}>Word List</Link>
+          <Link
+            as={NextLink}
+            href={"/word-list"}
+            className={pathName.includes("word-list") ? "underline" : ""}
+          >
+            Word List
+          </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link href={"/protected"}>Protected Page</Link>
+          <Link
+            as={NextLink}
+            href={"/protected"}
+            className={pathName.includes("protected") ? "underline" : ""}
+          >
+            Protected Page
+          </Link>
         </NavbarMenuItem>
       </NavbarMenu>
     </NextuiNavbar>
