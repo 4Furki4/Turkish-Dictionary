@@ -10,12 +10,19 @@ import {
   Button,
   Avatar,
   Link,
+  Dropdown,
+  DropdownItem,
+  DropdownTrigger,
+  DropdownMenu,
 } from "@nextui-org/react";
 import { HomeIcon, GithubIcon, Sun, Moon } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import NextLink from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next-intl/client";
+import { onEnterAndSpace } from "@/lib/keyEvents";
 
 export default function Navbar() {
   const { status, data } = useSession();
@@ -23,6 +30,7 @@ export default function Navbar() {
   const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
+  const route = useRouter();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -53,7 +61,7 @@ export default function Navbar() {
       />
       <NavbarContent className="hidden sm:flex" justify="start">
         <NavbarItem>
-          <Link href="/">
+          <Link as={NextLink} href="/">
             <HomeIcon size={32} />
           </Link>
         </NavbarItem>
@@ -76,25 +84,21 @@ export default function Navbar() {
           </Link>
         </NavbarItem>
         {isMounted && (
-          <NavbarItem
-            className="cursor-pointer"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                setTheme(theme === "dark" ? "light" : "dark");
-              }
-            }}
-            onClick={() => {
-              setTheme(theme === "dark" ? "light" : "dark");
-            }}
-          >
-            {theme === "dark" ? <Sun size={32} /> : <Moon size={32} />}
+          <NavbarItem>
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? <Sun size={32} /> : <Moon size={32} />}
+            </button>
           </NavbarItem>
         )}
         <NavbarContent className="hidden sm:flex" justify="center">
           {status !== "authenticated" ? (
             <NavbarItem>
               <Button
+                onKeyDown={(e) =>
+                  onEnterAndSpace(e, async () => await signIn())
+                }
                 onClick={() => signIn()}
                 variant="ghost"
                 color="primary"
@@ -104,12 +108,52 @@ export default function Navbar() {
               </Button>
             </NavbarItem>
           ) : (
-            <NavbarItem>
-              <Avatar
-                showFallback
-                src="https://images.unsplash.com/broken"
-                size="sm"
-              />
+            <NavbarItem className="cursor-pointer">
+              <Dropdown>
+                <DropdownTrigger>
+                  <button>
+                    <Avatar
+                      showFallback
+                      src="https://images.unsplash.com/broken"
+                      size="sm"
+                    />
+                  </button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  onAction={(key) => {
+                    switch (key) {
+                      case "saved-words":
+                        route.push("/saved-words");
+                        break;
+                      case "settings":
+                        route.push("/settings");
+                        break;
+                      case "sign-out":
+                        signOut();
+                        break;
+                    }
+                  }}
+                >
+                  <DropdownItem key={"saved-words"} className="text-center">
+                    <Link className="w-full" href="/saved-words">
+                      Saved Words
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem key={"settings"}>
+                    <Link className="w-full" href="/settings">
+                      Settings
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="text-danger"
+                    key={"sign-out"}
+                    color="danger"
+                    onClick={() => signOut()}
+                  >
+                    Sign Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </NavbarItem>
           )}
         </NavbarContent>
@@ -127,12 +171,31 @@ export default function Navbar() {
             </Button>
           </NavbarItem>
         ) : (
-          <NavbarItem className="cursor-pointer p-3 hover:bg-secondary rounded-full transition-background">
-            <Avatar
-              showFallback
-              src="https://images.unsplash.com/broken"
-              size="sm"
-            />
+          <NavbarItem>
+            <Dropdown>
+              <DropdownTrigger>
+                <Avatar
+                  showFallback
+                  src="https://images.unsplash.com/broken"
+                  size="sm"
+                />
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem>
+                  <Link href="/saved-words"> Saved Words </Link>
+                </DropdownItem>
+                <DropdownItem>
+                  <Link href="/settings"> Settings </Link>
+                </DropdownItem>
+                <DropdownItem
+                  className="text-danger"
+                  color="danger"
+                  onClick={() => signOut()}
+                >
+                  Sign Out
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </NavbarItem>
         )}
       </NavbarContent>

@@ -78,15 +78,37 @@ module.exports = {
   plugins: [
     require("tailwindcss-animate"),
     nextui({
+      prefix: "nextui-",
       themes: {
         light: {
           colors: {
-            primary: "#7828c8",
+            primary: "#5800FF",
+            background: {
+              DEFAULT: "#E4F1FF",
+            },
+            foreground: "#27005D",
+            danger: {
+              DEFAULT: "#FF0000",
+              foreground: "#ffffff",
+            },
           },
         },
         dark: {
           colors: {
-            primary: { DEFAULT: "#9353d3", foreground: "#ffffff" },
+            primary: { DEFAULT: "#5800FF", foreground: "#ffffff" },
+            background: {
+              DEFAULT: "#27005D",
+              foreground: "#E4F1FF",
+            },
+            foreground: "#E4F1FF",
+            danger: {
+              DEFAULT: "#FF0000",
+              foreground: "#ffffff",
+            },
+            warning: {
+              DEFAULT: "#FFA500",
+              foreground: "#ffffff",
+            },
           },
         },
       },
