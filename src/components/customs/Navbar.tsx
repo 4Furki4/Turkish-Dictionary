@@ -74,15 +74,7 @@ export default function Navbar() {
           <Link href={"/protected"}>Protected Page</Link>
         </NavbarItem>
       </NavbarContent>
-      <NavbarContent className="hidden sm:flex" justify="end">
-        <NavbarItem>
-          <Link
-            href={"https://github.com/4Furki4/Turkish-Dictionary"}
-            target="_blank"
-          >
-            <GithubIcon size={32} />
-          </Link>
-        </NavbarItem>
+      <NavbarContent justify="end">
         {isMounted && (
           <NavbarItem>
             <button
@@ -92,7 +84,7 @@ export default function Navbar() {
             </button>
           </NavbarItem>
         )}
-        <NavbarContent className="hidden sm:flex" justify="center">
+        <NavbarContent justify="center">
           {status !== "authenticated" ? (
             <NavbarItem>
               <Button
@@ -157,47 +149,6 @@ export default function Navbar() {
             </NavbarItem>
           )}
         </NavbarContent>
-      </NavbarContent>
-      <NavbarContent className="sm:hidden" justify="end">
-        {status !== "authenticated" ? (
-          <NavbarItem>
-            <Button
-              onClick={() => signIn()}
-              variant="ghost"
-              color="primary"
-              isLoading={status === "loading"}
-            >
-              Sign In
-            </Button>
-          </NavbarItem>
-        ) : (
-          <NavbarItem>
-            <Dropdown>
-              <DropdownTrigger>
-                <Avatar
-                  showFallback
-                  src="https://images.unsplash.com/broken"
-                  size="sm"
-                />
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>
-                  <Link href="/saved-words"> Saved Words </Link>
-                </DropdownItem>
-                <DropdownItem>
-                  <Link href="/settings"> Settings </Link>
-                </DropdownItem>
-                <DropdownItem
-                  className="text-danger"
-                  color="danger"
-                  onClick={() => signOut()}
-                >
-                  Sign Out
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </NavbarItem>
-        )}
       </NavbarContent>
       <NavbarMenu>
         <NavbarMenuItem>

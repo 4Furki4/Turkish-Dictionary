@@ -1,6 +1,6 @@
 "use client";
 import Provider from "@/app/_trpc/Provider";
-import Navbar from "@/components/customs/navbar";
+import Navbar from "@/components/customs/Navbar";
 import { SessionProvider } from "next-auth/react";
 import React from "react";
 
