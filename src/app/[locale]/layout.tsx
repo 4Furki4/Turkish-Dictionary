@@ -1,10 +1,13 @@
 import { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
+import "../globals.css";
+import { Inter } from "next/font/google";
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
+const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Turkish Dictionary",
   description:
@@ -25,8 +28,8 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale}>
-      <body>
+    <html lang={locale} className="min-h-[100dvh] dark">
+      <body className={inter.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
