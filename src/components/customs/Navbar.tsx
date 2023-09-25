@@ -83,7 +83,7 @@ export default function Navbar() {
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger>
-              <Button variant="ghost" color="primary">
+              <Button variant="light" color="primary">
                 {locale === "en" ? "English" : "Turkish"}
               </Button>
             </DropdownTrigger>
@@ -111,15 +111,6 @@ export default function Navbar() {
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        {isMounted && (
-          <NavbarItem>
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? <Sun size={32} /> : <Moon size={32} />}
-            </button>
-          </NavbarItem>
-        )}
         <NavbarContent justify="center">
           {status !== "authenticated" ? (
             <NavbarItem>
@@ -185,6 +176,15 @@ export default function Navbar() {
             </NavbarItem>
           )}
         </NavbarContent>
+        {isMounted && (
+          <NavbarItem>
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? <Sun size={32} /> : <Moon size={32} />}
+            </button>
+          </NavbarItem>
+        )}
       </NavbarContent>
       <NavbarMenu>
         <NavbarMenuItem>
