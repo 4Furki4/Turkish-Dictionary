@@ -20,9 +20,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { usePathname } from "next-intl/client";
-import { useRouter } from "next-intl/client";
+import { useRouter, usePathname } from "next-intl/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
+import { useLocale } from "next-intl";
 
 export default function Navbar() {
   const { status, data } = useSession();
@@ -31,6 +31,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
   const route = useRouter();
+  const locale = useLocale();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -79,6 +80,37 @@ export default function Navbar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
+        <NavbarItem>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="ghost" color="primary">
+                {locale === "en" ? "English" : "Turkish"}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              onAction={(key) => {
+                switch (key) {
+                  case "tr":
+                    route.push(pathName, { locale: "tr" });
+                    break;
+                  case "en":
+                    route.push(pathName, { locale: "en" });
+                    break;
+                }
+              }}
+            >
+              {locale === "en" ? (
+                <DropdownItem color="primary" key={"tr"}>
+                  Turkish
+                </DropdownItem>
+              ) : (
+                <DropdownItem color="primary" key={"en"}>
+                  English
+                </DropdownItem>
+              )}
+            </DropdownMenu>
+          </Dropdown>
+        </NavbarItem>
         {isMounted && (
           <NavbarItem>
             <button
