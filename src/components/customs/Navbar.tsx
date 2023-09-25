@@ -83,7 +83,9 @@ export default function Navbar() {
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger>
-              <Button>{locale === "en" ? "English" : "Turkish"}</Button>
+              <Button variant="ghost" color="primary">
+                {locale === "en" ? "English" : "Turkish"}
+              </Button>
             </DropdownTrigger>
             <DropdownMenu
               onAction={(key) => {
@@ -98,9 +100,13 @@ export default function Navbar() {
               }}
             >
               {locale === "en" ? (
-                <DropdownItem key={"tr"}>Turkish</DropdownItem>
+                <DropdownItem color="primary" key={"tr"}>
+                  Turkish
+                </DropdownItem>
               ) : (
-                <DropdownItem key={"en"}>English</DropdownItem>
+                <DropdownItem color="primary" key={"en"}>
+                  English
+                </DropdownItem>
               )}
             </DropdownMenu>
           </Dropdown>
