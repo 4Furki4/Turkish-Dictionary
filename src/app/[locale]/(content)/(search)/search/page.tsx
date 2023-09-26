@@ -1,4 +1,5 @@
 import { serverClient } from "@/app/_trpc/serverClient";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export async function generateMetadata({
@@ -22,8 +23,22 @@ export default async function Page({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  if (searchParams.word === undefined) return redirect("/"); // redirect to home page if no word is provided
   const parsedWord = decodeURIComponent(searchParams.word as string);
+  if (!parsedWord) {
+    // redirect to home page if word is empty
+    redirect("/");
+  }
   const response = await serverClient.getWord(parsedWord);
+  if (response.length === 0) {
+    // if no word is found, render this
+    return (
+      <div>
+        <h1>{parsedWord}</h1>
+        <p>Word not found</p>
+      </div>
+    );
+  }
   return (
     <div>
       <h1>{parsedWord}</h1>
