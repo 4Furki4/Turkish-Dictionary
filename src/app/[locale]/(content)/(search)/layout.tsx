@@ -2,7 +2,6 @@
 import { Button, Input } from "@nextui-org/react";
 import React from "react";
 import { useRouter } from "next-intl/client";
-import { onEnterAndSpace } from "@/lib/keyEvents";
 
 export default function SearchLayout({
   children,
