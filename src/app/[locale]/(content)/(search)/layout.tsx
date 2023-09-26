@@ -16,7 +16,7 @@ export default function SearchLayout({
         onSubmit={(e) => {
           e.preventDefault();
           const search = e.currentTarget.search.value;
-          router.push(`/${search}`);
+          router.push(`/search?word=${search}`);
         }}
       >
         <div className="flex">
