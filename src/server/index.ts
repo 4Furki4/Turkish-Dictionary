@@ -43,6 +43,64 @@ export const appRouter = router({
       });
       return words || "Not found any word";
     }),
+  /**
+   * Get a word by id quering the database
+   * @param input string mongo id
+   */
+  getSavedWords: publicProcedure.input(z.string()).query(async ({ input }) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: input,
+      },
+    });
+    if (!user)
+      return {
+        error: "User not found",
+      };
+    const savedWords = await prisma.word.findMany({
+      where: {
+        id: {
+          in: user.savedWordIds,
+        },
+      },
+      include: {
+        meanings: true,
+      },
+    });
+    return savedWords;
+  }),
+  /**
+   * Save a word to user's saved word list
+   */
+  saveWord: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        wordId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: input.userId,
+        },
+      });
+      if (!user)
+        return {
+          error: "User not found",
+        };
+      const savedWords = await prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          savedWordIds: {
+            push: input.wordId,
+          },
+        },
+      });
+      return savedWords;
+    }),
 });
 
 export type AppRouter = typeof appRouter;
