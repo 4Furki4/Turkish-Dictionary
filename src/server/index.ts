@@ -101,6 +101,44 @@ export const appRouter = router({
       });
       return savedWords;
     }),
+  createUser: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string(),
+        username: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const userQueriedWEmail = await prisma.user.findUnique({
+        where: {
+          email: input.email,
+        },
+      });
+      if (userQueriedWEmail)
+        return {
+          error: "User with this email already exists",
+        };
+      const userQueriedWUsername = await prisma.user.findUnique({
+        where: {
+          username: input.username,
+        },
+      });
+      if (userQueriedWUsername)
+        return {
+          error: "User with this username already exists",
+        };
+      const user = await prisma.user.create({
+        data: {
+          name: input.name,
+          email: input.email,
+          username: input.username,
+          password: input.password,
+        },
+      });
+      return user;
+    }),
 });
 
 export type AppRouter = typeof appRouter;
