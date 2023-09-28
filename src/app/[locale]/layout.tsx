@@ -28,8 +28,8 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} className="min-h-[100dvh] dark">
-      <body className={inter.className}>
+    <html lang={locale} className="dark">
+      <body className={`${inter.className} min-h-[100dvh]`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>

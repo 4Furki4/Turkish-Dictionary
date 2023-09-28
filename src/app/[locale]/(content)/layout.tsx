@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <Provider>
         <Navbar />
-        {children}
+        <main>{children}</main>
       </Provider>
     </SessionProvider>
   );

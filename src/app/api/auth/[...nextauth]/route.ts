@@ -1,3 +1,4 @@
+import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/db";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
@@ -6,6 +7,27 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials) => {
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials?.email,
+          },
+        });
+        if (user?.password === undefined) return Promise.resolve(null);
+        if (user && user.password === credentials?.password) {
+          return Promise.resolve(user);
+        } else {
+          return Promise.resolve(null);
+        }
+      },
     }),
   ],
   callbacks: {
