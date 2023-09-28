@@ -1,10 +1,11 @@
 "use client";
-
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next-intl/client";
 
 type Inputs = {
   name: string;
@@ -28,17 +29,20 @@ export default function Signup() {
     clearErrors,
     formState: { errors },
   } = useForm<Inputs>({ mode: "onBlur" });
+  const params = useSearchParams();
+  const router = useRouter();
   return (
     <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+        className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
       >
         <Button
+          variant="bordered"
           onClick={() => signIn("google")}
           startContent={
             <Image
-              src={"https://authjs.dev/img/providers/google.svg"}
+              src={"/svg/providers/google.svg"}
               width={24}
               height={24}
               alt="google-icon"
@@ -168,6 +172,45 @@ export default function Signup() {
         <Button color="primary" variant="ghost" type="submit">
           Sign up
         </Button>
+        {params.get("user") === "new" ? (
+          <p>
+            {"Don't have an account ?"}
+            <span
+              className="underline cursor-pointer"
+              onClick={() =>
+                router.push(
+                  `${
+                    params.get("callbackUrl")
+                      ? `?callbackUrl=${params.get("callbackUrl")}`
+                      : ""
+                  }`,
+                  { scroll: false }
+                )
+              }
+            >
+              Sign up
+            </span>
+          </p>
+        ) : (
+          <p>
+            Are you already signed up ?{" "}
+            <span
+              className="underline cursor-pointer"
+              onClick={() =>
+                router.push(
+                  `${
+                    params.get("callbackUrl")
+                      ? `?callbackUrl=${params.get("callbackUrl")}&user=new`
+                      : "?user=new"
+                  }`,
+                  { scroll: false }
+                )
+              }
+            >
+              Login
+            </span>
+          </p>
+        )}
       </form>
     </div>
   );
