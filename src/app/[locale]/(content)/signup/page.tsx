@@ -1,6 +1,8 @@
 "use client";
 
-import { Button, Input } from "@nextui-org/react";
+import { Button, Divider, Input } from "@nextui-org/react";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
 import React from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 
@@ -27,11 +29,28 @@ export default function Signup() {
     formState: { errors },
   } = useForm<Inputs>({ mode: "onBlur" });
   return (
-    <div className="absolute grid place-items-center w-full h-[calc(100%-64px)]">
+    <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
       >
+        <Button
+          onClick={() => signIn("google")}
+          startContent={
+            <Image
+              src={"https://authjs.dev/img/providers/google.svg"}
+              width={24}
+              height={24}
+              alt="google-icon"
+            />
+          }
+        >
+          Sign up with Google
+        </Button>
+        <Divider></Divider>
+        <div>
+          <h1 className="text-4xl font-bold">Create a new account</h1>
+        </div>
         <Controller
           name="name"
           rules={{
