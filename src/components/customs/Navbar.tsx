@@ -22,7 +22,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next-intl/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
 export default function Navbar() {
@@ -34,6 +34,7 @@ export default function Navbar() {
   const params = useSearchParams();
   const route = useRouter();
   const locale = useLocale();
+  const t = useTranslations("Navbar");
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -72,7 +73,7 @@ export default function Navbar() {
       <NavbarContent className="hidden sm:flex" justify="center">
         <NavbarItem isActive={pathName.includes("/word-list")}>
           <Link as={NextLink} href={"/word-list"}>
-            Word List
+            {t("Word List")}
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathName.includes("/protected")}>
@@ -134,7 +135,7 @@ export default function Navbar() {
                 color="primary"
                 isLoading={status === "loading"}
               >
-                Sign In
+                {t("Sign In")}
               </Button>
             </NavbarItem>
           ) : (
@@ -204,7 +205,7 @@ export default function Navbar() {
             href={"/"}
             className={pathName === "/" ? "underline" : ""}
           >
-            Home
+            {t("Home")}
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
@@ -213,7 +214,7 @@ export default function Navbar() {
             href={"/word-list"}
             className={pathName.includes("word-list") ? "underline" : ""}
           >
-            Word List
+            {t("Word List")}
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>

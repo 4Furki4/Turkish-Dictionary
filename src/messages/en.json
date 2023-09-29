@@ -1,6 +1,8 @@
 {
-    "Index": {
-      "title": "Hello world!"
+    "Navbar":{
+      "Home": "Home",
+      "Word List": "Word List",
+      "Sign In": "Sign In"
     },
     "Signup":{
       "Sign up with Google": "Sign up with Google",
@@ -19,4 +21,4 @@
       "Don't have an account?": "Don't have an account?",
       "Sign In": "Sign In"
     }
-  }
+}

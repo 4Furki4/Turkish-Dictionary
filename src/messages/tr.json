@@ -1,6 +1,8 @@
 {
-    "Index": {
-      "title": "Merhaba Dünya!"
+    "Navbar":{
+      "Home": "Ana Sayfa",
+      "Word List": "Kelime Listesi",
+      "Sign In": "Giriş Yap"
     },
     "Signup":{
       "Sign up with Google": "Google ile kaydol",
@@ -19,4 +21,4 @@
       "Don't have an account?" : "Hesabınız yok mu?",
       "Sign In": "Giriş Yap"
     }
-  }
+}
