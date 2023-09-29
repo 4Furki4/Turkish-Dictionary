@@ -2,10 +2,11 @@
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next-intl/client";
+import { onEnterAndSpace } from "@/lib/keyEvents";
 
 type SignUpInputs = {
   name: string;
@@ -26,6 +27,11 @@ export default function Signup() {
   const onLoginSubmit: SubmitHandler<LoginInputs> = (data) => {
     console.log(data);
   };
+  const onProviderSignin = (provider: "google" | "github") => {
+    signIn(provider, {
+      callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
+    });
+  };
   const {
     register,
     handleSubmit,
@@ -34,9 +40,22 @@ export default function Signup() {
     setError,
     clearErrors,
     formState: { errors },
-  } = useForm<SignUpInputs & LoginInputs>({ mode: "onBlur" });
+  } = useForm<SignUpInputs & LoginInputs>({ mode: "all" });
   const params = useSearchParams();
   const router = useRouter();
+  useEffect(() => {
+    if (params.get("user") === "new") {
+      document.title = "Sign up";
+      document
+        .querySelector("meta[name='description']")
+        ?.setAttribute("content", "Sign up to create an account");
+      return;
+    }
+    document.title = "Sign in";
+    document
+      .querySelector("meta[name='description']")
+      ?.setAttribute("content", "Sign in to your account");
+  }, [params.get("user")]);
   return (
     <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
       {params.get("user") && params.get("user") === "new" ? (
@@ -46,7 +65,10 @@ export default function Signup() {
         >
           <Button
             variant="bordered"
-            onClick={() => signIn("google")}
+            onClick={() => onProviderSignin("google")}
+            onKeyDown={(e) =>
+              onEnterAndSpace(e, () => onProviderSignin("google"))
+            }
             startContent={
               <Image
                 src={"/svg/providers/google.svg"}
@@ -207,7 +229,10 @@ export default function Signup() {
         >
           <Button
             variant="bordered"
-            onClick={() => signIn("google")}
+            onClick={() => onProviderSignin("google")}
+            onKeyDown={(e) =>
+              onEnterAndSpace(e, () => onProviderSignin("google"))
+            }
             startContent={
               <Image
                 src={"/svg/providers/google.svg"}

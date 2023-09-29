@@ -116,9 +116,13 @@ export default function Navbar() {
             <NavbarItem>
               <Button
                 onKeyDown={(e) =>
-                  onEnterAndSpace(e, async () => await signIn())
+                  onEnterAndSpace(e, () => {
+                    if (pathName !== "/signup") signIn();
+                  })
                 }
-                onClick={() => signIn()}
+                onClick={() => {
+                  if (pathName !== "/signup") signIn();
+                }}
                 variant="ghost"
                 color="primary"
                 isLoading={status === "loading"}
