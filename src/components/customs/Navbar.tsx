@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next-intl/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { useLocale } from "next-intl";
+import { useSearchParams } from "next/navigation";
 
 export default function Navbar() {
   const { status, data } = useSession();
@@ -30,6 +31,7 @@ export default function Navbar() {
   const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
+  const params = useSearchParams();
   const route = useRouter();
   const locale = useLocale();
   useEffect(() => {
@@ -89,12 +91,17 @@ export default function Navbar() {
             </DropdownTrigger>
             <DropdownMenu
               onAction={(key) => {
+                const queryParams = decodeURIComponent(params.toString());
                 switch (key) {
                   case "tr":
-                    route.push(pathName, { locale: "tr" });
+                    route.replace(`${pathName}?${queryParams}`, {
+                      locale: "tr",
+                    });
                     break;
                   case "en":
-                    route.push(pathName, { locale: "en" });
+                    route.replace(`${pathName}?${queryParams}`, {
+                      locale: "en",
+                    });
                     break;
                 }
               }}
@@ -116,9 +123,13 @@ export default function Navbar() {
             <NavbarItem>
               <Button
                 onKeyDown={(e) =>
-                  onEnterAndSpace(e, async () => await signIn())
+                  onEnterAndSpace(e, () => {
+                    if (pathName !== "/signup") signIn();
+                  })
                 }
-                onClick={() => signIn()}
+                onClick={() => {
+                  if (pathName !== "/signup") signIn();
+                }}
                 variant="ghost"
                 color="primary"
                 isLoading={status === "loading"}

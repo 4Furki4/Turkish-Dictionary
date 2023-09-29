@@ -1,5 +1,22 @@
 {
     "Index": {
       "title": "Hello world!"
+    },
+    "Signup":{
+      "Sign up with Google": "Sign up with Google",
+      "Sign in with Google": "Sign in with Google",
+      "Create a new account": "Create new account",
+      "Name": "Name",
+      "Username": "Username",
+      "Email": "Email",
+      "Password": "Password",
+      "Confirm Password": "Confirm Password",
+      "Sign Up Button": "Sign Up",
+      "Sign Up": "Sign Up",
+      "Already have an account?": "Already have an account?",
+      "Login": "Login",
+      "Username or Email":"Username or Email",
+      "Don't have an account?": "Don't have an account?",
+      "Sign In": "Sign In"
     }
   }
