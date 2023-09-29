@@ -1,5 +1,22 @@
 {
     "Index": {
       "title": "Merhaba Dünya!"
+    },
+    "Signup":{
+      "Sign up with Google": "Google ile kaydol",
+      "Sign in with Google": "Google ile giriş yap",
+      "Create a new account": "Yeni hesap oluştur",
+      "Name": "İsim",
+      "Username": "Kullanıcı Adı",
+      "Email": "E-posta",
+      "Password": "Şifre",
+      "Confirm Password": "Şifreyi Onayla",
+      "Sign Up Button": "Kaydol",
+      "Sign Up": "Kaydolun",
+      "Already have an account?": "Zaten hesabınız var mı?",
+      "Login": "Giriş Yapın",
+      "Username or Email": "Kullanıcı Adı veya E-posta",
+      "Don't have an account?" : "Hesabınız yok mu?",
+      "Sign In": "Giriş Yap"
     }
   }

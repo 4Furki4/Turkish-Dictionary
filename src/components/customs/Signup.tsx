@@ -3,6 +3,7 @@
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -45,6 +46,7 @@ export default function Signup() {
   const params = useSearchParams();
   const router = useRouter();
   const userParam = params.get("user");
+  const t = useTranslations("Signup");
   return (
     <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
       {userParam && userParam === "new" ? (
@@ -67,12 +69,12 @@ export default function Signup() {
               />
             }
           >
-            Sign up with Google
+            {t("Sign up with Google")}
           </Button>
           <Divider></Divider>
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
-              Create a new account
+              {t("Create a new account")}
             </h1>
           </div>
           <Controller
@@ -89,7 +91,7 @@ export default function Signup() {
             render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
-                label="Name"
+                label={t("Name")}
                 isRequired
                 color="primary"
                 variant="underlined"
@@ -112,7 +114,7 @@ export default function Signup() {
             render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
-                label="Username"
+                label={t("Username")}
                 isRequired
                 color="primary"
                 variant="underlined"
@@ -135,7 +137,7 @@ export default function Signup() {
               <Input
                 type="email"
                 {...field}
-                label="Email"
+                label={t("Email")}
                 isRequired
                 color="primary"
                 variant="underlined"
@@ -157,7 +159,7 @@ export default function Signup() {
             render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
-                label="Password"
+                label={t("Password")}
                 isRequired
                 color="primary"
                 variant="underlined"
@@ -178,7 +180,7 @@ export default function Signup() {
             render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
-                label="Confirm password"
+                label={t("Confirm Password")}
                 isRequired
                 color="primary"
                 variant="underlined"
@@ -190,10 +192,10 @@ export default function Signup() {
           />
 
           <Button color="primary" variant="ghost" type="submit">
-            Sign up
+            {t("Sign Up Button")}
           </Button>
           <p>
-            Are you already signed up ?{" "}
+            {t("Already have an account?")}{" "}
             <span
               className="underline cursor-pointer"
               onClick={() =>
@@ -207,7 +209,7 @@ export default function Signup() {
                 )
               }
             >
-              Login
+              {t("Login")}
             </span>
           </p>
         </form>
@@ -241,7 +243,7 @@ export default function Signup() {
             render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
-                label="Username or Email"
+                label={t("Username or Email")}
                 isRequired
                 color="primary"
                 variant="underlined"
@@ -257,7 +259,7 @@ export default function Signup() {
             render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
-                label="Password"
+                label={t("Password")}
                 isRequired
                 color="primary"
                 variant="underlined"
@@ -267,10 +269,10 @@ export default function Signup() {
             )}
           />
           <Button color="primary" variant="ghost" type="submit">
-            Sign In
+            {t("Sign In")}
           </Button>
           <p>
-            {"Don't have an account ? "}
+            {t("Don't have an account?")}{" "}
             <span
               className="underline cursor-pointer"
               onClick={() =>
@@ -284,7 +286,7 @@ export default function Signup() {
                 )
               }
             >
-              Sign up
+              {t("Sign Up")}
             </span>
           </p>
         </form>
