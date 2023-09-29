@@ -43,8 +43,9 @@ export default function Signup() {
   } = useForm<SignUpInputs & LoginInputs>({ mode: "all" });
   const params = useSearchParams();
   const router = useRouter();
+  const userParam = params.get("user");
   useEffect(() => {
-    if (params.get("user") === "new") {
+    if (userParam === "new") {
       document.title = "Sign up";
       document
         .querySelector("meta[name='description']")
@@ -55,10 +56,10 @@ export default function Signup() {
     document
       .querySelector("meta[name='description']")
       ?.setAttribute("content", "Sign in to your account");
-  }, [params.get("user")]);
+  }, [userParam]);
   return (
     <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
-      {params.get("user") && params.get("user") === "new" ? (
+      {userParam && userParam === "new" ? (
         <form
           onSubmit={handleSubmit(onSignupSubmit)}
           className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
