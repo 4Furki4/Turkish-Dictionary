@@ -2,6 +2,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/db";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import * as bycrypt from "bcrypt";
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -16,17 +17,27 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findFirst({
           where: {
             email: credentials?.email,
           },
         });
-        if (user?.password === undefined) return Promise.resolve(null);
-        if (user && user.password === credentials?.password) {
-          return Promise.resolve(user);
-        } else {
-          return Promise.resolve(null);
-        }
+        user =
+          user !== null
+            ? user
+            : await prisma.user.findFirst({
+                where: {
+                  username: credentials?.username,
+                },
+              });
+        if (user === null) return Promise.resolve(null); // user not found
+        if (user.password === undefined) return Promise.resolve(null); // users created with google auth
+        const isPasswordValid = await bycrypt.compare(
+          credentials?.password!,
+          user.password!
+        );
+        if (!isPasswordValid) return Promise.resolve(null);
+        return Promise.resolve(user);
       },
     }),
   ],

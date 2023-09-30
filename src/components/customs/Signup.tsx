@@ -31,8 +31,17 @@ export default function Signup() {
     const createdUser = await mutation.mutateAsync(data);
     console.log(createdUser);
   };
-  const onLoginSubmit: SubmitHandler<LoginInputs> = (data) => {
-    console.log(data);
+  const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    await signIn("credentials", {
+      username: data.usernameOrEmail.includes("@")
+        ? undefined
+        : data.usernameOrEmail,
+      email: data.usernameOrEmail.includes("@")
+        ? data.usernameOrEmail
+        : undefined,
+      password: data.loginPassword,
+      callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
+    });
   };
   const onProviderSignin = (provider: "google" | "github") => {
     signIn(provider, {
