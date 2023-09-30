@@ -1,5 +1,6 @@
 "use client";
 
+import { trpc } from "@/app/_trpc/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
@@ -7,14 +8,14 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
+// EXCLUDE CONFIRM PASSWORD
+type SignUpRequest = Omit<SignUpInputs, "confirmPassword">;
 type SignUpInputs = {
   name: string;
   username: string;
   email: string;
-  signupPassword: string;
+  password: string;
   confirmPassword: string;
 };
 type LoginInputs = {
@@ -23,8 +24,12 @@ type LoginInputs = {
 };
 
 export default function Signup() {
-  const onSignupSubmit: SubmitHandler<SignUpInputs> = (data) => {
-    console.log(data);
+  const mutation = trpc.createUser.useMutation();
+  const onSignupSubmit: SubmitHandler<SignUpInputs> = async (
+    data: SignUpRequest
+  ) => {
+    const createdUser = await mutation.mutateAsync(data);
+    console.log(createdUser);
   };
   const onLoginSubmit: SubmitHandler<LoginInputs> = (data) => {
     console.log(data);
@@ -148,7 +153,7 @@ export default function Signup() {
           />
           <Controller
             control={control}
-            name="signupPassword"
+            name="password"
             rules={{
               required: true,
               minLength: {
@@ -163,7 +168,7 @@ export default function Signup() {
                 isRequired
                 color="primary"
                 variant="underlined"
-                errorMessage={errors.signupPassword?.message}
+                errorMessage={errors.password?.message}
                 isInvalid={error !== undefined}
                 type="password"
               />
@@ -175,7 +180,7 @@ export default function Signup() {
             rules={{
               required: true,
               validate: (value) =>
-                value === watch("signupPassword") || "Passwords do not match",
+                value === watch("password") || "Passwords do not match",
             }}
             render={({ field, fieldState: { error } }) => (
               <Input

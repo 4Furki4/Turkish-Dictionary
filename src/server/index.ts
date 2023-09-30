@@ -1,6 +1,7 @@
 import prisma from "@/db";
 import { z } from "zod";
 import { router, publicProcedure } from "./trpc";
+import * as bycrypt from "bcrypt";
 export const appRouter = router({
   helloWorld: publicProcedure.query(() => {
     return "Hello World!";
@@ -129,15 +130,23 @@ export const appRouter = router({
         return {
           error: "User with this username already exists",
         };
-      const user = await prisma.user.create({
-        data: {
-          name: input.name,
-          email: input.email,
-          username: input.username,
-          password: input.password,
-        },
-      });
-      return user;
+      try {
+        const hashedPassword = await bycrypt.hash(input.password, 10);
+        const user = await prisma.user.create({
+          data: {
+            name: input.name,
+            email: input.email,
+            username: input.username,
+            password: hashedPassword,
+          },
+        });
+        return user;
+      } catch (error) {
+        console.log(error);
+        return {
+          error: "Something went wrong. Please try again later",
+        };
+      }
     }),
 });
 
