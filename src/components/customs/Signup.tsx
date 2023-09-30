@@ -1,5 +1,6 @@
 "use client";
-
+import "react-toastify/dist/ReactToastify.css";
+import { trpc } from "@/app/_trpc/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
@@ -7,9 +8,10 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
+type SignUpRequest = Omit<SignUpInputs, "confirmPassword">; // Omit confirmPassword from SignUpInputs to create SignUpRequest
 type SignUpInputs = {
   name: string;
   username: string;
@@ -19,27 +21,59 @@ type SignUpInputs = {
 };
 type LoginInputs = {
   usernameOrEmail: string;
-  loginPassword: string;
+  password: string;
 };
 
 export default function Signup() {
-  const onSignupSubmit: SubmitHandler<SignUpInputs> = (data) => {
-    console.log(data);
+  const createUserMutation = trpc.createUser.useMutation({
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: async (data) => {
+      toast.success(t("Account created successfully, please sign in"));
+      router.push(
+        `${
+          params.get("callbackUrl")
+            ? `?callbackUrl=${params.get("callbackUrl")}`
+            : ""
+        }`,
+        { scroll: false }
+      );
+    },
+  });
+  const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
+    createUserMutation.mutate({
+      name: data.name,
+      username: data.username,
+      email: data.email,
+      password: data.signupPassword,
+    });
   };
-  const onLoginSubmit: SubmitHandler<LoginInputs> = (data) => {
-    console.log(data);
+  const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    await signIn("credentials", {
+      username: data.usernameOrEmail.includes("@")
+        ? undefined
+        : data.usernameOrEmail,
+      email: data.usernameOrEmail.includes("@")
+        ? data.usernameOrEmail
+        : undefined,
+      password: data.password,
+      callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
+    });
   };
   const onProviderSignin = (provider: "google" | "github") => {
     signIn(provider, {
       callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
+    }).then((res) => {
+      if (res?.error) {
+        toast.error(res.error);
+      }
     });
   };
   const {
-    register,
     handleSubmit,
     control,
     watch,
-    setError,
     clearErrors,
     formState: { errors },
   } = useForm<SignUpInputs & LoginInputs>({ mode: "all" });
@@ -236,7 +270,15 @@ export default function Signup() {
             Sign in with Google
           </Button>
           <Divider></Divider>
+          <div>
+            {params.get("error") === "CredentialsSignin" && (
+              <p className="text-red-500">
+                {t("Invalid username, email or password")}
+              </p>
+            )}
+          </div>
           <Controller
+            key={"usernameOrEmail"}
             name="usernameOrEmail"
             control={control}
             rules={{ required: true }}
@@ -253,7 +295,8 @@ export default function Signup() {
             )}
           />
           <Controller
-            name="loginPassword"
+            name="password"
+            key="password"
             control={control}
             rules={{ required: true }}
             render={({ field, fieldState: { error } }) => (

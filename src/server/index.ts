@@ -1,6 +1,8 @@
 import prisma from "@/db";
 import { z } from "zod";
 import { router, publicProcedure } from "./trpc";
+import * as bycrypt from "bcrypt";
+import { TRPCError } from "@trpc/server";
 export const appRouter = router({
   helloWorld: publicProcedure.query(() => {
     return "Hello World!";
@@ -111,33 +113,49 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+      const userQueriedWUsername = await prisma.user.findUnique({
+        where: {
+          username: input.username,
+        },
+      });
+      console.log(userQueriedWUsername);
+      if (userQueriedWUsername)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with this username already exists",
+        });
       const userQueriedWEmail = await prisma.user.findUnique({
         where: {
           email: input.email,
         },
       });
       if (userQueriedWEmail)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with this email already exists",
+        });
+      try {
+        const hashedPassword = await bycrypt.hash(input.password, 10);
+        const user = await prisma.user.create({
+          data: {
+            name: input.name,
+            email: input.email,
+            username: input.username,
+            password: hashedPassword,
+          },
+        });
         return {
-          error: "User with this email already exists",
+          email: user.email,
+          name: user.name,
+          username: user.username,
         };
-      const userQueriedWUsername = await prisma.user.findUnique({
-        where: {
-          username: input.username,
-        },
-      });
-      if (userQueriedWUsername)
-        return {
-          error: "User with this username already exists",
-        };
-      const user = await prisma.user.create({
-        data: {
-          name: input.name,
-          email: input.email,
-          username: input.username,
-          password: input.password,
-        },
-      });
-      return user;
+      } catch (error) {
+        console.log(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
     }),
 });
 
