@@ -19,6 +19,8 @@
       "Login": "Login",
       "Username or Email":"Username or Email",
       "Don't have an account?": "Don't have an account?",
-      "Sign In": "Sign In"
+      "Sign In": "Sign In",
+      "Invalid username, email or password": "Invalid username, email or password",
+      "Account created successfully, please sign in": "Account created successfully. Please sign in."
     }
 }

@@ -1,5 +1,5 @@
 "use client";
-
+import "react-toastify/dist/ReactToastify.css";
 import { trpc } from "@/app/_trpc/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
@@ -9,27 +9,45 @@ import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-// EXCLUDE CONFIRM PASSWORD
-type SignUpRequest = Omit<SignUpInputs, "confirmPassword">;
+import { toast } from "react-toastify";
+
+type SignUpRequest = Omit<SignUpInputs, "confirmPassword">; // Omit confirmPassword from SignUpInputs to create SignUpRequest
 type SignUpInputs = {
   name: string;
   username: string;
   email: string;
-  password: string;
+  signupPassword: string;
   confirmPassword: string;
 };
 type LoginInputs = {
   usernameOrEmail: string;
-  loginPassword: string;
+  password: string;
 };
 
 export default function Signup() {
-  const mutation = trpc.createUser.useMutation();
-  const onSignupSubmit: SubmitHandler<SignUpInputs> = async (
-    data: SignUpRequest
-  ) => {
-    const createdUser = await mutation.mutateAsync(data);
-    console.log(createdUser);
+  const createUserMutation = trpc.createUser.useMutation({
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: async (data) => {
+      toast.success(t("Account created successfully, please sign in"));
+      router.push(
+        `${
+          params.get("callbackUrl")
+            ? `?callbackUrl=${params.get("callbackUrl")}`
+            : ""
+        }`,
+        { scroll: false }
+      );
+    },
+  });
+  const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
+    createUserMutation.mutate({
+      name: data.name,
+      username: data.username,
+      email: data.email,
+      password: data.signupPassword,
+    });
   };
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
     await signIn("credentials", {
@@ -39,21 +57,23 @@ export default function Signup() {
       email: data.usernameOrEmail.includes("@")
         ? data.usernameOrEmail
         : undefined,
-      password: data.loginPassword,
+      password: data.password,
       callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
     });
   };
   const onProviderSignin = (provider: "google" | "github") => {
     signIn(provider, {
       callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
+    }).then((res) => {
+      if (res?.error) {
+        toast.error(res.error);
+      }
     });
   };
   const {
-    register,
     handleSubmit,
     control,
     watch,
-    setError,
     clearErrors,
     formState: { errors },
   } = useForm<SignUpInputs & LoginInputs>({ mode: "all" });
@@ -162,7 +182,7 @@ export default function Signup() {
           />
           <Controller
             control={control}
-            name="password"
+            name="signupPassword"
             rules={{
               required: true,
               minLength: {
@@ -177,7 +197,7 @@ export default function Signup() {
                 isRequired
                 color="primary"
                 variant="underlined"
-                errorMessage={errors.password?.message}
+                errorMessage={errors.signupPassword?.message}
                 isInvalid={error !== undefined}
                 type="password"
               />
@@ -189,7 +209,7 @@ export default function Signup() {
             rules={{
               required: true,
               validate: (value) =>
-                value === watch("password") || "Passwords do not match",
+                value === watch("signupPassword") || "Passwords do not match",
             }}
             render={({ field, fieldState: { error } }) => (
               <Input
@@ -250,7 +270,15 @@ export default function Signup() {
             Sign in with Google
           </Button>
           <Divider></Divider>
+          <div>
+            {params.get("error") === "CredentialsSignin" && (
+              <p className="text-red-500">
+                {t("Invalid username, email or password")}
+              </p>
+            )}
+          </div>
           <Controller
+            key={"usernameOrEmail"}
             name="usernameOrEmail"
             control={control}
             rules={{ required: true }}
@@ -267,7 +295,8 @@ export default function Signup() {
             )}
           />
           <Controller
-            name="loginPassword"
+            name="password"
+            key="password"
             control={control}
             rules={{ required: true }}
             render={({ field, fieldState: { error } }) => (

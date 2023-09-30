@@ -2,6 +2,7 @@ import prisma from "@/db";
 import { z } from "zod";
 import { router, publicProcedure } from "./trpc";
 import * as bycrypt from "bcrypt";
+import { TRPCError } from "@trpc/server";
 export const appRouter = router({
   helloWorld: publicProcedure.query(() => {
     return "Hello World!";
@@ -112,24 +113,27 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+      const userQueriedWUsername = await prisma.user.findUnique({
+        where: {
+          username: input.username,
+        },
+      });
+      console.log(userQueriedWUsername);
+      if (userQueriedWUsername)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with this username already exists",
+        });
       const userQueriedWEmail = await prisma.user.findUnique({
         where: {
           email: input.email,
         },
       });
       if (userQueriedWEmail)
-        return {
-          error: "User with this email already exists",
-        };
-      const userQueriedWUsername = await prisma.user.findUnique({
-        where: {
-          username: input.username,
-        },
-      });
-      if (userQueriedWUsername)
-        return {
-          error: "User with this username already exists",
-        };
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with this email already exists",
+        });
       try {
         const hashedPassword = await bycrypt.hash(input.password, 10);
         const user = await prisma.user.create({
@@ -140,12 +144,17 @@ export const appRouter = router({
             password: hashedPassword,
           },
         });
-        return user;
+        return {
+          email: user.email,
+          name: user.name,
+          username: user.username,
+        };
       } catch (error) {
         console.log(error);
-        return {
-          error: "Something went wrong. Please try again later",
-        };
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
       }
     }),
 });

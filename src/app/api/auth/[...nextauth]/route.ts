@@ -17,11 +17,13 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
+        console.log(credentials);
         let user = await prisma.user.findFirst({
           where: {
             email: credentials?.email,
           },
         });
+        console.log("user", user);
         user =
           user !== null
             ? user
