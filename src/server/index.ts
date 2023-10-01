@@ -3,6 +3,7 @@ import { z } from "zod";
 import { router, publicProcedure } from "./trpc";
 import * as bycrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
+import jwt from "jsonwebtoken";
 export const appRouter = router({
   helloWorld: publicProcedure.query(() => {
     return "Hello World!";
@@ -154,6 +155,80 @@ export const appRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
+        });
+      }
+    }),
+  createUniqueForgotPasswordLink: publicProcedure
+    .input(z.string())
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.findUnique({
+        where: {
+          email: input,
+        },
+      });
+      if (!user)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User with this email does not exist",
+        });
+      if (user && !user.password)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User created with google auth",
+        });
+      const payload = {
+        email: user.email,
+        id: user.id,
+      };
+      const secret = process.env.NEXTAUTH_SECRET! + user.password;
+      const token = jwt.sign(payload, secret, {
+        expiresIn: "30m",
+      });
+      const link = `${process.env.NEXTAUTH_URL}/reset-password/${user.id}?token=${token}`;
+      return link;
+    }),
+  verifyResetPasswordToken: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      let user;
+      try {
+        user = await prisma.user.findUnique({
+          where: {
+            id: input.id,
+          },
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid token or user does not exist",
+        });
+      }
+      if (!user)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid token or user does not exist",
+        });
+      if (user && !user.password) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User created with google auth",
+        });
+      }
+      try {
+        const payload = jwt.verify(
+          input.token,
+          process.env.NEXTAUTH_SECRET! + user.password
+        );
+        return payload;
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid token or user does not exist",
         });
       }
     }),

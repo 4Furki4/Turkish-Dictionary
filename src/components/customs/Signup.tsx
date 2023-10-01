@@ -45,6 +45,27 @@ export default function Signup() {
       );
     },
   });
+  const forgotPasswordMutation =
+    trpc.createUniqueForgotPasswordLink.useMutation({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: async (data) => {
+        console.log(data);
+        toast.success(t("Email sent"));
+        router.push(
+          `${
+            params.get("callbackUrl")
+              ? `?callbackUrl=${params.get("callbackUrl")}`
+              : ""
+          }`,
+          { scroll: false }
+        );
+      },
+    });
+  const onForgotPasswordSubmit: SubmitHandler<ForgotPassword> = (data) => {
+    forgotPasswordMutation.mutate(data.forgotPasswordEmail);
+  };
   const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
     createUserMutation.mutate({
       name: data.name,
@@ -254,27 +275,9 @@ export default function Signup() {
       ) : userParam === "forgot" ? (
         <>
           <form
-            onSubmit={handleSubmit(onLoginSubmit)}
+            onSubmit={handleSubmit(onForgotPasswordSubmit)}
             className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
           >
-            <Button
-              variant="bordered"
-              onClick={() => onProviderSignin("google")}
-              onKeyDown={(e) =>
-                onEnterAndSpace(e, () => onProviderSignin("google"))
-              }
-              startContent={
-                <Image
-                  src={"/svg/providers/google.svg"}
-                  width={24}
-                  height={24}
-                  alt="google-icon"
-                />
-              }
-            >
-              {t("Sign up with Google")}
-            </Button>
-            <Divider></Divider>
             <div>
               <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
                 {t("Forgot Password")}
