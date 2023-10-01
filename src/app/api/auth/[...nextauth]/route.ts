@@ -3,6 +3,7 @@ import prisma from "@/db";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import * as bycrypt from "bcrypt";
+import { getToken } from "next-auth/jwt";
 const handler = NextAuth({
   providers: [
     GoogleProvider({

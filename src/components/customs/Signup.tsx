@@ -24,6 +24,10 @@ type LoginInputs = {
   password: string;
 };
 
+type ForgotPassword = {
+  forgotPasswordEmail: string;
+};
+
 export default function Signup() {
   const createUserMutation = trpc.createUser.useMutation({
     onError: (error) => {
@@ -76,7 +80,7 @@ export default function Signup() {
     watch,
     clearErrors,
     formState: { errors },
-  } = useForm<SignUpInputs & LoginInputs>({ mode: "all" });
+  } = useForm<SignUpInputs & LoginInputs & ForgotPassword>({ mode: "all" });
   const params = useSearchParams();
   const router = useRouter();
   const userParam = params.get("user");
@@ -247,6 +251,82 @@ export default function Signup() {
             </span>
           </p>
         </form>
+      ) : userParam === "forgot" ? (
+        <>
+          <form
+            onSubmit={handleSubmit(onLoginSubmit)}
+            className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+          >
+            <Button
+              variant="bordered"
+              onClick={() => onProviderSignin("google")}
+              onKeyDown={(e) =>
+                onEnterAndSpace(e, () => onProviderSignin("google"))
+              }
+              startContent={
+                <Image
+                  src={"/svg/providers/google.svg"}
+                  width={24}
+                  height={24}
+                  alt="google-icon"
+                />
+              }
+            >
+              {t("Sign up with Google")}
+            </Button>
+            <Divider></Divider>
+            <div>
+              <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
+                {t("Forgot Password")}
+              </h1>
+            </div>
+            <Controller
+              name="forgotPasswordEmail"
+              rules={{
+                required: true,
+                pattern: {
+                  value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                  message: "Please enter a valid email",
+                },
+              }}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <Input
+                  key={"forgotPasswordEmail"}
+                  type="email"
+                  {...field}
+                  label={t("Email")}
+                  isRequired
+                  color="primary"
+                  variant="underlined"
+                  errorMessage={errors.email?.message}
+                  isInvalid={error !== undefined}
+                />
+              )}
+            />
+            <Button color="primary" variant="ghost" type="submit">
+              {t("Send Email")}
+            </Button>
+            <p>
+              {t("Already have an account?")}{" "}
+              <span
+                className="underline cursor-pointer"
+                onClick={() =>
+                  router.push(
+                    `${
+                      params.get("callbackUrl")
+                        ? `?callbackUrl=${params.get("callbackUrl")}`
+                        : ""
+                    }`,
+                    { scroll: false }
+                  )
+                }
+              >
+                {t("Login")}
+              </span>
+            </p>
+          </form>
+        </>
       ) : (
         <form
           onSubmit={handleSubmit(onLoginSubmit)}
@@ -330,6 +410,23 @@ export default function Signup() {
               }
             >
               {t("Sign Up")}
+            </span>
+          </p>
+          <p>
+            <span
+              className="underline cursor-pointer"
+              onClick={() =>
+                router.push(
+                  `${
+                    params.get("callbackUrl")
+                      ? `?callbackUrl=${params.get("callbackUrl")}&user=forgot`
+                      : "?user=forgot"
+                  }`,
+                  { scroll: false }
+                )
+              }
+            >
+              {t("Forgot Password")}
             </span>
           </p>
         </form>
