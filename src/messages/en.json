@@ -25,5 +25,14 @@
       "Forgot Password": "Forgot Password ?",
       "Send Email": "Send Email",
       "Email Sent": "The email with the reset link has just been sent, please check your inbox."
+    },
+    "ResetPassword": {
+      "Password": "Password",
+      "Confirm Password": "Confirm Password",
+      "Reset Password": "Reset Password",
+      "Confirm password": "Confirm password",
+      "Passwords do not match": "Passwords do not match",
+      "PasswordPatternErrorMessage":"Password must contain at least 8 characters, one uppercase, and one number",
+      "PasswordResetSuccess": "Password reset successfully"
     }
 }

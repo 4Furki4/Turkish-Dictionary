@@ -25,5 +25,14 @@
       "Forgot Password": "Şifrenizi mi unuttunuz?",
       "Send Email": "E-posta Gönder",
       "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin."
+    },
+    "ResetPassword": {
+      "Password": "Şifre",
+      "Confirm Password": "Şifreyi Onayla",
+      "Reset Password": "Şifreyi Yenile",
+      "Confirm password": "Şifreyi Onayla",
+      "Passwords do not match": "Şifreler eşleşmiyor",
+      "PasswordPatternErrorMessage":"Şifre en az 8 karakter, bir büyük harf ve bir sayı içermelidir",
+      "PasswordResetSuccess": "Şifreniz başarıyla sıfırlandı, lütfen giriş yapın."
     }
 }

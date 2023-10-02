@@ -266,6 +266,65 @@ export const appRouter = router({
         });
       }
     }),
+  resetPassword: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        newPassword: z.string(),
+        token: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+      if (!user)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid token or user does not exist",
+        });
+      if (user && !user.password) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User created with google auth",
+        });
+      }
+      try {
+        const payload = jwt.verify(
+          input.token,
+          process.env.NEXTAUTH_SECRET! + user.password
+        );
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid token or user does not exist",
+        });
+      }
+      const isPasswordSame = await bycrypt.compare(
+        input.newPassword,
+        user.password!
+      );
+      if (isPasswordSame) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "New password cannot be same as old password",
+        });
+      }
+      const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
+      await prisma.user.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          password: newHashedPassword,
+        },
+      });
+      return {
+        message: "Password changed successfully",
+      };
+    }),
 });
 
 export type AppRouter = typeof appRouter;
