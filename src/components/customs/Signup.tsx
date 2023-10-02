@@ -52,7 +52,7 @@ export default function Signup() {
       },
       onSuccess: async (data) => {
         console.log(data);
-        toast.success(t("Email sent"));
+        toast.success(t("Email Sent"));
         router.push(
           `${
             params.get("callbackUrl")

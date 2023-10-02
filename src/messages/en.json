@@ -23,6 +23,7 @@
       "Invalid username, email or password": "Invalid username, email or password",
       "Account created successfully, please sign in": "Account created successfully. Please sign in.",
       "Forgot Password": "Forgot Password ?",
-      "Send Email": "Send Email"
+      "Send Email": "Send Email",
+      "Email Sent": "The email with the reset link has just been sent, please check your inbox."
     }
 }

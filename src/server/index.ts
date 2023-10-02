@@ -185,7 +185,7 @@ export const appRouter = router({
       const token = jwt.sign(payload, secret, {
         expiresIn: "30m",
       });
-      const link = `${process.env.NEXTAUTH_URL}/reset-password/${user.id}?token=${token}`;
+      const link = `${process.env.NEXT_PUBLIC_URL}/reset-password/${user.id}?token=${token}`;
       const transporter = nodemailler.createTransport({
         service: "gmail",
         host: "smtp.gmail.com",

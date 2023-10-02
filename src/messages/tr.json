@@ -23,6 +23,7 @@
       "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre",
       "Account created successfully, please sign in" : "Hesap başarıyla oluşturuldu. Lütfen giriş yapın.",
       "Forgot Password": "Şifrenizi mi unuttunuz?",
-      "Send Email": "E-posta Gönder"
+      "Send Email": "E-posta Gönder",
+      "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin."
     }
 }
