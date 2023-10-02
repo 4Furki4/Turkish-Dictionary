@@ -4,6 +4,7 @@ import { router, publicProcedure } from "./trpc";
 import * as bycrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
+import nodemailler from "nodemailer";
 export const appRouter = router({
   helloWorld: publicProcedure.query(() => {
     return "Hello World!";
@@ -185,7 +186,26 @@ export const appRouter = router({
         expiresIn: "30m",
       });
       const link = `${process.env.NEXTAUTH_URL}/reset-password/${user.id}?token=${token}`;
-      return link;
+      const transporter = nodemailler.createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.NODEMAIL_EMAIL,
+          pass: process.env.NODEMAIL_PASSWORD,
+        },
+      });
+      transporter.sendMail({
+        from: process.env.NODEMAIL_EMAIL,
+        to: user.email,
+        subject: "Reset password link | Turkish Dictionary",
+        html: `
+        <a href="${link}">Reset password</a>
+        <p>Link will expire in 30 minutes</p>
+        <p>If you can't click the link, copy and paste this link to your browser: ${link}</p>
+        `,
+      });
     }),
   verifyResetPasswordToken: publicProcedure
     .input(
