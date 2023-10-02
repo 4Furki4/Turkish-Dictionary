@@ -196,15 +196,29 @@ export const appRouter = router({
           pass: process.env.NODEMAIL_PASSWORD,
         },
       });
-      transporter.sendMail({
-        from: process.env.NODEMAIL_EMAIL,
-        to: user.email,
-        subject: "Reset password link | Turkish Dictionary",
-        html: `
-        <a href="${link}">Reset password</a>
-        <p>Link will expire in 30 minutes</p>
-        <p>If you can't click the link, copy and paste this link to your browser: ${link}</p>
-        `,
+      await new Promise((resolve, reject) => {
+        // send mail
+        transporter.sendMail(
+          {
+            from: process.env.NODEMAIL_EMAIL,
+            to: user.email,
+            subject: "Reset password link | Turkish Dictionary",
+            html: `
+          <a href="${link}">Reset password</a>
+          <p>Link will expire in 30 minutes</p>
+          <p>If you can't click the link, copy and paste this link to your browser: ${link}</p>
+          `,
+          },
+          (err, info) => {
+            if (err) {
+              console.error(err);
+              reject(err);
+            } else {
+              console.log(info);
+              resolve(info);
+            }
+          }
+        );
       });
     }),
   verifyResetPasswordToken: publicProcedure
