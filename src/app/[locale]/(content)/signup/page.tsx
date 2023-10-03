@@ -1,6 +1,6 @@
 import Signup from "@/components/customs/Signup";
 import { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 
 export async function generateMetadata({
   searchParams,
@@ -25,6 +25,10 @@ export async function generateMetadata({
   };
 }
 
-export default function Page() {
-  return <Signup />;
+export default function Page({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  return <Signup params={searchParams} />;
 }
