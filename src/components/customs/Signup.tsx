@@ -4,7 +4,8 @@ import { trpc } from "@/app/_trpc/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import Link from "next-intl/link";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -24,6 +25,10 @@ type LoginInputs = {
   password: string;
 };
 
+type ForgotPassword = {
+  forgotPasswordEmail: string;
+};
+
 export default function Signup() {
   const createUserMutation = trpc.createUser.useMutation({
     onError: (error) => {
@@ -41,6 +46,31 @@ export default function Signup() {
       );
     },
   });
+  const forgotPasswordMutation =
+    trpc.createUniqueForgotPasswordLink.useMutation({
+      onError: (error) => {
+        toast.error(t(error.message));
+      },
+      onSuccess: async (data) => {
+        console.log(data);
+        toast.success(t("Email Sent"));
+        router.push(
+          `${
+            params.get("callbackUrl")
+              ? `?callbackUrl=${params.get("callbackUrl")}`
+              : ""
+          }`,
+          { scroll: false }
+        );
+      },
+    });
+  const locale = useLocale();
+  const onForgotPasswordSubmit: SubmitHandler<ForgotPassword> = (data) => {
+    forgotPasswordMutation.mutate({
+      email: data.forgotPasswordEmail,
+      locale,
+    });
+  };
   const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
     createUserMutation.mutate({
       name: data.name,
@@ -76,7 +106,7 @@ export default function Signup() {
     watch,
     clearErrors,
     formState: { errors },
-  } = useForm<SignUpInputs & LoginInputs>({ mode: "all" });
+  } = useForm<SignUpInputs & LoginInputs & ForgotPassword>({ mode: "all" });
   const params = useSearchParams();
   const router = useRouter();
   const userParam = params.get("user");
@@ -230,23 +260,71 @@ export default function Signup() {
           </Button>
           <p>
             {t("Already have an account?")}{" "}
-            <span
-              className="underline cursor-pointer"
-              onClick={() =>
-                router.push(
-                  `${
-                    params.get("callbackUrl")
-                      ? `?callbackUrl=${params.get("callbackUrl")}`
-                      : ""
-                  }`,
-                  { scroll: false }
-                )
-              }
+            <Link
+              href={`${
+                params.get("callbackUrl")
+                  ? `?callbackUrl=${params.get("callbackUrl")}`
+                  : ""
+              }`}
+              className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
             >
               {t("Login")}
-            </span>
+            </Link>
           </p>
         </form>
+      ) : userParam === "forgot" ? (
+        <>
+          <form
+            onSubmit={handleSubmit(onForgotPasswordSubmit)}
+            className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+          >
+            <div>
+              <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
+                {t("Forgot Password")}
+              </h1>
+            </div>
+            <Controller
+              name="forgotPasswordEmail"
+              rules={{
+                required: true,
+                pattern: {
+                  value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                  message: "Please enter a valid email",
+                },
+              }}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <Input
+                  key={"forgotPasswordEmail"}
+                  type="email"
+                  {...field}
+                  label={t("Email")}
+                  isRequired
+                  color="primary"
+                  variant="underlined"
+                  errorMessage={errors.email?.message}
+                  isInvalid={error !== undefined}
+                />
+              )}
+            />
+            <Button color="primary" variant="ghost" type="submit">
+              {t("Send Email")}
+            </Button>
+            <p>
+              {t("Already have an account?")}{" "}
+              <Link
+                href={`${
+                  params.get("callbackUrl")
+                    ? `?callbackUrl=${params.get("callbackUrl")}`
+                    : ""
+                }`}
+                className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+              >
+                {t("Login")}
+              </Link>
+            </p>
+          </form>
+        </>
       ) : (
         <form
           onSubmit={handleSubmit(onLoginSubmit)}
@@ -316,21 +394,28 @@ export default function Signup() {
           </Button>
           <p>
             {t("Don't have an account?")}{" "}
-            <span
-              className="underline cursor-pointer"
-              onClick={() =>
-                router.push(
-                  `${
-                    params.get("callbackUrl")
-                      ? `?callbackUrl=${params.get("callbackUrl")}&user=new`
-                      : "?user=new"
-                  }`,
-                  { scroll: false }
-                )
-              }
+            <Link
+              className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+              href={`${
+                params.get("callbackUrl")
+                  ? `?callbackUrl=${params.get("callbackUrl")}&user=new`
+                  : "?user=new"
+              }`}
             >
               {t("Sign Up")}
-            </span>
+            </Link>
+          </p>
+          <p>
+            <Link
+              className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+              href={`${
+                params.get("callbackUrl")
+                  ? `?callbackUrl=${params.get("callbackUrl")}&user=forgot`
+                  : "?user=forgot"
+              }`}
+            >
+              {t("Forgot Password")}
+            </Link>
           </p>
         </form>
       )}

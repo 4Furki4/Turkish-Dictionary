@@ -13,6 +13,12 @@ export async function generateMetadata({
       description: "Sign up to create an account",
     };
   }
+  if (searchParams.user === "forgot") {
+    return {
+      title: "Forgot password",
+      description: "Forgot your password? No problem, we'll help you reset it.",
+    };
+  }
   return {
     title: "Sign in",
     description: "Sign in to your account",

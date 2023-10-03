@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <Provider>
         <Navbar />
-        <main>{children}</main>
+        <main className="">{children}</main>
         <ToastContainer limit={4} />
       </Provider>
     </SessionProvider>
