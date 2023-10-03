@@ -4,7 +4,7 @@ import { trpc } from "@/app/_trpc/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -48,7 +48,7 @@ export default function Signup() {
   const forgotPasswordMutation =
     trpc.createUniqueForgotPasswordLink.useMutation({
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(t(error.message));
       },
       onSuccess: async (data) => {
         console.log(data);
@@ -63,8 +63,12 @@ export default function Signup() {
         );
       },
     });
+  const locale = useLocale();
   const onForgotPasswordSubmit: SubmitHandler<ForgotPassword> = (data) => {
-    forgotPasswordMutation.mutate(data.forgotPasswordEmail);
+    forgotPasswordMutation.mutate({
+      email: data.forgotPasswordEmail,
+      locale,
+    });
   };
   const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
     createUserMutation.mutate({

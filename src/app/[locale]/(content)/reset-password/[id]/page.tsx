@@ -42,15 +42,17 @@ export default function Page({
   };
   const forgotPasswordMutation = trpc.verifyResetPasswordToken.useMutation({
     onError(error) {
-      toast.error(error.message);
-    },
-    onSuccess(data) {
-      console.log(data);
+      toast.info("Redirecting to signup page", {
+        autoClose: 3000,
+      });
+      setTimeout(() => {
+        router.push("/signup");
+      }, 3000);
     },
   });
   const resetPasswordMutation = trpc.resetPassword.useMutation({
     onError(error) {
-      toast.error(error.message);
+      toast.error(t(error.message));
     },
     onSuccess(data) {
       toast.success(t("PasswordResetSuccess"));
@@ -61,21 +63,26 @@ export default function Page({
     },
   });
   useEffect(() => {
-    forgotPasswordMutation.mutate({
-      token: searchParams.token as string,
-      id: params.id,
-    });
-  }, [searchParams.token, params.id]);
+    const verifyResetPasswordToken = async () => {
+      await forgotPasswordMutation.mutateAsync({
+        token: searchParams.token as string,
+        id: params.id,
+      });
+    };
+    verifyResetPasswordToken();
+  }, []);
   return (
     <>
       {forgotPasswordMutation.status === "loading" && (
-        <Spinner className="fixed inset-0 m-auto" />
+        <Spinner size="lg" className="fixed inset-0 m-auto" />
       )}
       {forgotPasswordMutation.error && (
         <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
-          <div>
-            <h1>Error</h1>
-            <p>{forgotPasswordMutation.error.message}</p>
+          <div className="flex flex-col gap-12 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl">
+            <h1 className="text-xl sm:text-3xl lg:text-6xl">{t("Opps!")}</h1>
+            <p className="sm:text-xl">
+              {t(forgotPasswordMutation.error.message)}
+            </p>
           </div>
         </div>
       )}

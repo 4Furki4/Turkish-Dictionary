@@ -160,11 +160,19 @@ export const appRouter = router({
       }
     }),
   createUniqueForgotPasswordLink: publicProcedure
-    .input(z.string())
+    .input(
+      z.object({
+        email: z.string({
+          invalid_type_error: "Email must be a string",
+          required_error: "Email is required to get a reset link",
+        }),
+        locale: z.string().optional().default("en"),
+      })
+    )
     .mutation(async ({ input }) => {
       const user = await prisma.user.findUnique({
         where: {
-          email: input,
+          email: input.email,
         },
       });
       if (!user)
@@ -185,7 +193,7 @@ export const appRouter = router({
       const token = jwt.sign(payload, secret, {
         expiresIn: "30m",
       });
-      const link = `${process.env.NEXT_PUBLIC_URL}/reset-password/${user.id}?token=${token}`;
+      const link = `${process.env.NEXT_PUBLIC_URL}/${input.locale}/reset-password/${user.id}?token=${token}`;
       const transporter = nodemailler.createTransport({
         service: "gmail",
         host: "smtp.gmail.com",

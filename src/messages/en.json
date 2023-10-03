@@ -24,7 +24,8 @@
       "Account created successfully, please sign in": "Account created successfully. Please sign in.",
       "Forgot Password": "Forgot Password ?",
       "Send Email": "Send Email",
-      "Email Sent": "The email with the reset link has just been sent, please check your inbox."
+      "Email Sent": "The email with the reset link has just been sent, please check your inbox.",
+      "User created with google auth": "User created with Google auth. Please sign in with Google."
     },
     "ResetPassword": {
       "Password": "Password",
@@ -33,6 +34,10 @@
       "Confirm password": "Confirm password",
       "Passwords do not match": "Passwords do not match",
       "PasswordPatternErrorMessage":"Password must contain at least 8 characters, one uppercase, and one number",
-      "PasswordResetSuccess": "Password reset successfully"
+      "PasswordResetSuccess": "Password reset successfully",
+      "Opps!": "Opps!",
+      "Invalid token or user does not exist": "Invalid token or user does not exist",
+      "User created with google auth": "User created with Google auth. Please sign in with Google.",
+      "Same Password": "New password cannot be the same as the old password"
     }
 }

@@ -24,7 +24,8 @@
       "Account created successfully, please sign in" : "Hesap başarıyla oluşturuldu. Lütfen giriş yapın.",
       "Forgot Password": "Şifrenizi mi unuttunuz?",
       "Send Email": "E-posta Gönder",
-      "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin."
+      "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin.",
+      "User created with google auth": "Google kimlik doğrulamasıyla kullanıcı oluşturulmuş. Lütfen Google ile giriş yapın."
     },
     "ResetPassword": {
       "Password": "Şifre",
@@ -33,6 +34,10 @@
       "Confirm password": "Şifreyi Onayla",
       "Passwords do not match": "Şifreler eşleşmiyor",
       "PasswordPatternErrorMessage":"Şifre en az 8 karakter, bir büyük harf ve bir sayı içermelidir",
-      "PasswordResetSuccess": "Şifreniz başarıyla sıfırlandı, lütfen giriş yapın."
+      "PasswordResetSuccess": "Şifreniz başarıyla sıfırlandı, lütfen giriş yapın.",
+      "Opps!": "Hay Aksi!",
+      "Invalid token or user does not exist": "Geçersiz jeton veya kullanıcı namevcut",
+      "User created with google auth": "Kullanıcı, Google kimlik doğrulamasıyla kullanıcı oluşturmuş. Lütfen Google ile giriş yapın.",
+      "Same Password": "Yeni şifre eski şifre ile aynı olamaz"
     }
 }
