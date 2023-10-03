@@ -8,7 +8,6 @@ import { useLocale, useTranslations } from "next-intl";
 import Link from "next-intl/link";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -29,7 +28,11 @@ type ForgotPassword = {
   forgotPasswordEmail: string;
 };
 
-export default function Signup() {
+export default function Signup({
+  params,
+}: {
+  params: { [key: string]: string | string[] | undefined };
+}) {
   const createUserMutation = trpc.createUser.useMutation({
     onError: (error) => {
       toast.error(error.message);
@@ -37,11 +40,7 @@ export default function Signup() {
     onSuccess: async (data) => {
       toast.success(t("Account created successfully, please sign in"));
       router.push(
-        `${
-          params.get("callbackUrl")
-            ? `?callbackUrl=${params.get("callbackUrl")}`
-            : ""
-        }`,
+        `${params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""}`,
         { scroll: false }
       );
     },
@@ -55,11 +54,7 @@ export default function Signup() {
         console.log(data);
         toast.success(t("Email Sent"));
         router.push(
-          `${
-            params.get("callbackUrl")
-              ? `?callbackUrl=${params.get("callbackUrl")}`
-              : ""
-          }`,
+          `${params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""}`,
           { scroll: false }
         );
       },
@@ -88,12 +83,12 @@ export default function Signup() {
         ? data.usernameOrEmail
         : undefined,
       password: data.password,
-      callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
+      callbackUrl: decodeURIComponent((params.callbackUrl as string) ?? "/"),
     });
   };
   const onProviderSignin = (provider: "google" | "github") => {
     signIn(provider, {
-      callbackUrl: decodeURIComponent(params.get("callbackUrl") ?? "/"),
+      callbackUrl: decodeURIComponent((params.callbackUrl as string) ?? "/"),
     }).then((res) => {
       if (res?.error) {
         toast.error(res.error);
@@ -107,9 +102,8 @@ export default function Signup() {
     clearErrors,
     formState: { errors },
   } = useForm<SignUpInputs & LoginInputs & ForgotPassword>({ mode: "all" });
-  const params = useSearchParams();
   const router = useRouter();
-  const userParam = params.get("user");
+  const userParam = params.user;
   const t = useTranslations("Signup");
   return (
     <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
@@ -262,9 +256,7 @@ export default function Signup() {
             {t("Already have an account?")}{" "}
             <Link
               href={`${
-                params.get("callbackUrl")
-                  ? `?callbackUrl=${params.get("callbackUrl")}`
-                  : ""
+                params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""
               }`}
               className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
             >
@@ -314,9 +306,7 @@ export default function Signup() {
               {t("Already have an account?")}{" "}
               <Link
                 href={`${
-                  params.get("callbackUrl")
-                    ? `?callbackUrl=${params.get("callbackUrl")}`
-                    : ""
+                  params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""
                 }`}
                 className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
               >
@@ -349,7 +339,7 @@ export default function Signup() {
           </Button>
           <Divider></Divider>
           <div>
-            {params.get("error") === "CredentialsSignin" && (
+            {params.error === "CredentialsSignin" && (
               <p className="text-red-500">
                 {t("Invalid username, email or password")}
               </p>
@@ -397,8 +387,8 @@ export default function Signup() {
             <Link
               className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
               href={`${
-                params.get("callbackUrl")
-                  ? `?callbackUrl=${params.get("callbackUrl")}&user=new`
+                params.callbackUrl
+                  ? `?callbackUrl=${params.callbackUrl}&user=new`
                   : "?user=new"
               }`}
             >
@@ -409,8 +399,8 @@ export default function Signup() {
             <Link
               className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
               href={`${
-                params.get("callbackUrl")
-                  ? `?callbackUrl=${params.get("callbackUrl")}&user=forgot`
+                params.callbackUrl
+                  ? `?callbackUrl=${params.callbackUrl}&user=forgot`
                   : "?user=forgot"
               }`}
             >
