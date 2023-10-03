@@ -5,6 +5,7 @@ import { onEnterAndSpace } from "@/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
+import Link from "next-intl/link";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -259,21 +260,16 @@ export default function Signup() {
           </Button>
           <p>
             {t("Already have an account?")}{" "}
-            <span
-              className="underline cursor-pointer"
-              onClick={() =>
-                router.push(
-                  `${
-                    params.get("callbackUrl")
-                      ? `?callbackUrl=${params.get("callbackUrl")}`
-                      : ""
-                  }`,
-                  { scroll: false }
-                )
-              }
+            <Link
+              href={`${
+                params.get("callbackUrl")
+                  ? `?callbackUrl=${params.get("callbackUrl")}`
+                  : ""
+              }`}
+              className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
             >
               {t("Login")}
-            </span>
+            </Link>
           </p>
         </form>
       ) : userParam === "forgot" ? (
@@ -316,21 +312,16 @@ export default function Signup() {
             </Button>
             <p>
               {t("Already have an account?")}{" "}
-              <span
-                className="underline cursor-pointer"
-                onClick={() =>
-                  router.push(
-                    `${
-                      params.get("callbackUrl")
-                        ? `?callbackUrl=${params.get("callbackUrl")}`
-                        : ""
-                    }`,
-                    { scroll: false }
-                  )
-                }
+              <Link
+                href={`${
+                  params.get("callbackUrl")
+                    ? `?callbackUrl=${params.get("callbackUrl")}`
+                    : ""
+                }`}
+                className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
               >
                 {t("Login")}
-              </span>
+              </Link>
             </p>
           </form>
         </>
@@ -403,38 +394,28 @@ export default function Signup() {
           </Button>
           <p>
             {t("Don't have an account?")}{" "}
-            <span
-              className="underline cursor-pointer"
-              onClick={() =>
-                router.push(
-                  `${
-                    params.get("callbackUrl")
-                      ? `?callbackUrl=${params.get("callbackUrl")}&user=new`
-                      : "?user=new"
-                  }`,
-                  { scroll: false }
-                )
-              }
+            <Link
+              className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+              href={`${
+                params.get("callbackUrl")
+                  ? `?callbackUrl=${params.get("callbackUrl")}&user=new`
+                  : "?user=new"
+              }`}
             >
               {t("Sign Up")}
-            </span>
+            </Link>
           </p>
           <p>
-            <span
-              className="underline cursor-pointer"
-              onClick={() =>
-                router.push(
-                  `${
-                    params.get("callbackUrl")
-                      ? `?callbackUrl=${params.get("callbackUrl")}&user=forgot`
-                      : "?user=forgot"
-                  }`,
-                  { scroll: false }
-                )
-              }
+            <Link
+              className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+              href={`${
+                params.get("callbackUrl")
+                  ? `?callbackUrl=${params.get("callbackUrl")}&user=forgot`
+                  : "?user=forgot"
+              }`}
             >
               {t("Forgot Password")}
-            </span>
+            </Link>
           </p>
         </form>
       )}
