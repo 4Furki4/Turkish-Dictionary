@@ -5,6 +5,8 @@ import * as bycrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
+import { render } from "@react-email/render";
+import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
 export const appRouter = router({
   helloWorld: publicProcedure.query(() => {
     return "Hello World!";
@@ -204,6 +206,9 @@ export const appRouter = router({
           pass: process.env.NODEMAIL_PASSWORD,
         },
       });
+      const emailHtml = render(
+        PasswordResetEmail({ link: link, name: user.name })
+      );
       await new Promise((resolve, reject) => {
         // send mail
         transporter.sendMail(
@@ -211,11 +216,7 @@ export const appRouter = router({
             from: process.env.NODEMAIL_EMAIL,
             to: user.email,
             subject: "Reset password link | Turkish Dictionary",
-            html: `
-          <a href="${link}">Reset password</a>
-          <p>Link will expire in 30 minutes</p>
-          <p>If you can't click the link, copy and paste this link to your browser: ${link}</p>
-          `,
+            html: emailHtml,
           },
           (err, info) => {
             if (err) {
