@@ -102,6 +102,7 @@ export default function Page({
                     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=\S+$).{8,}$/,
                   message: t("PasswordPatternErrorMessage"),
                 },
+                required: true,
               }}
               render={({ field, fieldState: { error } }) => (
                 <Input
