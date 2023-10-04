@@ -1,7 +1,6 @@
 "use client";
 import {
   Navbar as NextuiNavbar,
-  NavbarBrand,
   NavbarContent,
   NavbarItem,
   NavbarMenuToggle,
@@ -15,11 +14,11 @@ import {
   DropdownTrigger,
   DropdownMenu,
 } from "@nextui-org/react";
-import { HomeIcon, GithubIcon, Sun, Moon } from "lucide-react";
+import { HomeIcon, Sun, Moon } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, usePathname } from "next-intl/client";
 import { onEnterAndSpace } from "@/lib/keyEvents";
 import { useLocale, useTranslations } from "next-intl";
@@ -28,16 +27,12 @@ import { useSearchParams } from "next/navigation";
 export default function Navbar() {
   const { status, data } = useSession();
   const { theme, setTheme } = useTheme();
-  const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
   const params = useSearchParams();
   const route = useRouter();
   const locale = useLocale();
   const t = useTranslations("Navbar");
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
   return (
     <NextuiNavbar
       shouldHideOnScroll
@@ -188,15 +183,11 @@ export default function Navbar() {
             </NavbarItem>
           )}
         </NavbarContent>
-        {isMounted && (
-          <NavbarItem>
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? <Sun size={32} /> : <Moon size={32} />}
-            </button>
-          </NavbarItem>
-        )}
+        <NavbarItem>
+          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? <Sun size={32} /> : <Moon size={32} />}
+          </button>
+        </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
         <NavbarMenuItem>
