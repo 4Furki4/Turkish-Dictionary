@@ -47,6 +47,7 @@ model Meaning {
 type Definition {
   definition String
   example    Example?
+  imageUrl   String?
 }
 
 type Example {
