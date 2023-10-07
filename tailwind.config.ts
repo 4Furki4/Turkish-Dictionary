@@ -80,33 +80,71 @@ module.exports = {
     nextui({
       prefix: "nextui-",
       themes: {
-        light: {
+        dark: {
           colors: {
-            primary: "#5800FF",
-            background: {
-              DEFAULT: "#E4F1FF",
+            content1: {
+              DEFAULT: "#0F0E0E",
+              foreground: "#ffffff",
             },
-            foreground: "#27005D",
             danger: {
               DEFAULT: "#FF0000",
               foreground: "#ffffff",
             },
           },
         },
-        dark: {
+        light: {
           colors: {
-            primary: { DEFAULT: "#5800FF", foreground: "#ffffff" },
-            background: {
-              DEFAULT: "#27005D",
-              foreground: "#E4F1FF",
+            content1: {
+              DEFAULT: "#F9F5F6",
+              foreground: "#0F0E0E",
             },
-            foreground: "#E4F1FF",
             danger: {
               DEFAULT: "#FF0000",
               foreground: "#ffffff",
             },
-            warning: {
-              DEFAULT: "#FFA500",
+          },
+        },
+        "dark-purple": {
+          extend: "dark",
+          colors: {
+            default: {
+              DEFAULT: "#27005D",
+              foreground: "#ffffff",
+            },
+            background: {
+              DEFAULT: "#27005D",
+              foreground: "#E4F1FF",
+            },
+            foreground: "#ffffff",
+            primary: { DEFAULT: "#5800FF", foreground: "#FFCEFE" },
+            content1: {
+              DEFAULT: "#100637",
+              foreground: "#ffffff",
+            },
+            danger: {
+              DEFAULT: "#FF0000",
+              foreground: "#ffffff",
+            },
+          },
+        },
+        "light-purple": {
+          extend: "light",
+          colors: {
+            primary: {
+              DEFAULT: "#5800FF",
+              foreground: "#ffffff",
+            },
+            background: {
+              DEFAULT: "#B2A4FF",
+            },
+            foreground: "#27005D",
+            focus: "#F182F6",
+            content1: {
+              DEFAULT: "#d4ccff",
+              foreground: "#27005D",
+            },
+            danger: {
+              DEFAULT: "#FF0000",
               foreground: "#ffffff",
             },
           },

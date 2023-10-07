@@ -14,7 +14,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
 } from "@nextui-org/react";
-import { HomeIcon, Sun, Moon } from "lucide-react";
+import { HomeIcon, Palette } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
@@ -35,6 +35,7 @@ export default function Navbar() {
   const t = useTranslations("Navbar");
   return (
     <NextuiNavbar
+      className="bg-content1"
       shouldHideOnScroll
       classNames={{
         item: [
@@ -184,9 +185,38 @@ export default function Navbar() {
           )}
         </NavbarContent>
         <NavbarItem>
-          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-            {theme === "dark" ? <Sun size={32} /> : <Moon size={32} />}
-          </button>
+          <Dropdown>
+            <DropdownTrigger className="cursor-pointer">
+              <Button className="bg-transparent" variant="flat">
+                <Palette size={32} />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              color="primary"
+              disabledKeys={[theme!]}
+              onAction={(key) => {
+                switch (key) {
+                  case "dark-purple":
+                    setTheme("dark-purple");
+                    break;
+                  case "light-purple":
+                    setTheme("light-purple");
+                    break;
+                  case "dark":
+                    setTheme("dark");
+                    break;
+                  case "light":
+                    setTheme("light");
+                    break;
+                }
+              }}
+            >
+              <DropdownItem key={"dark-purple"}>Dark Purple</DropdownItem>
+              <DropdownItem key={"light-purple"}>Light Purple</DropdownItem>
+              <DropdownItem key={"dark"}>Dark</DropdownItem>
+              <DropdownItem key={"light"}>Light</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
