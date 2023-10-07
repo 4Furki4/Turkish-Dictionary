@@ -78,7 +78,7 @@ export default function Page({
       )}
       {forgotPasswordMutation.error && (
         <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
-          <div className="flex flex-col gap-12 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl">
+          <div className="flex flex-col gap-12 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl">
             <h1 className="text-xl sm:text-3xl lg:text-6xl">{t("Opps!")}</h1>
             <p className="sm:text-xl">
               {t(forgotPasswordMutation.error.message)}
@@ -90,7 +90,7 @@ export default function Page({
         <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+            className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
           >
             <h1>{t("Reset Password")}</h1>
             <Controller

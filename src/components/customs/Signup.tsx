@@ -110,10 +110,11 @@ export default function Signup({
       {userParam && userParam === "new" ? (
         <form
           onSubmit={handleSubmit(onSignupSubmit)}
-          className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+          className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
         >
           <Button
             variant="bordered"
+            color="primary"
             onClick={() => onProviderSignin("google")}
             onKeyDown={(e) =>
               onEnterAndSpace(e, () => onProviderSignin("google"))
@@ -268,7 +269,7 @@ export default function Signup({
         <>
           <form
             onSubmit={handleSubmit(onForgotPasswordSubmit)}
-            className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+            className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
           >
             <div>
               <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
@@ -318,10 +319,11 @@ export default function Signup({
       ) : (
         <form
           onSubmit={handleSubmit(onLoginSubmit)}
-          className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-background/70 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+          className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
         >
           <Button
             variant="bordered"
+            color="primary"
             onClick={() => onProviderSignin("google")}
             onKeyDown={(e) =>
               onEnterAndSpace(e, () => onProviderSignin("google"))
