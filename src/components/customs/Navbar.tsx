@@ -219,7 +219,7 @@ export default function Navbar() {
           </Dropdown>
         </NavbarItem>
       </NavbarContent>
-      <NavbarMenu>
+      <NavbarMenu className="bg-content1">
         <NavbarMenuItem>
           <Link
             as={NextLink}
