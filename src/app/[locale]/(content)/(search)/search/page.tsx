@@ -1,7 +1,9 @@
 import { serverClient } from "@/app/_trpc/serverClient";
+import WordCard from "@/components/customs/WordCard";
 import { redirect } from "next/navigation";
 import React from "react";
-
+import type * as Prisma from "@prisma/client";
+import { Word } from "../../../../../../types";
 export async function generateMetadata({
   searchParams,
 }: {
@@ -29,7 +31,7 @@ export default async function Page({
     // redirect to home page if word is empty
     redirect("/");
   }
-  const response = await serverClient.getWord(parsedWord);
+  const response: Word[] = await serverClient.getWord(parsedWord);
   if (response.length === 0) {
     // if no word is found, render this
     return (
@@ -40,11 +42,10 @@ export default async function Page({
     );
   }
   return (
-    <div>
-      <h1>{parsedWord}</h1>
-      <pre>
-        <code>{JSON.stringify(response, null, 2)}</code>
-      </pre>
-    </div>
+    <main className="flex flex-col gap-4 max-w-5xl mx-auto">
+      {response.map((word) => (
+        <WordCard key={word.id} word={word} />
+      ))}
+    </main>
   );
 }

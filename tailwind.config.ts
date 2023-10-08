@@ -94,6 +94,9 @@ module.exports = {
         },
         light: {
           colors: {
+            primary: {
+              foreground: "#000000",
+            },
             content1: {
               DEFAULT: "#F9F5F6",
               foreground: "#0F0E0E",

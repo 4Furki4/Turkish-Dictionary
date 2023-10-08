@@ -1,5 +1,5 @@
 "use client";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import React from "react";
 import { useRouter } from "next-intl/client";
 
@@ -14,7 +14,7 @@ export default function SearchLayout({
   return (
     <>
       <form
-        className="max-w-5xl mx-auto px-6"
+        className="max-w-5xl mx-auto"
         onSubmit={(e) => {
           e.preventDefault();
           const input: string = e.currentTarget.search.value;
@@ -34,21 +34,25 @@ export default function SearchLayout({
           router.push(`/search?word=${formattedInput}`);
         }}
       >
-        <div className="flex">
-          <Input
-            value={wordInput}
-            onValueChange={(val) => {
-              setWordInput(val);
-              if (val.trim()) setInputError("");
-            }}
-            color="primary"
-            name="search"
-            placeholder="Search Words..."
-            isInvalid={!!inputError}
-            errorMessage={inputError}
-          />
-          <Button type="submit">Search</Button>
-        </div>
+        <Card className="my-4 bg-content1 text-primary-foreground">
+          <CardBody className="flex-row gap-2 ">
+            <Input
+              value={wordInput}
+              onValueChange={(val) => {
+                setWordInput(val);
+                if (val.trim()) setInputError("");
+              }}
+              color="primary"
+              name="search"
+              placeholder="Search Words..."
+              isInvalid={!!inputError}
+              errorMessage={inputError}
+            />
+            <Button color="primary" variant="ghost" type="submit">
+              Search
+            </Button>
+          </CardBody>
+        </Card>
       </form>
       {children}
     </>
