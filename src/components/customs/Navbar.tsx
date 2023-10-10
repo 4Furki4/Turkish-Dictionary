@@ -53,6 +53,7 @@ export default function Navbar() {
           "data-[active=true]:after:rounded-[2px]",
           "data-[active=true]:after:bg-primary",
         ],
+        // wrapper: ["max-w-7xl"],
       }}
     >
       <NavbarMenuToggle

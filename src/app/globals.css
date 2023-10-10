@@ -7,6 +7,21 @@
     @apply scroll-smooth
   }
   :root {
+    /* @link https://utopia.fyi/type/calculator?c=320,18,1.2,1024,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+
+  --step--2: clamp(0.7813rem, 0.7727rem + 0.0426vw, 0.8rem);
+  --step--1: clamp(0.9375rem, 0.9091rem + 0.142vw, 1rem);
+  --step-0: clamp(1.125rem, 1.0682rem + 0.2841vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.2534rem + 0.483vw, 1.5625rem);
+  --step-2: clamp(1.62rem, 1.4686rem + 0.7571vw, 1.9531rem);
+  --step-3: clamp(1.9438rem, 1.7176rem + 1.1307vw, 2.4413rem);
+  --step-4: clamp(2.3325rem, 2.0055rem + 1.6349vw, 3.0519rem);
+  --step-5: clamp(2.7994rem, 2.3377rem + 2.3082vw, 3.815rem);
+  --step-6: clamp(3.3594rem, 2.719rem + 3.2017vw, 4.7681rem);
+  --step-7: clamp(4.0313rem, 3.1543rem + 4.3849vw, 5.9606rem);
+  --step-8: clamp(4.8375rem, 3.6497rem + 5.9389vw, 7.4506rem);
+
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 

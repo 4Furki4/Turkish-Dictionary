@@ -42,7 +42,7 @@ export default async function Page({
     );
   }
   return (
-    <main className="flex flex-col gap-4 max-w-5xl mx-auto">
+    <main className="flex flex-col gap-4 px-4 max-w-5xl xl:p-0 mx-auto">
       {response.map((word) => (
         <WordCard key={word.id} word={word} />
       ))}

@@ -19,6 +19,19 @@ module.exports = {
       },
     },
     extend: {
+      fontSize: {
+        "fs--2": "var(--step--2)",
+        "fs--1": "var(--step--1)",
+        "fs-0": "var(--step-0)",
+        "fs-1": "var(--step-1)",
+        "fs-2": "var(--step-2)",
+        "fs-3": "var(--step-3)",
+        "fs-4": "var(--step-4)",
+        "fs-5": "var(--step-5)",
+        "fs-6": "var(--step-6)",
+        "fs-7": "var(--step-7)",
+        "fs-8": "var(--step-8)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -54,6 +67,7 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
