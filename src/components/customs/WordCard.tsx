@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Card,
   CardHeader,
@@ -20,8 +20,8 @@ export default function WordCard({ word }: { word: Word }) {
           <h3 className="text-fs-0">{word.root}</h3>
           <div className="grid gap-2 mt-4">
             {word.meanings.map((meaning) => (
-              <>
-                <p className="text-fs-1" key={meaning.id}>
+              <Fragment key={meaning.id}>
+                <p className="text-fs-1">
                   {meaning.partOfSpeech ? `${meaning.partOfSpeech}` : null}
                   {meaning.attributes.length > 0 && ", "}
                   {meaning.attributes ? `${meaning.attributes}` : null}
@@ -35,7 +35,7 @@ export default function WordCard({ word }: { word: Word }) {
                   </p>
                 ) : null}
                 <Divider />
-              </>
+              </Fragment>
             ))}
           </div>
         </>
