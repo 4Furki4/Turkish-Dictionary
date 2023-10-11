@@ -1,6 +1,6 @@
 "use client";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import React from "react";
+import React, { Fragment } from "react";
 import { useRouter } from "next-intl/client";
 
 export default function SearchLayout({

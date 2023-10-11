@@ -7,7 +7,6 @@ import {
   CardFooter,
   Divider,
 } from "@nextui-org/react";
-import type * as Prisma from "@prisma/client";
 import { Word } from "../../../types";
 export default function WordCard({ word }: { word: Word }) {
   return (
@@ -29,8 +28,8 @@ export default function WordCard({ word }: { word: Word }) {
                   {meaning.definition.definition}
                 </p>
                 {meaning.definition.example ? (
-                  <p className="italic px-2 text-fs--1">
-                    {meaning.definition.example.sentence}{" "}
+                  <p className="text-center italic px-2 text-fs--1">
+                    <q>{meaning.definition.example.sentence}</q>{" "}
                     {"- " + meaning.definition.example.author}
                   </p>
                 ) : null}
@@ -40,6 +39,9 @@ export default function WordCard({ word }: { word: Word }) {
           </div>
         </>
       </CardBody>
+      <CardFooter>
+        <p className="text-fs--1">Related Words</p>
+      </CardFooter>
     </Card>
   );
 }
