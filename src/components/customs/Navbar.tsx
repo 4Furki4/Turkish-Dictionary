@@ -20,7 +20,7 @@ import NextLink from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { useRouter, usePathname } from "next-intl/client";
-import { onEnterAndSpace } from "@/lib/keyEvents";
+import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
@@ -53,6 +53,7 @@ export default function Navbar() {
           "data-[active=true]:after:rounded-[2px]",
           "data-[active=true]:after:bg-primary",
         ],
+        // wrapper: ["max-w-7xl"],
       }}
     >
       <NavbarMenuToggle

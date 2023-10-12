@@ -1,4 +1,4 @@
-import prisma from "@/db";
+import prisma from "@/src/db";
 import { z } from "zod";
 import { router, publicProcedure } from "./trpc";
 import * as bycrypt from "bcrypt";
@@ -47,7 +47,7 @@ export const appRouter = router({
           meanings: true,
         },
       });
-      return words || "Not found any word";
+      return words || "Word not found";
     }),
   /**
    * Get a word by id quering the database

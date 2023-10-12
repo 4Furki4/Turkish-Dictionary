@@ -1,5 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import prisma from "@/db";
+import prisma from "@/src/db";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import * as bycrypt from "bcrypt";
