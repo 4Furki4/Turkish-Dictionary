@@ -4,7 +4,16 @@
       "Word List": "Word List",
       "Sign In": "Sign In"
     },
-    "Signup":{
+    "SigninForm":{
+      "Sign in with Google": "Sign in with Google",
+      "Don't have an account?" : "Don't have an account?",
+      "Sign Up": "Sign Up",
+      "Sign In": "Sign In",
+      "Forgot Password": "Forgot Password ?",
+      "Password": "Password",
+      "Username or Email": "Username or Email"
+    },
+    "SignupForm":{
       "Sign up with Google": "Sign up with Google",
       "Sign in with Google": "Sign in with Google",
       "Create a new account": "Create new account",
@@ -14,18 +23,18 @@
       "Password": "Password",
       "Confirm Password": "Confirm Password",
       "Sign Up Button": "Sign Up",
-      "Sign Up": "Sign Up",
       "Already have an account?": "Already have an account?",
       "Login": "Login",
-      "Username or Email":"Username or Email",
-      "Don't have an account?": "Don't have an account?",
-      "Sign In": "Sign In",
       "Invalid username, email or password": "Invalid username, email or password",
       "Account created successfully, please sign in": "Account created successfully. Please sign in.",
-      "Forgot Password": "Forgot Password ?",
+      "User created with google auth": "User created with Google auth. Please sign in with Google."
+    },
+    "ForgotPasswordForm":{
+      "Forgot Password": "Forgot Password",
       "Send Email": "Send Email",
       "Email Sent": "The email with the reset link has just been sent, please check your inbox.",
-      "User created with google auth": "User created with Google auth. Please sign in with Google."
+      "Email": "Email",
+      "Login": "Login"
     },
     "ResetPassword": {
       "Password": "Password",

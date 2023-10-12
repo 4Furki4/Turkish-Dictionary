@@ -1,44 +1,65 @@
+"use client";
+import "react-toastify/dist/ReactToastify.css";
+import { trpc } from "@/src/app/_trpc/client";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
-import { SignUpInputs, LoginInputs, ForgotPassword } from "@/types";
+import { SignUpInputs, SignUpRequest } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
-import { NestedKeyOf } from "next-intl";
+import { useTranslations } from "next-intl";
 import Link from "next-intl/link";
 import Image from "next/image";
 import React from "react";
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  SubmitHandler,
-  UseFormClearErrors,
-  UseFormHandleSubmit,
-  UseFormWatch,
-} from "react-hook-form";
+import { useRouter } from "next-intl/client";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
-export default function SignupForm({
-  handleSubmit,
-  onSignupSubmit,
-  onProviderSignin,
-  control,
-  watch,
-  clearErrors,
-  errors,
-  t,
-  params,
-}: {
-  handleSubmit: UseFormHandleSubmit<
-    SignUpInputs & LoginInputs & ForgotPassword,
-    undefined
-  >;
-  onSignupSubmit: SubmitHandler<SignUpInputs>;
-  onProviderSignin: (provider: "google" | "github") => void;
-  control: Control<SignUpInputs & LoginInputs & ForgotPassword, any>;
-  watch: UseFormWatch<SignUpInputs & LoginInputs & ForgotPassword>;
-  clearErrors: UseFormClearErrors<SignUpInputs & LoginInputs & ForgotPassword>;
-  errors: FieldErrors<SignUpInputs & LoginInputs & ForgotPassword>;
-  t: (key: string) => string;
-  params: { [key: string]: string | string[] | undefined };
-}) {
+export default function SignupForm() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const createUserMutation = trpc.createUser.useMutation({
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: async (data) => {
+      toast.success(t("Account created successfully, please sign in"));
+      router.push(
+        `${
+          params.get("callbackUrl")
+            ? `?callbackUrl=${params.get("callbackUrl")}`
+            : ""
+        }`,
+        { scroll: false }
+      );
+    },
+  });
+  const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
+    createUserMutation.mutate({
+      name: data.name,
+      username: data.username,
+      email: data.email,
+      password: data.signupPassword,
+    });
+  };
+  const onProviderSignin = (provider: "google" | "github") => {
+    signIn(provider, {
+      callbackUrl: decodeURIComponent(
+        (params.get("callbackUrl") as string) ?? "/"
+      ),
+    }).then((res) => {
+      if (res?.error) {
+        toast.error(res.error);
+      }
+    });
+  };
+  const {
+    handleSubmit,
+    control,
+    watch,
+    clearErrors,
+    formState: { errors },
+  } = useForm<SignUpInputs>({ mode: "all" });
+  const t = useTranslations("SignupForm");
   return (
     <form
       onSubmit={handleSubmit(onSignupSubmit)}
@@ -186,9 +207,7 @@ export default function SignupForm({
       <p>
         {t("Already have an account?")}{" "}
         <Link
-          href={`${
-            params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""
-          }`}
+          href={`/signin?${params.toString()}`}
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
         >
           {t("Login")}
