@@ -1,4 +1,4 @@
-import prisma from "@/db";
+import prisma from "@/src/db";
 import { z } from "zod";
 import { router, publicProcedure } from "./trpc";
 import * as bycrypt from "bcrypt";

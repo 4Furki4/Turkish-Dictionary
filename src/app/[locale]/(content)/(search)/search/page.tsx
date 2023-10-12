@@ -1,9 +1,11 @@
 import { serverClient } from "@/app/_trpc/serverClient";
-import WordCard from "@/components/customs/WordCard";
 import { redirect } from "next/navigation";
 import React from "react";
-import type * as Prisma from "@prisma/client";
-import { Word } from "../../../../../../types";
+import { Word } from "@/types";
+import dynamic from "next/dynamic";
+const WordCard = dynamic(() => import("@/components/customs/WordCard"), {
+  ssr: false,
+}); // if the first searched word is not found, this will reduce bundle size by not importing WordCard component.
 export async function generateMetadata({
   searchParams,
 }: {
@@ -25,10 +27,10 @@ export default async function Page({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  if (searchParams.word === undefined) return redirect("/"); // redirect to home page if no word is provided
+  if (searchParams.word === undefined) return redirect("/"); // redirect to home page if no word param is provided
   const parsedWord = decodeURIComponent(searchParams.word as string);
   if (!parsedWord) {
-    // redirect to home page if word is empty
+    // redirect to home page if word param is empty
     redirect("/");
   }
   const response: Word[] = await serverClient.getWord(parsedWord);
@@ -41,6 +43,7 @@ export default async function Page({
       </div>
     );
   }
+
   return (
     <main className="flex flex-col gap-4 px-4 max-w-5xl xl:p-0 mx-auto">
       {response.map((word) => (

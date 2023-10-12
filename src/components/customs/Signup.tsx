@@ -1,7 +1,7 @@
 "use client";
 import "react-toastify/dist/ReactToastify.css";
 import { trpc } from "@/app/_trpc/client";
-import { onEnterAndSpace } from "@/lib/keyEvents";
+import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";

@@ -1,6 +1,6 @@
 import { httpBatchLink } from "@trpc/client";
 
-import { appRouter } from "@/server";
+import { appRouter } from "@/src/server";
 /**
  * This is the client that is used on the server.
  */
