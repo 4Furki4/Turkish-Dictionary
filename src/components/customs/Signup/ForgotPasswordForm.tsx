@@ -2,9 +2,8 @@
 import "react-toastify/dist/ReactToastify.css";
 import { trpc } from "@/src/app/_trpc/client";
 import { ForgotPassword } from "@/types";
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next-intl/link";
 import React from "react";
 import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";

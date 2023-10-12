@@ -1,5 +1,7 @@
 import SignupForm from "@/src/components/customs/Signup/SignupForm";
 import { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export async function generateMetadata({
@@ -23,7 +25,11 @@ export async function generateMetadata({
   }
 }
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerSession();
+  if (session) {
+    redirect("/?warning=alreadySignedIn");
+  }
   return (
     <main className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
       <SignupForm />

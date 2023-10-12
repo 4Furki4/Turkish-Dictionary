@@ -58,7 +58,7 @@ export default function Page({
       toast.success(t("PasswordResetSuccess"));
       // wait 2 seconds before redirecting to login
       setTimeout(() => {
-        router.push("/signup");
+        router.replace("/signup");
       }, 2000);
     },
   });
