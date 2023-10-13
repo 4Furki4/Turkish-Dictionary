@@ -49,7 +49,7 @@ export default function SigninForm() {
   return (
     <form
       onSubmit={handleSubmit(onLoginSubmit)}
-      className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+      className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
     >
       <Button
         variant="bordered"

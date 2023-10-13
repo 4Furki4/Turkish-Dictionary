@@ -47,7 +47,7 @@
       "Opps!": "Opps!",
       "Invalid token or user does not exist": "Invalid token or user does not exist",
       "User created with google auth": "User created with Google auth. Please sign in with Google.",
-      "Same Password": "New password cannot be the same as the old password"
+      "New password cannot be the same as the old password": "New password cannot be the same as the old password"
     },
     "Home":{
       "alreadySignedIn": "You are already signed in"

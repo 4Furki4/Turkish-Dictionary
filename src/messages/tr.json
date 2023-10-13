@@ -49,7 +49,7 @@
       "Opps!": "Hay Aksi!",
       "Invalid token or user does not exist": "Geçersiz jeton veya kullanıcı namevcut",
       "User created with google auth": "Kullanıcı, Google kimlik doğrulamasıyla kullanıcı oluşturmuş. Lütfen Google ile giriş yapın.",
-      "Same Password": "Yeni şifre eski şifre ile aynı olamaz"
+      "New password cannot be the same as the old password": "Yeni şifre, eski şifre ile aynı olamaz"
     },
     "Home":{
       "alreadySignedIn": "Zaten giriş yaptınız"
