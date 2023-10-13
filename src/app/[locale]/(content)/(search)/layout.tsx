@@ -1,14 +1,27 @@
 "use client";
-import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import React, { Fragment } from "react";
+import "react-toastify/dist/ReactToastify.css";
+import { Button, Card, CardBody, Input } from "@nextui-org/react";
+import React, { useEffect } from "react";
 import { useRouter } from "next-intl/client";
+import { useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
 
 export default function SearchLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const params = useSearchParams();
   const router = useRouter();
+  const t = useTranslations("Home");
+  useEffect(() => {
+    const warningParam = params.get("warning");
+    if (warningParam === "alreadySignedIn") {
+      toast.warning(t(warningParam));
+      router.replace("/", { shallow: true });
+    }
+  }, [params, router, t]);
   const [wordInput, setWordInput] = React.useState<string>("");
   const [inputError, setInputError] = React.useState<string>("");
   return (

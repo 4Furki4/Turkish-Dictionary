@@ -318,7 +318,7 @@ export const appRouter = router({
       if (isPasswordSame) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "New password cannot be same as old password",
+          message: "New password cannot be the same as the old password",
         });
       }
       const newHashedPassword = await bycrypt.hash(input.newPassword, 10);

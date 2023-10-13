@@ -43,10 +43,10 @@ export default function Page({
   const forgotPasswordMutation = trpc.verifyResetPasswordToken.useMutation({
     onError(error) {
       toast.info("Redirecting to signup page", {
-        autoClose: 3000,
+        autoClose: 2500,
       });
       setTimeout(() => {
-        router.push("/signup");
+        router.replace("/signup");
       }, 3000);
     },
   });
@@ -55,10 +55,12 @@ export default function Page({
       toast.error(t(error.message));
     },
     onSuccess(data) {
-      toast.success(t("PasswordResetSuccess"));
+      toast.success(t("PasswordResetSuccess"), {
+        autoClose: 1500,
+      });
       // wait 2 seconds before redirecting to login
       setTimeout(() => {
-        router.push("/signup");
+        router.replace("/signin");
       }, 2000);
     },
   });
@@ -78,7 +80,7 @@ export default function Page({
       )}
       {forgotPasswordMutation.error && (
         <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
-          <div className="flex flex-col gap-12 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl">
+          <div className="flex flex-col shadow-md gap-12 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl">
             <h1 className="text-xl sm:text-3xl lg:text-6xl">{t("Opps!")}</h1>
             <p className="sm:text-xl">
               {t(forgotPasswordMutation.error.message)}
@@ -87,10 +89,10 @@ export default function Page({
         </div>
       )}
       {forgotPasswordMutation.isSuccess && (
-        <div className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
+        <div className="absolute grid  place-items-center w-full h-[calc(100%-64px)] p-2">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+            className="flex flex-col shadow-md gap-2 w-11/12 sm:w-full max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
           >
             <h1>{t("Reset Password")}</h1>
             <Controller
