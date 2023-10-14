@@ -31,6 +31,7 @@ export default function ForgotPasswordForm() {
         toast.error(t(error.message), {
           theme:
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+          position: "bottom-center",
         });
       },
       onSuccess: async (data) => {
@@ -38,6 +39,7 @@ export default function ForgotPasswordForm() {
         toast.success(t("Email Sent"), {
           theme:
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+          position: "bottom-center",
         });
         router.push(
           `${

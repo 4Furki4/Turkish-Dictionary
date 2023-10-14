@@ -50,6 +50,7 @@ export default function SigninForm() {
         toast.error(res.error, {
           theme:
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+          position: "bottom-center",
         });
       }
     });
@@ -59,6 +60,7 @@ export default function SigninForm() {
       toast.error(t("Invalid username, email or password"), {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
       });
       router.replace(
         `/signin?${
