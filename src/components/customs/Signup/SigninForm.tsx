@@ -4,7 +4,7 @@ import { LoginInputs } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import Link from "next-intl/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
@@ -12,6 +12,7 @@ import { signIn } from "next-auth/react";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useRouter } from "next-intl/client";
 export default function SigninForm() {
   const {
     handleSubmit,
@@ -22,6 +23,7 @@ export default function SigninForm() {
   } = useForm<LoginInputs>({ mode: "all" });
   const t = useTranslations("SigninForm");
   const params = useSearchParams();
+  const router = useRouter();
   const { theme } = useTheme();
 
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
@@ -48,10 +50,27 @@ export default function SigninForm() {
         toast.error(res.error, {
           theme:
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+          position: "bottom-center",
         });
       }
     });
   };
+  useEffect(() => {
+    if (params.get("error") === "CredentialsSignin") {
+      toast.error(t("Invalid username, email or password"), {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
+      });
+      router.replace(
+        `/signin?${
+          params.get("callbackUrl")
+            ? `callbackUrl=${params.get("callbackUrl")}`
+            : ""
+        }`
+      );
+    }
+  }, [params.get("error")]);
   return (
     <form
       onSubmit={handleSubmit(onLoginSubmit)}
@@ -74,13 +93,6 @@ export default function SigninForm() {
         {t("Sign in with Google")}
       </Button>
       <Divider></Divider>
-      <div>
-        {params.get("error") === "CredentialsSignin" && (
-          <p className="text-red-500">
-            {t("Invalid username, email or password")}
-          </p>
-        )}
-      </div>
       <Controller
         key={"usernameOrEmail"}
         name="usernameOrEmail"
@@ -122,7 +134,7 @@ export default function SigninForm() {
         {t("Don't have an account?")}{" "}
         <Link
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-          href={`/signup?${params.toString()}`}
+          href={`/signup?${decodeURIComponent(params.toString())}`}
         >
           {t("Sign Up")}
         </Link>
@@ -130,7 +142,7 @@ export default function SigninForm() {
       <p>
         <Link
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-          href={`/forgot-password?${params.toString()}`}
+          href={`/forgot-password?${decodeURIComponent(params.toString())}`}
         >
           {t("Forgot Password")}
         </Link>

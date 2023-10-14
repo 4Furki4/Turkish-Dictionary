@@ -34,7 +34,8 @@
       "Email": "E-posta",
       "Send Email": "E-posta Gönder",
       "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin.",
-      "Login": "Giriş Yapın"
+      "Login": "Giriş Yapın",
+      "Remembered Password": "Şifrenizi hatırladınız mı?"
     },
     "ResetPassword": {
       "Password": "Şifre",

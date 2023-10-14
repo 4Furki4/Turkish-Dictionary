@@ -8,13 +8,14 @@ import React from "react";
 import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
+import Link from "next-intl/link";
 
 export default function ForgotPasswordForm() {
   const t = useTranslations("ForgotPasswordForm");
   const router = useRouter();
-  const params = useParams();
+  const params = useSearchParams();
   const locale = useLocale();
   const { theme } = useTheme();
   const {
@@ -30,6 +31,7 @@ export default function ForgotPasswordForm() {
         toast.error(t(error.message), {
           theme:
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+          position: "bottom-center",
         });
       },
       onSuccess: async (data) => {
@@ -37,9 +39,14 @@ export default function ForgotPasswordForm() {
         toast.success(t("Email Sent"), {
           theme:
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+          position: "bottom-center",
         });
         router.push(
-          `${params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""}`,
+          `${
+            params.get("callbackUrl")
+              ? `?callbackUrl=${params.get("callbackUrl")}`
+              : ""
+          }`,
           { scroll: false }
         );
       },
@@ -88,6 +95,16 @@ export default function ForgotPasswordForm() {
         <Button color="primary" variant="ghost" type="submit">
           {t("Send Email")}
         </Button>
+        <p>
+          {t("Remembered Password")}
+          {` `}
+          <Link
+            className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+            href={`/signin?${decodeURIComponent(params.toString())}`}
+          >
+            {t("Login")}
+          </Link>
+        </p>
       </form>
     </>
   );

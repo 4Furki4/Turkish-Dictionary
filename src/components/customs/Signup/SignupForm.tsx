@@ -24,12 +24,14 @@ export default function SignupForm() {
       toast.error(error.message, {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
       });
     },
     onSuccess: async (data) => {
       toast.success(t("Account created successfully, please sign in"), {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
       });
       router.push(
         `${
@@ -59,6 +61,7 @@ export default function SignupForm() {
         toast.error(res.error, {
           theme:
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+          position: "bottom-center",
         });
       }
     });
@@ -218,7 +221,7 @@ export default function SignupForm() {
       <p>
         {t("Already have an account?")}{" "}
         <Link
-          href={`/signin?${params.toString()}`}
+          href={`/signin?${decodeURIComponent(params.toString())}`}
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
         >
           {t("Login")}

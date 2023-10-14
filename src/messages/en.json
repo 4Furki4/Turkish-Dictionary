@@ -9,7 +9,7 @@
       "Don't have an account?" : "Don't have an account?",
       "Sign Up": "Sign Up",
       "Sign In": "Sign In",
-      "Forgot Password": "Forgot Password ?",
+      "Forgot Password": "Forgot Password?",
       "Password": "Password",
       "Username or Email": "Username or Email",
       "Invalid username, email or password": "Invalid username, email or password"
@@ -34,7 +34,8 @@
       "Send Email": "Send Email",
       "Email Sent": "The email with the reset link has just been sent, please check your inbox.",
       "Email": "Email",
-      "Login": "Login"
+      "Login": "Login",
+      "Remembered Password": "Remembered Password?"
     },
     "ResetPassword": {
       "Password": "Password",

@@ -47,6 +47,7 @@ export default function Page({
       toast.info("Redirecting to signup page", {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
         autoClose: 2500,
       });
       setTimeout(() => {
@@ -59,6 +60,7 @@ export default function Page({
       toast.error(t(error.message), {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
       });
     },
     onSuccess(data) {
@@ -66,6 +68,7 @@ export default function Page({
         autoClose: 1500,
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
       });
       // wait 2 seconds before redirecting to login
       setTimeout(() => {
