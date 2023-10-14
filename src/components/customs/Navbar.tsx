@@ -33,6 +33,9 @@ export default function Navbar() {
   const route = useRouter();
   const locale = useLocale();
   const t = useTranslations("Navbar");
+  const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
+    pathName
+  );
   return (
     <NextuiNavbar
       className="bg-content1"
@@ -120,13 +123,14 @@ export default function Navbar() {
           {status !== "authenticated" ? (
             <NavbarItem>
               <Button
+                isDisabled={isAuthPage}
                 onKeyDown={(e) =>
                   onEnterAndSpace(e, () => {
-                    if (pathName !== "/signup") signIn();
+                    if (!isAuthPage) signIn();
                   })
                 }
                 onClick={() => {
-                  if (pathName !== "/signup") signIn();
+                  if (!isAuthPage) signIn();
                 }}
                 variant="ghost"
                 color="primary"
