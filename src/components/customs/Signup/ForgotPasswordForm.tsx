@@ -98,7 +98,7 @@ export default function ForgotPasswordForm() {
           {` `}
           <Link
             className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-            href={`/signin?${params.toString()}`}
+            href={`/signin?${decodeURIComponent(params.toString())}`}
           >
             {t("Login")}
           </Link>

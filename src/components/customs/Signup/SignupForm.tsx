@@ -218,7 +218,7 @@ export default function SignupForm() {
       <p>
         {t("Already have an account?")}{" "}
         <Link
-          href={`/signin?${params.toString()}`}
+          href={`/signin?${decodeURIComponent(params.toString())}`}
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
         >
           {t("Login")}
