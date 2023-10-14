@@ -11,7 +11,8 @@
       "Sign In": "Sign In",
       "Forgot Password": "Forgot Password ?",
       "Password": "Password",
-      "Username or Email": "Username or Email"
+      "Username or Email": "Username or Email",
+      "Invalid username, email or password": "Invalid username, email or password"
     },
     "SignupForm":{
       "Sign up with Google": "Sign up with Google",
@@ -25,7 +26,6 @@
       "Sign Up Button": "Sign Up",
       "Already have an account?": "Already have an account?",
       "Login": "Login",
-      "Invalid username, email or password": "Invalid username, email or password",
       "Account created successfully, please sign in": "Account created successfully. Please sign in.",
       "User created with google auth": "User created with Google auth. Please sign in with Google."
     },

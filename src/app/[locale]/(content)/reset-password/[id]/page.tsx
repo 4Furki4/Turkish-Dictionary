@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import { useRouter } from "next-intl/client";
+import { useTheme } from "next-themes";
 type ForgotPasswordForm = {
   resetPassword: string;
   resetPasswordConfirm: string;
@@ -33,6 +34,7 @@ export default function Page({
     React.useState(false);
   const [isResetPasswordConfirmVisible, setIsResetPasswordConfirmVisible] =
     React.useState(false);
+  const { theme } = useTheme();
   const onSubmit: SubmitHandler<ForgotPasswordForm> = async (data) => {
     await resetPasswordMutation.mutateAsync({
       token: searchParams.token as string,
@@ -43,6 +45,8 @@ export default function Page({
   const forgotPasswordMutation = trpc.verifyResetPasswordToken.useMutation({
     onError(error) {
       toast.info("Redirecting to signup page", {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         autoClose: 2500,
       });
       setTimeout(() => {
@@ -52,11 +56,16 @@ export default function Page({
   });
   const resetPasswordMutation = trpc.resetPassword.useMutation({
     onError(error) {
-      toast.error(t(error.message));
+      toast.error(t(error.message), {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+      });
     },
     onSuccess(data) {
       toast.success(t("PasswordResetSuccess"), {
         autoClose: 1500,
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
       });
       // wait 2 seconds before redirecting to login
       setTimeout(() => {

@@ -9,12 +9,14 @@ import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export default function ForgotPasswordForm() {
   const t = useTranslations("ForgotPasswordForm");
   const router = useRouter();
   const params = useParams();
   const locale = useLocale();
+  const { theme } = useTheme();
   const {
     handleSubmit,
     control,
@@ -25,11 +27,17 @@ export default function ForgotPasswordForm() {
   const forgotPasswordMutation =
     trpc.createUniqueForgotPasswordLink.useMutation({
       onError: (error) => {
-        toast.error(t(error.message));
+        toast.error(t(error.message), {
+          theme:
+            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        });
       },
       onSuccess: async (data) => {
         console.log(data);
-        toast.success(t("Email Sent"));
+        toast.success(t("Email Sent"), {
+          theme:
+            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        });
         router.push(
           `${params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""}`,
           { scroll: false }
