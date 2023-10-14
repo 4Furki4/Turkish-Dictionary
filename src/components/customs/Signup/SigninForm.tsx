@@ -7,10 +7,11 @@ import Link from "next-intl/link";
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 export default function SigninForm() {
   const {
     handleSubmit,
@@ -21,6 +22,8 @@ export default function SigninForm() {
   } = useForm<LoginInputs>({ mode: "all" });
   const t = useTranslations("SigninForm");
   const params = useSearchParams();
+  const { theme } = useTheme();
+
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
     await signIn("credentials", {
       username: data.usernameOrEmail.includes("@")
@@ -42,7 +45,10 @@ export default function SigninForm() {
       ),
     }).then((res) => {
       if (res?.error) {
-        toast.error(res.error);
+        toast.error(res.error, {
+          theme:
+            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        });
       }
     });
   };

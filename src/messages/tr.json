@@ -11,7 +11,8 @@
       "Sign In": "Giriş Yap",
       "Forgot Password": "Şifrenizi mi unuttunuz?",
       "Password": "Şifre",
-      "Username or Email": "Kullanıcı Adı veya E-posta"
+      "Username or Email": "Kullanıcı Adı veya E-posta",
+      "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre"
     },
     "SignupForm":{
       "Sign up with Google": "Google ile kaydol",
@@ -25,10 +26,7 @@
       "Sign Up Button": "Kaydol",
       "Already have an account?": "Zaten hesabınız var mı?",
       "Login": "Giriş Yapın",
-      "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre",
       "Account created successfully, please sign in" : "Hesap başarıyla oluşturuldu. Lütfen giriş yapın.",
-      "Send Email": "E-posta Gönder",
-      "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin.",
       "User created with google auth": "Google kimlik doğrulamasıyla kullanıcı oluşturulmuş. Lütfen Google ile giriş yapın."
     },
     "ForgotPasswordForm":{

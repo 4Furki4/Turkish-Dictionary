@@ -6,6 +6,7 @@ import { useRouter } from "next-intl/client";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 
 export default function SearchLayout({
   children,
@@ -15,13 +16,17 @@ export default function SearchLayout({
   const params = useSearchParams();
   const router = useRouter();
   const t = useTranslations("Home");
+  const { theme } = useTheme();
   useEffect(() => {
     const warningParam = params.get("warning");
     if (warningParam === "alreadySignedIn") {
-      toast.warning(t(warningParam));
+      toast.warning(t(warningParam), {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+      });
       router.replace("/", { shallow: true });
     }
-  }, [params, router, t]);
+  }, []);
   const [wordInput, setWordInput] = React.useState<string>("");
   const [inputError, setInputError] = React.useState<string>("");
   return (

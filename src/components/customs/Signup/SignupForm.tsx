@@ -13,16 +13,24 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 export default function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
+  const { theme } = useTheme();
   const createUserMutation = trpc.createUser.useMutation({
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message, {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+      });
     },
     onSuccess: async (data) => {
-      toast.success(t("Account created successfully, please sign in"));
+      toast.success(t("Account created successfully, please sign in"), {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+      });
       router.push(
         `${
           params.get("callbackUrl")
@@ -48,7 +56,10 @@ export default function SignupForm() {
       ),
     }).then((res) => {
       if (res?.error) {
-        toast.error(res.error);
+        toast.error(res.error, {
+          theme:
+            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        });
       }
     });
   };
