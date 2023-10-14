@@ -8,14 +8,14 @@ import React from "react";
 import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import Link from "next-intl/link";
 
 export default function ForgotPasswordForm() {
   const t = useTranslations("ForgotPasswordForm");
   const router = useRouter();
-  const params = useParams();
+  const params = useSearchParams();
   const locale = useLocale();
   const { theme } = useTheme();
   const {
@@ -40,7 +40,11 @@ export default function ForgotPasswordForm() {
             theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         });
         router.push(
-          `${params.callbackUrl ? `?callbackUrl=${params.callbackUrl}` : ""}`,
+          `${
+            params.get("callbackUrl")
+              ? `?callbackUrl=${params.get("callbackUrl")}`
+              : ""
+          }`,
           { scroll: false }
         );
       },
