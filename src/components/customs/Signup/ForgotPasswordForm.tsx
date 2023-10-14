@@ -10,6 +10,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
+import Link from "next-intl/link";
 
 export default function ForgotPasswordForm() {
   const t = useTranslations("ForgotPasswordForm");
@@ -88,6 +89,16 @@ export default function ForgotPasswordForm() {
         <Button color="primary" variant="ghost" type="submit">
           {t("Send Email")}
         </Button>
+        <p>
+          {t("Remembered Password")}
+          {` `}
+          <Link
+            className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+            href={`/signin?${params.toString()}`}
+          >
+            {t("Login")}
+          </Link>
+        </p>
       </form>
     </>
   );
