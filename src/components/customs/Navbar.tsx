@@ -154,12 +154,6 @@ export default function Navbar() {
                 <DropdownMenu
                   onAction={(key) => {
                     switch (key) {
-                      case "saved-words":
-                        route.push("/saved-words");
-                        break;
-                      case "settings":
-                        route.push("/settings");
-                        break;
                       case "sign-out":
                         signOut();
                         break;
@@ -167,13 +161,13 @@ export default function Navbar() {
                   }}
                 >
                   <DropdownItem key={"saved-words"} className="text-center">
-                    <Link className="w-full" href="/saved-words">
+                    <Link as={NextLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
                   </DropdownItem>
-                  <DropdownItem key={"settings"}>
-                    <Link className="w-full" href="/settings">
-                      Settings
+                  <DropdownItem key={"profile"}>
+                    <Link as={NextLink} className="w-full" href="/profile">
+                      Profile
                     </Link>
                   </DropdownItem>
                   <DropdownItem
@@ -224,7 +218,7 @@ export default function Navbar() {
           </Dropdown>
         </NavbarItem>
       </NavbarContent>
-      <NavbarMenu className="bg-content1">
+      <NavbarMenu className="bg-content1 sm:hidden">
         <NavbarMenuItem>
           <Link
             as={NextLink}
