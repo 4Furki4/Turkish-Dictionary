@@ -24,7 +24,7 @@ export default function SearchLayout({
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
       });
-      router.replace("/", { shallow: true });
+      router.replace("/");
     }
   }, []);
   const [wordInput, setWordInput] = React.useState<string>("");
