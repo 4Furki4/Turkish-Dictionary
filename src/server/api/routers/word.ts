@@ -1,13 +1,13 @@
 import prisma from "@/src/db";
 import { z } from "zod";
-import { router, publicProcedure } from "./trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 import * as bycrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
-export const appRouter = router({
+export const wordRouter = createTRPCRouter({
   helloWorld: publicProcedure.query(() => {
     return "Hello World!";
   }),
@@ -335,5 +335,3 @@ export const appRouter = router({
       };
     }),
 });
-
-export type AppRouter = typeof appRouter;
