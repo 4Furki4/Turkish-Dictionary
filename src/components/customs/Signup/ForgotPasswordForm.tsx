@@ -1,6 +1,5 @@
 "use client";
 import "react-toastify/dist/ReactToastify.css";
-import { trpc } from "@/src/app/_trpc/client";
 import { ForgotPassword } from "@/types";
 import { Button, Input } from "@nextui-org/react";
 import { useLocale, useTranslations } from "next-intl";
@@ -11,6 +10,7 @@ import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import Link from "next-intl/link";
+import { api } from "@/src/trpc/react";
 
 export default function ForgotPasswordForm() {
   const t = useTranslations("ForgotPasswordForm");
@@ -26,7 +26,7 @@ export default function ForgotPasswordForm() {
     formState: { errors },
   } = useForm<ForgotPassword>({ mode: "all" });
   const forgotPasswordMutation =
-    trpc.createUniqueForgotPasswordLink.useMutation({
+    api.auth.createUniqueForgotPasswordLink.useMutation({
       onError: (error) => {
         toast.error(t(error.message), {
           theme:

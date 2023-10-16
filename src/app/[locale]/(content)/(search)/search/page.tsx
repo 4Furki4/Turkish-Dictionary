@@ -1,4 +1,4 @@
-import { serverClient } from "@/app/_trpc/serverClient";
+import { api } from "@/src/trpc/server";
 import { redirect } from "next/navigation";
 import React from "react";
 import { Word } from "@/types";
@@ -14,7 +14,7 @@ export async function generateMetadata({
   const word = searchParams.word as string;
   if (word) {
     const parsedWord = decodeURIComponent(word); // parse the word to utf-8 format string
-    const response = await serverClient.getWord(parsedWord);
+    const response = await api.word.getWord.query(parsedWord);
     return {
       title: parsedWord,
       description: response[0]?.meanings[0].partOfSpeech,
@@ -33,7 +33,7 @@ export default async function Page({
     // redirect to home page if word param is empty
     redirect("/");
   }
-  const response: Word[] = await serverClient.getWord(parsedWord);
+  const response: Word[] = await api.word.getWord.query(parsedWord);
   if (response.length === 0) {
     // if no word is found, render this
     return (

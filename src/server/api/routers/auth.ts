@@ -1,112 +1,13 @@
-import prisma from "@/src/db";
-import { z } from "zod";
-import { router, publicProcedure } from "./trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 import * as bycrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
-export const appRouter = router({
-  helloWorld: publicProcedure.query(() => {
-    return "Hello World!";
-  }),
-  /**
-   * Get all words from database with pagination
-   */
-  getWords: publicProcedure
-    .input(
-      z.object({
-        take: z.number().optional().default(5),
-        skip: z.number().optional().default(0),
-      })
-    )
-    .query(async ({ input }) => {
-      return await prisma.word.findMany({
-        take: input.take,
-        skip: input.skip,
-        include: { meanings: true },
-      });
-    }),
-  /**
-   * Get a word by name quering the database
-   */
-  getWord: publicProcedure
-    .input(
-      z.string({
-        invalid_type_error: "Word must be a string",
-        required_error: "Word is required to get a word",
-      })
-    )
-    .query(async ({ input }) => {
-      const words = await prisma.word.findMany({
-        where: {
-          name: input,
-        },
-        include: {
-          meanings: true,
-        },
-      });
-      return words || "Word not found";
-    }),
-  /**
-   * Get a word by id quering the database
-   * @param input string mongo id
-   */
-  getSavedWords: publicProcedure.input(z.string()).query(async ({ input }) => {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: input,
-      },
-    });
-    if (!user)
-      return {
-        error: "User not found",
-      };
-    const savedWords = await prisma.word.findMany({
-      where: {
-        id: {
-          in: user.savedWordIds,
-        },
-      },
-      include: {
-        meanings: true,
-      },
-    });
-    return savedWords;
-  }),
-  /**
-   * Save a word to user's saved word list
-   */
-  saveWord: publicProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        wordId: z.string(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const user = await prisma.user.findUnique({
-        where: {
-          id: input.userId,
-        },
-      });
-      if (!user)
-        return {
-          error: "User not found",
-        };
-      const savedWords = await prisma.user.update({
-        where: {
-          id: input.userId,
-        },
-        data: {
-          savedWordIds: {
-            push: input.wordId,
-          },
-        },
-      });
-      return savedWords;
-    }),
+import { db } from "../../db";
+import { z } from "zod";
+export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
       z.object({
@@ -117,18 +18,17 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const userQueriedWUsername = await prisma.user.findUnique({
+      const userQueriedWUsername = await db.user.findUnique({
         where: {
           username: input.username,
         },
       });
-      console.log(userQueriedWUsername);
       if (userQueriedWUsername)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User with this username already exists",
         });
-      const userQueriedWEmail = await prisma.user.findUnique({
+      const userQueriedWEmail = await db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -140,7 +40,7 @@ export const appRouter = router({
         });
       try {
         const hashedPassword = await bycrypt.hash(input.password, 10);
-        const user = await prisma.user.create({
+        const user = await db.user.create({
           data: {
             name: input.name,
             email: input.email,
@@ -154,7 +54,6 @@ export const appRouter = router({
           username: user.username,
         };
       } catch (error) {
-        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
@@ -172,7 +71,7 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const user = await prisma.user.findUnique({
+      const user = await db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -240,7 +139,7 @@ export const appRouter = router({
     .mutation(async ({ input }) => {
       let user;
       try {
-        user = await prisma.user.findUnique({
+        user = await db.user.findUnique({
           where: {
             id: input.id,
           },
@@ -284,7 +183,7 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const user = await prisma.user.findUnique({
+      const user = await db.user.findUnique({
         where: {
           id: input.id,
         },
@@ -322,7 +221,7 @@ export const appRouter = router({
         });
       }
       const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
-      await prisma.user.update({
+      await db.user.update({
         where: {
           id: input.id,
         },
@@ -335,5 +234,3 @@ export const appRouter = router({
       };
     }),
 });
-
-export type AppRouter = typeof appRouter;
