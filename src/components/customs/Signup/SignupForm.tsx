@@ -1,6 +1,5 @@
 "use client";
 import "react-toastify/dist/ReactToastify.css";
-import { trpc } from "@/src/app/_trpc/client";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { SignUpInputs, SignUpRequest } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
@@ -14,12 +13,13 @@ import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { api } from "@/src/trpc/react";
 
 export default function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
   const { theme } = useTheme();
-  const createUserMutation = trpc.createUser.useMutation({
+  const createUserMutation = api.auth.createUser.useMutation({
     onError: (error) => {
       toast.error(error.message, {
         theme:
@@ -33,14 +33,8 @@ export default function SignupForm() {
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
-      router.push(
-        `${
-          params.get("callbackUrl")
-            ? `?callbackUrl=${params.get("callbackUrl")}`
-            : ""
-        }`,
-        { scroll: false }
-      );
+      console.log(params.get("callbackUrl"));
+      router.push("/signin", { scroll: false });
     },
   });
   const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
