@@ -1,6 +1,5 @@
 "use client";
 import "react-toastify/dist/ReactToastify.css";
-import { trpc } from "@/app/_trpc/client";
 import { Button, Spinner } from "@nextui-org/react";
 import React, { useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -10,6 +9,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import { useRouter } from "next-intl/client";
 import { useTheme } from "next-themes";
+import { api } from "@/src/trpc/react";
 type ForgotPasswordForm = {
   resetPassword: string;
   resetPasswordConfirm: string;
@@ -42,7 +42,7 @@ export default function Page({
       newPassword: data.resetPassword,
     });
   };
-  const forgotPasswordMutation = trpc.verifyResetPasswordToken.useMutation({
+  const forgotPasswordMutation = api.auth.verifyResetPasswordToken.useMutation({
     onError(error) {
       toast.info("Redirecting to signup page", {
         theme:
@@ -55,7 +55,7 @@ export default function Page({
       }, 3000);
     },
   });
-  const resetPasswordMutation = trpc.resetPassword.useMutation({
+  const resetPasswordMutation = api.auth.resetPassword.useMutation({
     onError(error) {
       toast.error(t(error.message), {
         theme:
