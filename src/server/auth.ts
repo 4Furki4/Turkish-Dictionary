@@ -4,7 +4,7 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import prisma from "@/src/db";
+import { db } from "./db";
 import GoogleProvider from "next-auth/providers/google";
 import * as bycrypt from "bcrypt";
 
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
       },
       authorize: async (credentials) => {
         console.log(credentials);
-        let user = await prisma.user.findFirst({
+        let user = await db.user.findFirst({
           where: {
             email: credentials?.email,
           },
@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
         user =
           user !== null
             ? user
-            : await prisma.user.findFirst({
+            : await db.user.findFirst({
                 where: {
                   username: credentials?.username,
                 },
@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     signIn: async ({ user, account, profile, email, credentials }) => {
-      const userExist = await prisma.user.findUnique({
+      const userExist = await db.user.findUnique({
         where: {
           email: user.email!,
         },
@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
         return true;
       }
       try {
-        await prisma.user.create({
+        await db.user.create({
           data: {
             email: user.email!,
             name: user.name!,

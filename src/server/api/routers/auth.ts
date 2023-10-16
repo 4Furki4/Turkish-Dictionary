@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
-import prisma from "@/src/db";
+import { db } from "../../db";
 import { z } from "zod";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
@@ -18,7 +18,7 @@ export const authRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const userQueriedWUsername = await prisma.user.findUnique({
+      const userQueriedWUsername = await db.user.findUnique({
         where: {
           username: input.username,
         },
@@ -28,7 +28,7 @@ export const authRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "User with this username already exists",
         });
-      const userQueriedWEmail = await prisma.user.findUnique({
+      const userQueriedWEmail = await db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -40,7 +40,7 @@ export const authRouter = createTRPCRouter({
         });
       try {
         const hashedPassword = await bycrypt.hash(input.password, 10);
-        const user = await prisma.user.create({
+        const user = await db.user.create({
           data: {
             name: input.name,
             email: input.email,
@@ -71,7 +71,7 @@ export const authRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const user = await prisma.user.findUnique({
+      const user = await db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -139,7 +139,7 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       let user;
       try {
-        user = await prisma.user.findUnique({
+        user = await db.user.findUnique({
           where: {
             id: input.id,
           },
@@ -183,7 +183,7 @@ export const authRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const user = await prisma.user.findUnique({
+      const user = await db.user.findUnique({
         where: {
           id: input.id,
         },
@@ -221,7 +221,7 @@ export const authRouter = createTRPCRouter({
         });
       }
       const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
-      await prisma.user.update({
+      await db.user.update({
         where: {
           id: input.id,
         },

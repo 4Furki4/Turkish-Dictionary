@@ -1,6 +1,5 @@
-import prisma from "@/src/db";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const wordRouter = createTRPCRouter({
   helloWorld: publicProcedure.query(() => {
@@ -16,8 +15,8 @@ export const wordRouter = createTRPCRouter({
         skip: z.number().optional().default(0),
       })
     )
-    .query(async ({ input }) => {
-      return await prisma.word.findMany({
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.word.findMany({
         take: input.take,
         skip: input.skip,
         include: { meanings: true },
@@ -33,8 +32,8 @@ export const wordRouter = createTRPCRouter({
         required_error: "Word is required to get a word",
       })
     )
-    .query(async ({ input }) => {
-      const words = await prisma.word.findMany({
+    .query(async ({ input, ctx }) => {
+      const words = await ctx.db.word.findMany({
         where: {
           name: input,
         },
@@ -48,40 +47,42 @@ export const wordRouter = createTRPCRouter({
    * Get a word by id quering the database
    * @param input string mongo id
    */
-  getSavedWords: publicProcedure.input(z.string()).query(async ({ input }) => {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: input,
-      },
-    });
-    if (!user)
-      return {
-        error: "User not found",
-      };
-    const savedWords = await prisma.word.findMany({
-      where: {
-        id: {
-          in: user.savedWordIds,
+  getSavedWords: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
+        where: {
+          email: input,
         },
-      },
-      include: {
-        meanings: true,
-      },
-    });
-    return savedWords;
-  }),
+      });
+      if (!user)
+        return {
+          error: "User not found",
+        };
+      const savedWords = await ctx.db.word.findMany({
+        where: {
+          id: {
+            in: user.savedWordIds,
+          },
+        },
+        include: {
+          meanings: true,
+        },
+      });
+      return savedWords;
+    }),
   /**
    * Save a word to user's saved word list
    */
-  saveWord: publicProcedure
+  saveWord: protectedProcedure
     .input(
       z.object({
         userId: z.string(),
         wordId: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
-      const user = await prisma.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
         where: {
           id: input.userId,
         },
@@ -90,7 +91,7 @@ export const wordRouter = createTRPCRouter({
         return {
           error: "User not found",
         };
-      const savedWords = await prisma.user.update({
+      const savedWords = await ctx.db.user.update({
         where: {
           id: input.userId,
         },
