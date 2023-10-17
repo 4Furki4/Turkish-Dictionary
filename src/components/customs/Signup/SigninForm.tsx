@@ -97,12 +97,16 @@ export default function SigninForm() {
         key={"usernameOrEmail"}
         name="usernameOrEmail"
         control={control}
-        rules={{ required: true }}
+        rules={{
+          required: {
+            value: true,
+            message: t("UsernameOrEmailRequired"),
+          },
+        }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
             label={t("Username or Email")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.usernameOrEmail?.message}
@@ -114,14 +118,19 @@ export default function SigninForm() {
         name="password"
         key="password"
         control={control}
-        rules={{ required: true }}
+        rules={{
+          required: {
+            value: true,
+            message: t("PasswordRequiredErrorMessage"),
+          },
+        }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
             label={t("Password")}
-            isRequired
             color="primary"
             variant="underlined"
+            errorMessage={errors.password?.message}
             isInvalid={error !== undefined}
             type="password"
           />

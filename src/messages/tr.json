@@ -12,7 +12,9 @@
       "Forgot Password": "Şifrenizi mi unuttunuz?",
       "Password": "Şifre",
       "Username or Email": "Kullanıcı Adı veya E-posta",
-      "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre"
+      "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre",
+      "UsernameOrEmailRequired": "Kullanıcı adı veya e-posta girmeniz gereklidir",
+      "PasswordRequiredErrorMessage":"Şifre girmeniz gereklidir"
     },
     "SignupForm":{
       "Sign up with Google": "Google ile kaydol",

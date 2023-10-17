@@ -12,7 +12,9 @@
       "Forgot Password": "Forgot Password?",
       "Password": "Password",
       "Username or Email": "Username or Email",
-      "Invalid username, email or password": "Invalid username, email or password"
+      "Invalid username, email or password": "Invalid username, email or password",
+      "UsernameOrEmailRequired": "Username or email is required",
+      "PasswordRequiredErrorMessage":"Password is required"
     },
     "SignupForm":{
       "Sign up with Google": "Sign up with Google",
