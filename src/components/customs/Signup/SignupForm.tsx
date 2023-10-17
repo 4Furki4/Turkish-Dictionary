@@ -15,12 +15,30 @@ import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "./PasswordEye";
+import { z } from "zod";
+import { TRPCClientError } from "@trpc/client";
 export default function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
   const { theme } = useTheme();
   const createUserMutation = api.auth.createUser.useMutation({
     onError: (error) => {
+      if (error.data?.zodError?.fieldErrors) {
+        // Validation error messages from zod
+        for (const field in error.data?.zodError?.fieldErrors) {
+          toast.error(t(error.data?.zodError?.fieldErrors[field]?.at(0)), {
+            theme:
+              theme === "dark"
+                ? "dark"
+                : theme === "light"
+                ? "light"
+                : "colored",
+            position: "bottom-center",
+          });
+        }
+        return;
+      }
+
       toast.error(error.message, {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
@@ -38,12 +56,13 @@ export default function SignupForm() {
     },
   });
   const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
-    createUserMutation.mutate({
+    const user = {
       name: data.name,
       username: data.username,
       email: data.email,
       password: data.signupPassword,
-    });
+    };
+    createUserMutation.mutate(user);
   };
   const onProviderSignin = (provider: "google" | "github") => {
     signIn(provider, {
@@ -132,7 +151,6 @@ export default function SignupForm() {
         render={({ field, fieldState: { error } }) => (
           <Input
             label={t("Username")}
-            type={isConfirmPasswordVisible ? "text" : "password"}
             {...field}
             color="primary"
             variant="underlined"

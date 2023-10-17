@@ -11,10 +11,18 @@ export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
       z.object({
-        name: z.string(),
-        email: z.string(),
-        username: z.string(),
-        password: z.string(),
+        name: z.string().min(3, { message: "NameLengthError" }),
+        username: z.string().min(3, { message: "UsernameLengthError" }),
+        email: z.string().email({ message: "EmailInvalidError" }),
+        password: z
+          .string()
+          .min(8, { message: "PasswordLengthError" })
+          .regex(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=\S+$).{8,}$/,
+            {
+              message: "PasswordPatternErrorMessage",
+            }
+          ),
       })
     )
     .mutation(async ({ input }) => {

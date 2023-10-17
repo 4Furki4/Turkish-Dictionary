@@ -14,7 +14,9 @@
       "Username or Email": "Username or Email",
       "Invalid username, email or password": "Invalid username, email or password",
       "UsernameOrEmailRequired": "Username or email is required",
-      "PasswordRequiredErrorMessage":"Password is required"
+      "PasswordRequiredErrorMessage":"Password is required",
+      "CorruptedLoginData": "Provide valid login data",
+      "PasswordMinLengthErrorMessage": "Password must contain at least 8 characters"
     },
     "SignupForm":{
       "Sign up with Google": "Sign up with Google",
@@ -36,7 +38,12 @@
       "NameRequiredErrorMessage": "Name is required",
       "UsernameRequiredErrorMessage": "Username is required",
       "EmailRequiredErrorMessage": "Email is required",
-      "ConfirmPasswordRequiredErrorMessage": "Confirm password is required"
+      "ConfirmPasswordRequiredErrorMessage": "Confirm password is required",
+      "NameLengthError": "Name must be between 2 and 30 characters",
+      "UsernameLengthError": "Username must be between 2 and 30 characters",
+      "EmailInvalidError": "Invalid email format",
+      "PasswordLengthError": "Password must be at least 8 characters",
+      "PasswordPatternError": "Password must contain at least 8 characters, one uppercase, and one number"
     },
     "ForgotPasswordForm":{
       "Forgot Password": "Forgot Password",

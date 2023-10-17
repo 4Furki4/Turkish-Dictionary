@@ -14,7 +14,9 @@
       "Username or Email": "Kullanıcı Adı veya E-posta",
       "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre",
       "UsernameOrEmailRequired": "Kullanıcı adı veya e-posta girmeniz gereklidir",
-      "PasswordRequiredErrorMessage":"Şifre girmeniz gereklidir"
+      "PasswordRequiredErrorMessage":"Şifre girmeniz gereklidir",
+      "CorruptedLoginData": "Kullanıcı adı veya e-posta ve şifre girmeniz gereklidir",
+      "PasswordMinLengthErrorMessage": "Şifre en az 8 karakter içermelidir"
     },
     "SignupForm":{
       "Sign up with Google": "Google ile kaydol",
@@ -36,7 +38,11 @@
       "NameRequiredErrorMessage": "İsim girmeniz gereklidir",
       "UsernameRequiredErrorMessage": "Kullanıcı adı girmeniz gereklidir",
       "EmailRequiredErrorMessage": "E-posta girmeniz gereklidir",
-      "ConfirmPasswordRequiredErrorMessage": "Şifreyi onaylamanız gereklidir"
+      "ConfirmPasswordRequiredErrorMessage": "Şifreyi onaylamanız gereklidir",
+      "NameLengthError": "İsim 2 ile 30 karakter arasında olmalıdır",
+      "UsernameLengthError": "Kullanıcı adı 2 ile 30 karakter arasında olmalıdır",
+      "EmailInvalidError": "Geçersiz e-posta adresi",
+      "PasswordLengthError": "Şifre en az 8 karakter içermelidir"
     },
     "ForgotPasswordForm":{
       "Forgot Password": "Şifremi Unuttum",

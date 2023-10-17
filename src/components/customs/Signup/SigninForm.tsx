@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRouter } from "next-intl/client";
 import PasswordEye from "./PasswordEye";
+import { z } from "zod";
 export default function SigninForm() {
   const {
     handleSubmit,
@@ -24,8 +25,20 @@ export default function SigninForm() {
   const params = useSearchParams();
   const router = useRouter();
   const { theme } = useTheme();
-
+  const credentialSchema = z.object({
+    usernameOrEmail: z.string().min(3),
+    password: z.string().min(8),
+  });
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    const result = credentialSchema.safeParse(data);
+    if (!result.success) {
+      toast.error(t("CorruptedLoginData"), {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
+      });
+      return;
+    }
     await signIn("credentials", {
       username: data.usernameOrEmail.includes("@")
         ? undefined
@@ -122,6 +135,10 @@ export default function SigninForm() {
           required: {
             value: true,
             message: t("PasswordRequiredErrorMessage"),
+          },
+          minLength: {
+            value: 8,
+            message: t("PasswordMinLengthErrorMessage"),
           },
         }}
         render={({ field, fieldState: { error } }) => (
