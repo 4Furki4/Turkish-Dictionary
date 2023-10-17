@@ -27,7 +27,14 @@
       "Already have an account?": "Zaten hesabınız var mı?",
       "Login": "Giriş Yapın",
       "Account created successfully, please sign in" : "Hesap başarıyla oluşturuldu. Lütfen giriş yapın.",
-      "User created with google auth": "Google kimlik doğrulamasıyla kullanıcı oluşturulmuş. Lütfen Google ile giriş yapın."
+      "User created with google auth": "Google kimlik doğrulamasıyla kullanıcı oluşturulmuş. Lütfen Google ile giriş yapın.",
+      "Passwords do not match": "Şifreler eşleşmiyor",
+      "PasswordPatternErrorMessage": "Şifre en az 8 karakter, bir büyük harf ve bir sayı içermelidir",
+      "PasswordRequiredErrorMessage": "Şifre girmeniz gereklidir",
+      "NameRequiredErrorMessage": "İsim girmeniz gereklidir",
+      "UsernameRequiredErrorMessage": "Kullanıcı adı girmeniz gereklidir",
+      "EmailRequiredErrorMessage": "E-posta girmeniz gereklidir",
+      "ConfirmPasswordRequiredErrorMessage": "Şifreyi onaylamanız gereklidir"
     },
     "ForgotPasswordForm":{
       "Forgot Password": "Şifremi Unuttum",

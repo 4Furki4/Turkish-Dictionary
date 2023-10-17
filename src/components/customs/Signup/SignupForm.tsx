@@ -98,7 +98,7 @@ export default function SignupForm() {
       <Controller
         name="name"
         rules={{
-          required: true,
+          required: { value: true, message: t("NameRequiredErrorMessage") },
           onChange: (e) => {
             if (e.target.value.length > 0) {
               clearErrors("name");
@@ -110,7 +110,6 @@ export default function SignupForm() {
           <Input
             {...field}
             label={t("Name")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.name?.message}
@@ -121,11 +120,9 @@ export default function SignupForm() {
       <Controller
         name="username"
         rules={{
-          required: true,
-          onChange: (e) => {
-            if (e.target.value.length > 0) {
-              clearErrors("username");
-            }
+          required: {
+            value: true,
+            message: t("UsernameRequiredErrorMessage"),
           },
         }}
         control={control}
@@ -133,7 +130,6 @@ export default function SignupForm() {
           <Input
             {...field}
             label={t("Username")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.username?.message}
@@ -145,7 +141,10 @@ export default function SignupForm() {
         control={control}
         name="email"
         rules={{
-          required: true,
+          required: {
+            value: true,
+            message: t("EmailRequiredErrorMessage"),
+          },
           pattern: {
             value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
             message: "Please enter a valid email",
@@ -156,7 +155,6 @@ export default function SignupForm() {
             type="email"
             {...field}
             label={t("Email")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.email?.message}
@@ -168,17 +166,20 @@ export default function SignupForm() {
         control={control}
         name="signupPassword"
         rules={{
-          required: true,
-          minLength: {
-            value: 8,
-            message: "Password must have at least 8 characters",
+          pattern: {
+            value:
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=\S+$).{8,}$/,
+            message: t("PasswordPatternErrorMessage"),
+          },
+          required: {
+            value: true,
+            message: t("PasswordRequiredErrorMessage"),
           },
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
             label={t("Password")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.signupPassword?.message}
@@ -191,7 +192,10 @@ export default function SignupForm() {
         control={control}
         name="confirmPassword"
         rules={{
-          required: true,
+          required: {
+            value: true,
+            message: t("ConfirmPasswordRequiredErrorMessage"),
+          },
           validate: (value) =>
             value === watch("signupPassword") || "Passwords do not match",
         }}
@@ -199,7 +203,6 @@ export default function SignupForm() {
           <Input
             {...field}
             label={t("Confirm Password")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.confirmPassword?.message}

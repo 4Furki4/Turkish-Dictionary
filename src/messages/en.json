@@ -27,7 +27,14 @@
       "Already have an account?": "Already have an account?",
       "Login": "Login",
       "Account created successfully, please sign in": "Account created successfully. Please sign in.",
-      "User created with google auth": "User created with Google auth. Please sign in with Google."
+      "User created with google auth": "User created with Google auth. Please sign in with Google.",
+      "Passwords do not match": "Passwords do not match",
+      "PasswordPatternErrorMessage":"Password must contain at least 8 characters, one uppercase, and one number",
+      "PasswordRequiredErrorMessage": "Password is required",
+      "NameRequiredErrorMessage": "Name is required",
+      "UsernameRequiredErrorMessage": "Username is required",
+      "EmailRequiredErrorMessage": "Email is required",
+      "ConfirmPasswordRequiredErrorMessage": "Confirm password is required"
     },
     "ForgotPasswordForm":{
       "Forgot Password": "Forgot Password",
