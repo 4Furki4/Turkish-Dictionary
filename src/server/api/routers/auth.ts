@@ -11,8 +11,8 @@ export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
       z.object({
-        name: z.string().min(3, { message: "NameLengthError" }),
-        username: z.string().min(3, { message: "UsernameLengthError" }),
+        name: z.string().min(2, { message: "NameLengthError" }),
+        username: z.string().min(2, { message: "UsernameLengthError" }),
         email: z.string().email({ message: "EmailInvalidError" }),
         password: z
           .string()
