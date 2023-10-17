@@ -25,8 +25,8 @@ export const authRouter = createTRPCRouter({
           ),
       })
     )
-    .mutation(async ({ input }) => {
-      const userQueriedWUsername = await db.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      const userQueriedWUsername = await ctx.db.user.findUnique({
         where: {
           username: input.username,
         },
@@ -36,7 +36,7 @@ export const authRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "User with this username already exists",
         });
-      const userQueriedWEmail = await db.user.findUnique({
+      const userQueriedWEmail = await ctx.db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -48,7 +48,7 @@ export const authRouter = createTRPCRouter({
         });
       try {
         const hashedPassword = await bycrypt.hash(input.password, 10);
-        const user = await db.user.create({
+        const user = await ctx.db.user.create({
           data: {
             name: input.name,
             email: input.email,
@@ -78,8 +78,8 @@ export const authRouter = createTRPCRouter({
         locale: z.string().optional().default("en"),
       })
     )
-    .mutation(async ({ input }) => {
-      const user = await db.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -144,10 +144,10 @@ export const authRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       let user;
       try {
-        user = await db.user.findUnique({
+        user = await ctx.db.user.findUnique({
           where: {
             id: input.id,
           },
@@ -190,8 +190,8 @@ export const authRouter = createTRPCRouter({
         token: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
-      const user = await db.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
         where: {
           id: input.id,
         },
@@ -229,7 +229,7 @@ export const authRouter = createTRPCRouter({
         });
       }
       const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
-      await db.user.update({
+      await ctx.db.user.update({
         where: {
           id: input.id,
         },
