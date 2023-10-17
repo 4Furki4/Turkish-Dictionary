@@ -44,7 +44,9 @@
       "Email Sent": "The email with the reset link has just been sent, please check your inbox.",
       "Email": "Email",
       "Login": "Login",
-      "Remembered Password": "Remembered Password?"
+      "Remembered Password": "Remembered Password?",
+      "EmailRequired": "Email is required",
+      "InvalidEmail":"Invalid email"
     },
     "ResetPassword": {
       "Password": "Password",

@@ -71,10 +71,13 @@ export default function ForgotPasswordForm() {
         <Controller
           name="forgotPasswordEmail"
           rules={{
-            required: true,
+            required: {
+              value: true,
+              message: t("EmailRequired"),
+            },
             pattern: {
               value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-              message: "Please enter a valid email",
+              message: t("InvalidEmail"),
             },
           }}
           control={control}
@@ -84,7 +87,6 @@ export default function ForgotPasswordForm() {
               type="email"
               {...field}
               label={t("Email")}
-              isRequired
               color="primary"
               variant="underlined"
               errorMessage={errors.forgotPasswordEmail?.message}

@@ -44,7 +44,9 @@
       "Send Email": "E-posta Gönder",
       "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin.",
       "Login": "Giriş Yapın",
-      "Remembered Password": "Şifrenizi hatırladınız mı?"
+      "Remembered Password": "Şifrenizi hatırladınız mı?",
+      "EmailRequired": "E-posta girmeniz gereklidir",
+      "InvalidEmail":"Geçersiz e-posta"
     },
     "ResetPassword": {
       "Password": "Şifre",
