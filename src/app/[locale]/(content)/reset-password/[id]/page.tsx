@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next-intl/client";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
+import PasswordEye from "@/src/components/customs/Signup/PasswordEye";
 type ForgotPasswordForm = {
   resetPassword: string;
   resetPasswordConfirm: string;
@@ -158,14 +159,12 @@ export default function Page({
                 <Input
                   isRequired
                   endContent={
-                    <div
-                      className="cursor-pointer"
-                      onClick={() => {
+                    <PasswordEye
+                      handleVisibility={() => {
                         setIsResetPasswordConfirmVisible((prev) => !prev);
                       }}
-                    >
-                      {isResetPasswordConfirmVisible ? <EyeOff /> : <Eye />}
-                    </div>
+                      isVisible={isResetPasswordConfirmVisible}
+                    />
                   }
                   label={t("Confirm Password")}
                   type={isResetPasswordConfirmVisible ? "text" : "password"}

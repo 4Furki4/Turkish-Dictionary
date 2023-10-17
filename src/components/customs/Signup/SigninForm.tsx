@@ -13,12 +13,11 @@ import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRouter } from "next-intl/client";
+import PasswordEye from "./PasswordEye";
 export default function SigninForm() {
   const {
     handleSubmit,
     control,
-    watch,
-    clearErrors,
     formState: { errors },
   } = useForm<LoginInputs>({ mode: "all" });
   const t = useTranslations("SigninForm");
@@ -71,6 +70,7 @@ export default function SigninForm() {
       );
     }
   }, [params.get("error")]);
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
   return (
     <form
       onSubmit={handleSubmit(onLoginSubmit)}
@@ -132,7 +132,13 @@ export default function SigninForm() {
             variant="underlined"
             errorMessage={errors.password?.message}
             isInvalid={error !== undefined}
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
+            endContent={
+              <PasswordEye
+                handleVisibility={() => setIsPasswordVisible((val) => !val)}
+                isVisible={isPasswordVisible}
+              />
+            }
           />
         )}
       />

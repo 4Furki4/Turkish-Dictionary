@@ -6,7 +6,7 @@ import { Button, Divider, Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import Link from "next-intl/link";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
-
+import PasswordEye from "./PasswordEye";
 export default function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
@@ -68,6 +68,9 @@ export default function SignupForm() {
     formState: { errors },
   } = useForm<SignUpInputs>({ mode: "all" });
   const t = useTranslations("SignupForm");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
   return (
     <form
       onSubmit={handleSubmit(onSignupSubmit)}
@@ -128,8 +131,9 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
-            {...field}
             label={t("Username")}
+            type={isConfirmPasswordVisible ? "text" : "password"}
+            {...field}
             color="primary"
             variant="underlined"
             errorMessage={errors.username?.message}
@@ -184,7 +188,13 @@ export default function SignupForm() {
             variant="underlined"
             errorMessage={errors.signupPassword?.message}
             isInvalid={error !== undefined}
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
+            endContent={
+              <PasswordEye
+                handleVisibility={() => setIsPasswordVisible((val) => !val)}
+                isVisible={isPasswordVisible}
+              />
+            }
           />
         )}
       />
@@ -207,7 +217,15 @@ export default function SignupForm() {
             variant="underlined"
             errorMessage={errors.confirmPassword?.message}
             isInvalid={error !== undefined}
-            type="password"
+            endContent={
+              <PasswordEye
+                handleVisibility={() =>
+                  setIsConfirmPasswordVisible((val) => !val)
+                }
+                isVisible={isConfirmPasswordVisible}
+              />
+            }
+            type={isConfirmPasswordVisible ? "text" : "password"}
           />
         )}
       />
