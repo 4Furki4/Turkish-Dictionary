@@ -5,20 +5,27 @@ import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
-import { db } from "../../db";
 import { z } from "zod";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
       z.object({
-        name: z.string(),
-        email: z.string(),
-        username: z.string(),
-        password: z.string(),
+        name: z.string().min(2, { message: "NameLengthError" }),
+        username: z.string().min(2, { message: "UsernameLengthError" }),
+        email: z.string().email({ message: "EmailInvalidError" }),
+        password: z
+          .string()
+          .min(8, { message: "PasswordLengthError" })
+          .regex(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=\S+$).{8,}$/,
+            {
+              message: "PasswordPatternErrorMessage",
+            }
+          ),
       })
     )
-    .mutation(async ({ input }) => {
-      const userQueriedWUsername = await db.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      const userQueriedWUsername = await ctx.db.user.findUnique({
         where: {
           username: input.username,
         },
@@ -28,7 +35,7 @@ export const authRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "User with this username already exists",
         });
-      const userQueriedWEmail = await db.user.findUnique({
+      const userQueriedWEmail = await ctx.db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -40,7 +47,7 @@ export const authRouter = createTRPCRouter({
         });
       try {
         const hashedPassword = await bycrypt.hash(input.password, 10);
-        const user = await db.user.create({
+        const user = await ctx.db.user.create({
           data: {
             name: input.name,
             email: input.email,
@@ -63,15 +70,12 @@ export const authRouter = createTRPCRouter({
   createUniqueForgotPasswordLink: publicProcedure
     .input(
       z.object({
-        email: z.string({
-          invalid_type_error: "Email must be a string",
-          required_error: "Email is required to get a reset link",
-        }),
+        email: z.string().email({ message: "EmailInvalidError" }),
         locale: z.string().optional().default("en"),
       })
     )
-    .mutation(async ({ input }) => {
-      const user = await db.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
         where: {
           email: input.email,
         },
@@ -136,10 +140,10 @@ export const authRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       let user;
       try {
-        user = await db.user.findUnique({
+        user = await ctx.db.user.findUnique({
           where: {
             id: input.id,
           },
@@ -182,8 +186,8 @@ export const authRouter = createTRPCRouter({
         token: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
-      const user = await db.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
         where: {
           id: input.id,
         },
@@ -221,7 +225,7 @@ export const authRouter = createTRPCRouter({
         });
       }
       const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
-      await db.user.update({
+      await ctx.db.user.update({
         where: {
           id: input.id,
         },

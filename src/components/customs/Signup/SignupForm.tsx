@@ -6,7 +6,7 @@ import { Button, Divider, Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import Link from "next-intl/link";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -14,13 +14,31 @@ import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
-
+import PasswordEye from "./PasswordEye";
+import { z } from "zod";
+import { TRPCClientError } from "@trpc/client";
 export default function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
   const { theme } = useTheme();
   const createUserMutation = api.auth.createUser.useMutation({
     onError: (error) => {
+      if (error.data?.zodError?.fieldErrors) {
+        // Validation error messages from zod
+        for (const field in error.data?.zodError?.fieldErrors) {
+          toast.error(t(error.data?.zodError?.fieldErrors[field]?.at(0)), {
+            theme:
+              theme === "dark"
+                ? "dark"
+                : theme === "light"
+                ? "light"
+                : "colored",
+            position: "bottom-center",
+          });
+        }
+        return;
+      }
+
       toast.error(error.message, {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
@@ -38,12 +56,13 @@ export default function SignupForm() {
     },
   });
   const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
-    createUserMutation.mutate({
+    const user = {
       name: data.name,
       username: data.username,
       email: data.email,
       password: data.signupPassword,
-    });
+    };
+    createUserMutation.mutate(user);
   };
   const onProviderSignin = (provider: "google" | "github") => {
     signIn(provider, {
@@ -68,6 +87,9 @@ export default function SignupForm() {
     formState: { errors },
   } = useForm<SignUpInputs>({ mode: "all" });
   const t = useTranslations("SignupForm");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
   return (
     <form
       onSubmit={handleSubmit(onSignupSubmit)}
@@ -98,7 +120,7 @@ export default function SignupForm() {
       <Controller
         name="name"
         rules={{
-          required: true,
+          required: { value: true, message: t("NameRequiredErrorMessage") },
           onChange: (e) => {
             if (e.target.value.length > 0) {
               clearErrors("name");
@@ -110,7 +132,6 @@ export default function SignupForm() {
           <Input
             {...field}
             label={t("Name")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.name?.message}
@@ -121,19 +142,16 @@ export default function SignupForm() {
       <Controller
         name="username"
         rules={{
-          required: true,
-          onChange: (e) => {
-            if (e.target.value.length > 0) {
-              clearErrors("username");
-            }
+          required: {
+            value: true,
+            message: t("UsernameRequiredErrorMessage"),
           },
         }}
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
-            {...field}
             label={t("Username")}
-            isRequired
+            {...field}
             color="primary"
             variant="underlined"
             errorMessage={errors.username?.message}
@@ -145,7 +163,10 @@ export default function SignupForm() {
         control={control}
         name="email"
         rules={{
-          required: true,
+          required: {
+            value: true,
+            message: t("EmailRequiredErrorMessage"),
+          },
           pattern: {
             value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
             message: "Please enter a valid email",
@@ -156,7 +177,6 @@ export default function SignupForm() {
             type="email"
             {...field}
             label={t("Email")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.email?.message}
@@ -168,22 +188,31 @@ export default function SignupForm() {
         control={control}
         name="signupPassword"
         rules={{
-          required: true,
-          minLength: {
-            value: 8,
-            message: "Password must have at least 8 characters",
+          pattern: {
+            value:
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=\S+$).{8,}$/,
+            message: t("PasswordPatternErrorMessage"),
+          },
+          required: {
+            value: true,
+            message: t("PasswordRequiredErrorMessage"),
           },
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
             label={t("Password")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.signupPassword?.message}
             isInvalid={error !== undefined}
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
+            endContent={
+              <PasswordEye
+                handleVisibility={() => setIsPasswordVisible((val) => !val)}
+                isVisible={isPasswordVisible}
+              />
+            }
           />
         )}
       />
@@ -191,7 +220,10 @@ export default function SignupForm() {
         control={control}
         name="confirmPassword"
         rules={{
-          required: true,
+          required: {
+            value: true,
+            message: t("ConfirmPasswordRequiredErrorMessage"),
+          },
           validate: (value) =>
             value === watch("signupPassword") || "Passwords do not match",
         }}
@@ -199,12 +231,19 @@ export default function SignupForm() {
           <Input
             {...field}
             label={t("Confirm Password")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.confirmPassword?.message}
             isInvalid={error !== undefined}
-            type="password"
+            endContent={
+              <PasswordEye
+                handleVisibility={() =>
+                  setIsConfirmPasswordVisible((val) => !val)
+                }
+                isVisible={isConfirmPasswordVisible}
+              />
+            }
+            type={isConfirmPasswordVisible ? "text" : "password"}
           />
         )}
       />

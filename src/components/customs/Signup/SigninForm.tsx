@@ -13,20 +13,32 @@ import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRouter } from "next-intl/client";
+import PasswordEye from "./PasswordEye";
+import { z } from "zod";
 export default function SigninForm() {
   const {
     handleSubmit,
     control,
-    watch,
-    clearErrors,
     formState: { errors },
   } = useForm<LoginInputs>({ mode: "all" });
   const t = useTranslations("SigninForm");
   const params = useSearchParams();
   const router = useRouter();
   const { theme } = useTheme();
-
+  const credentialSchema = z.object({
+    usernameOrEmail: z.string().min(3),
+    password: z.string().min(8),
+  });
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    const result = credentialSchema.safeParse(data);
+    if (!result.success) {
+      toast.error(t("CorruptedLoginData"), {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
+      });
+      return;
+    }
     await signIn("credentials", {
       username: data.usernameOrEmail.includes("@")
         ? undefined
@@ -71,6 +83,7 @@ export default function SigninForm() {
       );
     }
   }, [params.get("error")]);
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
   return (
     <form
       onSubmit={handleSubmit(onLoginSubmit)}
@@ -97,12 +110,16 @@ export default function SigninForm() {
         key={"usernameOrEmail"}
         name="usernameOrEmail"
         control={control}
-        rules={{ required: true }}
+        rules={{
+          required: {
+            value: true,
+            message: t("UsernameOrEmailRequired"),
+          },
+        }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
             label={t("Username or Email")}
-            isRequired
             color="primary"
             variant="underlined"
             errorMessage={errors.usernameOrEmail?.message}
@@ -114,16 +131,31 @@ export default function SigninForm() {
         name="password"
         key="password"
         control={control}
-        rules={{ required: true }}
+        rules={{
+          required: {
+            value: true,
+            message: t("PasswordRequiredErrorMessage"),
+          },
+          minLength: {
+            value: 8,
+            message: t("PasswordMinLengthErrorMessage"),
+          },
+        }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
             label={t("Password")}
-            isRequired
             color="primary"
             variant="underlined"
+            errorMessage={errors.password?.message}
             isInvalid={error !== undefined}
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
+            endContent={
+              <PasswordEye
+                handleVisibility={() => setIsPasswordVisible((val) => !val)}
+                isVisible={isPasswordVisible}
+              />
+            }
           />
         )}
       />

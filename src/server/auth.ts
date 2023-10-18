@@ -42,13 +42,23 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        console.log(credentials);
-        let user = await db.user.findFirst({
-          where: {
-            email: credentials?.email,
-          },
-        });
-        console.log("user", user);
+        if (
+          (credentials?.email === undefined &&
+            credentials?.username === undefined) || // no email or username
+          credentials?.password === undefined || // no password
+          (credentials?.password && credentials?.password.length < 8) // password too short
+        )
+          return Promise.resolve(null);
+
+        let user = null;
+        if (credentials?.email !== undefined) {
+          user = await db.user.findFirst({
+            where: {
+              email: credentials?.email,
+            },
+          });
+        }
+
         user =
           user !== null
             ? user
@@ -57,12 +67,16 @@ export const authOptions: NextAuthOptions = {
                   username: credentials?.username,
                 },
               });
+
         if (user === null) return Promise.resolve(null); // user not found
+
         if (user.password === undefined) return Promise.resolve(null); // users created with google auth
+
         const isPasswordValid = await bycrypt.compare(
           credentials?.password!,
           user.password!
         );
+
         if (!isPasswordValid) return Promise.resolve(null);
         return Promise.resolve(user);
       },

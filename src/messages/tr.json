@@ -12,7 +12,11 @@
       "Forgot Password": "Şifrenizi mi unuttunuz?",
       "Password": "Şifre",
       "Username or Email": "Kullanıcı Adı veya E-posta",
-      "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre"
+      "Invalid username, email or password": "Geçersiz kullanıcı adı, e-posta veya şifre",
+      "UsernameOrEmailRequired": "Kullanıcı adı veya e-posta girmeniz gereklidir",
+      "PasswordRequiredErrorMessage":"Şifre girmeniz gereklidir",
+      "CorruptedLoginData": "Kullanıcı adı veya e-posta ve şifre girmeniz gereklidir",
+      "PasswordMinLengthErrorMessage": "Şifre en az 8 karakter içermelidir"
     },
     "SignupForm":{
       "Sign up with Google": "Google ile kaydol",
@@ -27,7 +31,18 @@
       "Already have an account?": "Zaten hesabınız var mı?",
       "Login": "Giriş Yapın",
       "Account created successfully, please sign in" : "Hesap başarıyla oluşturuldu. Lütfen giriş yapın.",
-      "User created with google auth": "Google kimlik doğrulamasıyla kullanıcı oluşturulmuş. Lütfen Google ile giriş yapın."
+      "User created with google auth": "Google kimlik doğrulamasıyla kullanıcı oluşturulmuş. Lütfen Google ile giriş yapın.",
+      "Passwords do not match": "Şifreler eşleşmiyor",
+      "PasswordPatternErrorMessage": "Şifre en az 8 karakter, bir büyük harf ve bir sayı içermelidir",
+      "PasswordRequiredErrorMessage": "Şifre girmeniz gereklidir",
+      "NameRequiredErrorMessage": "İsim girmeniz gereklidir",
+      "UsernameRequiredErrorMessage": "Kullanıcı adı girmeniz gereklidir",
+      "EmailRequiredErrorMessage": "E-posta girmeniz gereklidir",
+      "ConfirmPasswordRequiredErrorMessage": "Şifreyi onaylamanız gereklidir",
+      "NameLengthError": "İsim 2 ile 30 karakter arasında olmalıdır",
+      "UsernameLengthError": "Kullanıcı adı 2 ile 30 karakter arasında olmalıdır",
+      "EmailInvalidError": "Geçersiz e-posta adresi",
+      "PasswordLengthError": "Şifre en az 8 karakter içermelidir"
     },
     "ForgotPasswordForm":{
       "Forgot Password": "Şifremi Unuttum",
@@ -35,7 +50,9 @@
       "Send Email": "E-posta Gönder",
       "Email Sent": "Doğrulama e-postası gönderildi, lütfen e-postanızı kontrol edin.",
       "Login": "Giriş Yapın",
-      "Remembered Password": "Şifrenizi hatırladınız mı?"
+      "Remembered Password": "Şifrenizi hatırladınız mı?",
+      "EmailRequired": "E-posta girmeniz gereklidir",
+      "InvalidEmail":"Geçersiz e-posta"
     },
     "ResetPassword": {
       "Password": "Şifre",
