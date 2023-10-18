@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
-import { db } from "../../db";
 import { z } from "zod";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
@@ -71,10 +70,7 @@ export const authRouter = createTRPCRouter({
   createUniqueForgotPasswordLink: publicProcedure
     .input(
       z.object({
-        email: z.string({
-          invalid_type_error: "Email must be a string",
-          required_error: "Email is required to get a reset link",
-        }),
+        email: z.string().email({ message: "EmailInvalidError" }),
         locale: z.string().optional().default("en"),
       })
     )
