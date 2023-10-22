@@ -91,22 +91,6 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) return Promise.resolve(null);
-        const sessionToken = randomUUID();
-        const sessionExpiry = new Date(Date.now() + 60 * 60 * 24 * 30 * 1000);
-        await db.session.create({
-          data: {
-            sessionToken,
-            expires: sessionExpiry,
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-          },
-        });
-        cookies().set("next-auth.session-token", sessionToken, {
-          expires: sessionExpiry,
-        });
         return Promise.resolve(user);
       },
     }),
@@ -135,18 +119,9 @@ export const authOptions: NextAuthOptions = {
     //     return false;
     //   }
     // },
-    session: function ({ session, user }) {
-      console.log("session", session);
-      console.log("user", user);
-
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: user.id,
-        },
-      };
-    },
+  },
+  session: {
+    strategy: "jwt",
   },
   adapter,
   pages: {
