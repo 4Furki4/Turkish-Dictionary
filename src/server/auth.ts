@@ -6,8 +6,12 @@ import {
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "./db";
 import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
+import DiscordProvider from "next-auth/providers/discord";
 import * as bycrypt from "bcrypt";
-
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { randomUUID } from "crypto";
+import { cookies } from "next/headers";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -22,17 +26,25 @@ declare module "next-auth" {
       // role: UserRole;
     } & DefaultSession["user"];
   }
-
   // interface User {
   //   // ...other properties
   //   // role: UserRole;
   // }
 }
+export const adapter = PrismaAdapter(db);
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -42,6 +54,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
+        console.log("credentials", credentials);
         if (
           (credentials?.email === undefined &&
             credentials?.username === undefined) || // no email or username
@@ -78,35 +91,64 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) return Promise.resolve(null);
+        const sessionToken = randomUUID();
+        const sessionExpiry = new Date(Date.now() + 60 * 60 * 24 * 30 * 1000);
+        await db.session.create({
+          data: {
+            sessionToken,
+            expires: sessionExpiry,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        });
+        cookies().set("next-auth.session-token", sessionToken, {
+          expires: sessionExpiry,
+        });
         return Promise.resolve(user);
       },
     }),
   ],
   callbacks: {
-    signIn: async ({ user, account, profile, email, credentials }) => {
-      const userExist = await db.user.findUnique({
-        where: {
-          email: user.email!,
+    // signIn: async ({ user, account, profile, email, credentials }) => {
+    //   const userExist = await db.user.findUnique({
+    //     where: {
+    //       email: user.email!,
+    //     },
+    //   });
+    //   if (userExist) {
+    //     return true;
+    //   }
+    //   try {
+    //     await db.user.create({
+    //       data: {
+    //         email: user.email!,
+    //         name: user.name!,
+    //         username: user.email!.split("@")[0],
+    //       },
+    //     });
+    //     return true;
+    //   } catch (error) {
+    //     console.log(error);
+    //     return false;
+    //   }
+    // },
+    session: function ({ session, user }) {
+      console.log("session", session);
+      console.log("user", user);
+
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
         },
-      });
-      if (userExist) {
-        return true;
-      }
-      try {
-        await db.user.create({
-          data: {
-            email: user.email!,
-            name: user.name!,
-            username: user.email!.split("@")[0],
-          },
-        });
-        return true;
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
+      };
     },
   },
+  adapter,
   pages: {
     signIn: "/signin",
   },

@@ -6,6 +6,8 @@ import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
 import { z } from "zod";
+import { adapter } from "../../auth";
+import { randomUUID } from "crypto";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
@@ -29,6 +31,9 @@ export const authRouter = createTRPCRouter({
         where: {
           username: input.username,
         },
+        include: {
+          Account: true,
+        },
       });
       if (userQueriedWUsername)
         throw new TRPCError({
@@ -38,6 +43,9 @@ export const authRouter = createTRPCRouter({
       const userQueriedWEmail = await ctx.db.user.findUnique({
         where: {
           email: input.email,
+        },
+        include: {
+          Account: true,
         },
       });
       if (userQueriedWEmail)
@@ -55,6 +63,13 @@ export const authRouter = createTRPCRouter({
             password: hashedPassword,
           },
         });
+        await adapter.linkAccount!({
+          provider: "credentials",
+          providerAccountId: user.id,
+          userId: user.id,
+          type: "email",
+        });
+
         return {
           email: user.email,
           name: user.name,
