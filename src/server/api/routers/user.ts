@@ -5,29 +5,44 @@ export const userRouter = createTRPCRouter({
    * Get a word by id quering the database
    * @param input string mongo id
    */
-  getSavedWords: protectedProcedure
+  getSavedWords: protectedProcedure.query(async ({ ctx }) => {
+    const session = ctx.session.user;
+    const user = await ctx.db.user.findUnique({
+      where: {
+        email: session.email!,
+      },
+    });
+    if (!user)
+      return {
+        error: "User not found",
+      };
+    const savedWords = await ctx.db.word.findMany({
+      where: {
+        id: {
+          in: user.savedWordIds,
+        },
+      },
+      include: {
+        meanings: true,
+      },
+    });
+    return savedWords;
+  }),
+  getWordSaveStatus: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
+      const session = ctx.session.user;
       const user = await ctx.db.user.findUnique({
         where: {
-          email: input,
+          email: session.email!,
         },
       });
-      if (!user)
-        return {
-          error: "User not found",
-        };
-      const savedWords = await ctx.db.word.findMany({
+      const savedWords = await ctx.db.user.findFirst({
         where: {
-          id: {
-            in: user.savedWordIds,
-          },
-        },
-        include: {
-          meanings: true,
+          email: session.email!,
         },
       });
-      return savedWords;
+      return savedWords?.savedWordIds?.includes(input) ?? false;
     }),
   /**
    * Save a word to user's saved word list
@@ -35,23 +50,36 @@ export const userRouter = createTRPCRouter({
   saveWord: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
         wordId: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const session = ctx.session.user;
+      console.log(session);
       const user = await ctx.db.user.findUnique({
         where: {
-          id: input.userId,
+          email: session.email!,
         },
       });
-      if (!user)
-        return {
-          error: "User not found",
-        };
+      if (user?.savedWordIds?.includes(input.wordId)) {
+        console.log("word_id", input.wordId);
+        const savedWords = await ctx.db.user.update({
+          where: {
+            email: user.email!,
+          },
+          data: {
+            savedWordIds: {
+              set: user.savedWordIds.filter(
+                (wordId) => wordId !== input.wordId
+              ),
+            },
+          },
+        });
+        return savedWords;
+      }
       const savedWords = await ctx.db.user.update({
         where: {
-          id: input.userId,
+          email: session.email!,
         },
         data: {
           savedWordIds: {

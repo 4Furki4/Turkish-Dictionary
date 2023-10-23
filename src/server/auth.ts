@@ -21,7 +21,7 @@ import { cookies } from "next/headers";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      id: string;
+      id: string | undefined;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -96,6 +96,10 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    session({ session, token }) {
+      session.user.id = token.sub;
+      return session;
+    },
     // signIn: async ({ user, account, profile, email, credentials }) => {
     //   const userExist = await db.user.findUnique({
     //     where: {
