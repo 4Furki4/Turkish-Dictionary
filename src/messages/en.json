@@ -16,7 +16,8 @@
       "UsernameOrEmailRequired": "Username or email is required",
       "PasswordRequiredErrorMessage":"Password is required",
       "CorruptedLoginData": "Provide valid login data",
-      "PasswordMinLengthErrorMessage": "Password must contain at least 8 characters"
+      "PasswordMinLengthErrorMessage": "Password must contain at least 8 characters",
+      "OAuthAccountNotLinked": "This email is already registered with another sigin method. Please sign in with that method."
     },
     "SignupForm":{
       "Sign up with Google": "Sign up with Google",
@@ -43,7 +44,8 @@
       "UsernameLengthError": "Username must be between 2 and 30 characters",
       "EmailInvalidError": "Invalid email format",
       "PasswordLengthError": "Password must be at least 8 characters",
-      "PasswordPatternError": "Password must contain at least 8 characters, one uppercase, and one number"
+      "PasswordPatternError": "Password must contain at least 8 characters, one uppercase, and one number",
+      "OAuthAccountNotLinked": "This email is already registered with another sigin method. Please sign in with that method."
     },
     "ForgotPasswordForm":{
       "Forgot Password": "Forgot Password",

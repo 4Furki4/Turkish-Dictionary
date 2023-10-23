@@ -15,6 +15,7 @@ import { useTheme } from "next-themes";
 import { useRouter } from "next-intl/client";
 import PasswordEye from "./PasswordEye";
 import { z } from "zod";
+import { GithubIcon } from "lucide-react";
 export default function SigninForm() {
   const {
     handleSubmit,
@@ -52,7 +53,7 @@ export default function SigninForm() {
       ),
     });
   };
-  const onProviderSignin = (provider: "google" | "github") => {
+  const onProviderSignin = (provider: "google" | "discord" | "github") => {
     signIn(provider, {
       callbackUrl: decodeURIComponent(
         (params.get("callbackUrl") as string) ?? "/"
@@ -70,6 +71,20 @@ export default function SigninForm() {
   useEffect(() => {
     if (params.get("error") === "CredentialsSignin") {
       toast.error(t("Invalid username, email or password"), {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        position: "bottom-center",
+      });
+      router.replace(
+        `/signin?${
+          params.get("callbackUrl")
+            ? `callbackUrl=${params.get("callbackUrl")}`
+            : ""
+        }`
+      );
+    }
+    if (params.get("error") === "OAuthAccountNotLinked") {
+      toast.error(t("OAuthAccountNotLinked"), {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
@@ -104,6 +119,23 @@ export default function SigninForm() {
         }
       >
         {t("Sign in with Google")}
+      </Button>
+      <Button
+        variant="bordered"
+        color="primary"
+        onClick={() => onProviderSignin("discord")}
+        onKeyDown={(e) => onEnterAndSpace(e, () => onProviderSignin("discord"))}
+      >
+        {"Sign in with Discord"}
+      </Button>
+      <Button
+        variant="bordered"
+        color="primary"
+        onClick={() => onProviderSignin("github")}
+        onKeyDown={(e) => onEnterAndSpace(e, () => onProviderSignin("github"))}
+        startContent={<GithubIcon size={24} />}
+      >
+        {"Sign in with Github"}
       </Button>
       <Divider></Divider>
       <Controller

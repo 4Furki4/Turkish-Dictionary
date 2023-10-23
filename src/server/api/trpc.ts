@@ -39,7 +39,6 @@ interface CreateContextOptions {
  */
 export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
   const session = await getServerAuthSession();
-
   return {
     session,
     headers: opts.headers,
