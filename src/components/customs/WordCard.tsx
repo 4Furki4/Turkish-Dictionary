@@ -11,6 +11,7 @@ import {
   Divider,
   Accordion,
   AccordionItem,
+  Spinner,
 } from "@nextui-org/react";
 import { Word } from "../../../types";
 import Link from "next-intl/link";
@@ -48,13 +49,15 @@ export default function WordCard({ word }: { word: Word }) {
   return (
     <Card isBlurred className="bg-content1 text-primary-foreground">
       <Bookmark
+        size={32}
         fill={optimisticIsSaved ? "#F59E0B" : "#fff"}
-        className="absolute top-2 right-2 cursor-pointer z-50"
+        className="absolute top-2 right-2 cursor-pointer z-50 sm:hover:scale-125 transition-all"
         onClick={async () => {
           setOptimisticIsSave(!optimisticIsSaved);
           await saveWordMutation.mutateAsync({ wordId: word.id });
         }}
       />
+
       <CardHeader className="justify-center">
         <h2 className="text-fs-6 text-center w-full self-start">
           {word.prefix && <span className="text-fs-4">{word.prefix}-, </span>}

@@ -12,14 +12,10 @@ export const userRouter = createTRPCRouter({
         email: session.email!,
       },
     });
-    if (!user)
-      return {
-        error: "User not found",
-      };
     const savedWords = await ctx.db.word.findMany({
       where: {
         id: {
-          in: user.savedWordIds,
+          in: user?.savedWordIds,
         },
       },
       include: {
@@ -34,12 +30,12 @@ export const userRouter = createTRPCRouter({
       const session = ctx.session.user;
       const user = await ctx.db.user.findUnique({
         where: {
-          email: session.email!,
+          id: session.id!,
         },
       });
       const savedWords = await ctx.db.user.findFirst({
         where: {
-          email: session.email!,
+          id: session.id!,
         },
       });
       return savedWords?.savedWordIds?.includes(input) ?? false;
@@ -58,7 +54,7 @@ export const userRouter = createTRPCRouter({
       console.log(session);
       const user = await ctx.db.user.findUnique({
         where: {
-          email: session.email!,
+          id: session.id!,
         },
       });
       if (user?.savedWordIds?.includes(input.wordId)) {
