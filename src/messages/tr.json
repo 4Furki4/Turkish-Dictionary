@@ -71,5 +71,9 @@
     },
     "Home":{
       "alreadySignedIn": "Zaten giriş yaptınız"
+    },
+    "WordCard":{
+      "UnauthSave": "Kaydetmek için giriş yapın",
+      "Saved": "Kelime kaydedildi"
     }
 }

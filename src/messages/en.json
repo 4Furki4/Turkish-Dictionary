@@ -72,5 +72,9 @@
     },
     "Home":{
       "alreadySignedIn": "You are already signed in"
+    },
+    "WordCard":{
+      "UnauthSave": "You need to be signed in to save words",
+      "Saved": "Word saved!"
     }
 }

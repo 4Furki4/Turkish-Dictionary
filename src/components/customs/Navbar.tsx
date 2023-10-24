@@ -76,11 +76,6 @@ export default function Navbar() {
             {t("Word List")}
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathName.includes("/protected")}>
-          <Link as={NextLink} href={"/protected"}>
-            Protected Page
-          </Link>
-        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
@@ -235,15 +230,6 @@ export default function Navbar() {
             className={pathName.includes("word-list") ? "underline" : ""}
           >
             {t("Word List")}
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            as={NextLink}
-            href={"/protected"}
-            className={pathName.includes("protected") ? "underline" : ""}
-          >
-            Protected Page
           </Link>
         </NavbarMenuItem>
       </NavbarMenu>

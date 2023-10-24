@@ -18,6 +18,7 @@ import Link from "next-intl/link";
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
 const itemClasses = {
   title: "font-normal text-fs-1 text-primary",
   trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
@@ -33,16 +34,19 @@ export default function WordCard({ word }: { word: Word }) {
     savedWordsQuery.data,
     (state, action) => !state
   );
+  const t = useTranslations("WordCard");
   const saveWordMutation = api.user.saveWord.useMutation({
     onError: (error) => {
       switch (error.message) {
         case "UNAUTHORIZED":
-          toast.error("Please login to save words");
+          toast.error(t("UnauthSave"), {
+            position: "bottom-center",
+          });
           break;
       }
     },
     onSuccess: async () => {
-      const saved = await savedWordsQuery.refetch();
+      await savedWordsQuery.refetch();
     },
   });
 
