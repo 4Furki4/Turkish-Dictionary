@@ -112,11 +112,9 @@ export default function SignupForm() {
         {t("Sign up with Google")}
       </Button>
       <Divider></Divider>
-      <div>
-        <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
-          {t("Create a new account")}
-        </h1>
-      </div>
+      <h1 className="text-fs-2 font-bold text-center">
+        {t("Create a new account")}
+      </h1>
       <Controller
         name="name"
         rules={{
@@ -130,6 +128,7 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
             label={t("Name")}
             color="primary"
@@ -150,6 +149,7 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             label={t("Username")}
             {...field}
             color="primary"
@@ -174,6 +174,7 @@ export default function SignupForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             type="email"
             {...field}
             label={t("Email")}
@@ -200,6 +201,7 @@ export default function SignupForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
             label={t("Password")}
             color="primary"

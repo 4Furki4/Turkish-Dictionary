@@ -55,6 +55,10 @@ export default function SearchLayout({
         <Card className="my-4 bg-content1 text-primary-foreground">
           <CardBody className="flex-row gap-2 ">
             <Input
+              aria-required
+              autoFocus
+              role="search"
+              aria-label="search words"
               value={wordInput}
               onValueChange={(val) => {
                 setWordInput(val);

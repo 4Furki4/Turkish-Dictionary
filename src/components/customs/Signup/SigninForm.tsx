@@ -138,6 +138,9 @@ export default function SigninForm() {
         {"Sign in with Github"}
       </Button>
       <Divider></Divider>
+      <h1 className="text-fs-2 font-bold text-center">
+        {t("WithCredentials")}
+      </h1>
       <Controller
         key={"usernameOrEmail"}
         name="usernameOrEmail"
@@ -150,6 +153,7 @@ export default function SigninForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
             label={t("Username or Email")}
             color="primary"
@@ -175,6 +179,7 @@ export default function SigninForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
             label={t("Password")}
             color="primary"
