@@ -66,7 +66,7 @@ export default function Navbar() {
       <NavbarContent className="hidden sm:flex" justify="start">
         <NavbarItem>
           <Link as={NextLink} href="/">
-            <HomeIcon size={32} />
+            <HomeIcon aria-label="Home Icon" size={32} />
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -114,75 +114,74 @@ export default function Navbar() {
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        <NavbarContent justify="center">
-          {status !== "authenticated" ? (
-            <NavbarItem>
-              <Button
-                isDisabled={isAuthPage}
-                onKeyDown={(e) =>
-                  onEnterAndSpace(e, () => {
-                    if (!isAuthPage) signIn();
-                  })
-                }
-                onClick={() => {
+        {status !== "authenticated" ? (
+          <NavbarItem>
+            <Button
+              aria-disabled={isAuthPage}
+              isDisabled={isAuthPage}
+              onKeyDown={(e) =>
+                onEnterAndSpace(e, () => {
                   if (!isAuthPage) signIn();
+                })
+              }
+              onClick={() => {
+                if (!isAuthPage) signIn();
+              }}
+              variant="ghost"
+              color="primary"
+              isLoading={status === "loading"}
+            >
+              {t("Sign In")}
+            </Button>
+          </NavbarItem>
+        ) : (
+          <NavbarItem className="cursor-pointer">
+            <Dropdown>
+              <DropdownTrigger>
+                <button>
+                  <Avatar
+                    showFallback
+                    src="https://images.unsplash.com/broken"
+                    size="sm"
+                  />
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu
+                onAction={(key) => {
+                  switch (key) {
+                    case "sign-out":
+                      signOut();
+                      break;
+                  }
                 }}
-                variant="ghost"
-                color="primary"
-                isLoading={status === "loading"}
               >
-                {t("Sign In")}
-              </Button>
-            </NavbarItem>
-          ) : (
-            <NavbarItem className="cursor-pointer">
-              <Dropdown>
-                <DropdownTrigger>
-                  <button>
-                    <Avatar
-                      showFallback
-                      src="https://images.unsplash.com/broken"
-                      size="sm"
-                    />
-                  </button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  onAction={(key) => {
-                    switch (key) {
-                      case "sign-out":
-                        signOut();
-                        break;
-                    }
-                  }}
+                <DropdownItem key={"saved-words"} className="text-center">
+                  <Link as={NextLink} className="w-full" href="/saved-words">
+                    Saved Words
+                  </Link>
+                </DropdownItem>
+                <DropdownItem key={"profile"}>
+                  <Link as={NextLink} className="w-full" href="/profile">
+                    Profile
+                  </Link>
+                </DropdownItem>
+                <DropdownItem
+                  className="text-danger"
+                  key={"sign-out"}
+                  color="danger"
+                  onClick={() => signOut()}
                 >
-                  <DropdownItem key={"saved-words"} className="text-center">
-                    <Link as={NextLink} className="w-full" href="/saved-words">
-                      Saved Words
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key={"profile"}>
-                    <Link as={NextLink} className="w-full" href="/profile">
-                      Profile
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem
-                    className="text-danger"
-                    key={"sign-out"}
-                    color="danger"
-                    onClick={() => signOut()}
-                  >
-                    Sign Out
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </NavbarItem>
-          )}
-        </NavbarContent>
+                  Sign Out
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </NavbarItem>
+        )}
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger className="cursor-pointer">
               <Button className="bg-transparent" variant="flat">
-                <Palette size={32} />
+                <Palette aria-label="palette icon" size={32} />
               </Button>
             </DropdownTrigger>
             <DropdownMenu

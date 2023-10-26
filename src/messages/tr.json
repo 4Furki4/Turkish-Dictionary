@@ -17,7 +17,8 @@
       "PasswordRequiredErrorMessage":"Şifre girmeniz gereklidir",
       "CorruptedLoginData": "Kullanıcı adı veya e-posta ve şifre girmeniz gereklidir",
       "PasswordMinLengthErrorMessage": "Şifre en az 8 karakter içermelidir",
-      "OAuthAccountNotLinked": "This email is already registered with another sigin method. Please sign in with that method."
+      "OAuthAccountNotLinked": "This email is already registered with another sigin method. Please sign in with that method.",
+      "WithCredentials":"Kullanıcı adı ve şifre ile giriş yapın"
     },
     "SignupForm":{
       "Sign up with Google": "Google ile kaydol",
