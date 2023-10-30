@@ -135,47 +135,54 @@ export default function Navbar() {
             </Button>
           </NavbarItem>
         ) : (
-          <NavbarItem className="cursor-pointer">
-            <Dropdown>
-              <DropdownTrigger>
-                <button>
-                  <Avatar
-                    showFallback
-                    src="https://images.unsplash.com/broken"
-                    size="sm"
-                  />
-                </button>
-              </DropdownTrigger>
-              <DropdownMenu
-                onAction={(key) => {
-                  switch (key) {
-                    case "sign-out":
-                      signOut();
-                      break;
-                  }
-                }}
-              >
-                <DropdownItem key={"saved-words"} className="text-center">
-                  <Link as={NextLink} className="w-full" href="/saved-words">
-                    Saved Words
-                  </Link>
-                </DropdownItem>
-                <DropdownItem key={"profile"}>
-                  <Link as={NextLink} className="w-full" href="/profile">
-                    Profile
-                  </Link>
-                </DropdownItem>
-                <DropdownItem
-                  className="text-danger"
-                  key={"sign-out"}
-                  color="danger"
-                  onClick={() => signOut()}
+          <>
+            <NavbarItem>
+              <Link as={NextLink} href={"/dashboard"}>
+                Dashboard
+              </Link>
+            </NavbarItem>
+            <NavbarItem className="cursor-pointer">
+              <Dropdown>
+                <DropdownTrigger>
+                  <button>
+                    <Avatar
+                      showFallback
+                      src="https://images.unsplash.com/broken"
+                      size="sm"
+                    />
+                  </button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  onAction={(key) => {
+                    switch (key) {
+                      case "sign-out":
+                        signOut();
+                        break;
+                    }
+                  }}
                 >
-                  Sign Out
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </NavbarItem>
+                  <DropdownItem key={"saved-words"} className="text-center">
+                    <Link as={NextLink} className="w-full" href="/saved-words">
+                      Saved Words
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem key={"profile"}>
+                    <Link as={NextLink} className="w-full" href="/profile">
+                      Profile
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="text-danger"
+                    key={"sign-out"}
+                    color="danger"
+                    onClick={() => signOut()}
+                  >
+                    Sign Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </NavbarItem>
+          </>
         )}
         <NavbarItem>
           <Dropdown>
