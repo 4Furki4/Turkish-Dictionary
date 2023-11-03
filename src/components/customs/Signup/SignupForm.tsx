@@ -131,7 +131,6 @@ export default function SignupForm() {
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
-            inputMode="text"
             autoComplete="name"
             dir="auto"
             label={t("Name")}
@@ -154,7 +153,6 @@ export default function SignupForm() {
         render={({ field, fieldState: { error } }) => (
           <Input
             autoComplete="username"
-            inputMode="text"
             dir="auto"
             label={t("Username")}
             {...field}
