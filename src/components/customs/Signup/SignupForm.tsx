@@ -131,6 +131,9 @@ export default function SignupForm() {
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
+            inputMode="text"
+            autoComplete="name"
+            dir="auto"
             label={t("Name")}
             color="primary"
             variant="underlined"
@@ -150,6 +153,9 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
+            autoComplete="username"
+            inputMode="text"
+            dir="auto"
             label={t("Username")}
             {...field}
             color="primary"
@@ -174,6 +180,9 @@ export default function SignupForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            autoComplete="email"
+            inputMode="email"
+            dir="auto"
             type="email"
             {...field}
             label={t("Email")}
@@ -201,6 +210,7 @@ export default function SignupForm() {
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
+            autoComplete="new-password"
             label={t("Password")}
             color="primary"
             variant="underlined"
@@ -230,6 +240,7 @@ export default function SignupForm() {
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
+            autoComplete="new-password"
             label={t("Confirm Password")}
             color="primary"
             variant="underlined"
