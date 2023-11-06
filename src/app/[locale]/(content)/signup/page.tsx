@@ -1,6 +1,6 @@
 import SignupForm from "@/src/components/customs/Signup/SignupForm";
+import { getServerAuthSession } from "@/src/server/auth";
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -26,7 +26,7 @@ export async function generateMetadata({
 }
 
 export default async function Page() {
-  const session = await getServerSession();
+  const session = await getServerAuthSession();
   if (session) {
     redirect("/?warning=alreadySignedIn");
   }

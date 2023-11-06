@@ -1,5 +1,8 @@
 "use client";
-import React, { Fragment } from "react";
+import React, {
+  Fragment,
+  experimental_useOptimistic as useOptimistic,
+} from "react";
 import {
   Card,
   CardHeader,
@@ -8,9 +11,14 @@ import {
   Divider,
   Accordion,
   AccordionItem,
+  Spinner,
 } from "@nextui-org/react";
 import { Word } from "../../../types";
 import Link from "next-intl/link";
+import { Bookmark } from "lucide-react";
+import { api } from "@/src/trpc/react";
+import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
 const itemClasses = {
   title: "font-normal text-fs-1 text-primary",
   trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
@@ -18,13 +26,66 @@ const itemClasses = {
   content: "px-2 text-fs--1",
 };
 export default function WordCard({ word }: { word: Word }) {
+  const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word.id, {
+    queryKey: ["user.getWordSaveStatus", word.id],
+    staleTime: Infinity,
+  });
+  const [optimisticIsSaved, setOptimisticIsSave] = useOptimistic(
+    savedWordsQuery.data,
+    (state, action) => !state
+  );
+  const t = useTranslations("WordCard");
+  const saveWordMutation = api.user.saveWord.useMutation({
+    onError: (error) => {
+      switch (error.message) {
+        case "UNAUTHORIZED":
+          toast.error(t("UnauthSave"), {
+            position: "bottom-center",
+          });
+          break;
+      }
+    },
+    onSuccess: async () => {
+      await savedWordsQuery.refetch();
+    },
+  });
+
   return (
-    <Card isBlurred className="bg-content1 text-primary-foreground">
+    <Card
+      aria-label="word card"
+      role="article"
+      isBlurred
+      className="bg-content1 text-primary-foreground"
+    >
+      <button
+        className="absolute top-2 right-2 cursor-pointer z-50 sm:hover:scale-125 transition-all"
+        onClick={async () => {
+          setOptimisticIsSave(!optimisticIsSaved);
+          await saveWordMutation.mutateAsync({ wordId: word.id });
+        }}
+      >
+        <Bookmark
+          aria-label="bookmark icon"
+          size={32}
+          fill={optimisticIsSaved ? "#F59E0B" : "#fff"}
+        />
+      </button>
+
       <CardHeader className="justify-center">
         <h2 className="text-fs-6 text-center w-full self-start">
-          {word.prefix && <span className="text-fs-4">{word.prefix}-, </span>}
+          {word.prefix && (
+            <span className="text-fs-4">
+              <span aria-label="word prefix">{word.prefix}</span>
+              <span aria-hidden>-,</span>
+            </span>
+          )}
           {word.name}
-          {word.suffix && <span className="text-fs-4">, -{word.suffix}</span>}
+          {word.suffix && (
+            <span className="text-fs-4">
+              <span aria-hidden>, -</span>
+              <span aria-label="word-suffix">{word.suffix}</span>
+            </span>
+          )}
         </h2>
       </CardHeader>
       <CardBody>
@@ -35,9 +96,9 @@ export default function WordCard({ word }: { word: Word }) {
               <Fragment key={meaning.id}>
                 <p className="text-fs-1">
                   {meaning.partOfSpeech ? `${meaning.partOfSpeech}` : null}
-                  {meaning.attributes.length > 0 && ", "}
+                  {meaning.attributes.length > 0 && <span aria-hidden>, </span>}
                   {meaning.attributes ? `${meaning.attributes}` : null}
-                  {": "}
+                  <span aria-hidden>{": "}</span>
                   {meaning.definition.definition}
                 </p>
                 {meaning.definition.example ? (

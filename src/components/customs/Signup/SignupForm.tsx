@@ -17,6 +17,7 @@ import { api } from "@/src/trpc/react";
 import PasswordEye from "./PasswordEye";
 import { z } from "zod";
 import { TRPCClientError } from "@trpc/client";
+
 export default function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
@@ -112,11 +113,9 @@ export default function SignupForm() {
         {t("Sign up with Google")}
       </Button>
       <Divider></Divider>
-      <div>
-        <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
-          {t("Create a new account")}
-        </h1>
-      </div>
+      <h1 className="text-fs-2 font-bold text-center">
+        {t("Create a new account")}
+      </h1>
       <Controller
         name="name"
         rules={{
@@ -130,6 +129,7 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
             autoComplete="name"
             dir="auto"
@@ -154,6 +154,7 @@ export default function SignupForm() {
           <Input
             autoComplete="username"
             dir="auto"
+            aria-required
             label={t("Username")}
             {...field}
             color="primary"
@@ -181,6 +182,7 @@ export default function SignupForm() {
             autoComplete="email"
             inputMode="email"
             dir="auto"
+            aria-required
             type="email"
             {...field}
             label={t("Email")}
@@ -207,6 +209,7 @@ export default function SignupForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
             autoComplete="new-password"
             label={t("Password")}

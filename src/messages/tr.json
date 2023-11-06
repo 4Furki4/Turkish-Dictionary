@@ -16,7 +16,9 @@
       "UsernameOrEmailRequired": "Kullanıcı adı veya e-posta girmeniz gereklidir",
       "PasswordRequiredErrorMessage":"Şifre girmeniz gereklidir",
       "CorruptedLoginData": "Kullanıcı adı veya e-posta ve şifre girmeniz gereklidir",
-      "PasswordMinLengthErrorMessage": "Şifre en az 8 karakter içermelidir"
+      "PasswordMinLengthErrorMessage": "Şifre en az 8 karakter içermelidir",
+      "OAuthAccountNotLinked": "This email is already registered with another sigin method. Please sign in with that method.",
+      "WithCredentials":"Kullanıcı adı ve şifre ile giriş yapın"
     },
     "SignupForm":{
       "Sign up with Google": "Google ile kaydol",
@@ -42,7 +44,8 @@
       "NameLengthError": "İsim 2 ile 30 karakter arasında olmalıdır",
       "UsernameLengthError": "Kullanıcı adı 2 ile 30 karakter arasında olmalıdır",
       "EmailInvalidError": "Geçersiz e-posta adresi",
-      "PasswordLengthError": "Şifre en az 8 karakter içermelidir"
+      "PasswordLengthError": "Şifre en az 8 karakter içermelidir",
+      "OAuthAccountNotLinked": "Bu e-posta adresiyle bir hesap oluşturulmuş, ancak İlgili servis ile bağlantılı değil. Lütfen önceden giriş yapmış olduğunuz servis ile giriş yapın ve hesabınızı bağlayın."
     },
     "ForgotPasswordForm":{
       "Forgot Password": "Şifremi Unuttum",
@@ -69,5 +72,9 @@
     },
     "Home":{
       "alreadySignedIn": "Zaten giriş yaptınız"
+    },
+    "WordCard":{
+      "UnauthSave": "Kaydetmek için giriş yapın",
+      "Saved": "Kelime kaydedildi"
     }
 }
