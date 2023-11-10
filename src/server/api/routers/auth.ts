@@ -7,7 +7,6 @@ import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
 import { z } from "zod";
 import { adapter } from "../../auth";
-import { randomUUID } from "crypto";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(

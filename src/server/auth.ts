@@ -10,8 +10,6 @@ import GithubProvider from "next-auth/providers/github";
 import DiscordProvider from "next-auth/providers/discord";
 import * as bycrypt from "bcrypt";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { randomUUID } from "crypto";
-import { cookies } from "next/headers";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.

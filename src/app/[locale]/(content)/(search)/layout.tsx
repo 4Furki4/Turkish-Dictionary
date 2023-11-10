@@ -1,13 +1,12 @@
 "use client";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Card, CardBody, Input } from "@nextui-org/react";
-import React, { Suspense, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next-intl/client";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import Loading from "./search/loading";
 
 export default function SearchLayout({
   children,

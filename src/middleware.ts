@@ -1,5 +1,4 @@
 import { withAuth } from "next-auth/middleware";
-import createMiddleware from "next-intl/middleware";
 import createIntlMiddleware from "next-intl/middleware";
 import { NextRequest } from "next/server";
 

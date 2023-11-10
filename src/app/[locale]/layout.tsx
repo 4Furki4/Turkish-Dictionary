@@ -4,7 +4,7 @@ import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
-import "../globals.css";
+import "@/app/globals.css";
 import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
