@@ -84,6 +84,9 @@ export default function ForgotPasswordForm() {
               aria-required
               key={"forgotPasswordEmail"}
               type="email"
+              autoCapitalize="email"
+              inputMode="email"
+              dir="auto"
               {...field}
               label={t("Email")}
               color="primary"

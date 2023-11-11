@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Loading() {
   return (
-    <main className="p-4 lg:p-0 max-w-5xl rounded-lg mx-auto shadow-sm">
+    <main className="p-4 lg:p-0 max-w-5xl rounded-lg shadow-sm">
       <div
         style={{ animationDuration: "10s" }}
         className="bg-secondary rounded-lg grid gap-4 animate-pulse p-4"

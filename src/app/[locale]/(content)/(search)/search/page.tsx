@@ -1,10 +1,13 @@
 import { api } from "@/src/trpc/server";
 import { redirect } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 import { Word } from "@/types";
 import dynamic from "next/dynamic";
+import Loading from "./loading";
+import SearchResult from "@/src/_pages/search/SearchResult";
 const WordCard = dynamic(() => import("@/components/customs/WordCard"), {
   ssr: false,
+  loading: () => <Loading />,
 }); // if the first searched word is not found, this will reduce bundle size by not importing WordCard component.
 export async function generateMetadata({
   searchParams,
@@ -33,22 +36,12 @@ export default async function Page({
     // redirect to home page if word param is empty
     redirect("/");
   }
-  const response: Word[] = await api.word.getWord.query(parsedWord);
-  if (response.length === 0) {
-    // if no word is found, render this
-    return (
-      <div>
-        <h1>{parsedWord}</h1>
-        <p>Word not found</p>
-      </div>
-    );
-  }
 
   return (
     <main className="flex flex-col gap-4 px-4 max-w-5xl xl:p-0 mx-auto">
-      {response.map((word) => (
-        <WordCard key={word.id} word={word} />
-      ))}
+      <Suspense key={parsedWord} fallback={<Loading />}>
+        <SearchResult word={parsedWord} />
+      </Suspense>
     </main>
   );
 }

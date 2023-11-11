@@ -155,6 +155,8 @@ export default function SigninForm() {
           <Input
             aria-required
             {...field}
+            dir="auto"
+            autoComplete="on"
             label={t("Username or Email")}
             color="primary"
             variant="underlined"
@@ -187,6 +189,7 @@ export default function SigninForm() {
             errorMessage={errors.password?.message}
             isInvalid={error !== undefined}
             type={isPasswordVisible ? "text" : "password"}
+            autoComplete="current-password"
             endContent={
               <PasswordEye
                 handleVisibility={() => setIsPasswordVisible((val) => !val)}
