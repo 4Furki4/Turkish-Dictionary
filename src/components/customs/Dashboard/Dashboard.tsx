@@ -5,8 +5,15 @@ import UserList from "./UserList";
 import WordList from "./WordList";
 import WordRequestList from "./WordRequestList";
 import { Word } from "@/types";
+import { api } from "@/src/trpc/react";
 
 export default function Dashboard({ words }: { words: Word[] }) {
+  const wordsQuery = api.word.getWords.useQuery(
+    {},
+    {
+      initialData: words,
+    }
+  );
   return (
     <Card className="max-w-5xl mx-auto my-4">
       <CardHeader>

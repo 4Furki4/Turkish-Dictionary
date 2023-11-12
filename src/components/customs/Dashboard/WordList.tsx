@@ -1,5 +1,6 @@
 "use client";
 import { Word } from "@/types";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useCallback } from "react";
 import {
   Table,
@@ -17,15 +18,30 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { Edit3, MoreVertical, Trash2 } from "lucide-react";
+import { api } from "@/src/trpc/react";
+import { toast } from "react-toastify";
+import Link from "next-intl/link";
 export default function WordList({ words }: { words: Word[] }) {
+  const wordsQuery = api.word.getWords.useQuery({}, { initialData: words });
+  const wordMutation = api.admin.deleteWord.useMutation({
+    onSuccess: async () => {
+      await wordsQuery.refetch();
+    },
+    onError: (err) => {
+      toast.error(err.message, {
+        position: "top-center",
+      });
+    },
+  });
   type Row = (typeof rows)[0];
-  const rows = words.map((word, idx) => {
+  const rows = wordsQuery.data.map((word, idx) => {
     return {
       name: word.name,
       key: idx,
       root: word.root,
       partOfSpeech: word.meanings[0].partOfSpeech,
       attributes: word.meanings[0].attributes.join(", "),
+      id: word.id,
     };
   });
   const columns = [
@@ -55,23 +71,41 @@ export default function WordList({ words }: { words: Word[] }) {
     switch (columnKey) {
       case "actions":
         return (
-          <Dropdown>
-            <DropdownTrigger className="flex">
-              <button className="ml-auto">
-                <MoreVertical aria-description="more action button" />
-              </button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownSection title={"Actions"}>
-                <DropdownItem startContent={<Trash2 />} color={"danger"}>
-                  Delete
-                </DropdownItem>
-                <DropdownItem startContent={<Edit3 />} color={"warning"}>
-                  Edit
-                </DropdownItem>
-              </DropdownSection>
-            </DropdownMenu>
-          </Dropdown>
+          <div className="flex">
+            <Link
+              className="hover:underline"
+              href={`/search?word=${item.name}`}
+            >
+              {`${item.name}`}
+            </Link>
+            <Dropdown>
+              <DropdownTrigger className="w-full flex justify-around items-center">
+                <button className="ml-auto">
+                  <MoreVertical aria-description="more action button" />
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu
+                onAction={(key) => {
+                  if (key === "Delete") {
+                    wordMutation.mutate({ id: item.id });
+                  }
+                }}
+              >
+                <DropdownSection title={"Actions"}>
+                  <DropdownItem
+                    key={"Delete"}
+                    startContent={<Trash2 />}
+                    color={"danger"}
+                  >
+                    Delete
+                  </DropdownItem>
+                  <DropdownItem startContent={<Edit3 />} color={"warning"}>
+                    Edit
+                  </DropdownItem>
+                </DropdownSection>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         );
       default:
         return cellValue;
