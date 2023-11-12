@@ -136,11 +136,13 @@ export default function Navbar() {
           </NavbarItem>
         ) : (
           <>
-            <NavbarItem>
-              <Link as={NextLink} href={"/dashboard"}>
-                Dashboard
-              </Link>
-            </NavbarItem>
+            {data.user.role === "USER" ? null : (
+              <NavbarItem>
+                <Link as={NextLink} href={"/dashboard"}>
+                  Dashboard
+                </Link>
+              </NavbarItem>
+            )}
             <NavbarItem className="cursor-pointer">
               <Dropdown>
                 <DropdownTrigger>

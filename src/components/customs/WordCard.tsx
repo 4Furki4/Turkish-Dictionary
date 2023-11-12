@@ -11,7 +11,6 @@ import {
   Divider,
   Accordion,
   AccordionItem,
-  Spinner,
 } from "@nextui-org/react";
 import { Word } from "../../../types";
 import Link from "next-intl/link";
@@ -26,6 +25,7 @@ const itemClasses = {
   content: "px-2 text-fs--1",
 };
 export default function WordCard({ word }: { word: Word }) {
+  const savedWords = api.user.getSavedWords.useQuery();
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word.id, {
     queryKey: ["user.getWordSaveStatus", word.id],
     staleTime: Infinity,
