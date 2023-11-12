@@ -60,6 +60,7 @@ export const authRouter = createTRPCRouter({
             email: input.email,
             username: input.username,
             password: hashedPassword,
+            role: "USER",
           },
         });
         await adapter.linkAccount!({

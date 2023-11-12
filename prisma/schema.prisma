@@ -49,6 +49,7 @@ model User {
   savedWordIds  String[]
   Account       Account[]
   Session       Session[]
+  role          String
 }
 
 model Word {

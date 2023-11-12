@@ -59,7 +59,7 @@ export default function SignupForm() {
       name: data.name,
       username: data.username,
       email: data.email,
-      password: data.signupPassword,
+      password: data.password,
     };
     createUserMutation.mutate(user);
   };
