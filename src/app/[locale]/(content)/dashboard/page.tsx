@@ -1,4 +1,4 @@
-import Dashboard from "@/src/components/customs/Dashboard/Dashboard";
+import Dashboard from "@/src/_pages/Dashboard/Dashboard";
 import { api } from "@/src/trpc/server";
 import { Metadata } from "next";
 import React from "react";

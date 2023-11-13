@@ -21,6 +21,7 @@ import { Edit3, MoreVertical, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
 import Link from "next-intl/link";
+import { Link as NextUILink } from "@nextui-org/react";
 export default function WordList({ words }: { words: Word[] }) {
   const wordsQuery = api.word.getWords.useQuery({}, { initialData: words });
   const wordMutation = api.admin.deleteWord.useMutation({
@@ -113,6 +114,9 @@ export default function WordList({ words }: { words: Word[] }) {
   }, []);
   return (
     <section>
+      <NextUILink as={Link} href={"/dashboard/create"}>
+        Create new word
+      </NextUILink>
       <Table aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => (
