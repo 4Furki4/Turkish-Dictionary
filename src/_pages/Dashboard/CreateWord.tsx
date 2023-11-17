@@ -10,7 +10,7 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import React, { Fragment } from "react";
+import React, { ChangeEvent } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -55,7 +55,9 @@ export default function CreateWord() {
       },
     }
   );
+  const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
   console.log(watch());
+  console.log(imagePreviewUrls);
   const onSubmit = (data: WordForm) => {
     /*
     todo:
@@ -63,7 +65,7 @@ export default function CreateWord() {
     uploading images and audio
     sending the whole form to the backend
     */
-    console.log(data);
+    console.log(data.meanings[0].definition.image);
     try {
       const attributes =
         data.attributes?.split(",").map((attribute) => {
@@ -242,27 +244,52 @@ export default function CreateWord() {
                   render={({ field, fieldState: { error } }) => (
                     <Input
                       {...field}
-                      label="Attributes"
+                      label="Definition"
                       color="primary"
                       variant="underlined"
                       description="Attributes are optional, please separate them with a comma."
                     />
                   )}
                 />
-                <Controller
-                  name={`meanings.${index}.definition.image`}
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    //@ts-ignore
-                    <input
-                      {...field}
-                      type="file"
-                      accept="image/jpeg, image/png, image/jpg, image/webp"
-                      // onChange={(e) => (field.value = e.target.files)}
-                      // todo: fix uploading image
+                <div>
+                  <input
+                    placeholder="Browse Image"
+                    accept="image/*"
+                    type="file"
+                    {...control.register(`meanings.${index}.definition.image`)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      const file = e.currentTarget.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setImagePreviewUrls((prev) => {
+                            prev[index] = reader.result as string;
+                            return [...prev];
+                          });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                  <Button
+                    onPress={() => {
+                      field.definition.image = undefined;
+                      setImagePreviewUrls((prev) => {
+                        prev[index] = "";
+                        return [...prev];
+                      });
+                    }}
+                  >
+                    Unselect Image
+                  </Button>
+                  {imagePreviewUrls[0] && (
+                    <img
+                      src={imagePreviewUrls[index] ?? ""}
+                      alt="selected image"
+                      // alt={field.definition.image?.[0].name ?? "selected image"}
                     />
                   )}
-                />
+                </div>
                 <Controller
                   name={`meanings.${index}.definition.example.author`}
                   control={control}
@@ -276,6 +303,7 @@ export default function CreateWord() {
                     />
                   )}
                 />
+                <Button>asdfasdfsa</Button>
                 <Controller
                   name={`meanings.${index}.definition.example.sentence`}
                   control={control}
