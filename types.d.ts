@@ -52,7 +52,7 @@ type MeaningInputs = {
       author: string | undefined;
     };
   };
-  partOfSpeech: string | undefined;
+  partOfSpeech: Prisma.$Enums.PartOfSpeech | undefined;
   attributes: string | undefined;
 };
 type WordForm = Prettify<

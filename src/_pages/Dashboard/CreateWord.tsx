@@ -1,6 +1,15 @@
 "use client";
+import * as Prisma from "@prisma/client";
 import { MeaningInputs, WordForm } from "@/types";
-import { Button, ButtonGroup, Input } from "@nextui-org/react";
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  CardBody,
+  Input,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 import React, { Fragment } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,6 +46,13 @@ export default function CreateWord() {
     {
       name: "meanings",
       control,
+      rules: {
+        required: {
+          value: true,
+          message: "You must have a meaning",
+        },
+        minLength: 1,
+      },
     }
   );
   console.log(watch());
@@ -47,6 +63,7 @@ export default function CreateWord() {
     uploading images and audio
     sending the whole form to the backend
     */
+    console.log(data);
     try {
       const attributes =
         data.attributes?.split(",").map((attribute) => {
@@ -101,19 +118,6 @@ export default function CreateWord() {
               errorMessage={error?.message}
               isInvalid={error !== undefined}
               description="Attributes are optional, please separate them with a comma."
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="root"
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Root"
-              color="primary"
-              variant="underlined"
-              description="Root is optional"
             />
           )}
         />
@@ -195,99 +199,99 @@ export default function CreateWord() {
             />
           )}
         />
-        <div className="w-full p-4">
-          <h2>Meanings</h2>
+        <div className="flex flex-col gap-4 w-full mt-2">
+          <h2 className="m-0 p-0">Meanings</h2>
           {fields.map((field, index) => (
-            <Fragment key={field.id}>
-              <Controller
-                name={`meanings.${index}.partOfSpeech`}
-                control={control}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Part of Speech is required",
-                  },
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <Input
-                    {...field}
-                    label="Part of Speech"
-                    color="primary"
-                    variant="underlined"
-                    errorMessage={error?.message}
-                    isInvalid={error !== undefined}
-                    isRequired={true}
-                  />
-                )}
-              />
-              <Controller
-                name={`meanings.${index}.attributes`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <Input
-                    {...field}
-                    label="Attributes"
-                    color="primary"
-                    variant="underlined"
-                    description="Attributes are optional, please separate them with a comma."
-                  />
-                )}
-              />
-              <Controller
-                name={`meanings.${index}.definition.definition`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <Input
-                    {...field}
-                    label="Attributes"
-                    color="primary"
-                    variant="underlined"
-                    description="Attributes are optional, please separate them with a comma."
-                  />
-                )}
-              />
-              <Controller
-                name={`meanings.${index}.definition.image`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  //@ts-ignore
-                  <input
-                    {...field}
-                    type="file"
-                    accept="image/jpeg, image/png, image/jpg, image/webp"
-                    // onChange={(e) => (field.value = e.target.files)}
-                    // todo: fix uploading image
-                  />
-                )}
-              />
-              <Controller
-                name={`meanings.${index}.definition.example.author`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <Input
-                    {...field}
-                    label="Example Author"
-                    color="primary"
-                    variant="underlined"
-                    description="Attributes are optional, please separate them with a comma."
-                  />
-                )}
-              />
-              <Controller
-                name={`meanings.${index}.definition.example.sentence`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <Input
-                    {...field}
-                    label="Example Sentence"
-                    color="primary"
-                    variant="underlined"
-                    description="Attributes are optional, please separate them with a comma."
-                  />
-                )}
-              />
-              <Button onClick={() => remove(index)}>Remove</Button>
-            </Fragment>
+            <Card key={field.id}>
+              <CardBody>
+                <Controller
+                  name={`meanings.${index}.partOfSpeech`}
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Part of Speech is required",
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <Select isRequired label="Part of Speech" color="primary">
+                      {Object.keys(Prisma.$Enums.PartOfSpeech).map((key) => (
+                        <SelectItem key={key} value={key}>
+                          {key}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                <Controller
+                  name={`meanings.${index}.attributes`}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <Input
+                      {...field}
+                      label="Attributes"
+                      color="primary"
+                      variant="underlined"
+                      description="Attributes are optional, please separate them with a comma."
+                    />
+                  )}
+                />
+                <Controller
+                  name={`meanings.${index}.definition.definition`}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <Input
+                      {...field}
+                      label="Attributes"
+                      color="primary"
+                      variant="underlined"
+                      description="Attributes are optional, please separate them with a comma."
+                    />
+                  )}
+                />
+                <Controller
+                  name={`meanings.${index}.definition.image`}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    //@ts-ignore
+                    <input
+                      {...field}
+                      type="file"
+                      accept="image/jpeg, image/png, image/jpg, image/webp"
+                      // onChange={(e) => (field.value = e.target.files)}
+                      // todo: fix uploading image
+                    />
+                  )}
+                />
+                <Controller
+                  name={`meanings.${index}.definition.example.author`}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <Input
+                      {...field}
+                      label="Example Author"
+                      color="primary"
+                      variant="underlined"
+                      description="Attributes are optional, please separate them with a comma."
+                    />
+                  )}
+                />
+                <Controller
+                  name={`meanings.${index}.definition.example.sentence`}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <Input
+                      {...field}
+                      label="Example Sentence"
+                      color="primary"
+                      variant="underlined"
+                      description="Attributes are optional, please separate them with a comma."
+                    />
+                  )}
+                />
+                <Button onClick={() => remove(index)}>Remove</Button>
+              </CardBody>
+            </Card>
           ))}
           <ButtonGroup>
             <Button
