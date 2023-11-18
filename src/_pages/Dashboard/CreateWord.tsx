@@ -28,7 +28,7 @@ const meaningDefaultValues: MeaningInputs = {
 };
 
 export default function CreateWord() {
-  const { handleSubmit, control, watch, register } = useForm<WordForm>({
+  const { handleSubmit, control, formState, clearErrors } = useForm<WordForm>({
     defaultValues: {
       name: "",
       attributes: "",
@@ -41,23 +41,20 @@ export default function CreateWord() {
       audio: undefined,
       meanings: [meaningDefaultValues],
     },
+    mode: "all",
   });
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      name: "meanings",
-      control,
-      rules: {
-        required: {
-          value: true,
-          message: "You must have a meaning",
-        },
-        minLength: 1,
+  const { fields, append, prepend, remove } = useFieldArray({
+    name: "meanings",
+    control,
+    rules: {
+      required: {
+        value: true,
+        message: "You must have a meaning",
       },
-    }
-  );
+      minLength: 1,
+    },
+  });
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
-  console.log(watch());
-  console.log(imagePreviewUrls);
   const onSubmit = (data: WordForm) => {
     /*
     todo:
@@ -65,7 +62,6 @@ export default function CreateWord() {
     uploading images and audio
     sending the whole form to the backend
     */
-    console.log(data.meanings[0].definition.image);
     try {
       const attributes =
         data.attributes?.split(",").map((attribute) => {
@@ -82,181 +78,238 @@ export default function CreateWord() {
   return (
     <section className="max-w-5xl mx-auto">
       <h1 className="text-center text-fs-2">Create Word</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          control={control}
-          name="name"
-          rules={{
-            required: {
-              value: true,
-              message: "Name is required",
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Name"
-              color="primary"
-              variant="underlined"
-              errorMessage={error?.message}
-              isInvalid={error !== undefined}
-              isRequired={true}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="attributes"
-          rules={{
-            required: false,
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              isRequired={false}
-              label="Attributes"
-              color="primary"
-              variant="underlined"
-              errorMessage={error?.message}
-              isInvalid={error !== undefined}
-              description="Attributes are optional, please separate them with a comma."
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="root"
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Root"
-              color="primary"
-              variant="underlined"
-              description="Root is optional"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="phonetics"
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Phonetics"
-              color="primary"
-              variant="underlined"
-              description="Phonetics is optional"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="prefix"
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Prefix"
-              color="primary"
-              variant="underlined"
-              description="Prefix is optional"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="suffix"
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Suffix"
-              color="primary"
-              variant="underlined"
-              description="Suffix is optional"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="relatedWords"
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Related Words"
-              color="primary"
-              variant="underlined"
-              description="Related Words is optional, please separate them with a comma."
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="relatedPhrases"
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label="Related Phrases"
-              color="primary"
-              variant="underlined"
-              description="Related Phrases is optional, please separate them with a comma."
-            />
-          )}
-        />
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
+        <div className="grid sm:grid-cols-2 gap-2">
+          <Controller
+            control={control}
+            name="name"
+            rules={{
+              required: {
+                value: true,
+                message: "Name is required",
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                {...field}
+                label="Name"
+                color="primary"
+                variant="underlined"
+                errorMessage={error?.message}
+                isInvalid={error !== undefined}
+                isRequired={true}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="attributes"
+            rules={{
+              required: false,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                {...field}
+                isRequired={false}
+                label="Attributes"
+                color="primary"
+                variant="underlined"
+                errorMessage={error?.message}
+                isInvalid={error !== undefined}
+                description="Attributes are optional, please separate them with a comma."
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="root"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Root"
+                color="primary"
+                variant="underlined"
+                description="Root is optional"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="phonetics"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Phonetics"
+                color="primary"
+                variant="underlined"
+                description="Phonetics is optional"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="prefix"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Prefix"
+                color="primary"
+                variant="underlined"
+                description="Prefix is optional"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="suffix"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Suffix"
+                color="primary"
+                variant="underlined"
+                description="Suffix is optional"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="relatedWords"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Related Words"
+                color="primary"
+                variant="underlined"
+                description="Related Words is optional."
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="relatedPhrases"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Related Phrases"
+                color="primary"
+                variant="underlined"
+                description="Related Phrases is optional."
+              />
+            )}
+          />
+        </div>
         <div className="flex flex-col gap-4 w-full mt-2">
-          <h2 className="m-0 p-0">Meanings</h2>
+          <h2 className="text-center text-fs-2">Meanings</h2>
           {fields.map((field, index) => (
             <Card key={field.id}>
-              <CardBody>
+              <CardBody className="flex flex-col gap-2">
                 <Controller
-                  name={`meanings.${index}.partOfSpeech`}
+                  name={`meanings.${index}.definition.definition`}
                   control={control}
                   rules={{
                     required: {
                       value: true,
-                      message: "Part of Speech is required",
+                      message: "Definition is required",
                     },
                   }}
-                  render={({ field, fieldState: { error } }) => (
-                    <Select isRequired label="Part of Speech" color="primary">
-                      {Object.keys(Prisma.$Enums.PartOfSpeech).map((key) => (
-                        <SelectItem key={key} value={key}>
-                          {key}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-                <Controller
-                  name={`meanings.${index}.attributes`}
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <Input
-                      {...field}
-                      label="Attributes"
-                      color="primary"
-                      variant="underlined"
-                      description="Attributes are optional, please separate them with a comma."
-                    />
-                  )}
-                />
-                <Controller
-                  name={`meanings.${index}.definition.definition`}
-                  control={control}
                   render={({ field, fieldState: { error } }) => (
                     <Input
                       {...field}
                       label="Definition"
                       color="primary"
                       variant="underlined"
-                      description="Attributes are optional, please separate them with a comma."
+                      description="Definition is required."
+                      isRequired
+                      errorMessage={error?.message}
+                      isInvalid={error !== undefined}
                     />
                   )}
                 />
-                <div>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <Controller
+                    name={`meanings.${index}.partOfSpeech`}
+                    control={control}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "Part of Speech is required",
+                      },
+                    }}
+                    render={({ field, fieldState: { error, isDirty } }) => (
+                      <Select
+                        label="Part of Speech"
+                        color="primary"
+                        variant="underlined"
+                        isRequired
+                        isInvalid={error !== undefined && isDirty}
+                        errorMessage={isDirty && error?.message}
+                        {...field}
+                      >
+                        {Object.keys(Prisma.$Enums.PartOfSpeech).map((key) => (
+                          <SelectItem key={key} value={key}>
+                            {key}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  <Controller
+                    name={`meanings.${index}.attributes`}
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Attributes"
+                        color="primary"
+                        variant="underlined"
+                        description="Attributes are optional, please separate them with a comma."
+                      />
+                    )}
+                  />
+                  <Controller
+                    name={`meanings.${index}.definition.example.sentence`}
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Example Sentence"
+                        color="primary"
+                        variant="underlined"
+                        description="Example sentence is optional."
+                      />
+                    )}
+                  />
+                  <Controller
+                    name={`meanings.${index}.definition.example.author`}
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Example Author"
+                        color="primary"
+                        variant="underlined"
+                        description="Example Author is optional."
+                      />
+                    )}
+                  />
+                </div>
+                <div className="grid gap-2">
                   <input
+                    className="w-full"
                     placeholder="Browse Image"
                     accept="image/*"
                     type="file"
-                    {...control.register(`meanings.${index}.definition.image`)}
+                    multiple={false}
+                    {...control.register(`meanings.${index}.definition.image`, {
+                      validate: (file) => {
+                        const FOUR_MB = 4 * 1024 * 1024;
+                        if (file && file[0]?.size > FOUR_MB) {
+                          return "Image must be smaller than 4MB";
+                        }
+                        return true;
+                      },
+                    })}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       const file = e.currentTarget.files?.[0];
                       if (file) {
@@ -271,53 +324,42 @@ export default function CreateWord() {
                       }
                     }}
                   />
-                  <Button
-                    onPress={() => {
-                      field.definition.image = undefined;
-                      setImagePreviewUrls((prev) => {
-                        prev[index] = "";
-                        return [...prev];
-                      });
-                    }}
-                  >
-                    Unselect Image
-                  </Button>
-                  {imagePreviewUrls[0] && (
+                  {formState.errors?.meanings?.[index]?.definition?.image && (
+                    <p>
+                      {
+                        formState.errors?.meanings?.[index]?.definition?.image
+                          ?.message
+                      }
+                    </p>
+                  )}
+                  {imagePreviewUrls[0] ? (
                     <img
                       src={imagePreviewUrls[index] ?? ""}
                       alt="selected image"
-                      // alt={field.definition.image?.[0].name ?? "selected image"}
                     />
+                  ) : (
+                    <p>
+                      Image is optional. If you want to add an image, please
+                      select one.
+                    </p>
+                  )}
+                  {imagePreviewUrls[index] && (
+                    <Button
+                      className="w-full"
+                      onPress={() => {
+                        field.definition.image = undefined;
+                        clearErrors(`meanings.${index}.definition.image`);
+                        setImagePreviewUrls((prev) => {
+                          prev[index] = "";
+                          return [...prev];
+                        });
+                      }}
+                    >
+                      Unselect Image
+                    </Button>
                   )}
                 </div>
-                <Controller
-                  name={`meanings.${index}.definition.example.author`}
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <Input
-                      {...field}
-                      label="Example Author"
-                      color="primary"
-                      variant="underlined"
-                      description="Attributes are optional, please separate them with a comma."
-                    />
-                  )}
-                />
-                <Button>asdfasdfsa</Button>
-                <Controller
-                  name={`meanings.${index}.definition.example.sentence`}
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <Input
-                      {...field}
-                      label="Example Sentence"
-                      color="primary"
-                      variant="underlined"
-                      description="Attributes are optional, please separate them with a comma."
-                    />
-                  )}
-                />
-                <Button onClick={() => remove(index)}>Remove</Button>
+                <Button onClick={() => remove(index)}>Remove Meaning</Button>
               </CardBody>
             </Card>
           ))}
@@ -341,8 +383,15 @@ export default function CreateWord() {
               Prepend
             </Button>
           </ButtonGroup>
+          {formState.errors.meanings && (
+            <p className="text-red-500">
+              {formState.errors.meanings.root?.message}
+            </p>
+          )}
         </div>
-        <button>Submit</button>
+        <Button type="submit" variant="ghost" className="w-full">
+          Submit
+        </Button>
       </form>
     </section>
   );
