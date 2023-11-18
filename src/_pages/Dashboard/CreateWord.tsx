@@ -6,6 +6,7 @@ import {
   ButtonGroup,
   Card,
   CardBody,
+  Divider,
   Input,
   Select,
   SelectItem,
@@ -76,7 +77,7 @@ export default function CreateWord() {
     }
   };
   return (
-    <section className="max-w-5xl mx-auto">
+    <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
         <div className="grid sm:grid-cols-2 gap-2">
@@ -199,10 +200,11 @@ export default function CreateWord() {
             )}
           />
         </div>
-        <div className="flex flex-col gap-4 w-full mt-2">
-          <h2 className="text-center text-fs-2">Meanings</h2>
+
+        <div className="w-full mt-2">
+          <h2 className="text-center text-fs-1">Meanings</h2>
           {fields.map((field, index) => (
-            <Card key={field.id}>
+            <Card key={field.id} className="mb-4">
               <CardBody className="flex flex-col gap-2">
                 <Controller
                   name={`meanings.${index}.definition.definition`}
@@ -363,24 +365,26 @@ export default function CreateWord() {
               </CardBody>
             </Card>
           ))}
-          <ButtonGroup>
+          <ButtonGroup className="w-full">
             <Button
+              className="w-full"
               type="button"
               variant="ghost"
               onClick={() => {
                 append(meaningDefaultValues);
               }}
             >
-              Append
+              Append <span className="max-sm:hidden">Meaning</span>
             </Button>
             <Button
+              className="w-full"
               type="button"
               variant="ghost"
               onClick={() => {
                 prepend(meaningDefaultValues);
               }}
             >
-              Prepend
+              Prepend <span className="max-sm:hidden">Meaning</span>
             </Button>
           </ButtonGroup>
           {formState.errors.meanings && (
