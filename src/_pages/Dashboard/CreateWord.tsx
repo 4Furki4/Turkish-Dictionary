@@ -27,23 +27,36 @@ const meaningDefaultValues: MeaningInputs = {
     },
   },
 };
+const attributeValidate = (value: string | undefined) => {
+  if (value && value.includes(",")) {
+    const attributes = value.split(",").map((attribute) => {
+      return z.string().min(2).safeParse(attribute.trim());
+    });
+    return (
+      attributes.every((attribute) => attribute.success) ||
+      "Attributes must be separated by a comma, and be at least 2 character long."
+    );
+  }
+  return true;
+};
 
 export default function CreateWord() {
-  const { handleSubmit, control, formState, clearErrors } = useForm<WordForm>({
-    defaultValues: {
-      name: "",
-      attributes: "",
-      root: "",
-      phonetics: "",
-      prefix: "",
-      suffix: "",
-      relatedWords: "",
-      relatedPhrases: "",
-      audio: undefined,
-      meanings: [meaningDefaultValues],
-    },
-    mode: "all",
-  });
+  const { handleSubmit, control, formState, clearErrors, watch } =
+    useForm<WordForm>({
+      defaultValues: {
+        name: "",
+        attributes: "",
+        root: "",
+        phonetics: "",
+        prefix: "",
+        suffix: "",
+        relatedWords: "",
+        relatedPhrases: "",
+        audio: undefined,
+        meanings: [meaningDefaultValues],
+      },
+      mode: "all",
+    });
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
     control,
@@ -55,6 +68,7 @@ export default function CreateWord() {
       minLength: 1,
     },
   });
+  console.log(formState.errors?.attributes);
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
   const onSubmit = (data: WordForm) => {
     /*
@@ -66,13 +80,14 @@ export default function CreateWord() {
     try {
       const attributes =
         data.attributes?.split(",").map((attribute) => {
-          return z.string().min(1).parse(attribute.trim());
+          return z.string().min(2).parse(attribute.trim());
         }) ?? [];
       console.log(attributes);
     } catch (error) {
       control.setError("attributes", {
         type: "value",
-        message: "Attributes must be separated by a comma",
+        message:
+          "Attributes must be separated by a comma, and be at least 2 character long.",
       });
     }
   };
@@ -107,6 +122,12 @@ export default function CreateWord() {
             name="attributes"
             rules={{
               required: false,
+              validate: attributeValidate,
+              pattern: {
+                // allow only letters and comma between them, also allow UTF-8 characters
+                value: /^[\p{L}\s,]+$/u,
+                message: "Attributes must be separated by a comma!",
+              },
             }}
             render={({ field, fieldState: { error } }) => (
               <Input
@@ -259,12 +280,22 @@ export default function CreateWord() {
                   <Controller
                     name={`meanings.${index}.attributes`}
                     control={control}
-                    render={({ field }) => (
+                    rules={{
+                      validate: attributeValidate,
+                      pattern: {
+                        // allow only letters and comma between them, also allow UTF-8 characters
+                        value: /^[\p{L}\s,]+$/u,
+                        message: "Attributes must be separated by a comma!",
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
                       <Input
                         {...field}
                         label="Attributes"
                         color="primary"
                         variant="underlined"
+                        errorMessage={error?.message}
+                        isInvalid={error !== undefined}
                         description="Attributes are optional, please separate them with a comma."
                       />
                     )}
