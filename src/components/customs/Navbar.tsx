@@ -137,7 +137,7 @@ export default function Navbar() {
         ) : (
           <>
             {data.user.role === "USER" ? null : (
-              <NavbarItem>
+              <NavbarItem className="hidden sm:flex">
                 <Link as={NextLink} href={"/dashboard"}>
                   Dashboard
                 </Link>
@@ -238,6 +238,15 @@ export default function Navbar() {
             className={pathName.includes("word-list") ? "underline" : ""}
           >
             {t("Word List")}
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link
+            as={NextLink}
+            className={pathName.includes("dashboard") ? "underline" : ""}
+            href="/dashboard"
+          >
+            Dashboard
           </Link>
         </NavbarMenuItem>
       </NavbarMenu>
