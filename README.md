@@ -13,6 +13,12 @@ No spesific order yet.
 
 ## Contribute to the project
 - Open issues to report bugs or request features. The guide for opening issues will be added soon.
+### The Tech Stack
+- create-t3-app with Next 13.5.2 app dir, next auth, and Prisma
+- NextUI
+- nodemail
+- uploadthing to upload files
+- react hook form
 
 ### Env Variables You Need
 ````ts
