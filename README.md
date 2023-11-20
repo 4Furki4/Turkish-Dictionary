@@ -19,10 +19,11 @@ No spesific order yet.
 - nodemail
 - uploadthing to upload files
 - react hook form
+- next-intl for internationalization
 
 ### Env Variables You Need
 ````ts
-UPLOADTHING_SECRET= // See [uploadthing](uploadthing.com) to get started.
+UPLOADTHING_SECRET= // See uploadthing.com to get started.
 NODEMAIL_PASSWORD=
 NODEMAIL_EMAIL=
 DATABASE_URL= // I've used MongoDB so far but I'll be switching to a SQL database, probably to PostgreSQL.
