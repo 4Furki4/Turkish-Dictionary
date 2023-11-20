@@ -6,7 +6,6 @@ import {
   ButtonGroup,
   Card,
   CardBody,
-  Divider,
   Input,
   Select,
   SelectItem,
@@ -14,6 +13,8 @@ import {
 import React, { ChangeEvent } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { api } from "@/src/trpc/react";
+import { uploadFiles } from "@/src/lib/uploadthing";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: "",
@@ -70,26 +71,33 @@ export default function CreateWord() {
   });
   console.log(formState.errors?.attributes);
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
-  const onSubmit = (data: WordForm) => {
+  const wordMutation = api.admin.createWord.useMutation();
+
+  const onSubmit = async (data: WordForm) => {
+    const { meanings } = data;
+    const uploadedPictures = meanings.map(async (meaning) => {
+      if (meaning.definition.image?.[0]) {
+        const files = [meaning.definition.image[0]];
+        const response = await uploadFiles({
+          endpoint: "imageUploader",
+          files,
+          onUploadProgress({ file, progress }) {
+            console.log(`Uploaded ${progress}% of ${file}`);
+          },
+        });
+        return response[0].url;
+      }
+      return undefined;
+    });
+    const uploadedPicturesUrls = await Promise.all(uploadedPictures);
+    console.log(uploadedPicturesUrls);
     /*
     todo:
     converting values into correct types
     uploading images and audio
     sending the whole form to the backend
     */
-    try {
-      const attributes =
-        data.attributes?.split(",").map((attribute) => {
-          return z.string().min(2).parse(attribute.trim());
-        }) ?? [];
-      console.log(attributes);
-    } catch (error) {
-      control.setError("attributes", {
-        type: "value",
-        message:
-          "Attributes must be separated by a comma, and be at least 2 character long.",
-      });
-    }
+    // wordMutation.mutate(newData);
   };
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">

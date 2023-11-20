@@ -1,10 +1,12 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "../trpc";
 
 export const wordRouter = createTRPCRouter({
-  helloWorld: publicProcedure.query(() => {
-    return "Hello World!";
-  }),
   /**
    * Get all words from database with pagination
    */
