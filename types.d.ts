@@ -45,14 +45,14 @@ type WordInputs = Prettify<
 
 type MeaningInputs = {
   definition: {
-    definition: string | undefined;
+    definition: string;
     image: FileList | null | undefined;
     example?: {
       sentence: string;
       author: string | undefined;
     };
   };
-  partOfSpeech: Prisma.$Enums.PartOfSpeech | undefined;
+  partOfSpeech: string;
   attributes: string | undefined;
 };
 type WordForm = Prettify<

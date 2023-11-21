@@ -1,5 +1,4 @@
 "use client";
-import "react-toastify/dist/ReactToastify.css";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { SignupForm, SignupRequest } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";

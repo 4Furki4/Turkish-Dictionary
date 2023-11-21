@@ -15,22 +15,24 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "@/src/trpc/react";
 import { uploadFiles } from "@/src/lib/uploadthing";
+import { CreateWordInput } from "@/src/lib/zod-schemas";
+import { toast } from "react-toastify";
 
 const meaningDefaultValues: MeaningInputs = {
-  attributes: "",
-  partOfSpeech: undefined,
+  attributes: undefined,
+  partOfSpeech: "",
   definition: {
     definition: "",
     image: undefined,
     example: {
-      author: "",
+      author: undefined,
       sentence: "",
     },
   },
 };
-const attributeValidate = (value: string | undefined) => {
-  if (value && value.includes(",")) {
-    const attributes = value.split(",").map((attribute) => {
+const seperationValidate = (value: string | undefined, symbol: string) => {
+  if (value && value.includes(symbol)) {
+    const attributes = value.split(symbol).map((attribute) => {
       return z.string().min(2).safeParse(attribute.trim());
     });
     return (
@@ -42,17 +44,17 @@ const attributeValidate = (value: string | undefined) => {
 };
 
 export default function CreateWord() {
-  const { handleSubmit, control, formState, clearErrors, watch } =
+  const { handleSubmit, control, formState, clearErrors, watch, reset } =
     useForm<WordForm>({
       defaultValues: {
         name: "",
-        attributes: "",
-        root: "",
-        phonetics: "",
-        prefix: "",
-        suffix: "",
-        relatedWords: "",
-        relatedPhrases: "",
+        attributes: undefined,
+        root: undefined,
+        phonetics: undefined,
+        prefix: undefined,
+        suffix: undefined,
+        relatedWords: undefined,
+        relatedPhrases: undefined,
         audio: undefined,
         meanings: [meaningDefaultValues],
       },
@@ -69,10 +71,9 @@ export default function CreateWord() {
       minLength: 1,
     },
   });
-  console.log(formState.errors?.attributes);
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
-  const wordMutation = api.admin.createWord.useMutation();
-
+  const wordMutation = api.admin.createWord.useMutation({});
+  const [isUploading, setIsUploading] = React.useState(false);
   const onSubmit = async (data: WordForm) => {
     const { meanings } = data;
     const uploadedPictures = meanings.map(async (meaning) => {
@@ -84,20 +85,58 @@ export default function CreateWord() {
           onUploadProgress({ file, progress }) {
             console.log(`Uploaded ${progress}% of ${file}`);
           },
+          onUploadBegin({ file }) {
+            console.log(`Started uploading ${file}`);
+            setIsUploading(true);
+          },
         });
         return response[0].url;
       }
       return undefined;
     });
-    const uploadedPicturesUrls = await Promise.all(uploadedPictures);
-    console.log(uploadedPicturesUrls);
-    /*
-    todo:
-    converting values into correct types
-    uploading images and audio
-    sending the whole form to the backend
-    */
-    // wordMutation.mutate(newData);
+    let uploadedPicturesUrls: (string | undefined)[] = [];
+    if (
+      meanings.every(
+        (meaning) => typeof meaning.definition.image === typeof FileList
+      )
+    ) {
+      const loadingToaster = toast.loading("Uploading images...");
+
+      uploadedPicturesUrls = await Promise.all(uploadedPictures);
+      setIsUploading(false);
+      toast.dismiss(loadingToaster);
+      toast.success("Images uploaded!");
+    }
+    const newData: CreateWordInput = {
+      word: {
+        ...data,
+        attributes: data.attributes?.split(",").map((attribute) => {
+          return attribute.trim();
+        }),
+        relatedWords: data.relatedWords?.split(",").map((word) => {
+          return word.trim();
+        }),
+        relatedPhrases: data.relatedPhrases?.split("|").map((phrase) => {
+          return phrase.trim();
+        }),
+        meanings: meanings.map((meaning, index) => {
+          return {
+            ...meaning,
+            definition: {
+              ...meaning.definition,
+              image: uploadedPicturesUrls[index],
+            },
+            attributes: meaning.attributes?.split(",").map((attribute) => {
+              return attribute.trim();
+            }),
+            partOfSpeech: data.meanings[index]
+              .partOfSpeech as Prisma.PartOfSpeech,
+          };
+        }),
+      },
+    };
+    wordMutation.mutate(newData);
+    reset();
   };
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
@@ -130,7 +169,7 @@ export default function CreateWord() {
             name="attributes"
             rules={{
               required: false,
-              validate: attributeValidate,
+              validate: (value) => seperationValidate(value, ","),
               pattern: {
                 // allow only letters and comma between them, also allow UTF-8 characters
                 value: /^[\p{L}\s,]+$/u,
@@ -205,26 +244,46 @@ export default function CreateWord() {
           <Controller
             control={control}
             name="relatedWords"
-            render={({ field }) => (
+            rules={{
+              pattern: {
+                // allow only letters and comma between them, also allow UTF-8 characters
+                value: /^[\p{L}\s,]+$/u,
+                message: "Words must be separated by a comma!",
+              },
+              validate: (value) => seperationValidate(value, ","),
+            }}
+            render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
                 label="Related Words"
                 color="primary"
                 variant="underlined"
-                description="Related Words is optional."
+                description="Related Words is optional. Please separate them with a comma."
+                isInvalid={error !== undefined}
+                errorMessage={error?.message}
               />
             )}
           />
           <Controller
             control={control}
             name="relatedPhrases"
-            render={({ field }) => (
+            rules={{
+              pattern: {
+                // allow only letters and comma between them, also allow UTF-8 characters
+                value: /^[\p{L}\s|]+$/u,
+                message: "Phrases must be separated by a pipe symbol ( | )!",
+              },
+              validate: (value) => seperationValidate(value, "|"),
+            }}
+            render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
                 label="Related Phrases"
                 color="primary"
                 variant="underlined"
-                description="Related Phrases is optional."
+                description="Related Phrases is optional. Please separate them with a pipe symbol ( | )."
+                isInvalid={error !== undefined}
+                errorMessage={error?.message}
               />
             )}
           />
@@ -289,7 +348,7 @@ export default function CreateWord() {
                     name={`meanings.${index}.attributes`}
                     control={control}
                     rules={{
-                      validate: attributeValidate,
+                      validate: (value) => seperationValidate(value, ","),
                       pattern: {
                         // allow only letters and comma between them, also allow UTF-8 characters
                         value: /^[\p{L}\s,]+$/u,
@@ -432,7 +491,12 @@ export default function CreateWord() {
             </p>
           )}
         </div>
-        <Button type="submit" variant="ghost" className="w-full">
+        <Button
+          isLoading={wordMutation.isLoading || isUploading}
+          type="submit"
+          variant="ghost"
+          className="w-full"
+        >
           Submit
         </Button>
       </form>

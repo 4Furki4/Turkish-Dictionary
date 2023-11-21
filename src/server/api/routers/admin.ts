@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { adminProcedure, createTRPCRouter } from "../trpc";
 import { z } from "zod";
-import type { Word } from "@prisma/client";
+import type { Prisma, Word } from "@prisma/client";
+import { createWordSchema } from "@/src/lib/zod-schemas";
 export const adminRouter = createTRPCRouter({
   deleteWord: adminProcedure
     .input(
@@ -25,45 +26,35 @@ export const adminRouter = createTRPCRouter({
       }
     }),
   createWord: adminProcedure
-    .input(
-      z.object({
-        word: z.object({
-          name: z.string(),
-          root: z.string().optional(),
-          attributes: z.array(z.string().min(2)),
-          audio: z.string().optional(),
-          prefix: z.string().optional(),
-          suffix: z.string().optional(),
-          relatedWords: z.array(z.string().min(2)).optional(),
-          relatedPhrases: z.array(z.string().min(2)).optional(),
-          meanings: z.array(
-            z.object({
-              definition: z.object({
-                definition: z.string(),
-                image: z.string().optional(),
-                example: z
-                  .object({
-                    sentence: z.string(),
-                    author: z.string().optional(),
-                  })
-                  .optional(),
+    .input(createWordSchema)
+    .mutation(async ({ ctx: { db }, input }) => {
+      await db.word.create({
+        data: {
+          name: input.word.name,
+          root: input.word.root,
+          attributes: input.word.attributes,
+          audio: input.word.audio,
+          meanings: {
+            createMany: {
+              data: input.word.meanings.map((meaning) => {
+                return {
+                  definition: {
+                    definition: meaning.definition.definition,
+                    example: meaning.definition.example,
+                    imageUrl: meaning.definition.image,
+                  },
+                  partOfSpeech: meaning.partOfSpeech,
+                  attributes: meaning.attributes,
+                } as Prisma.MeaningCreateInput;
               }),
-              partOfSpeech: z
-                .enum([
-                  "noun",
-                  "verb",
-                  "adjective",
-                  "adverb",
-                  "preposition",
-                  "conjunction",
-                  "interjection",
-                ])
-                .optional(),
-              attributes: z.array(z.string().min(2)).optional(),
-            })
-          ),
-        }),
-      })
-    )
-    .mutation(async ({ ctx: { db } }) => {}),
+            },
+          },
+          prefix: input.word.prefix,
+          suffix: input.word.suffix,
+          relatedWords: input.word.relatedWords,
+          relatedPhrases: input.word.relatedPhrases,
+          phonetics: input.word.phonetics,
+        },
+      });
+    }),
 });
