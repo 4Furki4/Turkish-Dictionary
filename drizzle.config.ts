@@ -1,10 +1,14 @@
 import { Config, defineConfig } from "drizzle-kit";
-import { env } from "process";
+import * as dotenv from "dotenv";
+dotenv.config({
+  path: ".env.local",
+});
 export default defineConfig({
   schema: "./db/schema.ts",
   driver: "pg",
   dbCredentials: {
-    connectionString: env.DB_URL!,
+    connectionString: process.env.DB_URL as string,
+    ssl: true,
   },
   verbose: true,
   strict: true,

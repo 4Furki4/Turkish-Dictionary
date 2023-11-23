@@ -1,1 +1,20 @@
-{"version":"5","dialect":"pg","entries":[]}
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1700756286969,
+      "tag": "0000_spooky_madame_web",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1700756743925,
+      "tag": "0001_stormy_odin",
+      "breakpoints": true
+    }
+  ]
+}
