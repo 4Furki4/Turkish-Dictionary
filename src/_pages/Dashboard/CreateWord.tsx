@@ -17,6 +17,7 @@ import { api } from "@/src/trpc/react";
 import { uploadFiles } from "@/src/lib/uploadthing";
 import { CreateWordInput } from "@/src/lib/zod-schemas";
 import { toast } from "react-toastify";
+import { PartOfSpeech, partOfSpeechEnum } from "@/db/schema";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -129,8 +130,7 @@ export default function CreateWord() {
             attributes: meaning.attributes?.split(",").map((attribute) => {
               return attribute.trim();
             }),
-            partOfSpeech: data.meanings[index]
-              .partOfSpeech as Prisma.PartOfSpeech,
+            partOfSpeech: data.meanings[index].partOfSpeech as PartOfSpeech,
           };
         }),
       },
@@ -336,7 +336,7 @@ export default function CreateWord() {
                         errorMessage={isDirty && error?.message}
                         {...field}
                       >
-                        {Object.keys(Prisma.$Enums.PartOfSpeech).map((key) => (
+                        {partOfSpeechEnum.enumValues.map((key) => (
                           <SelectItem key={key} value={key}>
                             {key}
                           </SelectItem>

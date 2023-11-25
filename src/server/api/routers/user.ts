@@ -1,44 +1,48 @@
+import { eq } from "drizzle-orm";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
+import { users, usersToWords } from "@/db/schema";
 export const userRouter = createTRPCRouter({
   /**
    * Get a word by id quering the database
    * @param input string mongo id
    */
-  getSavedWords: protectedProcedure.query(async ({ ctx }) => {
-    const session = ctx.session.user;
-    const user = await ctx.db.user.findUnique({
-      where: {
-        email: session.email!,
-      },
-    });
-    const savedWords = await ctx.db.word.findMany({
-      where: {
-        id: {
-          in: user?.savedWordIds,
+  getSavedWords: protectedProcedure.query(async ({ ctx: { session, db } }) => {
+    const userWithSavedWords = await db.query.users
+      .findFirst({
+        where: eq(users.email, session.user.email!),
+        with: {
+          usersToWords: {
+            with: {
+              word: {
+                with: {
+                  meanings: true,
+                },
+              },
+            },
+          },
         },
-      },
-      include: {
-        meanings: true,
-      },
-    });
+      })
+      .execute();
+    const savedWords = userWithSavedWords?.usersToWords.map(
+      (userToWord) => userToWord.word
+    );
     return savedWords;
   }),
   getWordSaveStatus: protectedProcedure
-    .input(z.string())
-    .query(async ({ input, ctx }) => {
-      const session = ctx.session.user;
-      const user = await ctx.db.user.findUnique({
-        where: {
-          id: session.id!,
-        },
-      });
-      const savedWords = await ctx.db.user.findFirst({
-        where: {
-          id: session.id!,
-        },
-      });
-      return savedWords?.savedWordIds?.includes(input) ?? false;
+    .input(z.number())
+    .query(async ({ input, ctx: { session, db } }) => {
+      const user = await db.query.users
+        .findFirst({
+          where: eq(users.id, session.user.id),
+          with: {
+            usersToWords: {
+              where: eq(usersToWords.wordId, input),
+            },
+          },
+        })
+        .execute();
+      return user?.usersToWords?.length ? true : false;
     }),
   /**
    * Save a word to user's saved word list
@@ -46,43 +50,38 @@ export const userRouter = createTRPCRouter({
   saveWord: protectedProcedure
     .input(
       z.object({
-        wordId: z.string(),
+        wordId: z.number(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const session = ctx.session.user;
+    .mutation(async ({ input, ctx: { session, db } }) => {
       console.log(session);
-      const user = await ctx.db.user.findUnique({
-        where: {
-          id: session.id!,
-        },
-      });
-      if (user?.savedWordIds?.includes(input.wordId)) {
-        console.log("word_id", input.wordId);
-        const savedWords = await ctx.db.user.update({
-          where: {
-            email: user.email!,
-          },
-          data: {
-            savedWordIds: {
-              set: user.savedWordIds.filter(
-                (wordId) => wordId !== input.wordId
-              ),
+      const user = await db.query.users
+        .findFirst({
+          where: eq(users.id, session.user.id),
+          with: {
+            usersToWords: {
+              where: eq(usersToWords.wordId, input.wordId),
             },
           },
-        });
-        return savedWords;
+        })
+        .execute();
+      const savedWordIds = user?.usersToWords.map(
+        (userToWord) => userToWord.wordId
+      );
+      if (savedWordIds?.includes(input.wordId)) {
+        await db
+          .delete(usersToWords)
+          .where(eq(usersToWords.wordId, input.wordId))
+          .execute();
+        return;
       }
-      const savedWords = await ctx.db.user.update({
-        where: {
-          email: session.email!,
-        },
-        data: {
-          savedWordIds: {
-            push: input.wordId,
-          },
-        },
-      });
-      return savedWords;
+      await db
+        .insert(usersToWords)
+        .values({
+          userId: session.user.id,
+          wordId: input.wordId,
+        })
+        .execute();
+      return;
     }),
 });

@@ -118,14 +118,14 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
-const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user || ctx.session.user.role !== "ADMIN") {
+const enforceUserIsAdmin = t.middleware(({ ctx: { session }, next }) => {
+  if (!session || !session.user || session.user.role !== "admin") {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      session: { ...session, user: session.user },
     },
   });
 });

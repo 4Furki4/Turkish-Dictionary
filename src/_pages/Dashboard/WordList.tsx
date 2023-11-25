@@ -22,7 +22,8 @@ import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
 import Link from "next-intl/link";
 import { Link as NextUILink } from "@nextui-org/react";
-export default function WordList({ words }: { words: Word[] }) {
+import { SelectWord } from "@/db/schema";
+export default function WordList({ words }: { words: SelectWord[] }) {
   const wordsQuery = api.word.getWords.useQuery({}, { initialData: words });
   const wordMutation = api.admin.deleteWord.useMutation({
     onSuccess: async () => {
@@ -41,7 +42,7 @@ export default function WordList({ words }: { words: Word[] }) {
       key: idx,
       root: word.root,
       partOfSpeech: word.meanings[0].partOfSpeech,
-      attributes: word.meanings[0].attributes.join(", "),
+      attributes: word.meanings[0].attributes?.join(", "),
       id: word.id,
     };
   });

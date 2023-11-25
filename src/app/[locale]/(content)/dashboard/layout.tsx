@@ -8,7 +8,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerAuthSession();
-  if (!["ADMIN", "MODERATOR"].includes(session?.user.role!)) {
+  if (!["admin", "moderator"].includes(session?.user.role!)) {
     return <DashboardUnauthorizedMessage />;
   }
   return <>{children}</>;

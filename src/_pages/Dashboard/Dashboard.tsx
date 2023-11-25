@@ -6,8 +6,9 @@ import WordList from "./WordList";
 import WordRequestList from "./WordRequestList";
 import { Word } from "@/types";
 import { api } from "@/src/trpc/react";
+import { SelectWord } from "@/db/schema";
 
-export default function Dashboard({ words }: { words: Word[] }) {
+export default function Dashboard({ words }: { words: SelectWord[] }) {
   const wordsQuery = api.word.getWords.useQuery(
     {},
     {

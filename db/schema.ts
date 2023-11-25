@@ -44,6 +44,7 @@ export const partOfSpeechEnum = pgEnum("partOfSpeech", [
   "edat",
   "bağlaç",
 ]);
+export type PartOfSpeech = (typeof partOfSpeechEnum.enumValues)[number];
 
 export const meanings = pgTable("meanings", {
   id: serial("id").primaryKey(),
@@ -138,7 +139,9 @@ export const accounts = pgTable(
   })
 );
 
-export type SelectWord = InferSelectModel<typeof words>;
+export type SelectWord = InferSelectModel<typeof words> & {
+  meanings: SelectMeaning[];
+};
 
 export type SelectMeaning = InferSelectModel<typeof meanings>;
 
