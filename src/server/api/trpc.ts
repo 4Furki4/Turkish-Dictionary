@@ -13,7 +13,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getServerAuthSession } from "@/src/server/auth";
-import { db } from "../db";
+import { db } from "@/db/index";
 
 /**
  * 1. CONTEXT

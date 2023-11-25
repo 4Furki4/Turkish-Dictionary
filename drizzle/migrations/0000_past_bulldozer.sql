@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS "meanings" (
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text,
+	"username" varchar(255) NOT NULL,
+	"password" varchar(510),
 	"email" text NOT NULL,
 	"emailVerified" timestamp,
 	"image" text,
@@ -60,10 +62,10 @@ CREATE TABLE IF NOT EXISTS "words" (
 	"root" varchar(255),
 	"attributes" varchar(255)[],
 	"audio" varchar(255),
-	"createdAt" date DEFAULT now(),
-	"updatedAt" date,
-	"relatedWords" varchar(255)[],
-	"relatedPhrases" text[]
+	"created_at" date DEFAULT now(),
+	"updated_at" date,
+	"related_words" varchar(255)[],
+	"related_phrases" text[]
 );
 --> statement-breakpoint
 DO $$ BEGIN

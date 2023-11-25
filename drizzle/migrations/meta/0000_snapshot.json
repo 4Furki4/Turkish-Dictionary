@@ -1,5 +1,5 @@
 {
-  "id": "2809ee53-a7d8-4486-8ac9-6b50f2aa51ba",
+  "id": "dbb07c5f-0ebd-4331-8aff-c8be2875b214",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -197,6 +197,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(510)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "email": {
           "name": "email",
           "type": "text",
@@ -332,27 +344,27 @@
           "primaryKey": false,
           "notNull": false
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "date",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "date",
           "primaryKey": false,
           "notNull": false
         },
-        "relatedWords": {
-          "name": "relatedWords",
+        "related_words": {
+          "name": "related_words",
           "type": "varchar(255)[]",
           "primaryKey": false,
           "notNull": false
         },
-        "relatedPhrases": {
-          "name": "relatedPhrases",
+        "related_phrases": {
+          "name": "related_phrases",
           "type": "text[]",
           "primaryKey": false,
           "notNull": false

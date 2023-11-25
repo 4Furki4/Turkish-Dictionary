@@ -1,6 +1,6 @@
 {
-  "id": "7f35bf4b-a3a5-44ae-b889-274f9f55529f",
-  "prevId": "2809ee53-a7d8-4486-8ac9-6b50f2aa51ba",
+  "id": "8af362b2-8cb5-4227-8d6a-d3d8f6796268",
+  "prevId": "dbb07c5f-0ebd-4331-8aff-c8be2875b214",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -197,6 +197,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(510)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "email": {
           "name": "email",
           "type": "text",
@@ -332,15 +344,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "date",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "date",
           "primaryKey": false,
           "notNull": false
@@ -391,9 +403,6 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {
-      "\"words\".\"relatedWords\"": "\"words\".\"related_words\"",
-      "\"words\".\"relatedPhrases\"": "\"words\".\"related_phrases\""
-    }
+    "columns": {}
   }
 }

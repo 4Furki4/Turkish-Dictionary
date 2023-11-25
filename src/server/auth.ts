@@ -4,14 +4,18 @@ import {
   type NextAuthOptions,
   DefaultUser,
   User,
+  Awaitable,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db } from "./db";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import DiscordProvider from "next-auth/providers/discord";
 import * as bycrypt from "bcrypt";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/db";
+import { eq } from "drizzle-orm";
+import { users } from "@/db/schema";
+import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -33,17 +37,13 @@ declare module "next-auth" {
     role: string | undefined;
     username: string | undefined;
   }
-  interface AdapterUser extends User {
-    id: string;
-    role: string;
-    username: string;
-  }
   // interface User {
   //   // ...other properties
   //   // role: UserRole;
   // }
 }
-export const adapter = PrismaAdapter(db);
+
+export const adapter = CustomDrizzleAdapter(db);
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -86,23 +86,19 @@ export const authOptions: NextAuthOptions = {
 
         let user = null;
         if (credentials?.email !== undefined) {
-          user = await db.user.findFirst({
-            where: {
-              email: credentials?.email,
-            },
+          user = await db.query.users.findFirst({
+            where: eq(users.email, credentials?.email),
           });
         }
 
         user =
           user !== null
             ? user
-            : await db.user.findFirst({
-                where: {
-                  username: credentials?.username,
-                },
+            : await db.query.users.findFirst({
+                where: eq(users.username, credentials?.username),
               });
 
-        if (user === null) return Promise.resolve(null); // user not found
+        if (user === undefined) return Promise.resolve(null); // user not found
 
         if (user.password === undefined) return Promise.resolve(null); // users created with google auth
 
@@ -110,8 +106,8 @@ export const authOptions: NextAuthOptions = {
           credentials?.password!,
           user.password!
         );
-
         if (!isPasswordValid) return Promise.resolve(null);
+
         return Promise.resolve(user as User);
       },
     }),

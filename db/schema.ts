@@ -9,7 +9,11 @@ import {
   timestamp,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import {
+  relations,
+  type InferSelectModel,
+  type InferInsertModel,
+} from "drizzle-orm";
 import type { AdapterAccount } from "@auth/core/adapters";
 
 export const words = pgTable("words", {
@@ -19,10 +23,10 @@ export const words = pgTable("words", {
   root: varchar("root", { length: 255 }),
   attributes: varchar("attributes", { length: 255 }).array(),
   audioUrl: varchar("audio", { length: 255 }), // will also have many-to-many relation with words and users in the future
-  createdAt: date("createdAt").defaultNow(),
-  updatedAt: date("updatedAt"),
-  relatedWords: varchar("related_words", { length: 255 }).array(),
-  relatedPhrases: text("related_phrases").array(),
+  created_at: date("created_at").defaultNow(),
+  updated_at: date("updated_at"),
+  related_words: varchar("related_words", { length: 255 }).array(),
+  related_phrases: text("related_phrases").array(),
 });
 
 export const wordsRelations = relations(words, ({ many }) => ({
@@ -89,6 +93,8 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+  username: varchar("username", { length: 255 }),
+  password: varchar("password", { length: 510 }),
   role: rolesEnum("role").default("user"),
 });
 
@@ -131,3 +137,23 @@ export const accounts = pgTable(
     }),
   })
 );
+
+export type SelectWord = InferSelectModel<typeof words>;
+
+export type SelectMeaning = InferSelectModel<typeof meanings>;
+
+export type SelectUser = InferSelectModel<typeof users>;
+
+export type SelectUsersToWords = InferSelectModel<typeof usersToWords>;
+
+export type SelectAccount = InferSelectModel<typeof accounts>;
+
+export type InsertWord = InferInsertModel<typeof words>;
+
+export type InsertMeaning = InferInsertModel<typeof meanings>;
+
+export type InsertUser = InferInsertModel<typeof users>;
+
+export type InsertUsersToWords = InferInsertModel<typeof usersToWords>;
+
+export type InsertAccount = InferInsertModel<typeof accounts>;
