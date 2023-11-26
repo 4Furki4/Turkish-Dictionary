@@ -7,4 +7,6 @@ import "dotenv/config";
 const sql = postgres(process.env.DATABASE_URL!, { max: 1 });
 export const db = drizzle(sql, { schema });
 
-await migrate(db, { migrationsFolder: "drizzle/migrations" });
+export const migrateToLatest = async () => {
+  await migrate(db, { migrationsFolder: "drizzle/migrations" });
+};
