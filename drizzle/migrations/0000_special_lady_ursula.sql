@@ -40,12 +40,12 @@ CREATE TABLE IF NOT EXISTS "meanings" (
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text,
-	"username" varchar(255) NOT NULL,
-	"password" varchar(510),
 	"email" text NOT NULL,
 	"emailVerified" timestamp,
 	"image" text,
-	"role" "role" DEFAULT 'user'
+	"username" varchar(255),
+	"password" varchar(510),
+	"role" "role" DEFAULT 'user' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users_to_groups" (
@@ -65,7 +65,9 @@ CREATE TABLE IF NOT EXISTS "words" (
 	"created_at" date DEFAULT now(),
 	"updated_at" date,
 	"related_words" varchar(255)[],
-	"related_phrases" text[]
+	"related_phrases" text[],
+	"prefix" varchar(255),
+	"suffix" varchar(255)
 );
 --> statement-breakpoint
 DO $$ BEGIN

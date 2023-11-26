@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1700839479292,
-      "tag": "0000_past_bulldozer",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1700845134059,
-      "tag": "0001_black_wiccan",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1701016898465,
-      "tag": "0002_many_shockwave",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1701018371057,
-      "tag": "0003_familiar_mantis",
+      "when": 1701020609043,
+      "tag": "0000_special_lady_ursula",
       "breakpoints": true
     }
   ]

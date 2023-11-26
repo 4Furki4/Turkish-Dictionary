@@ -1,5 +1,5 @@
 {
-  "id": "dbb07c5f-0ebd-4331-8aff-c8be2875b214",
+  "id": "3bdf3939-161c-486b-8283-bb000393a19d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -197,18 +197,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "username": {
-          "name": "username",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "password": {
-          "name": "password",
-          "type": "varchar(510)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "email": {
           "name": "email",
           "type": "text",
@@ -227,11 +215,23 @@
           "primaryKey": false,
           "notNull": false
         },
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(510)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "role": {
           "name": "role",
           "type": "role",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "'user'"
         }
       },
@@ -366,6 +366,18 @@
         "related_phrases": {
           "name": "related_phrases",
           "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prefix": {
+          "name": "prefix",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suffix": {
+          "name": "suffix",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         }
