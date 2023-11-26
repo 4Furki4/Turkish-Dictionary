@@ -4,11 +4,14 @@ import React from "react";
 import UserList from "./UserList";
 import WordList from "./WordList";
 import WordRequestList from "./WordRequestList";
-import { Word } from "@/types";
 import { api } from "@/src/trpc/react";
-import { SelectWord } from "@/db/schema";
+import { SelectWordWithMeanings } from "@/db/schema";
 
-export default function Dashboard({ words }: { words: SelectWord[] }) {
+export default function Dashboard({
+  words,
+}: {
+  words: SelectWordWithMeanings[];
+}) {
   const wordsQuery = api.word.getWords.useQuery(
     {},
     {

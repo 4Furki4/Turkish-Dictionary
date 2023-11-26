@@ -1,5 +1,4 @@
 "use client";
-import * as Prisma from "@prisma/client";
 import { MeaningInputs, WordForm } from "@/types";
 import {
   Button,
@@ -51,12 +50,12 @@ export default function CreateWord() {
         name: "",
         attributes: undefined,
         root: undefined,
-        phonetics: undefined,
+        phonetic: undefined,
         prefix: undefined,
         suffix: undefined,
         relatedWords: undefined,
         relatedPhrases: undefined,
-        audio: undefined,
+        audioUrl: undefined,
         meanings: [meaningDefaultValues],
       },
       mode: "all",
@@ -204,7 +203,7 @@ export default function CreateWord() {
           />
           <Controller
             control={control}
-            name="phonetics"
+            name="phonetic"
             render={({ field }) => (
               <Input
                 {...field}

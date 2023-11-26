@@ -12,20 +12,19 @@ import {
   Accordion,
   AccordionItem,
 } from "@nextui-org/react";
-import { Word } from "../../../types";
 import Link from "next-intl/link";
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
-import { SelectWord } from "@/db/schema";
+import { SelectWordWithMeanings } from "@/db/schema";
 const itemClasses = {
   title: "font-normal text-fs-1 text-primary",
   trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
   indicator: "text-fs-0",
   content: "px-2 text-fs--1",
 };
-export default function WordCard({ word }: { word: SelectWord }) {
+export default function WordCard({ word }: { word: SelectWordWithMeanings }) {
   const savedWords = api.user.getSavedWords.useQuery();
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word.id, {
     queryKey: ["user.getWordSaveStatus", word.id],
@@ -74,7 +73,7 @@ export default function WordCard({ word }: { word: SelectWord }) {
 
       <CardHeader className="justify-center">
         <h2 className="text-fs-6 text-center w-full self-start">
-          {/* {word.prefix && (
+          {word.prefix && (
             <span className="text-fs-4">
               <span aria-label="word prefix">{word.prefix}</span>
               <span aria-hidden>-,</span>
@@ -86,7 +85,7 @@ export default function WordCard({ word }: { word: SelectWord }) {
               <span aria-hidden>, -</span>
               <span aria-label="word-suffix">{word.suffix}</span>
             </span>
-          )} */}
+          )}
         </h2>
       </CardHeader>
       <CardBody>

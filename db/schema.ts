@@ -14,7 +14,7 @@ import {
   type InferSelectModel,
   type InferInsertModel,
 } from "drizzle-orm";
-import type { AdapterAccount } from "@auth/core/adapters";
+import { AdapterAccount } from "next-auth/adapters";
 
 export const words = pgTable("words", {
   id: serial("id").primaryKey(),
@@ -27,6 +27,8 @@ export const words = pgTable("words", {
   updated_at: date("updated_at"),
   related_words: varchar("related_words", { length: 255 }).array(),
   related_phrases: text("related_phrases").array(),
+  prefix: varchar("prefix", { length: 255 }),
+  suffix: varchar("suffix", { length: 255 }),
 });
 
 export const wordsRelations = relations(words, ({ many }) => ({
@@ -88,6 +90,8 @@ export const usersToWords = pgTable(
 
 export const rolesEnum = pgEnum("role", ["user", "moderator", "admin"]);
 
+export type Role = (typeof rolesEnum.enumValues)[number];
+
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
@@ -96,7 +100,7 @@ export const users = pgTable("user", {
   image: text("image"),
   username: varchar("username", { length: 255 }),
   password: varchar("password", { length: 510 }),
-  role: rolesEnum("role").default("user"),
+  role: rolesEnum("role").default("user").notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -139,9 +143,10 @@ export const accounts = pgTable(
   })
 );
 
-export type SelectWord = InferSelectModel<typeof words> & {
+export type SelectWordWithMeanings = InferSelectModel<typeof words> & {
   meanings: SelectMeaning[];
 };
+export type SelectWord = InferSelectModel<typeof words>;
 
 export type SelectMeaning = InferSelectModel<typeof meanings>;
 

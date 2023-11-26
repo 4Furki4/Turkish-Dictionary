@@ -1,5 +1,4 @@
 "use client";
-import { Word } from "@/types";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useCallback } from "react";
 import {
@@ -22,8 +21,12 @@ import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
 import Link from "next-intl/link";
 import { Link as NextUILink } from "@nextui-org/react";
-import { SelectWord } from "@/db/schema";
-export default function WordList({ words }: { words: SelectWord[] }) {
+import { SelectWordWithMeanings } from "@/db/schema";
+export default function WordList({
+  words,
+}: {
+  words: SelectWordWithMeanings[];
+}) {
   const wordsQuery = api.word.getWords.useQuery({}, { initialData: words });
   const wordMutation = api.admin.deleteWord.useMutation({
     onSuccess: async () => {

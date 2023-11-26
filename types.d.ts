@@ -1,7 +1,4 @@
-import type * as Prisma from "@prisma/client";
-type Word = {
-  meanings: Prisma.Meaning[];
-} & Prisma.Word;
+import type { SelectWord } from "./db/schema";
 
 type LoginInputs = {
   usernameOrEmail: string;
@@ -31,7 +28,7 @@ type WordInputs = Prettify<
   ToUndefinedProps<
     // to avoid react hook form type errors
     Omit<
-      Prisma.Word,
+      SelectWord,
       | "id"
       | "createdAt"
       | "updatedAt"

@@ -4,14 +4,12 @@ import {
   type NextAuthOptions,
   DefaultUser,
   User,
-  Awaitable,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import DiscordProvider from "next-auth/providers/discord";
 import * as bycrypt from "bcrypt";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { users } from "@/db/schema";
@@ -28,19 +26,13 @@ declare module "next-auth" {
       id: string;
       role: string;
       username: string;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
   interface User extends DefaultUser {
-    id: string | undefined;
-    role: string | undefined;
-    username: string | undefined;
+    id: string;
+    role: string;
+    username: string;
   }
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 export const adapter = CustomDrizzleAdapter(db);

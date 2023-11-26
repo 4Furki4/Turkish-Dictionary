@@ -1,7 +1,7 @@
-import type { Adapter } from "@auth/core/adapters";
-import { users, accounts } from "./schema";
+import { users, accounts, Role } from "./schema";
 import { and, eq } from "drizzle-orm";
 import { PgDatabase } from "drizzle-orm/pg-core";
+import { Adapter, AdapterUser } from "next-auth/adapters";
 import { AdapterAccount } from "next-auth/adapters";
 
 export function CustomDrizzleAdapter(
@@ -10,7 +10,7 @@ export function CustomDrizzleAdapter(
   return {
     async createUser(user) {
       const { name, email, image, emailVerified } = user;
-      return await client
+      return (await client
         .insert(users)
         .values({
           id: crypto.randomUUID(),
@@ -21,33 +21,35 @@ export function CustomDrizzleAdapter(
           username: email.split("@")[0],
         })
         .returning()
-        .then((res) => res[0] ?? null);
+        .then((res) => res[0] ?? null)) as AdapterUser;
     },
     async getUser(data) {
-      return await client
+      return (await client
         .select()
         .from(users)
         .where(eq(users.id, data))
-        .then((res) => res[0] ?? null);
+        .then((res) => res[0] ?? null)) as AdapterUser;
     },
     async getUserByEmail(data) {
-      return await client
+      return (await client
         .select()
         .from(users)
         .where(eq(users.email, data))
-        .then((res) => res[0] ?? null);
+        .then((res) => res[0] ?? null)) as AdapterUser;
     },
     async updateUser(data) {
       if (!data.id) {
         throw new Error("No user id.");
       }
-
-      return await client
+      return (await client
         .update(users)
-        .set(data)
+        .set({
+          ...data,
+          role: data.role as Role | undefined,
+        })
         .where(eq(users.id, data.id))
         .returning()
-        .then((res) => res[0]);
+        .then((res) => res[0])) as AdapterUser;
     },
     async linkAccount(rawAccount) {
       const updatedAccount = await client
@@ -103,7 +105,7 @@ export function CustomDrizzleAdapter(
         return null;
       }
 
-      return dbAccount.user;
+      return dbAccount.user as AdapterUser;
     },
   };
 }
