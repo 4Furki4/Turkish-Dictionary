@@ -6,7 +6,7 @@
 
 ## Feature Roadmap
 No spesific order yet.
-- Minigames to learn or practice Turkish Words.
+- Minigames to learn or practice Turkish Words and grammar such as randomized letters to find a word and more.
 - Contributing to the dictionary by adding pronunciations of the words, and requesting missing words, especially outdated ones, for changes in words.
 - Save and learn words. I'll add creating cards to learn words and integrate the saved words to be added to the cards quickly.
 - Requesting new features and giving feedback with ease.
@@ -14,7 +14,7 @@ No spesific order yet.
 ## Contribute to the project
 - Open issues to report bugs or request features. The guide for opening issues will be added soon.
 ### The Tech Stack
-- create-t3-app with Next 13.5.2 app dir, next auth, and Prisma
+- create-t3-app with Next 13.5.2 app dir, tRPC, next auth, and drizzle. (Yes, I love type-safety!)
 - NextUI
 - nodemail
 - uploadthing to upload files
@@ -26,7 +26,7 @@ No spesific order yet.
 UPLOADTHING_SECRET= // See uploadthing.com to get started.
 NODEMAIL_PASSWORD=
 NODEMAIL_EMAIL=
-DATABASE_URL= // I've used MongoDB so far but I'll be switching to a SQL database, probably to PostgreSQL.
+DATABASE_URL= // postgres database URL
 NEXTAUTH_SECRET= see https://next-auth.js.org/configuration/options#secret
 NEXTAUTH_URL= http://localhost:3000
 -oAuth Applications-
