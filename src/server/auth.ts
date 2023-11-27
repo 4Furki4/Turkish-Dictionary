@@ -2,39 +2,62 @@ import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
+  DefaultUser,
+  User,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db } from "./db";
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import DiscordProvider from "next-auth/providers/discord";
 import * as bycrypt from "bcrypt";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { db } from "@/db";
+import { eq } from "drizzle-orm";
+import { users } from "@/db/schema";
+import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+type Role = "user" | "admin" | "moderator";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      id: string | undefined;
-      // ...other properties
-      // role: UserRole;
+      id: string;
+      role: Role;
+      username: string;
     } & DefaultSession["user"];
   }
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    id: string;
+    role: Role;
+    username: string;
+  }
 }
-export const adapter = PrismaAdapter(db);
+declare module "next-auth/adapters" {
+  export interface AdapterUser {
+    role: Role;
+  }
+}
+
+export const adapter = CustomDrizzleAdapter(db);
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      profile(profile: GoogleProfile) {
+        return {
+          id: profile.sub,
+          role: profile.role ?? "USER",
+          image: profile.picture,
+          email: profile.email,
+          name: profile.name,
+          username: profile.email!.split("@")[0],
+        };
+      },
     }),
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID!,
@@ -62,23 +85,19 @@ export const authOptions: NextAuthOptions = {
 
         let user = null;
         if (credentials?.email !== undefined) {
-          user = await db.user.findFirst({
-            where: {
-              email: credentials?.email,
-            },
+          user = await db.query.users.findFirst({
+            where: eq(users.email, credentials?.email),
           });
         }
 
         user =
           user !== null
             ? user
-            : await db.user.findFirst({
-                where: {
-                  username: credentials?.username,
-                },
+            : await db.query.users.findFirst({
+                where: eq(users.username, credentials?.username),
               });
 
-        if (user === null) return Promise.resolve(null); // user not found
+        if (user === undefined) return Promise.resolve(null); // user not found
 
         if (user.password === undefined) return Promise.resolve(null); // users created with google auth
 
@@ -86,44 +105,40 @@ export const authOptions: NextAuthOptions = {
           credentials?.password!,
           user.password!
         );
-
         if (!isPasswordValid) return Promise.resolve(null);
-        return Promise.resolve(user);
+
+        return Promise.resolve(user as User);
       },
     }),
   ],
   callbacks: {
     session({ session, token }) {
-      session.user.id = token.sub;
-      return session;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role,
+          username: token.username,
+        },
+      };
     },
-    // signIn: async ({ user, account, profile, email, credentials }) => {
-    //   const userExist = await db.user.findUnique({
-    //     where: {
-    //       email: user.email!,
-    //     },
-    //   });
-    //   if (userExist) {
-    //     return true;
-    //   }
-    //   try {
-    //     await db.user.create({
-    //       data: {
-    //         email: user.email!,
-    //         name: user.name!,
-    //         username: user.email!.split("@")[0],
-    //       },
-    //     });
-    //     return true;
-    //   } catch (error) {
-    //     console.log(error);
-    //     return false;
-    //   }
-    // },
+    jwt({ token, user }) {
+      if (user) {
+        return {
+          ...token,
+          username: user.username,
+          role: user.role,
+          id: user.id,
+        };
+      }
+      return token;
+    },
   },
   session: {
     strategy: "jwt",
   },
+  //@ts-ignore
   adapter,
   pages: {
     signIn: "/signin",

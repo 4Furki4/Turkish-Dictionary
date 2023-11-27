@@ -1,3 +1,5 @@
+@import url("react-toastify/dist/ReactToastify.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -90,5 +92,8 @@
   }
   html {
     @apply bg-background text-foreground;
+  }
+  ::file-selector-button {
+    @apply border-0 p-2 bg-primary rounded-md cursor-pointer hover:opacity-70 active:opacity-100 transition-opacity;
   }
 }

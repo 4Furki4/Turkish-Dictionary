@@ -1,7 +1,6 @@
 import { api } from "@/src/trpc/server";
 import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
-import { Word } from "@/types";
 import dynamic from "next/dynamic";
 import Loading from "./loading";
 import SearchResult from "@/src/_pages/search/SearchResult";
@@ -38,10 +37,10 @@ export default async function Page({
   }
 
   return (
-    <main className="flex flex-col gap-4 px-4 max-w-5xl xl:p-0 mx-auto">
+    <section className="flex flex-col gap-4 px-4 max-w-5xl xl:p-0 mx-auto">
       <Suspense key={parsedWord} fallback={<Loading />}>
         <SearchResult word={parsedWord} />
       </Suspense>
-    </main>
+    </section>
   );
 }

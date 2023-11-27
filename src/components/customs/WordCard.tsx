@@ -11,21 +11,21 @@ import {
   Divider,
   Accordion,
   AccordionItem,
-  Spinner,
 } from "@nextui-org/react";
-import { Word } from "../../../types";
 import Link from "next-intl/link";
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
+import { SelectWordWithMeanings } from "@/db/schema";
 const itemClasses = {
   title: "font-normal text-fs-1 text-primary",
   trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
   indicator: "text-fs-0",
   content: "px-2 text-fs--1",
 };
-export default function WordCard({ word }: { word: Word }) {
+export default function WordCard({ word }: { word: SelectWordWithMeanings }) {
+  const savedWords = api.user.getSavedWords.useQuery();
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word.id, {
     queryKey: ["user.getWordSaveStatus", word.id],
     staleTime: Infinity,
@@ -96,15 +96,15 @@ export default function WordCard({ word }: { word: Word }) {
               <Fragment key={meaning.id}>
                 <p className="text-fs-1">
                   {meaning.partOfSpeech ? `${meaning.partOfSpeech}` : null}
-                  {meaning.attributes.length > 0 && <span aria-hidden>, </span>}
+                  {meaning.attributes && <span aria-hidden>, </span>}
                   {meaning.attributes ? `${meaning.attributes}` : null}
                   <span aria-hidden>{": "}</span>
-                  {meaning.definition.definition}
+                  {meaning.definition}
                 </p>
-                {meaning.definition.example ? (
+                {meaning.exampleSentece ? (
                   <p className="text-center italic px-2 text-fs--1">
-                    <q>{meaning.definition.example.sentence}</q>{" "}
-                    {"- " + meaning.definition.example.author}
+                    <q>{meaning.exampleSentece}</q>{" "}
+                    {"- " + meaning.exampleSentenceAuthor}
                   </p>
                 ) : null}
                 <Divider />
@@ -121,8 +121,8 @@ export default function WordCard({ word }: { word: Word }) {
             title="Related Words"
           >
             <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {word.relatedWords.length > 0 ? (
-                word.relatedWords.map((word, index) => (
+              {word.related_words ? (
+                word.related_words.map((word, index) => (
                   <Fragment key={index}>
                     <Link
                       className="text-center underline"
@@ -139,8 +139,8 @@ export default function WordCard({ word }: { word: Word }) {
           </AccordionItem>
           <AccordionItem title="Related Phareses">
             <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {word.relatedWords.length > 0 ? (
-                word.relatedPhrases.map((word, index) => (
+              {word.related_phrases ? (
+                word.related_phrases.map((word, index) => (
                   <Fragment key={index}>
                     <Link
                       className="text-center underline"

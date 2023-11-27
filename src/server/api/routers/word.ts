@@ -1,10 +1,14 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "../trpc";
+import { eq } from "drizzle-orm";
+import { words } from "@/db/schema";
 
 export const wordRouter = createTRPCRouter({
-  helloWorld: publicProcedure.query(() => {
-    return "Hello World!";
-  }),
   /**
    * Get all words from database with pagination
    */
@@ -15,12 +19,16 @@ export const wordRouter = createTRPCRouter({
         skip: z.number().optional().default(0),
       })
     )
-    .query(async ({ input, ctx }) => {
-      return await ctx.db.word.findMany({
-        take: input.take,
-        skip: input.skip,
-        include: { meanings: true },
-      });
+    .query(async ({ input, ctx: { db } }) => {
+      return await db.query.words
+        .findMany({
+          limit: input.take,
+          offset: input.skip,
+          with: {
+            meanings: true,
+          },
+        })
+        .execute();
     }),
   /**
    * Get a word by name quering the database
@@ -32,15 +40,13 @@ export const wordRouter = createTRPCRouter({
         required_error: "Word is required to get a word",
       })
     )
-    .query(async ({ input, ctx }) => {
-      const words = await ctx.db.word.findMany({
-        where: {
-          name: input,
-        },
-        include: {
+    .query(async ({ input: name, ctx: { db } }) => {
+      const queriedWords = await db.query.words.findMany({
+        where: eq(words.name, name),
+        with: {
           meanings: true,
         },
       });
-      return words || "Word not found";
+      return queriedWords || "Word not found";
     }),
 });

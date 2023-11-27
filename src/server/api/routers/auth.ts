@@ -6,7 +6,9 @@ import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
 import { z } from "zod";
-import { adapter } from "../../auth";
+import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
+import { eq } from "drizzle-orm";
+import { users } from "@/db/schema";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
@@ -25,27 +27,17 @@ export const authRouter = createTRPCRouter({
           ),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const userQueriedWUsername = await ctx.db.user.findUnique({
-        where: {
-          username: input.username,
-        },
-        include: {
-          Account: true,
-        },
+    .mutation(async ({ input, ctx: { db, session } }) => {
+      const userQueriedWUsername = await db.query.users.findFirst({
+        where: eq(users.username, input.username),
       });
       if (userQueriedWUsername)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User with this username already exists",
         });
-      const userQueriedWEmail = await ctx.db.user.findUnique({
-        where: {
-          email: input.email,
-        },
-        include: {
-          Account: true,
-        },
+      const userQueriedWEmail = await db.query.users.findFirst({
+        where: eq(users.email, input.email),
       });
       if (userQueriedWEmail)
         throw new TRPCError({
@@ -54,26 +46,25 @@ export const authRouter = createTRPCRouter({
         });
       try {
         const hashedPassword = await bycrypt.hash(input.password, 10);
-        const user = await ctx.db.user.create({
-          data: {
+        const user = await db
+          .insert(users)
+          .values({
             name: input.name,
             email: input.email,
             username: input.username,
             password: hashedPassword,
-          },
-        });
-        await adapter.linkAccount!({
+            role: "user",
+            id: crypto.randomUUID(),
+          })
+          .returning()
+          .then((res) => res[0] ?? null);
+        await CustomDrizzleAdapter(db).linkAccount?.({
           provider: "credentials",
           providerAccountId: user.id,
           userId: user.id,
           type: "email",
         });
-
-        return {
-          email: user.email,
-          name: user.name,
-          username: user.username,
-        };
+        return user;
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -88,11 +79,9 @@ export const authRouter = createTRPCRouter({
         locale: z.string().optional().default("en"),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
-        where: {
-          email: input.email,
-        },
+    .mutation(async ({ input, ctx: { db } }) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.email, input.email),
       });
       if (!user)
         throw new TRPCError({
@@ -154,13 +143,11 @@ export const authRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx: { db } }) => {
       let user;
       try {
-        user = await ctx.db.user.findUnique({
-          where: {
-            id: input.id,
-          },
+        user = await db.query.users.findFirst({
+          where: eq(users.id, input.id),
         });
       } catch (error) {
         throw new TRPCError({
@@ -200,11 +187,9 @@ export const authRouter = createTRPCRouter({
         token: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
-        where: {
-          id: input.id,
-        },
+    .mutation(async ({ input, ctx: { db } }) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, input.id),
       });
       if (!user)
         throw new TRPCError({
@@ -239,14 +224,10 @@ export const authRouter = createTRPCRouter({
         });
       }
       const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
-      await ctx.db.user.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          password: newHashedPassword,
-        },
-      });
+      await db
+        .update(users)
+        .set({ password: newHashedPassword })
+        .where(eq(users.id, input.id));
       return {
         message: "Password changed successfully",
       };
