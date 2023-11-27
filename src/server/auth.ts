@@ -20,18 +20,25 @@ import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+type Role = "user" | "admin" | "moderator";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: string;
+      role: Role;
       username: string;
     } & DefaultSession["user"];
   }
   interface User extends DefaultUser {
     id: string;
-    role: string;
+    role: Role;
     username: string;
+  }
+}
+declare module "next-auth/adapters" {
+  export interface AdapterUser {
+    role: Role;
   }
 }
 

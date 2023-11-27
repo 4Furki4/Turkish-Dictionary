@@ -136,7 +136,7 @@ export default function Navbar() {
           </NavbarItem>
         ) : (
           <>
-            {data.user.role === "USER" ? null : (
+            {data.user.role === "user" ? null : (
               <NavbarItem className="hidden sm:flex">
                 <Link as={NextLink} href={"/dashboard"}>
                   Dashboard

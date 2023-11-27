@@ -1,6 +1,7 @@
 import { users, accounts, Role } from "./schema";
 import { and, eq } from "drizzle-orm";
 import { PgDatabase } from "drizzle-orm/pg-core";
+import { Awaitable } from "next-auth";
 import { Adapter, AdapterUser } from "next-auth/adapters";
 import { AdapterAccount } from "next-auth/adapters";
 
@@ -9,7 +10,7 @@ export function CustomDrizzleAdapter(
 ): Adapter {
   return {
     async createUser(user) {
-      const { name, email, image, emailVerified } = user;
+      const { name, email, image, emailVerified, username, role } = user;
       return (await client
         .insert(users)
         .values({
@@ -18,10 +19,11 @@ export function CustomDrizzleAdapter(
           email,
           image,
           emailVerified,
-          username: email.split("@")[0],
+          role: role as Role | undefined,
+          username: username || email.split("@")[0],
         })
         .returning()
-        .then((res) => res[0] ?? null)) as AdapterUser;
+        .then((res) => res[0] ?? null)) as Awaitable<AdapterUser>;
     },
     async getUser(data) {
       return (await client
