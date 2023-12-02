@@ -1,5 +1,5 @@
 {
-  "id": "44670f32-0ce9-4803-878f-2fe1ca0cea6d",
+  "id": "31b2b199-5252-4cff-85f1-81af84fd94f2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -99,8 +99,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "account_provider_providerAccountId": {
-          "name": "account_provider_providerAccountId",
+        "account_provider_providerAccountId_pk": {
+          "name": "account_provider_providerAccountId_pk",
           "columns": [
             "provider",
             "providerAccountId"
@@ -181,6 +181,61 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "related_words": {
+      "name": "related_words",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "related_word_id": {
+          "name": "related_word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "related_words_word_id_words_id_fk": {
+          "name": "related_words_word_id_words_id_fk",
+          "tableFrom": "related_words",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "related_words_related_word_id_words_id_fk": {
+          "name": "related_words_related_word_id_words_id_fk",
+          "tableFrom": "related_words",
+          "tableTo": "words",
+          "columnsFrom": [
+            "related_word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "user": {
       "name": "user",
       "schema": "",
@@ -240,8 +295,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users_to_groups": {
-      "name": "users_to_groups",
+    "users_to_words": {
+      "name": "users_to_words",
       "schema": "",
       "columns": {
         "user_id": {
@@ -266,9 +321,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "users_to_groups_user_id_user_id_fk": {
-          "name": "users_to_groups_user_id_user_id_fk",
-          "tableFrom": "users_to_groups",
+        "users_to_words_user_id_user_id_fk": {
+          "name": "users_to_words_user_id_user_id_fk",
+          "tableFrom": "users_to_words",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
@@ -279,9 +334,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "users_to_groups_word_id_words_id_fk": {
-          "name": "users_to_groups_word_id_words_id_fk",
-          "tableFrom": "users_to_groups",
+        "users_to_words_word_id_words_id_fk": {
+          "name": "users_to_words_word_id_words_id_fk",
+          "tableFrom": "users_to_words",
           "tableTo": "words",
           "columnsFrom": [
             "word_id"
@@ -294,8 +349,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "users_to_groups_user_id_word_id": {
-          "name": "users_to_groups_user_id_word_id",
+        "users_to_words_user_id_word_id_pk": {
+          "name": "users_to_words_user_id_word_id_pk",
           "columns": [
             "user_id",
             "word_id"
@@ -354,12 +409,6 @@
         "updated_at": {
           "name": "updated_at",
           "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "related_words": {
-          "name": "related_words",
-          "type": "varchar(255)[]",
           "primaryKey": false,
           "notNull": false
         },

@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "account" (
 	"id_token" text,
 	"session_state" text,
 	"createdAt" timestamp DEFAULT now(),
-	CONSTRAINT account_provider_providerAccountId PRIMARY KEY("provider","providerAccountId")
+	CONSTRAINT account_provider_providerAccountId_pk PRIMARY KEY("provider","providerAccountId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "meanings" (
@@ -37,6 +37,12 @@ CREATE TABLE IF NOT EXISTS "meanings" (
 	"attributes" varchar(255)[]
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "related_words" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"word_id" integer,
+	"related_word_id" integer
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text,
@@ -48,11 +54,11 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"role" "role" DEFAULT 'user' NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "users_to_groups" (
+CREATE TABLE IF NOT EXISTS "users_to_words" (
 	"user_id" text NOT NULL,
 	"word_id" integer NOT NULL,
 	"createdAt" timestamp DEFAULT now(),
-	CONSTRAINT users_to_groups_user_id_word_id PRIMARY KEY("user_id","word_id")
+	CONSTRAINT users_to_words_user_id_word_id_pk PRIMARY KEY("user_id","word_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "words" (
@@ -64,7 +70,6 @@ CREATE TABLE IF NOT EXISTS "words" (
 	"audio" varchar(255),
 	"created_at" date DEFAULT now(),
 	"updated_at" date,
-	"related_words" varchar(255)[],
 	"related_phrases" text[],
 	"prefix" varchar(255),
 	"suffix" varchar(255)
@@ -83,13 +88,25 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "users_to_groups" ADD CONSTRAINT "users_to_groups_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "related_words" ADD CONSTRAINT "related_words_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "users_to_groups" ADD CONSTRAINT "users_to_groups_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "related_words" ADD CONSTRAINT "related_words_related_word_id_words_id_fk" FOREIGN KEY ("related_word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "users_to_words" ADD CONSTRAINT "users_to_words_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "users_to_words" ADD CONSTRAINT "users_to_words_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

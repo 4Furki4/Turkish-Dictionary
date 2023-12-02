@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "../trpc";
 import { eq } from "drizzle-orm";
-import { words } from "@/db/schema";
+import { relatedWords, words } from "@/db/schema";
 
 export const wordRouter = createTRPCRouter({
   /**
@@ -41,12 +41,21 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input: name, ctx: { db } }) => {
-      const queriedWords = await db.query.words.findMany({
+      const query = db.query.words.findMany({
         where: eq(words.name, name),
         with: {
           meanings: true,
         },
       });
+      console.log(query.toSQL());
+      const queriedWords = await query.execute();
+      const relatedWordsQuery = await db.query.relatedWords.findMany({
+        where: eq(relatedWords.wordId, queriedWords[0].id),
+        with: {
+          relatedWord: true,
+        },
+      });
+      console.log(relatedWordsQuery);
       return queriedWords || "Word not found";
     }),
 });

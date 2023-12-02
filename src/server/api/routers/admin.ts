@@ -32,7 +32,6 @@ export const adminRouter = createTRPCRouter({
           phonetic: word.phonetics,
           attributes: word.attributes,
           related_phrases: word.relatedPhrases,
-          related_words: word.relatedWords,
           root: word.root,
           audioUrl: word.audio,
         })

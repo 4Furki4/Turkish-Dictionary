@@ -25,7 +25,6 @@ export const words = pgTable("words", {
   audioUrl: varchar("audio", { length: 255 }), // will also have many-to-many relation with words and users in the future
   created_at: date("created_at").defaultNow(),
   updated_at: date("updated_at"),
-  related_words: varchar("related_words", { length: 255 }).array(),
   related_phrases: text("related_phrases").array(),
   prefix: varchar("prefix", { length: 255 }),
   suffix: varchar("suffix", { length: 255 }),
@@ -35,6 +34,29 @@ export const wordsRelations = relations(words, ({ many }) => ({
   meanings: many(meanings),
   usersToWords: many(usersToWords),
 }));
+
+export const relatedWords = pgTable("related_words", {
+  wordId: integer("word_id").references(() => words.id, {
+    onDelete: "cascade",
+  }),
+  relatedWordId: integer("related_word_id").references(() => words.id, {
+    onDelete: "cascade",
+  }),
+});
+
+export const relatedWordsToWordsRelations = relations(
+  relatedWords,
+  ({ one }) => ({
+    word: one(words, {
+      fields: [relatedWords.wordId],
+      references: [words.id],
+    }),
+    relatedWord: one(words, {
+      fields: [relatedWords.relatedWordId],
+      references: [words.id],
+    }),
+  })
+);
 
 export const partOfSpeechEnum = pgEnum("partOfSpeech", [
   "isim",
@@ -71,7 +93,7 @@ export const meaningsRelations = relations(meanings, ({ one }) => ({
 }));
 
 export const usersToWords = pgTable(
-  "users_to_groups",
+  "users_to_words",
   {
     userId: text("user_id")
       .notNull()
