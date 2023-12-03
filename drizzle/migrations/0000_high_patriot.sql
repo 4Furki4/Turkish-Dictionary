@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS "meanings" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "related_words" (
-	"id" serial PRIMARY KEY NOT NULL,
 	"word_id" integer,
 	"related_word_id" integer
 );

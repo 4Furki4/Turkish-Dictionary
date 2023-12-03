@@ -1,0 +1,55 @@
+import {
+  integer,
+  pgEnum,
+  pgTable,
+  serial,
+  varchar,
+  text,
+  date,
+  timestamp,
+  primaryKey,
+} from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { words } from "./words";
+export const wordAttributes = pgTable("word_attributes", {
+  id: serial("id").primaryKey(),
+  attribute: varchar("attribute", { length: 255 }).notNull(),
+});
+
+export const wordAttributesRelations = relations(
+  wordAttributes,
+  ({ many }) => ({
+    wordAttributes: many(wordsAttributes),
+  })
+);
+
+export const wordsAttributes = pgTable(
+  "words_attributes",
+  {
+    wordId: integer("word_id").references(() => words.id, {
+      onDelete: "cascade",
+    }),
+    attributeId: integer("attribute_id").references(() => wordAttributes.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (t) => ({
+    pk: primaryKey({
+      columns: [t.wordId, t.attributeId],
+    }),
+  })
+);
+
+export const wordsAttributesRelations = relations(
+  wordsAttributes,
+  ({ one }) => ({
+    word: one(words, {
+      fields: [wordsAttributes.wordId],
+      references: [words.id],
+    }),
+    attribute: one(wordAttributes, {
+      fields: [wordsAttributes.attributeId],
+      references: [wordAttributes.id],
+    }),
+  })
+);
