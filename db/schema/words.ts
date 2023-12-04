@@ -1,8 +1,8 @@
 import { pgTable, serial, varchar, text, date } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { SelectMeaning, meanings } from "./meanings";
-import { usersToWords } from "./users";
 import { pronounciations } from "./pronounciations";
+import { savedWords } from "./saved_words";
 export const words = pgTable("words", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -18,7 +18,7 @@ export const words = pgTable("words", {
 
 export const wordsRelations = relations(words, ({ many }) => ({
   meanings: many(meanings),
-  usersToWords: many(usersToWords),
+  saved_words: many(savedWords),
   pronounciations: many(pronounciations),
 }));
 

@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1701509822797,
-      "tag": "0000_high_patriot",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1701632735271,
-      "tag": "0001_curly_warlock",
+      "when": 1701664926106,
+      "tag": "0000_modern_warbound",
       "breakpoints": true
     }
   ]

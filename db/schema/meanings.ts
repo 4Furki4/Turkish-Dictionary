@@ -8,18 +8,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { words } from "./words";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
-
-export const partOfSpeechEnum = pgEnum("partOfSpeech", [
-  "isim",
-  "fiil",
-  "sıfat",
-  "zarf",
-  "zamir",
-  "ünlem",
-  "edat",
-  "bağlaç",
-]);
-export type PartOfSpeech = (typeof partOfSpeechEnum.enumValues)[number];
+import { partOfSpeechs } from "./part_of_speechs";
+import { meaningsAttributes } from "./meaning_attributes";
 
 export const meanings = pgTable("meanings", {
   id: serial("id").primaryKey(),
@@ -32,15 +22,21 @@ export const meanings = pgTable("meanings", {
       onDelete: "cascade",
     }),
   imageUrl: varchar("imageUrl", { length: 255 }),
-  partOfSpeech: partOfSpeechEnum("partOfSpeech").notNull(),
-  attributes: varchar("attributes", { length: 255 }).array(),
+  partOfSpeechId: integer("part_of_speech_id")
+    .references(() => partOfSpeechs.id)
+    .notNull(),
 });
 
-export const meaningsRelations = relations(meanings, ({ one }) => ({
+export const meaningsRelations = relations(meanings, ({ one, many }) => ({
   word: one(words, {
     fields: [meanings.wordId],
     references: [words.id],
   }),
+  partOfSpeech: one(partOfSpeechs, {
+    fields: [meanings.partOfSpeechId],
+    references: [partOfSpeechs.id],
+  }),
+  attributes: many(meaningsAttributes),
 }));
 
 export type SelectMeaning = InferSelectModel<typeof meanings>;

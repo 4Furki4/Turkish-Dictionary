@@ -10,28 +10,12 @@ import {
 } from "drizzle-orm/pg-core";
 import { words } from "./words";
 import { pronounciations } from "./pronounciations";
+import { savedWords } from "./saved_words";
 
 export const rolesEnum = pgEnum("role", ["user", "moderator", "admin"]);
 
 export type Role = (typeof rolesEnum.enumValues)[number];
 
-export const usersToWords = pgTable(
-  "users_to_words",
-  {
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    wordId: integer("word_id")
-      .notNull()
-      .references(() => words.id, { onDelete: "cascade" }),
-    createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
-  },
-  (t) => ({
-    pk: primaryKey({
-      columns: [t.userId, t.wordId],
-    }),
-  })
-);
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
@@ -44,22 +28,22 @@ export const users = pgTable("user", {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  usersToWords: many(usersToWords),
+  saved_words: many(savedWords),
   pronounciations: many(pronounciations),
 }));
 
-export const usersToWordsRelations = relations(usersToWords, ({ one }) => ({
+export const usersToWordsRelations = relations(savedWords, ({ one }) => ({
   user: one(users, {
-    fields: [usersToWords.userId],
+    fields: [savedWords.userId],
     references: [users.id],
   }),
   word: one(words, {
-    fields: [usersToWords.wordId],
+    fields: [savedWords.wordId],
     references: [words.id],
   }),
 }));
 
 export type SelectUser = InferSelectModel<typeof users>;
-export type SelectUsersToWords = InferSelectModel<typeof usersToWords>;
+export type SelectUsersToWords = InferSelectModel<typeof savedWords>;
 export type InsertUser = InferInsertModel<typeof users>;
-export type InsertUsersToWords = InferInsertModel<typeof usersToWords>;
+export type InsertUsersToWords = InferInsertModel<typeof savedWords>;
