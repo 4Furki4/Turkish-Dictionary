@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "../trpc";
 import { eq } from "drizzle-orm";
-import { relatedWords, words } from "@/db/schema";
+import { words } from "@/db/schema/words";
 
 export const wordRouter = createTRPCRouter({
   /**

@@ -11,6 +11,7 @@ import {
 import { words } from "./words";
 import { pronounciations } from "./pronounciations";
 import { savedWords } from "./saved_words";
+import { requests } from "./requests";
 
 export const rolesEnum = pgEnum("role", ["user", "moderator", "admin"]);
 
@@ -30,6 +31,7 @@ export const users = pgTable("user", {
 export const usersRelations = relations(users, ({ many }) => ({
   saved_words: many(savedWords),
   pronounciations: many(pronounciations),
+  requests: many(requests),
 }));
 
 export const usersToWordsRelations = relations(savedWords, ({ one }) => ({
