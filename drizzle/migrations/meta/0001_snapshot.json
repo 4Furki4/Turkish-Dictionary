@@ -1,6 +1,6 @@
 {
-  "id": "dd1e953c-d159-429c-ba73-8a92a53c7553",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "41790011-86cc-484b-889e-7181e670016b",
+  "prevId": "dd1e953c-d159-429c-ba73-8a92a53c7553",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -499,7 +499,7 @@
         },
         "new_data": {
           "name": "new_data",
-          "type": "json",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },

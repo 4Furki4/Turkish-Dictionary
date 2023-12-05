@@ -75,6 +75,25 @@ CREATE TABLE IF NOT EXISTS "related_words" (
 	"related_word_id" integer
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "Requests" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"entity_type" varchar NOT NULL,
+	"entity_id" text,
+	"action" varchar NOT NULL,
+	"new_data" json,
+	"request_date" timestamp DEFAULT now(),
+	"status" varchar DEFAULT 'pending'
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "roots" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"root" varchar(255),
+	"language" varchar(255) NOT NULL,
+	"user_id" text,
+	"word_id" numeric NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "saved_words" (
 	"user_id" text NOT NULL,
 	"word_id" integer NOT NULL,
@@ -108,8 +127,7 @@ CREATE TABLE IF NOT EXISTS "words" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"phonetic" varchar(255),
-	"root" varchar(255),
-	"attributes" varchar(255)[],
+	"root_id" numeric,
 	"created_at" date DEFAULT now(),
 	"updated_at" date,
 	"related_phrases" text[],
@@ -173,6 +191,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "related_words" ADD CONSTRAINT "related_words_related_word_id_words_id_fk" FOREIGN KEY ("related_word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "Requests" ADD CONSTRAINT "Requests_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

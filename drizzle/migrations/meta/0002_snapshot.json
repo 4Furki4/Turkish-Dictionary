@@ -1,6 +1,6 @@
 {
-  "id": "dd1e953c-d159-429c-ba73-8a92a53c7553",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "5cf63063-19d1-4497-a2b2-90cd6e16f940",
+  "prevId": "41790011-86cc-484b-889e-7181e670016b",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -463,8 +463,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Requests": {
-      "name": "Requests",
+    "requests": {
+      "name": "requests",
       "schema": "",
       "columns": {
         "id": {
@@ -499,7 +499,7 @@
         },
         "new_data": {
           "name": "new_data",
-          "type": "json",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
@@ -520,9 +520,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "Requests_user_id_user_id_fk": {
-          "name": "Requests_user_id_user_id_fk",
-          "tableFrom": "Requests",
+        "requests_user_id_user_id_fk": {
+          "name": "requests_user_id_user_id_fk",
+          "tableFrom": "requests",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
@@ -871,7 +871,9 @@
   "schemas": {},
   "_meta": {
     "schemas": {},
-    "tables": {},
+    "tables": {
+      "\"Requests\"": "\"requests\""
+    },
     "columns": {}
   }
 }

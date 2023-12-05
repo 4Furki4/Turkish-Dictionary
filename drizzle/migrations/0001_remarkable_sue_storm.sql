@@ -1,0 +1,1 @@
+ALTER TABLE "Requests" ALTER COLUMN "new_data" SET DATA TYPE jsonb;
