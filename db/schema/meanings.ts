@@ -13,9 +13,7 @@ import { meaningsAttributes } from "./meaning_attributes";
 
 export const meanings = pgTable("meanings", {
   id: serial("id").primaryKey(),
-  definition: text("definition").notNull(),
-  exampleSentece: text("exampleSentence"),
-  exampleSentenceAuthor: varchar("exampleAuthor", { length: 255 }),
+  meaning: text("meaning").notNull(),
   wordId: integer("word_id")
     .notNull()
     .references(() => words.id, {
