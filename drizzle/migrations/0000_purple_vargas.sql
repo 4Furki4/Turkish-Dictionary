@@ -28,7 +28,7 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "account" (
+CREATE TABLE IF NOT EXISTS "accounts" (
 	"userId" text NOT NULL,
 	"type" text NOT NULL,
 	"provider" text NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "account" (
 	"id_token" text,
 	"session_state" text,
 	"createdAt" timestamp DEFAULT now(),
-	CONSTRAINT account_provider_providerAccountId_pk PRIMARY KEY("provider","providerAccountId")
+	CONSTRAINT accounts_provider_providerAccountId_pk PRIMARY KEY("provider","providerAccountId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "authors" (
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS "authors" (
 CREATE TABLE IF NOT EXISTS "examples" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"sentence" text NOT NULL,
-	"author_id" serial NOT NULL
+	"author_id" integer
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "meaning_attributes" (
@@ -81,14 +81,14 @@ CREATE TABLE IF NOT EXISTS "part_of_speechs" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "pronounciations" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"word_id" integer,
-	"user_id" text,
-	"audio_url" varchar(255)
+	"word_id" integer NOT NULL,
+	"user_id" text NOT NULL,
+	"audio_url" varchar(255) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "related_words" (
-	"word_id" integer,
-	"related_word_id" integer
+	"word_id" integer NOT NULL,
+	"related_word_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "requests" (
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS "roots" (
 	"root" varchar(255),
 	"language" varchar(255) NOT NULL,
 	"user_id" text,
-	"word_id" numeric NOT NULL
+	"word_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "saved_words" (
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS "words" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"phonetic" varchar(255),
-	"root_id" numeric,
+	"root_id" integer,
 	"created_at" date DEFAULT now(),
 	"updated_at" date,
 	"related_phrases" text[],
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS "words" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

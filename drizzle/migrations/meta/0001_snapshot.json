@@ -1,6 +1,6 @@
 {
-  "id": "ffaacb61-9ea1-44f8-90e2-a60258f8fd67",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "21be6730-0eb5-408c-8b95-1668f04e3c14",
+  "prevId": "ffaacb61-9ea1-44f8-90e2-a60258f8fd67",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -84,10 +84,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "accounts_userId_user_id_fk": {
-          "name": "accounts_userId_user_id_fk",
+        "accounts_userId_users_id_fk": {
+          "name": "accounts_userId_users_id_fk",
           "tableFrom": "accounts",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
@@ -385,10 +385,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "pronounciations_user_id_user_id_fk": {
-          "name": "pronounciations_user_id_user_id_fk",
+        "pronounciations_user_id_users_id_fk": {
+          "name": "pronounciations_user_id_users_id_fk",
           "tableFrom": "pronounciations",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -508,10 +508,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "requests_user_id_user_id_fk": {
-          "name": "requests_user_id_user_id_fk",
+        "requests_user_id_users_id_fk": {
+          "name": "requests_user_id_users_id_fk",
           "tableFrom": "requests",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -591,10 +591,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "saved_words_user_id_user_id_fk": {
-          "name": "saved_words_user_id_user_id_fk",
+        "saved_words_user_id_users_id_fk": {
+          "name": "saved_words_user_id_users_id_fk",
           "tableFrom": "saved_words",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -629,8 +629,8 @@
       },
       "uniqueConstraints": {}
     },
-    "user": {
-      "name": "user",
+    "users": {
+      "name": "users",
       "schema": "",
       "columns": {
         "id": {
@@ -889,7 +889,9 @@
   "schemas": {},
   "_meta": {
     "schemas": {},
-    "tables": {},
+    "tables": {
+      "\"user\"": "\"users\""
+    },
     "columns": {}
   }
 }

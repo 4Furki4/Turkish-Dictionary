@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { words } from "./words";
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const savedWords = pgTable(
   "saved_words",
@@ -25,3 +26,7 @@ export const savedWords = pgTable(
     }),
   })
 );
+
+export type SelectSavedWord = InferSelectModel<typeof savedWords>;
+
+export type InsertSavedWord = InferInsertModel<typeof savedWords>;

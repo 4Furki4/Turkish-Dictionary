@@ -9,7 +9,7 @@ import {
   timestamp,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { words } from "./words";
 export const wordAttributes = pgTable("word_attributes", {
   id: serial("id").primaryKey(),
@@ -53,3 +53,7 @@ export const wordsAttributesRelations = relations(
     }),
   })
 );
+
+export type SelectWordAttribute = InferSelectModel<typeof wordAttributes>;
+
+export type InsertWordAttribute = InferInsertModel<typeof wordAttributes>;

@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { pgTable, serial, text } from "drizzle-orm/pg-core";
 import { examples } from "./examples";
 
@@ -10,3 +10,7 @@ export const authors = pgTable("authors", {
 export const authorsRelations = relations(authors, ({ many }) => ({
   examples: many(examples),
 }));
+
+export type SelectAuthor = InferSelectModel<typeof authors>;
+
+export type InsertAuthor = InferInsertModel<typeof authors>;

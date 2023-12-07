@@ -4,7 +4,7 @@ import {
   varchar,
   text,
   date,
-  numeric,
+  integer,
 } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { SelectMeaning, meanings } from "./meanings";
@@ -15,7 +15,7 @@ export const words = pgTable("words", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   phonetic: varchar("phonetic", { length: 255 }),
-  rootId: numeric("root_id"),
+  rootId: integer("root_id"),
   created_at: date("created_at").defaultNow(),
   updated_at: date("updated_at"),
   related_phrases: text("related_phrases").array(),

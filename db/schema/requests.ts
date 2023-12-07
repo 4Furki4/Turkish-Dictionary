@@ -51,3 +51,24 @@ export const requestsRelations = relations(requests, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export type SelectRequest = {
+  id: number;
+  userId: string;
+  entityType: EntityTypes;
+  entityId: number;
+  action: Actions;
+  newData: any;
+  requestDate: Date;
+  status: Status;
+};
+
+export type InsertRequest = {
+  userId: string;
+  entityType: EntityTypes;
+  entityId: number;
+  action: Actions;
+  newData: any;
+  requestDate: Date;
+  status: Status;
+};

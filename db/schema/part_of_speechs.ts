@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { pgEnum, pgTable, serial } from "drizzle-orm/pg-core";
 import { meanings } from "./meanings";
 
@@ -23,11 +23,6 @@ export const partOfSpeechsRelations = relations(partOfSpeechs, ({ many }) => ({
   words: many(meanings),
 }));
 
-export type SelectPartOfSpeech = {
-  id: number;
-  partOfSpeech: PartOfSpeech;
-};
+export type SelectPartOfSpeech = InferSelectModel<typeof partOfSpeechs>;
 
-export type InsertPartOfSpeech = {
-  partOfSpeech: PartOfSpeech;
-};
+export type InsertPartOfSpeech = InferInsertModel<typeof partOfSpeechs>;

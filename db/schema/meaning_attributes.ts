@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { pgTable, primaryKey, serial, varchar } from "drizzle-orm/pg-core";
 import { meanings } from "./meanings";
 
@@ -44,11 +44,6 @@ export const meaningsAttributesRelations = relations(
   })
 );
 
-export type SelectMeaningAttribute = {
-  id: number;
-  attribute: string;
-};
+export type SelectMeaningAttribute = InferSelectModel<typeof meaningAttributes>;
 
-export type InsertMeaningAttribute = {
-  attribute: string;
-};
+export type InsertMeaningAttribute = InferInsertModel<typeof meaningAttributes>;
