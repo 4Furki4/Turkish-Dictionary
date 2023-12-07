@@ -16,7 +16,7 @@ import { api } from "@/src/trpc/react";
 import { uploadFiles } from "@/src/lib/uploadthing";
 import { CreateWordInput } from "@/src/lib/zod-schemas";
 import { toast } from "react-toastify";
-import { PartOfSpeech, partOfSpeechEnum } from "@/db/schema";
+import { PartOfSpeech, partOfSpeechEnum } from "@/db/schema/part_of_speechs";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -107,34 +107,34 @@ export default function CreateWord() {
       toast.dismiss(loadingToaster);
       toast.success("Images uploaded!");
     }
-    const newData: CreateWordInput = {
-      word: {
-        ...data,
-        attributes: data.attributes?.split(",").map((attribute) => {
-          return attribute.trim();
-        }),
-        relatedWords: data.relatedWords?.split(",").map((word) => {
-          return word.trim();
-        }),
-        relatedPhrases: data.relatedPhrases?.split("|").map((phrase) => {
-          return phrase.trim();
-        }),
-        meanings: meanings.map((meaning, index) => {
-          return {
-            ...meaning,
-            definition: {
-              ...meaning.definition,
-              image: uploadedPicturesUrls[index],
-            },
-            attributes: meaning.attributes?.split(",").map((attribute) => {
-              return attribute.trim();
-            }),
-            partOfSpeech: data.meanings[index].partOfSpeech as PartOfSpeech,
-          };
-        }),
-      },
-    };
-    wordMutation.mutate(newData);
+    // const newData: CreateWordInput = {
+    //   word: {
+    //     ...data,
+    //     attributes: data.attributes?.split(",").map((attribute) => {
+    //       return attribute.trim();
+    //     }),
+    //     relatedWords: data.relatedWords?.split(",").map((word) => {
+    //       return word.trim();
+    //     }),
+    //     relatedPhrases: data.relatedPhrases?.split("|").map((phrase) => {
+    //       return phrase.trim();
+    //     }),
+    //     meanings: meanings.map((meaning, index) => {
+    //       return {
+    //         ...meaning,
+    //         meaning: {
+    //           ...meaning.definition,
+    //           image: uploadedPicturesUrls[index],
+    //         },
+    //         attributes: meaning.attributes?.split(",").map((attribute) => {
+    //           return attribute.trim();
+    //         }),
+    //         partOfSpeech: data.meanings[index].partOfSpeech as PartOfSpeech,
+    //       };
+    //     }),
+    //   },
+    // };
+    // wordMutation.mutate(newData);
     reset();
   };
   return (

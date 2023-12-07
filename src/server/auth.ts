@@ -12,7 +12,7 @@ import DiscordProvider from "next-auth/providers/discord";
 import * as bycrypt from "bcrypt";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { users } from "@/db/schema";
+import { users } from "@/db/schema/users";
 import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

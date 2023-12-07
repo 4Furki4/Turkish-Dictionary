@@ -8,7 +8,7 @@ import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
 import { z } from "zod";
 import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 import { eq } from "drizzle-orm";
-import { users } from "@/db/schema";
+import { users } from "@/db/schema/users";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(

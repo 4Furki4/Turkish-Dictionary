@@ -2,8 +2,10 @@ import { TRPCError } from "@trpc/server";
 import { adminProcedure, createTRPCRouter } from "../trpc";
 import { z } from "zod";
 import { createWordSchema } from "@/src/lib/zod-schemas";
-import { InsertMeaning, meanings, words } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { words } from "@/db/schema/words";
+import { InsertMeaning, meanings } from "@/db/schema/meanings";
+import { roots } from "@/db/schema/roots";
 export const adminRouter = createTRPCRouter({
   deleteWord: adminProcedure
     .input(
@@ -25,25 +27,28 @@ export const adminRouter = createTRPCRouter({
   createWord: adminProcedure
     .input(createWordSchema)
     .mutation(async ({ ctx: { db }, input: { word } }) => {
-      const wordCreated = await db
+      const [wordCreated] = await db
         .insert(words)
         .values({
           name: word.name,
           phonetic: word.phonetics,
-          attributes: word.attributes,
-          related_phrases: word.relatedPhrases,
+          prefix: word.prefix,
+          suffix: word.suffix,
+        })
+        .returning()
+        .execute();
+      const root = await db
+        .insert(roots)
+        .values({
           root: word.root,
-          audioUrl: word.audio,
+          language: word.language,
+          wordId: wordCreated.id,
         })
         .returning()
         .execute();
       const wordMeanings: InsertMeaning[] = word.meanings.map((meaning) => ({
-        definition: meaning.definition.definition,
-        partOfSpeech: meaning.partOfSpeech,
-        wordId: wordCreated[0].id,
-        attributes: meaning.attributes,
-        exampleSentece: meaning.definition.example?.sentence,
-        exampleSentenceAuthor: meaning.definition.example?.author,
+        meaning: meaning.definition.definition,
+        wordId: wordCreated.id,
         imageUrl: meaning.definition.image,
       }));
       await db.insert(meanings).values(wordMeanings).execute();

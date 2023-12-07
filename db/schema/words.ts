@@ -18,7 +18,6 @@ export const words = pgTable("words", {
   rootId: integer("root_id"),
   created_at: date("created_at").defaultNow(),
   updated_at: date("updated_at"),
-  related_phrases: text("related_phrases").array(),
   prefix: varchar("prefix", { length: 255 }),
   suffix: varchar("suffix", { length: 255 }),
 });
