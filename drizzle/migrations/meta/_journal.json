@@ -15,6 +15,13 @@
       "when": 1701948883353,
       "tag": "0001_confused_morg",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1702034952050,
+      "tag": "0002_typical_blade",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,5 @@
 "use client";
-import { MeaningInputs, WordForm } from "@/types";
+import { MeaningInputs, WordForm, WordInput } from "@/types";
 import {
   Button,
   ButtonGroup,
@@ -14,20 +14,17 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "@/src/trpc/react";
 import { uploadFiles } from "@/src/lib/uploadthing";
-import { CreateWordInput } from "@/src/lib/zod-schemas";
 import { toast } from "react-toastify";
-import { PartOfSpeech, partOfSpeechEnum } from "@/db/schema/part_of_speechs";
+import { partOfSpeechEnum } from "@/db/schema/part_of_speechs";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
-  partOfSpeech: "",
-  definition: {
-    definition: "",
-    image: undefined,
-    example: {
-      author: undefined,
-      sentence: "",
-    },
+  partOfSpeech: undefined,
+  meaning: undefined,
+  image: undefined,
+  example: {
+    author: undefined,
+    sentence: undefined,
   },
 };
 const seperationValidate = (value: string | undefined, symbol: string) => {
@@ -47,15 +44,12 @@ export default function CreateWord() {
   const { handleSubmit, control, formState, clearErrors, watch, reset } =
     useForm<WordForm>({
       defaultValues: {
-        name: "",
-        attributes: undefined,
-        root: undefined,
+        name: undefined,
+        language: undefined,
         phonetic: undefined,
+        root: undefined,
         prefix: undefined,
         suffix: undefined,
-        relatedWords: undefined,
-        relatedPhrases: undefined,
-        audioUrl: undefined,
         meanings: [meaningDefaultValues],
       },
       mode: "all",
@@ -77,8 +71,8 @@ export default function CreateWord() {
   const onSubmit = async (data: WordForm) => {
     const { meanings } = data;
     const uploadedPictures = meanings.map(async (meaning) => {
-      if (meaning.definition.image?.[0]) {
-        const files = [meaning.definition.image[0]];
+      if (meaning.image?.[0]) {
+        const files = [meaning.image[0]];
         const response = await uploadFiles({
           endpoint: "imageUploader",
           files,
@@ -95,11 +89,7 @@ export default function CreateWord() {
       return undefined;
     });
     let uploadedPicturesUrls: (string | undefined)[] = [];
-    if (
-      meanings.every(
-        (meaning) => typeof meaning.definition.image === typeof FileList
-      )
-    ) {
+    if (meanings.every((meaning) => typeof meaning.image === typeof FileList)) {
       const loadingToaster = toast.loading("Uploading images...");
 
       uploadedPicturesUrls = await Promise.all(uploadedPictures);
@@ -107,34 +97,7 @@ export default function CreateWord() {
       toast.dismiss(loadingToaster);
       toast.success("Images uploaded!");
     }
-    // const newData: CreateWordInput = {
-    //   word: {
-    //     ...data,
-    //     attributes: data.attributes?.split(",").map((attribute) => {
-    //       return attribute.trim();
-    //     }),
-    //     relatedWords: data.relatedWords?.split(",").map((word) => {
-    //       return word.trim();
-    //     }),
-    //     relatedPhrases: data.relatedPhrases?.split("|").map((phrase) => {
-    //       return phrase.trim();
-    //     }),
-    //     meanings: meanings.map((meaning, index) => {
-    //       return {
-    //         ...meaning,
-    //         meaning: {
-    //           ...meaning.definition,
-    //           image: uploadedPicturesUrls[index],
-    //         },
-    //         attributes: meaning.attributes?.split(",").map((attribute) => {
-    //           return attribute.trim();
-    //         }),
-    //         partOfSpeech: data.meanings[index].partOfSpeech as PartOfSpeech,
-    //       };
-    //     }),
-    //   },
-    // };
-    // wordMutation.mutate(newData);
+    // TODO: handle object creation required in the backend
     reset();
   };
   return (
@@ -163,31 +126,7 @@ export default function CreateWord() {
               />
             )}
           />
-          <Controller
-            control={control}
-            name="attributes"
-            rules={{
-              required: false,
-              validate: (value) => seperationValidate(value, ","),
-              pattern: {
-                // allow only letters and comma between them, also allow UTF-8 characters
-                value: /^[\p{L}\s,]+$/u,
-                message: "Attributes must be separated by a comma!",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                {...field}
-                isRequired={false}
-                label="Attributes"
-                color="primary"
-                variant="underlined"
-                errorMessage={error?.message}
-                isInvalid={error !== undefined}
-                description="Attributes are optional, please separate them with a comma."
-              />
-            )}
-          />
+          {/* TODO: Attributes */}
           <Controller
             control={control}
             name="root"
@@ -204,10 +143,10 @@ export default function CreateWord() {
           <Controller
             control={control}
             name="phonetic"
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
-                label="Phonetics"
+                label="Phonetic"
                 color="primary"
                 variant="underlined"
                 description="Phonetics is optional"
@@ -240,52 +179,6 @@ export default function CreateWord() {
               />
             )}
           />
-          <Controller
-            control={control}
-            name="relatedWords"
-            rules={{
-              pattern: {
-                // allow only letters and comma between them, also allow UTF-8 characters
-                value: /^[\p{L}\s,]+$/u,
-                message: "Words must be separated by a comma!",
-              },
-              validate: (value) => seperationValidate(value, ","),
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                {...field}
-                label="Related Words"
-                color="primary"
-                variant="underlined"
-                description="Related Words is optional. Please separate them with a comma."
-                isInvalid={error !== undefined}
-                errorMessage={error?.message}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="relatedPhrases"
-            rules={{
-              pattern: {
-                // allow only letters and comma between them, also allow UTF-8 characters
-                value: /^[\p{L}\s|]+$/u,
-                message: "Phrases must be separated by a pipe symbol ( | )!",
-              },
-              validate: (value) => seperationValidate(value, "|"),
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                {...field}
-                label="Related Phrases"
-                color="primary"
-                variant="underlined"
-                description="Related Phrases is optional. Please separate them with a pipe symbol ( | )."
-                isInvalid={error !== undefined}
-                errorMessage={error?.message}
-              />
-            )}
-          />
         </div>
 
         <div className="w-full mt-2">
@@ -294,21 +187,21 @@ export default function CreateWord() {
             <Card key={field.id} className="mb-4">
               <CardBody className="flex flex-col gap-2">
                 <Controller
-                  name={`meanings.${index}.definition.definition`}
+                  name={`meanings.${index}.meaning`}
                   control={control}
                   rules={{
                     required: {
                       value: true,
-                      message: "Definition is required",
+                      message: "Meaning is required",
                     },
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <Input
                       {...field}
-                      label="Definition"
+                      label="Meaning"
                       color="primary"
                       variant="underlined"
-                      description="Definition is required."
+                      description="Meaning is required."
                       isRequired
                       errorMessage={error?.message}
                       isInvalid={error !== undefined}
@@ -367,7 +260,7 @@ export default function CreateWord() {
                     )}
                   />
                   <Controller
-                    name={`meanings.${index}.definition.example.sentence`}
+                    name={`meanings.${index}.example.sentence`}
                     control={control}
                     render={({ field }) => (
                       <Input
@@ -380,7 +273,7 @@ export default function CreateWord() {
                     )}
                   />
                   <Controller
-                    name={`meanings.${index}.definition.example.author`}
+                    name={`meanings.${index}.example.author`}
                     control={control}
                     render={({ field }) => (
                       <Input
@@ -400,7 +293,7 @@ export default function CreateWord() {
                     accept="image/*"
                     type="file"
                     multiple={false}
-                    {...control.register(`meanings.${index}.definition.image`, {
+                    {...control.register(`meanings.${index}.image`, {
                       validate: (file) => {
                         const FOUR_MB = 4 * 1024 * 1024;
                         if (file && file[0]?.size > FOUR_MB) {
@@ -423,13 +316,8 @@ export default function CreateWord() {
                       }
                     }}
                   />
-                  {formState.errors?.meanings?.[index]?.definition?.image && (
-                    <p>
-                      {
-                        formState.errors?.meanings?.[index]?.definition?.image
-                          ?.message
-                      }
-                    </p>
+                  {formState.errors?.meanings?.[index]?.image && (
+                    <p>{formState.errors?.meanings?.[index]?.image?.message}</p>
                   )}
                   {imagePreviewUrls[0] ? (
                     <img
@@ -446,8 +334,8 @@ export default function CreateWord() {
                     <Button
                       className="w-full"
                       onPress={() => {
-                        field.definition.image = undefined;
-                        clearErrors(`meanings.${index}.definition.image`);
+                        field.image = undefined;
+                        clearErrors(`meanings.${index}.image`);
                         setImagePreviewUrls((prev) => {
                           prev[index] = "";
                           return [...prev];
