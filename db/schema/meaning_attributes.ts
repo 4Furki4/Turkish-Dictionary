@@ -15,6 +15,9 @@ export const meaningsAttributes = pgTable(
     attributeId: serial("attribute_id").references(() => meaningAttributes.id, {
       onDelete: "cascade",
     }),
+    requestType: varchar("request_type", { length: 255 }).default(
+      "meaningAttribute"
+    ),
   },
   (t) => ({
     pk: primaryKey({

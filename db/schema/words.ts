@@ -20,6 +20,7 @@ export const words = pgTable("words", {
   updated_at: date("updated_at"),
   prefix: varchar("prefix", { length: 255 }),
   suffix: varchar("suffix", { length: 255 }),
+  requestType: varchar("request_type", { length: 255 }).default("word"),
 });
 
 export const wordsRelations = relations(words, ({ many, one }) => ({

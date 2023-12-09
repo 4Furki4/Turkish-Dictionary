@@ -5,6 +5,7 @@ import { examples } from "./examples";
 export const authors = pgTable("authors", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  requestType: varchar("request_type", { length: 255 }).default("author"),
 });
 
 export const authorsRelations = relations(authors, ({ many }) => ({

@@ -14,6 +14,9 @@ import { words } from "./words";
 export const wordAttributes = pgTable("word_attributes", {
   id: serial("id").primaryKey(),
   attribute: varchar("attribute", { length: 255 }).notNull(),
+  requestType: varchar("request_type", { length: 255 }).default(
+    "wordAttribute"
+  ),
 });
 
 export const wordAttributesRelations = relations(

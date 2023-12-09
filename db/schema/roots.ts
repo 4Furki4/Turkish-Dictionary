@@ -16,6 +16,7 @@ export const roots = pgTable("roots", {
   language: varchar("language", { length: 255 }).notNull(),
   userId: text("user_id"),
   wordId: integer("word_id").notNull(),
+  requestType: varchar("request_type", { length: 255 }).default("root"),
 });
 
 export const rootsRelations = relations(roots, ({ one }) => ({
