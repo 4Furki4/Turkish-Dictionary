@@ -1,5 +1,5 @@
 {
-  "id": "ffaacb61-9ea1-44f8-90e2-a60258f8fd67",
+  "id": "08f89d2c-7312-406d-91bb-f315304e869d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -84,10 +84,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "accounts_userId_user_id_fk": {
-          "name": "accounts_userId_user_id_fk",
+        "accounts_userId_users_id_fk": {
+          "name": "accounts_userId_users_id_fk",
           "tableFrom": "accounts",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
@@ -124,6 +124,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'author'"
         }
       },
       "indexes": {},
@@ -152,6 +159,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'example'"
         }
       },
       "indexes": {},
@@ -210,6 +224,13 @@
           "type": "serial",
           "primaryKey": false,
           "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'meaningAttribute'"
         }
       },
       "indexes": {},
@@ -285,6 +306,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'meaning'"
         }
       },
       "indexes": {},
@@ -334,6 +362,13 @@
           "type": "partOfSpeech",
           "primaryKey": false,
           "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'partOfSpeech'"
         }
       },
       "indexes": {},
@@ -385,12 +420,61 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "pronounciations_user_id_user_id_fk": {
-          "name": "pronounciations_user_id_user_id_fk",
+        "pronounciations_user_id_users_id_fk": {
+          "name": "pronounciations_user_id_users_id_fk",
           "tableFrom": "pronounciations",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "related_phrases": {
+      "name": "related_phrases",
+      "schema": "",
+      "columns": {
+        "phrase_id": {
+          "name": "phrase_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "related_phrase_id": {
+          "name": "related_phrase_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "related_phrases_phrase_id_words_id_fk": {
+          "name": "related_phrases_phrase_id_words_id_fk",
+          "tableFrom": "related_phrases",
+          "tableTo": "words",
+          "columnsFrom": [
+            "phrase_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "related_phrases_related_phrase_id_words_id_fk": {
+          "name": "related_phrases_related_phrase_id_words_id_fk",
+          "tableFrom": "related_phrases",
+          "tableTo": "words",
+          "columnsFrom": [
+            "related_phrase_id"
           ],
           "columnsTo": [
             "id"
@@ -508,10 +592,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "requests_user_id_user_id_fk": {
-          "name": "requests_user_id_user_id_fk",
+        "requests_user_id_users_id_fk": {
+          "name": "requests_user_id_users_id_fk",
           "tableFrom": "requests",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -558,6 +642,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'root'"
         }
       },
       "indexes": {},
@@ -591,10 +682,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "saved_words_user_id_user_id_fk": {
-          "name": "saved_words_user_id_user_id_fk",
+        "saved_words_user_id_users_id_fk": {
+          "name": "saved_words_user_id_users_id_fk",
           "tableFrom": "saved_words",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -629,8 +720,8 @@
       },
       "uniqueConstraints": {}
     },
-    "user": {
-      "name": "user",
+    "users": {
+      "name": "users",
       "schema": "",
       "columns": {
         "id": {
@@ -703,6 +794,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'wordAttribute'"
         }
       },
       "indexes": {},
@@ -808,12 +906,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "related_phrases": {
-          "name": "related_phrases",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false
-        },
         "prefix": {
           "name": "prefix",
           "type": "varchar(255)",
@@ -825,6 +917,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'word'"
         }
       },
       "indexes": {},

@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1701948805080,
-      "tag": "0000_purple_vargas",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1701948883353,
-      "tag": "0001_confused_morg",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1702034952050,
-      "tag": "0002_typical_blade",
+      "when": 1702226355425,
+      "tag": "0000_huge_phantom_reporter",
       "breakpoints": true
     }
   ]

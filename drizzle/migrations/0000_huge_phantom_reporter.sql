@@ -46,13 +46,15 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "authors" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"name" text NOT NULL
+	"name" text NOT NULL,
+	"request_type" varchar(255) DEFAULT 'author'
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "examples" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"sentence" text NOT NULL,
-	"author_id" integer
+	"author_id" integer,
+	"request_type" varchar(255) DEFAULT 'example'
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "meaning_attributes" (
@@ -63,6 +65,7 @@ CREATE TABLE IF NOT EXISTS "meaning_attributes" (
 CREATE TABLE IF NOT EXISTS "meanings_attributes" (
 	"meaning_id" serial NOT NULL,
 	"attribute_id" serial NOT NULL,
+	"request_type" varchar(255) DEFAULT 'meaningAttribute',
 	CONSTRAINT meanings_attributes_meaning_id_attribute_id_pk PRIMARY KEY("meaning_id","attribute_id")
 );
 --> statement-breakpoint
@@ -71,12 +74,14 @@ CREATE TABLE IF NOT EXISTS "meanings" (
 	"meaning" text NOT NULL,
 	"word_id" integer NOT NULL,
 	"imageUrl" varchar(255),
-	"part_of_speech_id" integer NOT NULL
+	"part_of_speech_id" integer NOT NULL,
+	"request_type" varchar(255) DEFAULT 'meaning'
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "part_of_speechs" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"partOfSpeech" "partOfSpeech" NOT NULL
+	"partOfSpeech" "partOfSpeech" NOT NULL,
+	"request_type" varchar(255) DEFAULT 'partOfSpeech'
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "pronounciations" (
@@ -84,6 +89,11 @@ CREATE TABLE IF NOT EXISTS "pronounciations" (
 	"word_id" integer NOT NULL,
 	"user_id" text NOT NULL,
 	"audio_url" varchar(255) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "related_phrases" (
+	"phrase_id" integer NOT NULL,
+	"related_phrase_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "related_words" (
@@ -107,7 +117,8 @@ CREATE TABLE IF NOT EXISTS "roots" (
 	"root" varchar(255),
 	"language" varchar(255) NOT NULL,
 	"user_id" text,
-	"word_id" integer NOT NULL
+	"word_id" integer NOT NULL,
+	"request_type" varchar(255) DEFAULT 'root'
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "saved_words" (
@@ -117,7 +128,7 @@ CREATE TABLE IF NOT EXISTS "saved_words" (
 	CONSTRAINT saved_words_user_id_word_id_pk PRIMARY KEY("user_id","word_id")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text,
 	"email" text NOT NULL,
@@ -130,7 +141,8 @@ CREATE TABLE IF NOT EXISTS "user" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "word_attributes" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"attribute" varchar(255) NOT NULL
+	"attribute" varchar(255) NOT NULL,
+	"request_type" varchar(255) DEFAULT 'wordAttribute'
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "words_attributes" (
@@ -146,13 +158,13 @@ CREATE TABLE IF NOT EXISTS "words" (
 	"root_id" integer,
 	"created_at" date DEFAULT now(),
 	"updated_at" date,
-	"related_phrases" text[],
 	"prefix" varchar(255),
-	"suffix" varchar(255)
+	"suffix" varchar(255),
+	"request_type" varchar(255) DEFAULT 'word'
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -194,7 +206,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "pronounciations" ADD CONSTRAINT "pronounciations_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "pronounciations" ADD CONSTRAINT "pronounciations_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "related_phrases" ADD CONSTRAINT "related_phrases_phrase_id_words_id_fk" FOREIGN KEY ("phrase_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "related_phrases" ADD CONSTRAINT "related_phrases_related_phrase_id_words_id_fk" FOREIGN KEY ("related_phrase_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -212,13 +236,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "requests" ADD CONSTRAINT "requests_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "requests" ADD CONSTRAINT "requests_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "saved_words" ADD CONSTRAINT "saved_words_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "saved_words" ADD CONSTRAINT "saved_words_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -44,7 +44,7 @@ export const requests = pgTable("requests", {
     .notNull()
     .references(() => users.id),
   entityType: entityTypesEnum("entity_type").notNull(),
-  requestableId: integer("entity_id").notNull(),
+  requestableId: integer("entity_id"),
   action: actionsEnum("action").notNull(),
   newData: jsonb("new_data"),
   requestDate: timestamp("request_date").defaultNow(),
