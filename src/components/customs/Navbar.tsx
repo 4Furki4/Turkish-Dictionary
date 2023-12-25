@@ -66,7 +66,7 @@ export default function Navbar() {
       <NavbarContent className="hidden sm:flex" justify="start">
         <NavbarItem>
           <Link as={NextLink} href="/">
-            <HomeIcon size={32} />
+            <HomeIcon aria-label="Home Icon" size={32} />
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -74,11 +74,6 @@ export default function Navbar() {
         <NavbarItem isActive={pathName.includes("/word-list")}>
           <Link as={NextLink} href={"/word-list"}>
             {t("Word List")}
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive={pathName.includes("/protected")}>
-          <Link as={NextLink} href={"/protected"}>
-            Protected Page
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -119,27 +114,35 @@ export default function Navbar() {
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        <NavbarContent justify="center">
-          {status !== "authenticated" ? (
-            <NavbarItem>
-              <Button
-                isDisabled={isAuthPage}
-                onKeyDown={(e) =>
-                  onEnterAndSpace(e, () => {
-                    if (!isAuthPage) signIn();
-                  })
-                }
-                onClick={() => {
+        {status !== "authenticated" ? (
+          <NavbarItem>
+            <Button
+              aria-disabled={isAuthPage}
+              isDisabled={isAuthPage}
+              onKeyDown={(e) =>
+                onEnterAndSpace(e, () => {
                   if (!isAuthPage) signIn();
-                }}
-                variant="ghost"
-                color="primary"
-                isLoading={status === "loading"}
-              >
-                {t("Sign In")}
-              </Button>
-            </NavbarItem>
-          ) : (
+                })
+              }
+              onClick={() => {
+                if (!isAuthPage) signIn();
+              }}
+              variant="ghost"
+              color="primary"
+              isLoading={status === "loading"}
+            >
+              {t("Sign In")}
+            </Button>
+          </NavbarItem>
+        ) : (
+          <>
+            {data.user.role === "user" ? null : (
+              <NavbarItem className="hidden sm:flex">
+                <Link as={NextLink} href={"/dashboard"}>
+                  Dashboard
+                </Link>
+              </NavbarItem>
+            )}
             <NavbarItem className="cursor-pointer">
               <Dropdown>
                 <DropdownTrigger>
@@ -181,13 +184,13 @@ export default function Navbar() {
                 </DropdownMenu>
               </Dropdown>
             </NavbarItem>
-          )}
-        </NavbarContent>
+          </>
+        )}
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger className="cursor-pointer">
               <Button className="bg-transparent" variant="flat">
-                <Palette size={32} />
+                <Palette aria-label="palette icon" size={32} />
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -240,10 +243,10 @@ export default function Navbar() {
         <NavbarMenuItem>
           <Link
             as={NextLink}
-            href={"/protected"}
-            className={pathName.includes("protected") ? "underline" : ""}
+            className={pathName.includes("dashboard") ? "underline" : ""}
+            href="/dashboard"
           >
-            Protected Page
+            Dashboard
           </Link>
         </NavbarMenuItem>
       </NavbarMenu>

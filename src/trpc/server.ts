@@ -21,6 +21,7 @@ export const api = createTRPCProxyClient<AppRouter>({
       headers() {
         const heads = new Map(headers());
         heads.set("x-trpc-source", "rsc");
+        heads.set("cache-control", `s-maxage=1, stale-while-revalidate=60`);
         return Object.fromEntries(heads);
       },
     }),

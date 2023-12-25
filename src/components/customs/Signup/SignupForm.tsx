@@ -1,7 +1,6 @@
 "use client";
-import "react-toastify/dist/ReactToastify.css";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
-import { SignUpInputs, SignUpRequest } from "@/types";
+import { SignupForm, SignupRequest } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import Link from "next-intl/link";
@@ -15,8 +14,7 @@ import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "./PasswordEye";
-import { z } from "zod";
-import { TRPCClientError } from "@trpc/client";
+
 export default function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
@@ -55,12 +53,12 @@ export default function SignupForm() {
       router.push("/signin", { scroll: false });
     },
   });
-  const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
+  const onSignupSubmit: SubmitHandler<SignupForm> = (data: SignupRequest) => {
     const user = {
       name: data.name,
       username: data.username,
       email: data.email,
-      password: data.signupPassword,
+      password: data.password,
     };
     createUserMutation.mutate(user);
   };
@@ -85,7 +83,7 @@ export default function SignupForm() {
     watch,
     clearErrors,
     formState: { errors },
-  } = useForm<SignUpInputs>({ mode: "all" });
+  } = useForm<SignupForm>({ mode: "all" });
   const t = useTranslations("SignupForm");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -112,11 +110,9 @@ export default function SignupForm() {
         {t("Sign up with Google")}
       </Button>
       <Divider></Divider>
-      <div>
-        <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
-          {t("Create a new account")}
-        </h1>
-      </div>
+      <h1 className="text-fs-2 font-bold text-center">
+        {t("Create a new account")}
+      </h1>
       <Controller
         name="name"
         rules={{
@@ -130,7 +126,10 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
+            autoComplete="name"
+            dir="auto"
             label={t("Name")}
             color="primary"
             variant="underlined"
@@ -150,6 +149,9 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
+            autoComplete="username"
+            dir="auto"
+            aria-required
             label={t("Username")}
             {...field}
             color="primary"
@@ -174,6 +176,10 @@ export default function SignupForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            autoComplete="email"
+            inputMode="email"
+            dir="auto"
+            aria-required
             type="email"
             {...field}
             label={t("Email")}
@@ -186,7 +192,7 @@ export default function SignupForm() {
       />
       <Controller
         control={control}
-        name="signupPassword"
+        name="password"
         rules={{
           pattern: {
             value:
@@ -200,11 +206,13 @@ export default function SignupForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
+            autoComplete="new-password"
             label={t("Password")}
             color="primary"
             variant="underlined"
-            errorMessage={errors.signupPassword?.message}
+            errorMessage={errors.password?.message}
             isInvalid={error !== undefined}
             type={isPasswordVisible ? "text" : "password"}
             endContent={
@@ -225,11 +233,12 @@ export default function SignupForm() {
             message: t("ConfirmPasswordRequiredErrorMessage"),
           },
           validate: (value) =>
-            value === watch("signupPassword") || "Passwords do not match",
+            value === watch("password") || "Passwords do not match",
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
+            autoComplete="new-password"
             label={t("Confirm Password")}
             color="primary"
             variant="underlined"

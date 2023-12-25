@@ -121,6 +121,7 @@ export default function Page({
               }}
               render={({ field, fieldState: { error } }) => (
                 <Input
+                  autoComplete="new-password"
                   endContent={
                     <div
                       className="cursor-pointer"
@@ -158,6 +159,7 @@ export default function Page({
               render={({ field, fieldState: { error } }) => (
                 <Input
                   isRequired
+                  autoComplete="new-password"
                   endContent={
                     <PasswordEye
                       handleVisibility={() => {

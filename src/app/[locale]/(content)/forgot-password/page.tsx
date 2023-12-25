@@ -1,8 +1,8 @@
 import ForgotPasswordForm from "@/src/components/customs/Signup/ForgotPasswordForm";
 import React from "react";
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { getServerAuthSession } from "@/src/server/auth";
 
 export async function generateMetadata({
   params: { locale },
@@ -26,7 +26,7 @@ export async function generateMetadata({
 }
 
 export default async function page() {
-  const session = await getServerSession();
+  const session = await getServerAuthSession();
   if (session) redirect("/?warning=alreadySignedIn");
   return (
     <main className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">

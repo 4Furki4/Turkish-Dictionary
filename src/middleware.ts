@@ -31,7 +31,7 @@ const authMiddleware = withAuth(
   }
 );
 
-export default function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const publicPathnameRegex = RegExp(
     `^(/(${locales.join("|")}))?(${publicPages.join("|")})?/?$`,
     "i"
@@ -48,3 +48,14 @@ export default function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/((?!api|_next|.*\\..*).*)"],
 };
+
+// export default createMiddleware({
+//   locales: ["en", "tr"],
+//   defaultLocale: "en",
+// });
+
+// export const config = {
+//   // Skip all paths that should not be internationalized. This example skips
+//   // certain folders and all pathnames with a dot (e.g. favicon.ico)
+//   matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+// };

@@ -11,12 +11,18 @@ export default function PasswordEye({
 }) {
   return (
     <div
+      tabIndex={0}
+      aria-hidden
       className="cursor-pointer"
       onClick={() => {
         handleVisibility();
       }}
     >
-      {isVisible ? <EyeOff /> : <Eye />}
+      {isVisible ? (
+        <EyeOff aria-label="Eye Off Icon" />
+      ) : (
+        <Eye aria-label="Eye Icon" />
+      )}
     </div>
   );
 }
