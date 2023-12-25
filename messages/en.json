@@ -6,6 +6,8 @@
   },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
+    "Sign in with GitHub": "Sign in with GitHub",
+    "Sign in with Discord": "Sign in with Discord",
     "Don't have an account?": "Don't have an account?",
     "Sign Up": "Sign Up",
     "Sign In": "Sign In",

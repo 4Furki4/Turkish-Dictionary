@@ -6,6 +6,8 @@
   },
   "SigninForm": {
     "Sign in with Google": "Google ile giriş yap",
+    "Sign in with GitHub": "GitHub ile giriş yap",
+    "Sign in with Discord": "Discord ile giriş yap",
     "Don't have an account?": "Hesabınız yok mu?",
     "Sign Up": "Kaydolun",
     "Sign In": "Giriş Yap",

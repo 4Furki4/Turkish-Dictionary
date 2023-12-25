@@ -163,11 +163,11 @@ export default function Navbar({
               isDisabled={isAuthPage}
               onKeyDown={(e) =>
                 onEnterAndSpace(e, () => {
-                  if (!isAuthPage) signIn();
+                  if (!isAuthPage) route.push("/signin");
                 })
               }
               onClick={() => {
-                if (!isAuthPage) signIn();
+                if (!isAuthPage) route.push("/signin");
               }}
               variant="ghost"
               color="primary"
