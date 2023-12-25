@@ -7,18 +7,23 @@ import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "@/src/navigation";
-export default function Search({ children }: { children: React.ReactNode }) {
+export default function Search({
+  children,
+  warningParamIntl,
+}: {
+  children: React.ReactNode;
+  warningParamIntl: string;
+}) {
   const params = useSearchParams();
   const router = useRouter();
-  // const t = useTranslations("Home");
   const { theme } = useTheme();
   useEffect(() => {
     const warningParam = params.get("warning");
     if (warningParam === "alreadySignedIn") {
-      // toast.warning(t(warningParam), {
-      //   theme:
-      //     theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
-      // });
+      toast.warning(warningParamIntl, {
+        theme:
+          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+      });
       router.replace("/");
     }
   }, []);

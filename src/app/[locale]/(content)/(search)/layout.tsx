@@ -1,10 +1,12 @@
 import Search from "@/src/components/customs/Search";
+import { getTranslations } from "next-intl/server";
 import React from "react";
 
-export default function SearchLayout({
+export default async function SearchLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <Search>{children}</Search>;
+  const t = await getTranslations("Home");
+  return <Search warningParamIntl={t("alreadySignedIn")}>{children}</Search>;
 }
