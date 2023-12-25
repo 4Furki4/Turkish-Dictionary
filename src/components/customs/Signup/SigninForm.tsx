@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { LoginInputs } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
-import Link from "next-intl/link";
 import React, { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -12,10 +11,10 @@ import { signIn } from "next-auth/react";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { useRouter } from "next-intl/client";
 import PasswordEye from "./PasswordEye";
 import { z } from "zod";
 import { GithubIcon } from "lucide-react";
+import { useRouter } from "@/src/navigation";
 export default function SigninForm() {
   const {
     handleSubmit,

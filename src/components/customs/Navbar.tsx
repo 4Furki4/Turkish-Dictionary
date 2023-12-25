@@ -19,20 +19,30 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import { useRouter, usePathname } from "next-intl/client";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, Link as NextIntlLink } from "@/src/navigation";
+import { Session } from "next-auth";
 
-export default function Navbar() {
-  const { status, data } = useSession();
+export default function Navbar({
+  session,
+  WordListIntl,
+  SignInIntl,
+  HomeIntl,
+}: {
+  session: Session | null;
+  WordListIntl: string;
+  SignInIntl: string;
+  HomeIntl: string;
+}) {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
-  const params = useSearchParams();
+  const searchParams = useSearchParams();
   const route = useRouter();
   const locale = useLocale();
-  const t = useTranslations("Navbar");
+  const params = useParams();
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
     pathName
   );
@@ -73,7 +83,7 @@ export default function Navbar() {
       <NavbarContent className="hidden sm:flex" justify="center">
         <NavbarItem isActive={pathName.includes("/word-list")}>
           <Link as={NextLink} href={"/word-list"}>
-            {t("Word List")}
+            {WordListIntl}
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -87,16 +97,24 @@ export default function Navbar() {
             </DropdownTrigger>
             <DropdownMenu
               onAction={(key) => {
-                const queryParams = decodeURIComponent(params.toString());
+                const queryParams = new URLSearchParams(searchParams);
                 switch (key) {
                   case "tr":
-                    route.replace(`${pathName}?${queryParams}`, {
-                      locale: "tr",
+                    route.push({
+                      pathname: pathName,
+                      query: queryParams as any,
+                      params: {
+                        token: params.token as any,
+                      },
                     });
                     break;
                   case "en":
-                    route.replace(`${pathName}?${queryParams}`, {
-                      locale: "en",
+                    route.push({
+                      pathname: pathName,
+                      query: queryParams as any,
+                      params: {
+                        token: params.token as any,
+                      },
                     });
                     break;
                 }
@@ -104,17 +122,41 @@ export default function Navbar() {
             >
               {locale === "en" ? (
                 <DropdownItem color="primary" key={"tr"}>
-                  Turkish
+                  <NextIntlLink
+                    className="w-full block"
+                    href={{
+                      pathname: pathName,
+                      query: new URLSearchParams(searchParams) as any,
+                      params: {
+                        token: params.token as any,
+                      },
+                    }}
+                    locale="tr"
+                  >
+                    Türkçe
+                  </NextIntlLink>
                 </DropdownItem>
               ) : (
                 <DropdownItem color="primary" key={"en"}>
-                  English
+                  <NextIntlLink
+                    className="w-full block"
+                    href={{
+                      pathname: pathName,
+                      query: new URLSearchParams(searchParams) as any,
+                      params: {
+                        token: params.token as any,
+                      },
+                    }}
+                    locale="en"
+                  >
+                    English
+                  </NextIntlLink>
                 </DropdownItem>
               )}
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        {status !== "authenticated" ? (
+        {!session?.user ? (
           <NavbarItem>
             <Button
               aria-disabled={isAuthPage}
@@ -129,14 +171,13 @@ export default function Navbar() {
               }}
               variant="ghost"
               color="primary"
-              isLoading={status === "loading"}
             >
-              {t("Sign In")}
+              {SignInIntl}
             </Button>
           </NavbarItem>
         ) : (
           <>
-            {data.user.role === "user" ? null : (
+            {session?.user.role === "user" ? null : (
               <NavbarItem className="hidden sm:flex">
                 <Link as={NextLink} href={"/dashboard"}>
                   Dashboard
@@ -228,7 +269,7 @@ export default function Navbar() {
             href={"/"}
             className={pathName === "/" ? "underline" : ""}
           >
-            {t("Home")}
+            {HomeIntl}
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
@@ -237,7 +278,7 @@ export default function Navbar() {
             href={"/word-list"}
             className={pathName.includes("word-list") ? "underline" : ""}
           >
-            {t("Word List")}
+            {WordListIntl}
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
