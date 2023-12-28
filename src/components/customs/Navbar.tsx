@@ -125,7 +125,11 @@ export default function Navbar({
                     className="w-full block"
                     href={{
                       pathname: pathName,
-                      query: new URLSearchParams(searchParams) as any,
+                      query: searchParams.get("callbackUrl")
+                        ? {
+                            callbackUrl: searchParams.get("callbackUrl"),
+                          }
+                        : undefined,
                       params: {
                         token: params.token as any,
                       },
@@ -141,7 +145,11 @@ export default function Navbar({
                     className="w-full block"
                     href={{
                       pathname: pathName,
-                      query: new URLSearchParams(searchParams) as any,
+                      query: searchParams.get("callbackUrl")
+                        ? {
+                            callbackUrl: searchParams.get("callbackUrl"),
+                          }
+                        : undefined,
                       params: {
                         token: params.token as any,
                       },
