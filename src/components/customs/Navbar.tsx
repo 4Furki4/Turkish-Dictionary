@@ -25,17 +25,16 @@ import { useParams, useSearchParams } from "next/navigation";
 import { usePathname, useRouter, Link as NextIntlLink } from "@/src/navigation";
 import { Session } from "next-auth";
 
+type NavbarProps = {
+  session: Session | null;
+} & Record<"WordListIntl" | "SignInIntl" | "HomeIntl", string>;
+
 export default function Navbar({
   session,
   WordListIntl,
   SignInIntl,
   HomeIntl,
-}: {
-  session: Session | null;
-  WordListIntl: string;
-  SignInIntl: string;
-  HomeIntl: string;
-}) {
+}: NavbarProps) {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
@@ -163,11 +162,19 @@ export default function Navbar({
               isDisabled={isAuthPage}
               onKeyDown={(e) =>
                 onEnterAndSpace(e, () => {
-                  if (!isAuthPage) route.push("/signin");
+                  if (!isAuthPage)
+                    route.push({
+                      pathname: "/signin",
+                      query: { callbackUrl: pathName },
+                    });
                 })
               }
               onClick={() => {
-                if (!isAuthPage) route.push("/signin");
+                if (!isAuthPage)
+                  route.push({
+                    pathname: "/signin",
+                    query: { callbackUrl: pathName },
+                  });
               }}
               variant="ghost"
               color="primary"

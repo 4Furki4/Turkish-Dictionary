@@ -9,6 +9,11 @@ const publicPages = [
   "/signin",
   "/forgot-password",
   "/reset-password/(.*)",
+  "/ara",
+  "/giris-yap",
+  "/kayit-ol",
+  "/sifremi-unuttum",
+  "/sifreyi-yenile/(.*)",
 ];
 
 const intlMiddleware = createIntlMiddleware({
