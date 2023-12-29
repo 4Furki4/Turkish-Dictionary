@@ -3,6 +3,7 @@ import React from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "@/src/server/auth";
+import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params: { locale },
@@ -25,10 +26,30 @@ export async function generateMetadata({
 
 export default async function page() {
   const session = await getServerAuthSession();
+  const t = await getTranslations("SigninForm");
   if (session) redirect("/?warning=alreadySignedIn");
   return (
     <main className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
-      <SigninForm />
+      <SigninForm
+        CorruptedLoginDataIntl={t("CorruptedLoginData")}
+        WithCredentialsIntl={t("WithCredentials")}
+        DontHaveAnAccountIntl={t("Don't have an account?")}
+        ForgotPasswordIntl={t("Forgot Password")}
+        PasswordMinLengthErrorMessageIntl={t("PasswordMinLengthErrorMessage")}
+        PasswordRequiredErrorMessageIntl={t("PasswordRequiredErrorMessage")}
+        PasswordIntl={t("Password")}
+        InvalidUsernameEmailOrPasswordIntl={t(
+          "Invalid username, email or password"
+        )}
+        OAuthAccountNotLinked={t("OAuthAccountNotLinked")}
+        SigninWithGoogleIntl={t("Sign in with Google")}
+        SigninWithDiscordIntl={t("Sign in with Discord")}
+        SigninWithGithubIntl={t("Sign in with GitHub")}
+        SigninIntl={t("Sign In")}
+        UsernameOrEmailRequiredIntl={t("UsernameOrEmailRequired")}
+        UsernameOrEmailIntl={t("Username or Email")}
+        SignupIntl={t("Sign Up")}
+      />
     </main>
   );
 }

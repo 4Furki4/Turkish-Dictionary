@@ -2,11 +2,8 @@
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { SignupForm, SignupRequest } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
-import { useTranslations } from "next-intl";
-import Link from "next-intl/link";
 import Image from "next/image";
 import React, { useState } from "react";
-import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
@@ -14,8 +11,48 @@ import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "./PasswordEye";
+import { Link, useRouter } from "@/src/navigation";
 
-export default function SignupForm() {
+type SignUpFormProps = Record<
+  | "SuccessMessageIntl"
+  | "GoogleSignupIntl"
+  | "CreateNewAccIntl"
+  | "NameIntl"
+  | "UsernameRequiredErrorIntl"
+  | "NameRequiredErrorIntl"
+  | "UsernameIntl"
+  | "EmailRequiredErrorIntl"
+  | "EmailIntl"
+  | "PasswordPatternErrorIntl"
+  | "PasswordRequiredErrorIntl"
+  | "PasswordIntl"
+  | "ConfirmPasswordRequiredErrorIntl"
+  | "ConfirmPasswordIntl"
+  | "SignupButtonIntl"
+  | "AlreadyHaveAccountIntl"
+  | "LoginIntl",
+  string
+>;
+
+export default function SignupForm({
+  SuccessMessageIntl,
+  GoogleSignupIntl,
+  CreateNewAccIntl,
+  NameIntl,
+  UsernameRequiredErrorIntl,
+  NameRequiredErrorIntl,
+  UsernameIntl,
+  EmailRequiredErrorIntl,
+  EmailIntl,
+  PasswordPatternErrorIntl,
+  PasswordRequiredErrorIntl,
+  PasswordIntl,
+  ConfirmPasswordRequiredErrorIntl,
+  ConfirmPasswordIntl,
+  SignupButtonIntl,
+  AlreadyHaveAccountIntl,
+  LoginIntl,
+}: SignUpFormProps) {
   const router = useRouter();
   const params = useSearchParams();
   const { theme } = useTheme();
@@ -44,7 +81,7 @@ export default function SignupForm() {
       });
     },
     onSuccess: async (data) => {
-      toast.success(t("Account created successfully, please sign in"), {
+      toast.success(SuccessMessageIntl, {
         theme:
           theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
@@ -84,7 +121,6 @@ export default function SignupForm() {
     clearErrors,
     formState: { errors },
   } = useForm<SignupForm>({ mode: "all" });
-  const t = useTranslations("SignupForm");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -107,16 +143,14 @@ export default function SignupForm() {
           />
         }
       >
-        {t("Sign up with Google")}
+        {GoogleSignupIntl}
       </Button>
       <Divider></Divider>
-      <h1 className="text-fs-2 font-bold text-center">
-        {t("Create a new account")}
-      </h1>
+      <h1 className="text-fs-2 font-bold text-center">{CreateNewAccIntl}</h1>
       <Controller
         name="name"
         rules={{
-          required: { value: true, message: t("NameRequiredErrorMessage") },
+          required: { value: true, message: NameRequiredErrorIntl },
           onChange: (e) => {
             if (e.target.value.length > 0) {
               clearErrors("name");
@@ -130,7 +164,7 @@ export default function SignupForm() {
             {...field}
             autoComplete="name"
             dir="auto"
-            label={t("Name")}
+            label={NameIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.name?.message}
@@ -143,7 +177,7 @@ export default function SignupForm() {
         rules={{
           required: {
             value: true,
-            message: t("UsernameRequiredErrorMessage"),
+            message: UsernameRequiredErrorIntl,
           },
         }}
         control={control}
@@ -152,7 +186,7 @@ export default function SignupForm() {
             autoComplete="username"
             dir="auto"
             aria-required
-            label={t("Username")}
+            label={UsernameIntl}
             {...field}
             color="primary"
             variant="underlined"
@@ -167,7 +201,7 @@ export default function SignupForm() {
         rules={{
           required: {
             value: true,
-            message: t("EmailRequiredErrorMessage"),
+            message: EmailRequiredErrorIntl,
           },
           pattern: {
             value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
@@ -182,7 +216,7 @@ export default function SignupForm() {
             aria-required
             type="email"
             {...field}
-            label={t("Email")}
+            label={EmailIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.email?.message}
@@ -197,11 +231,11 @@ export default function SignupForm() {
           pattern: {
             value:
               /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=\S+$).{8,}$/,
-            message: t("PasswordPatternErrorMessage"),
+            message: PasswordPatternErrorIntl,
           },
           required: {
             value: true,
-            message: t("PasswordRequiredErrorMessage"),
+            message: PasswordRequiredErrorIntl,
           },
         }}
         render={({ field, fieldState: { error } }) => (
@@ -209,7 +243,7 @@ export default function SignupForm() {
             aria-required
             {...field}
             autoComplete="new-password"
-            label={t("Password")}
+            label={PasswordIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.password?.message}
@@ -230,7 +264,7 @@ export default function SignupForm() {
         rules={{
           required: {
             value: true,
-            message: t("ConfirmPasswordRequiredErrorMessage"),
+            message: ConfirmPasswordRequiredErrorIntl,
           },
           validate: (value) =>
             value === watch("password") || "Passwords do not match",
@@ -239,7 +273,7 @@ export default function SignupForm() {
           <Input
             {...field}
             autoComplete="new-password"
-            label={t("Confirm Password")}
+            label={ConfirmPasswordIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.confirmPassword?.message}
@@ -258,15 +292,18 @@ export default function SignupForm() {
       />
 
       <Button color="primary" variant="ghost" type="submit">
-        {t("Sign Up Button")}
+        {SignupButtonIntl}
       </Button>
       <p>
-        {t("Already have an account?")}{" "}
+        {AlreadyHaveAccountIntl}{" "}
         <Link
-          href={`/signin?${decodeURIComponent(params.toString())}`}
+          href={{
+            pathname: "/signin",
+            query: new URLSearchParams(params) as any,
+          }}
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
         >
-          {t("Login")}
+          {LoginIntl}
         </Link>
       </p>
     </form>

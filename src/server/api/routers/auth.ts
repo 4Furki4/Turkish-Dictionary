@@ -87,11 +87,13 @@ export const authRouter = createTRPCRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User with this email does not exist",
+          cause: "UnknownEmailError",
         });
       if (user && !user.password)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User created with google auth",
+          cause: "GoogleAuthError",
         });
       const payload = {
         email: user.email,
