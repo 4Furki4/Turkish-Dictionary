@@ -31,11 +31,11 @@ export const pathnames = {
     en: "/saved-words",
     tr: "/kaydedilen-kelimeler",
   },
-  profile: {
+  "/profile": {
     en: "/profile",
     tr: "/profil",
   },
-  dashboard: {
+  "/dashboard": {
     en: "/dashboard",
     tr: "/panel",
   },
@@ -43,7 +43,7 @@ export const pathnames = {
     en: "/dashboard/create",
     tr: "/panel/ekle",
   },
-  search: {
+  "/search": {
     en: "/search",
     tr: "/arama",
   },
