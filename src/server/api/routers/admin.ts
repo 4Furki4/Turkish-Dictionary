@@ -27,30 +27,6 @@ export const adminRouter = createTRPCRouter({
   createWord: adminProcedure
     .input(createWordSchema)
     .mutation(async ({ ctx: { db }, input: { word } }) => {
-      const [wordCreated] = await db
-        .insert(words)
-        .values({
-          name: word.name,
-          phonetic: word.phonetics,
-          prefix: word.prefix,
-          suffix: word.suffix,
-        })
-        .returning()
-        .execute();
-      const root = await db
-        .insert(roots)
-        .values({
-          root: word.root,
-          language: word.language,
-          wordId: wordCreated.id,
-        })
-        .returning()
-        .execute();
-      const wordMeanings: InsertMeaning[] = word.meanings.map((meaning) => ({
-        meaning: meaning.definition.definition,
-        wordId: wordCreated.id,
-        imageUrl: meaning.definition.image,
-      }));
-      await db.insert(meanings).values(wordMeanings).execute();
+      // todo
     }),
 });

@@ -20,15 +20,7 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx: { db } }) => {
-      return await db.query.words
-        .findMany({
-          limit: input.take,
-          offset: input.skip,
-          with: {
-            meanings: true,
-          },
-        })
-        .execute();
+      // TODO
     }),
   /**
    * Get a word by name quering the database
@@ -41,21 +33,6 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input: name, ctx: { db } }) => {
-      const query = db.query.words.findMany({
-        where: eq(words.name, name),
-        with: {
-          meanings: true,
-        },
-      });
-      console.log(query.toSQL());
-      const queriedWords = await query.execute();
-      const relatedWordsQuery = await db.query.relatedWords.findMany({
-        where: eq(relatedWords.wordId, queriedWords[0].id),
-        with: {
-          relatedWord: true,
-        },
-      });
-      console.log(relatedWordsQuery);
-      return queriedWords || "Word not found";
+      //TODO
     }),
 });
