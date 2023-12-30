@@ -138,6 +138,12 @@ export default function CreateWord() {
                   // Check if the word exists, if it does, show a error message
                   const wordInput = watch("name");
                   if (!isFocused && wordInput) {
+                    wordCheckQuery.refetch();
+                    if (wordCheckQuery.data) {
+                      setError("name", {
+                        message: "Word already exists",
+                      });
+                    }
                   }
                 }}
               />
