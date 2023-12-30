@@ -17,7 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const words = await api.word.getWords.query({});
+  // const words = await api.word.getWords.query({});
+  const words = [] as any;
   return (
     <>
       <Dashboard words={words} />

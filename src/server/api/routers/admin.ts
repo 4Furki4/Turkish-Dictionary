@@ -20,13 +20,21 @@ export const adminRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
-          cause: error,
         });
       }
     }),
-  createWord: adminProcedure
-    .input(createWordSchema)
-    .mutation(async ({ ctx: { db }, input: { word } }) => {
-      // todo
+  // createWord: adminProcedure
+  //   .input(createWordSchema)
+  //   .mutation(async ({ ctx: { db }, input: { word } }) => {
+  //     // todo
+  //   }),
+  checkWord: adminProcedure
+    .input(z.string())
+    .query(async ({ ctx: { db }, input: wordInput }) => {
+      const word = await db
+        .select({ id: words.id })
+        .from(words)
+        .where(eq(words.name, wordInput));
+      return word.length > 0;
     }),
 });

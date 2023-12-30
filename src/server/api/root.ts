@@ -10,9 +10,9 @@ import { adminRouter } from "./routers/admin";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  word: wordRouter,
+  // word: wordRouter,
   auth: authRouter,
-  user: userRouter,
+  // user: userRouter,
   admin: adminRouter,
 });
 

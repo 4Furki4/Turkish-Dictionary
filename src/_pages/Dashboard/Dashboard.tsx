@@ -12,19 +12,19 @@ export default function Dashboard({
 }: {
   words: SelectWordWithMeanings[];
 }) {
-  const wordsQuery = api.word.getWords.useQuery(
-    {},
-    {
-      initialData: words,
-    }
-  );
+  // const wordsQuery = api.word.getWords.useQuery(
+  //   {},
+  //   {
+  //     initialData: words,
+  //   }
+  // );
   return (
     <Card className="max-w-5xl mx-auto my-4">
       <CardHeader>
         <h1 className="text-fs-3 font-bold text-center">Dashboard</h1>
       </CardHeader>
       <CardBody>
-        <WordList words={words} />
+        {/* <WordList words={words} /> */}
         <UserList />
         <WordRequestList />
       </CardBody>

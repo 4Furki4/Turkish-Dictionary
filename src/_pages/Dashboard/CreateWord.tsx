@@ -66,45 +66,47 @@ export default function CreateWord() {
     },
   });
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
-  const wordMutation = api.admin.createWord.useMutation({});
+  // const wordMutation = api.admin.createWord.useMutation({});
   const [isUploading, setIsUploading] = React.useState(false);
   const onSubmit = async (data: WordForm) => {
     const { meanings } = data;
-    const uploadedPictures = meanings.map(async (meaning) => {
-      if (meaning.image?.[0]) {
-        const files = [meaning.image[0]];
-        const response = await uploadFiles({
-          endpoint: "imageUploader",
-          files,
-          onUploadProgress({ file, progress }) {
-            console.log(`Uploaded ${progress}% of ${file}`);
-          },
-          onUploadBegin({ file }) {
-            console.log(`Started uploading ${file}`);
-            setIsUploading(true);
-          },
-        });
-        return response[0].url;
-      }
-      return undefined;
-    });
+    // const uploadedPictures = meanings.map(async (meaning) => {
+    //   if (meaning.image?.[0]) {
+    //     const files = [meaning.image[0]];
+    //     const response = await uploadFiles({
+    //       endpoint: "imageUploader",
+    //       files,
+    //       onUploadProgress({ file, progress }) {
+    //         console.log(`Uploaded ${progress}% of ${file}`);
+    //       },
+    //       onUploadBegin({ file }) {
+    //         console.log(`Started uploading ${file}`);
+    //         setIsUploading(true);
+    //       },
+    //     });
+    //     return response[0].url;
+    //   }
+    //   return undefined;
+    // });
     let uploadedPicturesUrls: (string | undefined)[] = [];
-    if (meanings.every((meaning) => typeof meaning.image === typeof FileList)) {
-      const loadingToaster = toast.loading("Uploading images...");
+    // if (meanings.every((meaning) => typeof meaning.image === typeof FileList)) {
+    //   const loadingToaster = toast.loading("Uploading images...");
 
-      uploadedPicturesUrls = await Promise.all(uploadedPictures);
-      setIsUploading(false);
-      toast.dismiss(loadingToaster);
-      toast.success("Images uploaded!");
-    }
+    //   uploadedPicturesUrls = await Promise.all(uploadedPictures);
+    //   setIsUploading(false);
+    //   toast.dismiss(loadingToaster);
+    //   toast.success("Images uploaded!");
+    // }
     // TODO: handle object creation required in the backend
     reset();
   };
+  const wordCheckQuery = api.admin;
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
         <div className="grid sm:grid-cols-2 gap-2">
+          {/* TODO: CHECK IF THE WORD EXISTS BY NAME ONCE FOCUS OUT */}
           <Controller
             control={control}
             name="name"
@@ -123,11 +125,14 @@ export default function CreateWord() {
                 errorMessage={error?.message}
                 isInvalid={error !== undefined}
                 isRequired={true}
+                onFocusChange={(isFocused) => {
+                  // Check if the word exists, if it does, show a error message
+                }}
               />
             )}
           />
-          {/* TODO: Attributes */}
-          <Controller
+          {/* TODO: Root takes language and root word as text */}
+          {/* <Controller
             control={control}
             name="root"
             render={({ field }) => (
@@ -139,7 +144,7 @@ export default function CreateWord() {
                 description="Root is optional"
               />
             )}
-          />
+          /> */}
           <Controller
             control={control}
             name="phonetic"
@@ -236,7 +241,9 @@ export default function CreateWord() {
                       </Select>
                     )}
                   />
-                  <Controller
+                  {/* TODO: LET THEM SELECT THE ADDED ATTRIBUTES OR ADD NEW ONE */}
+
+                  {/* <Controller
                     name={`meanings.${index}.attributes`}
                     control={control}
                     rules={{
@@ -258,7 +265,7 @@ export default function CreateWord() {
                         description="Attributes are optional, please separate them with a comma."
                       />
                     )}
-                  />
+                  /> */}
                   <Controller
                     name={`meanings.${index}.example.sentence`}
                     control={control}
@@ -272,6 +279,7 @@ export default function CreateWord() {
                       />
                     )}
                   />
+                  {/* TODO: LET THEM SELECT ADDED AUTHORS OR CREATE NEW ONE */}
                   <Controller
                     name={`meanings.${index}.example.author`}
                     control={control}
@@ -379,7 +387,7 @@ export default function CreateWord() {
           )}
         </div>
         <Button
-          isLoading={wordMutation.isLoading || isUploading}
+          // isLoading={wordMutation.isLoading || isUploading}
           type="submit"
           variant="ghost"
           className="w-full"
