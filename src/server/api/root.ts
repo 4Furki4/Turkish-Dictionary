@@ -11,7 +11,7 @@ import { adminRouter } from "./routers/admin";
  */
 export const appRouter = createTRPCRouter({
   // word: wordRouter,
-  auth: authRouter,
+  // auth: authRouter,
   // user: userRouter,
   admin: adminRouter,
 });

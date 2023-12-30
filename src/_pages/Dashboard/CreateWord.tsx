@@ -41,19 +41,26 @@ const seperationValidate = (value: string | undefined, symbol: string) => {
 };
 
 export default function CreateWord() {
-  const { handleSubmit, control, formState, clearErrors, watch, reset } =
-    useForm<WordForm>({
-      defaultValues: {
-        name: undefined,
-        language: undefined,
-        phonetic: undefined,
-        root: undefined,
-        prefix: undefined,
-        suffix: undefined,
-        meanings: [meaningDefaultValues],
-      },
-      mode: "all",
-    });
+  const {
+    handleSubmit,
+    control,
+    formState,
+    clearErrors,
+    watch,
+    reset,
+    setError,
+  } = useForm<WordForm>({
+    defaultValues: {
+      name: undefined,
+      language: undefined,
+      phonetic: undefined,
+      root: undefined,
+      prefix: undefined,
+      suffix: undefined,
+      meanings: [meaningDefaultValues],
+    },
+    mode: "all",
+  });
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
     control,
@@ -100,7 +107,9 @@ export default function CreateWord() {
     // TODO: handle object creation required in the backend
     reset();
   };
-  const wordCheckQuery = api.admin;
+  const wordCheckQuery = api.admin.checkWord.useQuery(watch("name")!, {
+    enabled: false,
+  });
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -127,6 +136,9 @@ export default function CreateWord() {
                 isRequired={true}
                 onFocusChange={(isFocused) => {
                   // Check if the word exists, if it does, show a error message
+                  const wordInput = watch("name");
+                  if (!isFocused && wordInput) {
+                  }
                 }}
               />
             )}
