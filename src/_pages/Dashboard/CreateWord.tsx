@@ -134,12 +134,12 @@ export default function CreateWord() {
                 errorMessage={error?.message}
                 isInvalid={error !== undefined}
                 isRequired={true}
-                onFocusChange={(isFocused) => {
+                onFocusChange={async (isFocused) => {
                   // Check if the word exists, if it does, show a error message
                   const wordInput = watch("name");
                   if (!isFocused && wordInput) {
-                    wordCheckQuery.refetch();
-                    if (wordCheckQuery.data) {
+                    const data = (await wordCheckQuery.refetch()).data;
+                    if (data?.wordAlreadyExists) {
                       setError("name", {
                         message: "Word already exists",
                       });

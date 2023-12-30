@@ -35,6 +35,8 @@ export const adminRouter = createTRPCRouter({
         .select({ id: words.id })
         .from(words)
         .where(eq(words.name, wordInput));
-      return word.length > 0;
+      return {
+        wordAlreadyExists: word.length > 0,
+      };
     }),
 });
