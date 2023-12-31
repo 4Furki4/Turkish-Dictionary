@@ -12,7 +12,7 @@ import {
   Accordion,
   AccordionItem,
 } from "@nextui-org/react";
-import Link from "next-intl/link";
+import { Link } from "@/src/navigation";
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
@@ -82,7 +82,7 @@ export default function WordCard({ word }: { word: SelectWordWithMeanings }) {
           {word.name}
           {word.suffix && (
             <span className="text-fs-4">
-              <span aria-hidden>, -</span>
+              <span aria-hidden></span>
               <span aria-label="word-suffix">{word.suffix}</span>
             </span>
           )}

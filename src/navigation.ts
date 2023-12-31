@@ -39,9 +39,9 @@ export const pathnames = {
     en: "/dashboard",
     tr: "/panel",
   },
-  "dashboard/create": {
-    en: "/dashboard/create",
-    tr: "/panel/ekle",
+  "/dashboard/create-word": {
+    en: "/dashboard/create-word",
+    tr: "/panel/kelime-ekle",
   },
   "/search": {
     en: "/search",

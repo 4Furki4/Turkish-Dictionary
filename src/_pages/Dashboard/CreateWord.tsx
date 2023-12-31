@@ -1,6 +1,8 @@
 "use client";
 import { MeaningInputs, WordForm, WordInput } from "@/types";
 import {
+  Autocomplete,
+  AutocompleteItem,
   Button,
   ButtonGroup,
   Card,
@@ -10,12 +12,13 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import React, { ChangeEvent } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, set, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "@/src/trpc/react";
 import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "react-toastify";
 import { partOfSpeechEnum } from "@/db/schema/part_of_speechs";
+import langs from "@/db/static/langs.json";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -40,7 +43,7 @@ const seperationValidate = (value: string | undefined, symbol: string) => {
   return true;
 };
 
-export default function CreateWord() {
+export default function CreateWord({ locale }: { locale: string }) {
   const {
     handleSubmit,
     control,
@@ -49,6 +52,7 @@ export default function CreateWord() {
     watch,
     reset,
     setError,
+    getFieldState,
   } = useForm<WordForm>({
     defaultValues: {
       name: undefined,
@@ -149,20 +153,84 @@ export default function CreateWord() {
               />
             )}
           />
-          {/* TODO: Root takes language and root word as text */}
-          {/* <Controller
-            control={control}
-            name="root"
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Root"
-                color="primary"
-                variant="underlined"
-                description="Root is optional"
-              />
-            )}
-          /> */}
+          <div>
+            <Controller
+              control={control}
+              name="language"
+              rules={{
+                validate: (value) => {
+                  if (
+                    !value &&
+                    !!watch("root") &&
+                    getFieldState("language").isTouched
+                  ) {
+                    return "Language is required when root specified";
+                  } else if (!watch("root") && value) {
+                    setError("root", {
+                      message: "Root is required when language is selected",
+                    });
+                    return true;
+                  } else {
+                    clearErrors("root");
+                    return true;
+                  }
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <Autocomplete
+                  placeholder="You can search for a language"
+                  defaultItems={langs}
+                  label="Select an language"
+                  {...field}
+                  onSelectionChange={(item) => {
+                    field.onChange(item);
+                    clearErrors("language");
+                  }}
+                  errorMessage={error?.message}
+                >
+                  {(item) => (
+                    <AutocompleteItem key={item.name}>
+                      {locale === "en" ? item.name : item.turkishName}
+                    </AutocompleteItem>
+                  )}
+                </Autocomplete>
+              )}
+            />
+            <Controller
+              control={control}
+              name="root"
+              rules={{
+                validate: (value) => {
+                  if (
+                    watch("language") &&
+                    !value &&
+                    getFieldState("root").isTouched
+                  ) {
+                    return "Root is required when language is selected";
+                  } else if (!watch("language") && value) {
+                    setError("language", {
+                      message: "Language is required when root specified",
+                    });
+                    return true;
+                  } else {
+                    clearErrors("language");
+                    return true;
+                  }
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <Input
+                  placeholder="Type the root word"
+                  label="Root"
+                  color="primary"
+                  variant="underlined"
+                  errorMessage={error?.message}
+                  isInvalid={error !== undefined}
+                  {...field}
+                />
+              )}
+            />
+          </div>
           <Controller
             control={control}
             name="phonetic"
