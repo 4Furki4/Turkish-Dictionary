@@ -153,84 +153,6 @@ export default function CreateWord({ locale }: { locale: string }) {
               />
             )}
           />
-          <div>
-            <Controller
-              control={control}
-              name="language"
-              rules={{
-                validate: (value) => {
-                  if (
-                    !value &&
-                    !!watch("root") &&
-                    getFieldState("language").isTouched
-                  ) {
-                    return "Language is required when root specified";
-                  } else if (!watch("root") && value) {
-                    setError("root", {
-                      message: "Root is required when language is selected",
-                    });
-                    return true;
-                  } else {
-                    clearErrors("root");
-                    return true;
-                  }
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <Autocomplete
-                  placeholder="You can search for a language"
-                  defaultItems={langs}
-                  label="Select an language"
-                  {...field}
-                  onSelectionChange={(item) => {
-                    field.onChange(item);
-                    clearErrors("language");
-                  }}
-                  errorMessage={error?.message}
-                >
-                  {(item) => (
-                    <AutocompleteItem key={item.name}>
-                      {locale === "en" ? item.name : item.turkishName}
-                    </AutocompleteItem>
-                  )}
-                </Autocomplete>
-              )}
-            />
-            <Controller
-              control={control}
-              name="root"
-              rules={{
-                validate: (value) => {
-                  if (
-                    watch("language") &&
-                    !value &&
-                    getFieldState("root").isTouched
-                  ) {
-                    return "Root is required when language is selected";
-                  } else if (!watch("language") && value) {
-                    setError("language", {
-                      message: "Language is required when root specified",
-                    });
-                    return true;
-                  } else {
-                    clearErrors("language");
-                    return true;
-                  }
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <Input
-                  placeholder="Type the root word"
-                  label="Root"
-                  color="primary"
-                  variant="underlined"
-                  errorMessage={error?.message}
-                  isInvalid={error !== undefined}
-                  {...field}
-                />
-              )}
-            />
-          </div>
           <Controller
             control={control}
             name="phonetic"
@@ -241,6 +163,82 @@ export default function CreateWord({ locale }: { locale: string }) {
                 color="primary"
                 variant="underlined"
                 description="Phonetics is optional"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="language"
+            rules={{
+              validate: (value) => {
+                if (
+                  !value &&
+                  !!watch("root") &&
+                  getFieldState("language").isTouched
+                ) {
+                  return "Language is required when root specified";
+                } else if (!watch("root") && value) {
+                  setError("root", {
+                    message: "Root is required when language is selected",
+                  });
+                  return true;
+                } else {
+                  clearErrors("root");
+                  return true;
+                }
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <Autocomplete
+                placeholder="You can search for a language"
+                defaultItems={langs}
+                label="Select an language"
+                {...field}
+                onSelectionChange={(item) => {
+                  field.onChange(item);
+                  clearErrors("language");
+                }}
+                errorMessage={error?.message}
+              >
+                {(item) => (
+                  <AutocompleteItem key={item.name}>
+                    {locale === "en" ? item.name : item.turkishName}
+                  </AutocompleteItem>
+                )}
+              </Autocomplete>
+            )}
+          />
+          <Controller
+            control={control}
+            name="root"
+            rules={{
+              validate: (value) => {
+                if (
+                  watch("language") &&
+                  !value &&
+                  getFieldState("root").isTouched
+                ) {
+                  return "Root is required when language is selected";
+                } else if (!watch("language") && value) {
+                  setError("language", {
+                    message: "Language is required when root specified",
+                  });
+                  return true;
+                } else {
+                  clearErrors("language");
+                  return true;
+                }
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                placeholder="Type the root word"
+                label="Root"
+                color="primary"
+                variant="underlined"
+                errorMessage={error?.message}
+                isInvalid={error !== undefined}
+                {...field}
               />
             )}
           />
