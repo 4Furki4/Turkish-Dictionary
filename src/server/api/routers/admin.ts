@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { words } from "@/db/schema/words";
 import { InsertMeaning, meanings } from "@/db/schema/meanings";
 import { roots } from "@/db/schema/roots";
+import { meaningAttributes } from "@/db/schema/meaning_attributes";
 export const adminRouter = createTRPCRouter({
   // deleteWord: adminProcedure
   //   .input(
@@ -39,4 +40,8 @@ export const adminRouter = createTRPCRouter({
         wordAlreadyExists: word.length > 0,
       };
     }),
+  getMeaningAttributes: adminProcedure.query(async ({ ctx: { db } }) => {
+    const attributes = await db.select().from(meaningAttributes)
+    return attributes
+  })
 });

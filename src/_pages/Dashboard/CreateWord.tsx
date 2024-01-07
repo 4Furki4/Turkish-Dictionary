@@ -43,7 +43,13 @@ const seperationValidate = (value: string | undefined, symbol: string) => {
   return true;
 };
 
-export default function CreateWord({ locale }: { locale: string }) {
+export default function CreateWord({ locale, meaningAttributes }: {
+  locale: string;
+  meaningAttributes: {
+    id: number;
+    attribute: string;
+  }[]
+}) {
   const {
     handleSubmit,
     control,
@@ -114,6 +120,7 @@ export default function CreateWord({ locale }: { locale: string }) {
   const wordCheckQuery = api.admin.checkWord.useQuery(watch("name")!, {
     enabled: false,
   });
+  // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -327,29 +334,19 @@ export default function CreateWord({ locale }: { locale: string }) {
                   />
                   {/* TODO: LET THEM SELECT THE ADDED ATTRIBUTES OR ADD NEW ONE */}
 
-                  {/* <Controller
+                  <Controller
                     name={`meanings.${index}.attributes`}
                     control={control}
-                    rules={{
-                      validate: (value) => seperationValidate(value, ","),
-                      pattern: {
-                        // allow only letters and comma between them, also allow UTF-8 characters
-                        value: /^[\p{L}\s,]+$/u,
-                        message: "Attributes must be separated by a comma!",
-                      },
-                    }}
                     render={({ field, fieldState: { error } }) => (
-                      <Input
-                        {...field}
-                        label="Attributes"
-                        color="primary"
-                        variant="underlined"
-                        errorMessage={error?.message}
-                        isInvalid={error !== undefined}
-                        description="Attributes are optional, please separate them with a comma."
-                      />
+                      <Autocomplete label={'Attribute'} defaultItems={meaningAttributes ?? []}>
+                        {(item) => (
+                          <AutocompleteItem key={item.attribute} className="capitalize">
+                            {item && item.attribute}
+                          </AutocompleteItem>
+                        )}
+                      </Autocomplete>
                     )}
-                  /> */}
+                  />
                   <Controller
                     name={`meanings.${index}.example.sentence`}
                     control={control}
@@ -359,7 +356,7 @@ export default function CreateWord({ locale }: { locale: string }) {
                         label="Example Sentence"
                         color="primary"
                         variant="underlined"
-                        description="Example sentence is optional."
+                        description="Example sentence is optional but required when example author is specified."
                       />
                     )}
                   />
