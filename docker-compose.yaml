@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    links:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:furkicik@db:5432/turkish_dictionary
+    ports:
+      - "3000:3000"
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=furkicik
+      - POSTGRES_DB=turkish_dictionary
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
