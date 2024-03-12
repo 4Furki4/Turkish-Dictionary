@@ -1,32 +1,27 @@
 "use client";
 import { MeaningInputs, WordForm, WordInput } from "@/types";
 import {
-  Autocomplete,
-  AutocompleteItem,
   Button,
-  ButtonGroup,
   Card,
   CardBody,
-  Input,
-  Select,
-  SelectItem,
 } from "@nextui-org/react";
-import React, { ChangeEvent } from "react";
-import { Controller, set, useFieldArray, useForm } from "react-hook-form";
+import React from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { api } from "@/src/trpc/react";
-import { uploadFiles } from "@/src/lib/uploadthing";
-import { toast } from "react-toastify";
-import { partOfSpeechEnum } from "@/db/schema/part_of_speechs";
 import langs from "@/db/static/langs.json";
-import WordName from "./CreateWordForm/Inputs/WordNameInput";
-import WordNameInput from "./CreateWordForm/Inputs/WordNameInput";
-import WordPhoneticInput from "./CreateWordForm/Inputs/WordPhoneticInput";
-import WordRootLanguageInput from "./CreateWordForm/Inputs/WordRootLanguageInput";
-import WordRootOrigin from "./CreateWordForm/Inputs/WordRootOriginInput";
-import WordRootOriginInput from "./CreateWordForm/Inputs/WordRootOriginInput";
-import WordPrefixInput from "./CreateWordForm/Inputs/WordPrefixInput";
-import WordSuffixInput from "./CreateWordForm/Inputs/WordSuffixInput";
+import WordNameInput from "./CreateWordForm/Inputs/Word/NameInput";
+import WordPhoneticInput from "./CreateWordForm/Inputs/Word/PhoneticInput";
+import WordRootLanguageInput from "./CreateWordForm/Inputs/Word/RootLanguageInput";
+import WordRootOriginInput from "./CreateWordForm/Inputs/Word/RootOriginInput";
+import WordPrefixInput from "./CreateWordForm/Inputs/Word/PrefixInput";
+import WordSuffixInput from "./CreateWordForm/Inputs/Word/SuffixInput";
+import WordMeaningInput from "./CreateWordForm/Inputs/Meaning/WordMeaningInput";
+import MeaningPartOfSpeechInput from "./CreateWordForm/Inputs/Meaning/PartOfSpeechInput";
+import MeaningAttributesInput from "./CreateWordForm/Inputs/Meaning/AttributesInput";
+import MeaningExampleSentenceInput from "./CreateWordForm/Inputs/Meaning/ExampleSentenceInput";
+import MeaningExampleAuthorInput from "./CreateWordForm/Inputs/Meaning/ExampleAuthorInput";
+import MeaningImageInput from "./CreateWordForm/Inputs/Meaning/ImageInput";
+import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -69,12 +64,12 @@ export default function CreateWord({ locale, meaningAttributes }: {
     getFieldState,
   } = useForm<WordForm>({
     defaultValues: {
-      name: undefined,
-      language: undefined,
-      phonetic: undefined,
-      root: undefined,
-      prefix: undefined,
-      suffix: undefined,
+      name: '',
+      language: '',
+      phonetic: '',
+      root: '',
+      prefix: '',
+      suffix: '',
       meanings: [meaningDefaultValues],
     },
     mode: "all",
@@ -132,7 +127,6 @@ export default function CreateWord({ locale, meaningAttributes }: {
       <h1 className="text-center text-fs-2">Create Word</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
         <div className="grid sm:grid-cols-2 gap-2">
-          {/* TODO: CHECK IF THE WORD EXISTS BY NAME ONCE FOCUS OUT */}
           <WordNameInput control={control} watch={watch} setError={setError} />
           <WordPhoneticInput control={control} />
           <WordRootLanguageInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} locale={locale} langs={langs} />
@@ -143,188 +137,27 @@ export default function CreateWord({ locale, meaningAttributes }: {
 
         <div className="w-full mt-2">
           <h2 className="text-center text-fs-1">Meanings</h2>
+
           {fields.map((field, index) => (
             <Card key={field.id} className="mb-4">
               <CardBody className="flex flex-col gap-2">
-                <Controller
-                  name={`meanings.${index}.meaning`}
-                  control={control}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: "Meaning is required",
-                    },
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <Input
-                      {...field}
-                      label="Meaning"
-                      color="primary"
-                      variant="underlined"
-                      description="Meaning is required."
-                      isRequired
-                      errorMessage={error?.message}
-                      isInvalid={error !== undefined}
-                    />
-                  )}
-                />
+                <WordMeaningInput index={index} control={control} />
                 <div className="grid sm:grid-cols-2 gap-2">
-                  <Controller
-                    name={`meanings.${index}.partOfSpeech`}
-                    control={control}
-                    rules={{
-                      required: {
-                        value: true,
-                        message: "Part of Speech is required",
-                      },
-                    }}
-                    render={({ field, fieldState: { error, isDirty } }) => (
-                      <Select
-                        label="Part of Speech"
-                        color="primary"
-                        variant="underlined"
-                        isRequired
-                        isInvalid={error !== undefined && isDirty}
-                        errorMessage={isDirty && error?.message}
-                        {...field}
-                      >
-                        {partOfSpeechEnum.enumValues.map((key) => (
-                          <SelectItem key={key} value={key}>
-                            {key}
-                          </SelectItem>
-                        ))}
-                      </Select>
-                    )}
-                  />
-                  {/* TODO: LET THEM SELECT THE ADDED ATTRIBUTES OR ADD NEW ONE */}
-
-                  <Controller
-                    name={`meanings.${index}.attributes`}
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Autocomplete label={'Attribute'} defaultItems={meaningAttributes ?? []}>
-                        {(item) => (
-                          <AutocompleteItem key={item.attribute} className="capitalize">
-                            {item && item.attribute}
-                          </AutocompleteItem>
-                        )}
-                      </Autocomplete>
-                    )}
-                  />
-                  <Controller
-                    name={`meanings.${index}.example.sentence`}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        label="Example Sentence"
-                        color="primary"
-                        variant="underlined"
-                        description="Example sentence is optional but required when example author is specified."
-                      />
-                    )}
-                  />
-                  {/* TODO: LET THEM SELECT ADDED AUTHORS OR CREATE NEW ONE */}
-                  <Controller
-                    name={`meanings.${index}.example.author`}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        label="Example Author"
-                        color="primary"
-                        variant="underlined"
-                        description="Example Author is optional."
-                      />
-                    )}
-                  />
+                  <MeaningPartOfSpeechInput index={index} control={control} />
+                  <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} />
+                  <MeaningExampleSentenceInput index={index} control={control} />
+                  <MeaningExampleAuthorInput index={index} control={control} />
                 </div>
                 <div className="grid gap-2">
-                  <input
-                    className="w-full"
-                    placeholder="Browse Image"
-                    accept="image/*"
-                    type="file"
-                    multiple={false}
-                    {...control.register(`meanings.${index}.image`, {
-                      validate: (file) => {
-                        const FOUR_MB = 4 * 1024 * 1024;
-                        if (file && file[0]?.size > FOUR_MB) {
-                          return "Image must be smaller than 4MB";
-                        }
-                        return true;
-                      },
-                    })}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      const file = e.currentTarget.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setImagePreviewUrls((prev) => {
-                            prev[index] = reader.result as string;
-                            return [...prev];
-                          });
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                  />
-                  {formState.errors?.meanings?.[index]?.image && (
-                    <p>{formState.errors?.meanings?.[index]?.image?.message}</p>
-                  )}
-                  {imagePreviewUrls[0] ? (
-                    <img
-                      src={imagePreviewUrls[index] ?? ""}
-                      alt="selected image"
-                    />
-                  ) : (
-                    <p>
-                      Image is optional. If you want to add an image, please
-                      select one.
-                    </p>
-                  )}
-                  {imagePreviewUrls[index] && (
-                    <Button
-                      className="w-full"
-                      onPress={() => {
-                        field.image = undefined;
-                        clearErrors(`meanings.${index}.image`);
-                        setImagePreviewUrls((prev) => {
-                          prev[index] = "";
-                          return [...prev];
-                        });
-                      }}
-                    >
-                      Unselect Image
-                    </Button>
-                  )}
+                  <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
                 </div>
                 <Button onClick={() => remove(index)}>Remove Meaning</Button>
               </CardBody>
             </Card>
           ))}
-          <ButtonGroup className="w-full">
-            <Button
-              className="w-full"
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                append(meaningDefaultValues);
-              }}
-            >
-              Append <span className="max-sm:hidden">Meaning</span>
-            </Button>
-            <Button
-              className="w-full"
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                prepend(meaningDefaultValues);
-              }}
-            >
-              Prepend <span className="max-sm:hidden">Meaning</span>
-            </Button>
-          </ButtonGroup>
+
+          <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
+
           {formState.errors.meanings && (
             <p className="text-red-500">
               {formState.errors.meanings.root?.message}
