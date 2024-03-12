@@ -19,6 +19,14 @@ import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "react-toastify";
 import { partOfSpeechEnum } from "@/db/schema/part_of_speechs";
 import langs from "@/db/static/langs.json";
+import WordName from "./CreateWordForm/Inputs/WordNameInput";
+import WordNameInput from "./CreateWordForm/Inputs/WordNameInput";
+import WordPhoneticInput from "./CreateWordForm/Inputs/WordPhoneticInput";
+import WordRootLanguageInput from "./CreateWordForm/Inputs/WordRootLanguageInput";
+import WordRootOrigin from "./CreateWordForm/Inputs/WordRootOriginInput";
+import WordRootOriginInput from "./CreateWordForm/Inputs/WordRootOriginInput";
+import WordPrefixInput from "./CreateWordForm/Inputs/WordPrefixInput";
+import WordSuffixInput from "./CreateWordForm/Inputs/WordSuffixInput";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -117,9 +125,7 @@ export default function CreateWord({ locale, meaningAttributes }: {
     // TODO: handle object creation required in the backend
     reset();
   };
-  const wordCheckQuery = api.admin.checkWord.useQuery(watch("name")!, {
-    enabled: false,
-  });
+
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
@@ -127,154 +133,12 @@ export default function CreateWord({ locale, meaningAttributes }: {
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
         <div className="grid sm:grid-cols-2 gap-2">
           {/* TODO: CHECK IF THE WORD EXISTS BY NAME ONCE FOCUS OUT */}
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: {
-                value: true,
-                message: "Name is required",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                {...field}
-                label="Name"
-                color="primary"
-                variant="underlined"
-                errorMessage={error?.message}
-                isInvalid={error !== undefined}
-                isRequired={true}
-                onFocusChange={async (isFocused) => {
-                  // Check if the word exists, if it does, show a error message
-                  const wordInput = watch("name");
-                  if (!isFocused && wordInput) {
-                    const data = (await wordCheckQuery.refetch()).data;
-                    if (data?.wordAlreadyExists) {
-                      setError("name", {
-                        message: "Word already exists",
-                      });
-                    }
-                  }
-                }}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="phonetic"
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                {...field}
-                label="Phonetic"
-                color="primary"
-                variant="underlined"
-                description="Phonetics is optional"
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="language"
-            rules={{
-              validate: (value) => {
-                if (
-                  !value &&
-                  !!watch("root") &&
-                  getFieldState("language").isTouched
-                ) {
-                  return "Language is required when root specified";
-                } else if (!watch("root") && value) {
-                  setError("root", {
-                    message: "Root is required when language is selected",
-                  });
-                  return true;
-                } else {
-                  clearErrors("root");
-                  return true;
-                }
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Autocomplete
-                placeholder="You can search for a language"
-                defaultItems={langs}
-                label="Select an language"
-                {...field}
-                onSelectionChange={(item) => {
-                  field.onChange(item);
-                  clearErrors("language");
-                }}
-                errorMessage={error?.message}
-              >
-                {(item) => (
-                  <AutocompleteItem key={item.name}>
-                    {locale === "en" ? item.name : item.turkishName}
-                  </AutocompleteItem>
-                )}
-              </Autocomplete>
-            )}
-          />
-          <Controller
-            control={control}
-            name="root"
-            rules={{
-              validate: (value) => {
-                if (
-                  watch("language") &&
-                  !value &&
-                  getFieldState("root").isTouched
-                ) {
-                  return "Root is required when language is selected";
-                } else if (!watch("language") && value) {
-                  setError("language", {
-                    message: "Language is required when root specified",
-                  });
-                  return true;
-                } else {
-                  clearErrors("language");
-                  return true;
-                }
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                placeholder="Type the root word"
-                label="Root"
-                color="primary"
-                variant="underlined"
-                errorMessage={error?.message}
-                isInvalid={error !== undefined}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="prefix"
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Prefix"
-                color="primary"
-                variant="underlined"
-                description="Prefix is optional"
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="suffix"
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Suffix"
-                color="primary"
-                variant="underlined"
-                description="Suffix is optional"
-              />
-            )}
-          />
+          <WordNameInput control={control} watch={watch} setError={setError} />
+          <WordPhoneticInput control={control} />
+          <WordRootLanguageInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} locale={locale} langs={langs} />
+          <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
+          <WordPrefixInput control={control} />
+          <WordSuffixInput control={control} />
         </div>
 
         <div className="w-full mt-2">
