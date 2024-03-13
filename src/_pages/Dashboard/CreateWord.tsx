@@ -89,6 +89,7 @@ export default function CreateWord({ locale, meaningAttributes }: {
   // const wordMutation = api.admin.createWord.useMutation({});
   const [isUploading, setIsUploading] = React.useState(false);
   const onSubmit = async (data: WordForm) => {
+    console.log('data', data)
     const { meanings } = data;
     // const uploadedPictures = meanings.map(async (meaning) => {
     //   if (meaning.image?.[0]) {
@@ -118,10 +119,11 @@ export default function CreateWord({ locale, meaningAttributes }: {
     //   toast.success("Images uploaded!");
     // }
     // TODO: handle object creation required in the backend
-    reset();
+    // reset();
   };
 
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
+  console.log(watch())
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
