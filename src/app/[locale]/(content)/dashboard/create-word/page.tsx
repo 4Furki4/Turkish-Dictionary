@@ -8,5 +8,6 @@ export default async function Page({
   params: { locale: string };
 }) {
   const meaningAttributes = await api.admin.getMeaningAttributes.query()
-  return <CreateWord locale={locale} meaningAttributes={meaningAttributes} />;
+  const authors = await api.admin.getExampleSentenceAuthors.query()
+  return <CreateWord locale={locale} meaningAttributes={meaningAttributes} authors={authors} />;
 }

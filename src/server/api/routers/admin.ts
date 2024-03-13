@@ -7,6 +7,7 @@ import { words } from "@/db/schema/words";
 import { InsertMeaning, meanings } from "@/db/schema/meanings";
 import { roots } from "@/db/schema/roots";
 import { meaningAttributes } from "@/db/schema/meaning_attributes";
+import { authors } from "@/db/schema/authors";
 export const adminRouter = createTRPCRouter({
   // deleteWord: adminProcedure
   //   .input(
@@ -43,5 +44,12 @@ export const adminRouter = createTRPCRouter({
   getMeaningAttributes: adminProcedure.query(async ({ ctx: { db } }) => {
     const attributes = await db.select().from(meaningAttributes)
     return attributes
+  }),
+  getExampleSentenceAuthors: adminProcedure.query(async ({ ctx: { db } }) => {
+    const authorsData = await db.select({
+      id: authors.id,
+      name: authors.name
+    }).from(authors)
+    return authorsData
   })
 });

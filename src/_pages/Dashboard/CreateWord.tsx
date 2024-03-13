@@ -33,24 +33,15 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-const seperationValidate = (value: string | undefined, symbol: string) => {
-  if (value && value.includes(symbol)) {
-    const attributes = value.split(symbol).map((attribute) => {
-      return z.string().min(2).safeParse(attribute.trim());
-    });
-    return (
-      attributes.every((attribute) => attribute.success) ||
-      "Attributes must be separated by a comma, and be at least 2 character long."
-    );
-  }
-  return true;
-};
-
-export default function CreateWord({ locale, meaningAttributes }: {
+export default function CreateWord({ locale, meaningAttributes, authors }: {
   locale: string;
   meaningAttributes: {
     id: number;
     attribute: string;
+  }[]
+  authors: {
+    id: number;
+    name: string;
   }[]
 }) {
   const {
@@ -62,6 +53,7 @@ export default function CreateWord({ locale, meaningAttributes }: {
     reset,
     setError,
     getFieldState,
+
   } = useForm<WordForm>({
     defaultValues: {
       name: '',
@@ -123,7 +115,7 @@ export default function CreateWord({ locale, meaningAttributes }: {
   };
 
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
-  console.log(watch())
+  console.log(watch('meanings'))
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -147,8 +139,8 @@ export default function CreateWord({ locale, meaningAttributes }: {
                 <div className="grid sm:grid-cols-2 gap-2">
                   <MeaningPartOfSpeechInput index={index} control={control} />
                   <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} />
-                  <MeaningExampleSentenceInput index={index} control={control} />
-                  <MeaningExampleAuthorInput index={index} control={control} />
+                  <MeaningExampleSentenceInput index={index} control={control} errors={formState.errors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} />
+                  <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} errors={formState.errors} />
                 </div>
                 <div className="grid gap-2">
                   <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
