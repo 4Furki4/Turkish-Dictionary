@@ -22,6 +22,10 @@ import MeaningExampleSentenceInput from "./CreateWordForm/Inputs/Meaning/Example
 import MeaningExampleAuthorInput from "./CreateWordForm/Inputs/Meaning/ExampleAuthorInput";
 import MeaningImageInput from "./CreateWordForm/Inputs/Meaning/ImageInput";
 import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons";
+import { uploadFiles } from "@/src/lib/uploadthing";
+import { toast } from "react-toastify";
+import { api } from "@/src/trpc/react";
+import { InsertWord } from "@/db/schema/words";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -78,39 +82,54 @@ export default function CreateWord({ locale, meaningAttributes, authors }: {
     },
   });
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
-  // const wordMutation = api.admin.createWord.useMutation({});
+  const wordMutation = api.admin.addWord.useMutation({});
   const [isUploading, setIsUploading] = React.useState(false);
   const onSubmit = async (data: WordForm) => {
     console.log('data', data)
     const { meanings } = data;
-    // const uploadedPictures = meanings.map(async (meaning) => {
-    //   if (meaning.image?.[0]) {
-    //     const files = [meaning.image[0]];
-    //     const response = await uploadFiles({
-    //       endpoint: "imageUploader",
-    //       files,
-    //       onUploadProgress({ file, progress }) {
-    //         console.log(`Uploaded ${progress}% of ${file}`);
-    //       },
-    //       onUploadBegin({ file }) {
-    //         console.log(`Started uploading ${file}`);
-    //         setIsUploading(true);
-    //       },
-    //     });
-    //     return response[0].url;
-    //   }
-    //   return undefined;
-    // });
+    const uploadedPictures = meanings.map(async (meaning) => {
+      if (meaning.image?.[0]) {
+        const files = [meaning.image[0]];
+        const response = await uploadFiles(
+          "imageUploader",
+          {
+            files,
+            onUploadProgress({ file, progress }) {
+              console.log(`Uploaded ${progress}% of ${file}`);
+            },
+            onUploadBegin({ file }) {
+              console.log(`Started uploading ${file}`);
+              setIsUploading(true);
+            },
+          }
+        );
+        return response[0].url;
+      }
+      return undefined;
+    });
     let uploadedPicturesUrls: (string | undefined)[] = [];
-    // if (meanings.every((meaning) => typeof meaning.image === typeof FileList)) {
-    //   const loadingToaster = toast.loading("Uploading images...");
+    if (meanings.every((meaning) => typeof meaning.image === typeof FileList)) {
+      const loadingToaster = toast.loading("Uploading images...");
 
-    //   uploadedPicturesUrls = await Promise.all(uploadedPictures);
-    //   setIsUploading(false);
-    //   toast.dismiss(loadingToaster);
-    //   toast.success("Images uploaded!");
-    // }
+      uploadedPicturesUrls = await Promise.all(uploadedPictures);
+      setIsUploading(false);
+      toast.dismiss(loadingToaster);
+      toast.success("Images uploaded!");
+    }
+    const meaningsWithImages = meanings.map((meaning, index) => {
+      return {
+        ...meaning,
+        image: uploadedPicturesUrls[index],
+      };
+    });
+    // console.log('meaningsWithImages', meaningsWithImages)
+    const word = {
+      ...data,
+      meanings: meaningsWithImages,
+    }
+    console.log('word', word)
     // TODO: handle object creation required in the backend
+    wordMutation.mutate(word as any)
     // reset();
   };
 
