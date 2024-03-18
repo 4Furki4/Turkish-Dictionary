@@ -8,7 +8,7 @@ import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
 import { z } from "zod";
 import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 import { eq } from "drizzle-orm";
-import { users } from "@/db/schema";
+import { users } from "@/db/schema/users";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
@@ -87,11 +87,13 @@ export const authRouter = createTRPCRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User with this email does not exist",
+          cause: "UnknownEmailError",
         });
       if (user && !user.password)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User created with google auth",
+          cause: "GoogleAuthError",
         });
       const payload = {
         email: user.email,

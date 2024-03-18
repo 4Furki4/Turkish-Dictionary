@@ -19,9 +19,9 @@ import {
 import { Edit3, MoreVertical, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "react-toastify";
-import Link from "next-intl/link";
 import { Link as NextUILink } from "@nextui-org/react";
 import { SelectWordWithMeanings } from "@/db/schema";
+import { Link } from "@/src/navigation";
 export default function WordList({
   words,
 }: {
@@ -79,7 +79,12 @@ export default function WordList({
           <div className="flex">
             <Link
               className="hover:underline"
-              href={`/search?word=${item.name}`}
+              href={{
+                pathname: "/search",
+                query: {
+                  word: item.name,
+                },
+              }}
             >
               {`${item.name}`}
             </Link>

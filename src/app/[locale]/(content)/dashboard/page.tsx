@@ -16,11 +16,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Page() {
-  const words = await api.word.getWords.query({});
+export default async function Page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  // const words = await api.word.getWords.query({});
+  const words = [] as any;
   return (
     <>
-      <Dashboard words={words} />
+      <Dashboard locale={locale} words={words} />
     </>
   );
 }

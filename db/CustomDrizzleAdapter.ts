@@ -1,9 +1,10 @@
-import { users, accounts, Role } from "./schema";
 import { and, eq } from "drizzle-orm";
 import { PgDatabase } from "drizzle-orm/pg-core";
 import { Awaitable } from "next-auth";
 import { Adapter, AdapterUser } from "next-auth/adapters";
 import { AdapterAccount } from "next-auth/adapters";
+import { Role, users } from "./schema/users";
+import { accounts } from "./schema/accounts";
 
 export function CustomDrizzleAdapter(
   client: InstanceType<typeof PgDatabase>
@@ -107,7 +108,7 @@ export function CustomDrizzleAdapter(
         return null;
       }
 
-      return dbAccount.user as AdapterUser;
+      return dbAccount.users as AdapterUser;
     },
   };
 }
