@@ -3,12 +3,14 @@ import { adminProcedure, createTRPCRouter } from "../trpc";
 import { z } from "zod";
 import { createWordSchema } from "@/src/lib/zod-schemas";
 import { eq } from "drizzle-orm";
-import { words } from "@/db/schema/words";
+import { InsertWord, words } from "@/db/schema/words";
 import { InsertMeaning, meanings } from "@/db/schema/meanings";
 import { roots } from "@/db/schema/roots";
-import { meaningAttributes } from "@/db/schema/meaning_attributes";
+import { meaningAttributes, meaningsAttributes } from "@/db/schema/meaning_attributes";
 import { authors } from "@/db/schema/authors";
-import { MeaningInputs, WordForm } from "@/types";
+import { Meaning, MeaningInputs, WordForm } from "@/types";
+import { PartOfSpeech, partOfSpeechs } from "@/db/schema/part_of_speechs";
+import { examples } from "@/db/schema/examples";
 const CreateWordSchema = z.ZodType<WordForm>
 export const adminRouter = createTRPCRouter({
   // deleteWord: adminProcedure
@@ -43,21 +45,117 @@ export const adminRouter = createTRPCRouter({
     requestType: z.string().optional(),
     meanings: z.array(z.object({
       meaning: z.string(),
-      partOfSpeech: z.string(),
-      attributes: z.string().optional(),
+      partOfSpeechId: z.number(),
+      attributes: z.union([z.string(), z.number()]).optional(),
       example: z.object({
-        sentence: z.string().optional(),
-        author: z.string().optional()
-      }),
+        sentence: z.string(),
+        author: z.union([z.string(), z.number()])
+      }).optional(),
       imageUrl: z.string().optional()
     }
     ))
-  })
-  ).mutation(async ({ ctx: { db }, input }) => {
-    // const word = await db.insert(words).values(input).execute();
-    // return word;
-    console.log(input)
-    return null;
+  })).mutation(async ({ ctx: { db }, input: { meanings: meaningData, ...word } }) => {
+    const [addedWord] = await db.insert(words).values(word).returning()
+    const addedMeanings = meaningData.map(async (meaning) => {
+      let addedMeaning: InsertMeaning | undefined;
+      try {
+        const [returnedMeaning] = await db.insert(meanings).values({
+          meaning: meaning.meaning,
+          partOfSpeechId: meaning.partOfSpeechId,
+          wordId: addedWord.id,
+          imageUrl: meaning.imageUrl,
+        }).returning()
+        addedMeaning = returnedMeaning
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong while adding meaning.",
+        })
+      }
+      // when the author is an id, it means the author is already in the database
+      if (meaning.example?.author && typeof meaning.example.author === "number") {
+        try {
+          await db.insert(examples).values({
+            wordId: addedWord.id,
+            sentence: meaning.example.sentence,
+            authorId: meaning.example.author,
+          })
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong while adding example sentence and setting already existing author.",
+          })
+        }
+
+      }
+      // when the author is a string, it means the author is not in the database
+      else if (meaning.example && typeof meaning.example.author === "string") {
+        try {
+          const [author] = await db.insert(authors).values({
+            name: meaning.example.author
+          }).returning()
+          await db.insert(examples).values({
+            wordId: addedWord.id,
+            sentence: meaning.example.sentence,
+            authorId: author.id,
+          })
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong while adding example sentence and setting new author.",
+          })
+        }
+      }
+      else if (meaning.example && typeof meaning.example.author === "undefined") {
+        try {
+          await db.insert(examples).values({
+            wordId: addedWord.id,
+            sentence: meaning.example.sentence,
+          })
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong while adding example sentence.",
+          })
+        }
+      }
+      if (typeof meaning.attributes === 'number' && meaning.attributes !== undefined) {
+        try {
+          await db.insert(meaningsAttributes).values({
+            attributeId: meaning.attributes,
+            meaningId: addedMeaning.id
+          })
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong while setting meaning attributes.",
+          })
+        }
+      }
+
+      else if (typeof meaning.attributes === 'string') {
+        try {
+          const [attribute] = await db.insert(meaningAttributes).values({
+            attribute: meaning.attributes
+          }).returning()
+          await db.insert(meaningsAttributes).values({
+            attributeId: attribute.id,
+            meaningId: addedMeaning.id
+          })
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong while adding new meaning attributes to the database.",
+          })
+        }
+      }
+      return addedMeaning
+    })
+
+    return {
+      word: addedWord,
+      meanings: addedMeanings
+    };
   }),
   checkWord: adminProcedure
     .input(z.string())
@@ -80,5 +178,9 @@ export const adminRouter = createTRPCRouter({
       name: authors.name
     }).from(authors)
     return authorsData
-  })
+  }),
+  getPartOfSpeeches: adminProcedure.query(async ({ ctx: { db } }) => {
+    const partOfSpeechData = await db.select({ id: partOfSpeechs.id, partOfSpeech: partOfSpeechs.partOfSpeech }).from(partOfSpeechs)
+    return partOfSpeechData
+  }),
 });

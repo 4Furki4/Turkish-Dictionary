@@ -33,7 +33,7 @@ type WordInput = ToUndefinedProps<
   Prettify<
     Partial<
       Omit<InsertWord, "rootId" | "created_at" | "updated_at" | "id"> &
-        RootInput
+      RootInput
     >
   >
 >;
@@ -45,7 +45,7 @@ type Meaning = {
     sentence: string | undefined;
     author: string | undefined;
   };
-  partOfSpeech: PartOfSpeech;
+  partOfSpeechId: number | undefined;
   attributes: string;
 };
 

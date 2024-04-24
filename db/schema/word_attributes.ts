@@ -29,10 +29,10 @@ export const wordAttributesRelations = relations(
 export const wordsAttributes = pgTable(
   "words_attributes",
   {
-    wordId: integer("word_id").references(() => words.id, {
+    wordId: integer("word_id").notNull().references(() => words.id, {
       onDelete: "cascade",
     }),
-    attributeId: integer("attribute_id").references(() => wordAttributes.id, {
+    attributeId: integer("attribute_id").notNull().references(() => wordAttributes.id, {
       onDelete: "cascade",
     }),
   },

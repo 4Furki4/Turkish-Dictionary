@@ -1,5 +1,5 @@
 {
-  "id": "08f89d2c-7312-406d-91bb-f315304e869d",
+  "id": "8ae34f35-bbd7-4e46-95f1-287ac97bba97",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -166,6 +166,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'example'"
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -176,6 +182,19 @@
           "tableTo": "authors",
           "columnsFrom": [
             "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "examples_word_id_words_id_fk": {
+          "name": "examples_word_id_words_id_fk",
+          "tableFrom": "examples",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
           ],
           "columnsTo": [
             "id"
@@ -816,13 +835,13 @@
           "name": "word_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "attribute_id": {
           "name": "attribute_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -987,8 +1006,8 @@
   },
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   }
 }

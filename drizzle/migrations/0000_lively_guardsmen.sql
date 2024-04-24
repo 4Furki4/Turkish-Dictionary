@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 	"id_token" text,
 	"session_state" text,
 	"createdAt" timestamp DEFAULT now(),
-	CONSTRAINT accounts_provider_providerAccountId_pk PRIMARY KEY("provider","providerAccountId")
+	CONSTRAINT "accounts_provider_providerAccountId_pk" PRIMARY KEY("provider","providerAccountId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "authors" (
@@ -54,7 +54,8 @@ CREATE TABLE IF NOT EXISTS "examples" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"sentence" text NOT NULL,
 	"author_id" integer,
-	"request_type" varchar(255) DEFAULT 'example'
+	"request_type" varchar(255) DEFAULT 'example',
+	"word_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "meaning_attributes" (
@@ -66,7 +67,7 @@ CREATE TABLE IF NOT EXISTS "meanings_attributes" (
 	"meaning_id" serial NOT NULL,
 	"attribute_id" serial NOT NULL,
 	"request_type" varchar(255) DEFAULT 'meaningAttribute',
-	CONSTRAINT meanings_attributes_meaning_id_attribute_id_pk PRIMARY KEY("meaning_id","attribute_id")
+	CONSTRAINT "meanings_attributes_meaning_id_attribute_id_pk" PRIMARY KEY("meaning_id","attribute_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "meanings" (
@@ -125,7 +126,7 @@ CREATE TABLE IF NOT EXISTS "saved_words" (
 	"user_id" text NOT NULL,
 	"word_id" integer NOT NULL,
 	"createdAt" timestamp DEFAULT now(),
-	CONSTRAINT saved_words_user_id_word_id_pk PRIMARY KEY("user_id","word_id")
+	CONSTRAINT "saved_words_user_id_word_id_pk" PRIMARY KEY("user_id","word_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
@@ -146,9 +147,9 @@ CREATE TABLE IF NOT EXISTS "word_attributes" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "words_attributes" (
-	"word_id" integer,
-	"attribute_id" integer,
-	CONSTRAINT words_attributes_word_id_attribute_id_pk PRIMARY KEY("word_id","attribute_id")
+	"word_id" integer NOT NULL,
+	"attribute_id" integer NOT NULL,
+	CONSTRAINT "words_attributes_word_id_attribute_id_pk" PRIMARY KEY("word_id","attribute_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "words" (
@@ -171,6 +172,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "examples" ADD CONSTRAINT "examples_author_id_authors_id_fk" FOREIGN KEY ("author_id") REFERENCES "authors"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "examples" ADD CONSTRAINT "examples_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

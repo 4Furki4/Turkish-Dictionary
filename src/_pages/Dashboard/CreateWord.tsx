@@ -1,5 +1,5 @@
 "use client";
-import { MeaningInputs, WordForm, WordInput } from "@/types";
+import { MeaningInputs, WordForm } from "@/types";
 import {
   Button,
   Card,
@@ -7,7 +7,6 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
 import langs from "@/db/static/langs.json";
 import WordNameInput from "./CreateWordForm/Inputs/Word/NameInput";
 import WordPhoneticInput from "./CreateWordForm/Inputs/Word/PhoneticInput";
@@ -25,11 +24,11 @@ import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons"
 import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "react-toastify";
 import { api } from "@/src/trpc/react";
-import { InsertWord } from "@/db/schema/words";
+import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
-  partOfSpeech: undefined,
+  partOfSpeechId: undefined,
   meaning: undefined,
   image: undefined,
   example: {
@@ -37,7 +36,7 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-export default function CreateWord({ locale, meaningAttributes, authors }: {
+export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches }: {
   locale: string;
   meaningAttributes: {
     id: number;
@@ -46,6 +45,10 @@ export default function CreateWord({ locale, meaningAttributes, authors }: {
   authors: {
     id: number;
     name: string;
+  }[]
+  partOfSpeeches: {
+    id: number;
+    partOfSpeech: PartOfSpeech;
   }[]
 }) {
   const {
@@ -85,8 +88,18 @@ export default function CreateWord({ locale, meaningAttributes, authors }: {
   const wordMutation = api.admin.addWord.useMutation({});
   const [isUploading, setIsUploading] = React.useState(false);
   const onSubmit = async (data: WordForm) => {
-    console.log('data', data)
-    const { meanings } = data;
+    let { meanings } = data;
+    meanings = meanings.map((meaning) => {
+      return {
+        ...meaning,
+        partOfSpeechId: meaning.partOfSpeechId,
+        example: meaning.example?.sentence && meaning.example?.sentence ? {
+          sentence: meaning.example.sentence,
+          author: meaning.example.author,
+        } : undefined,
+      }
+    })
+    console.log('mapped meanings', meanings)
     const uploadedPictures = meanings.map(async (meaning) => {
       if (meaning.image?.[0]) {
         const files = [meaning.image[0]];
@@ -156,7 +169,7 @@ export default function CreateWord({ locale, meaningAttributes, authors }: {
               <CardBody className="flex flex-col gap-2">
                 <WordMeaningInput index={index} control={control} />
                 <div className="grid sm:grid-cols-2 gap-2">
-                  <MeaningPartOfSpeechInput index={index} control={control} />
+                  <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />
                   <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} />
                   <MeaningExampleSentenceInput index={index} control={control} errors={formState.errors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} />
                   <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} errors={formState.errors} />

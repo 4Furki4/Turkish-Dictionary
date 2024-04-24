@@ -1,6 +1,7 @@
 import { integer, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { authors } from "./authors";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
+import { words } from "./words";
 
 export const examples = pgTable("examples", {
   id: serial("id").primaryKey(),
@@ -9,6 +10,9 @@ export const examples = pgTable("examples", {
     onDelete: "cascade",
   }),
   requestType: varchar("request_type", { length: 255 }).default("example"),
+  wordId: integer("word_id").notNull().references(() => words.id, {
+    onDelete: "cascade",
+  }),
 });
 
 export const examplesRelations = relations(examples, ({ one }) => ({
@@ -16,6 +20,10 @@ export const examplesRelations = relations(examples, ({ one }) => ({
     fields: [examples.authorId],
     references: [authors.id],
   }),
+  word: one(words, {
+    fields: [examples.wordId],
+    references: [words.id],
+  })
 }));
 
 export type SelectExample = InferSelectModel<typeof examples>;
