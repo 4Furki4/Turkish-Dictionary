@@ -7,10 +7,10 @@ import { Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
-import { useRouter } from "next-intl/client";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "@/src/components/customs/Signup/PasswordEye";
+import { useRouter } from "@/src/navigation";
 type ForgotPasswordForm = {
   resetPassword: string;
   resetPasswordConfirm: string;

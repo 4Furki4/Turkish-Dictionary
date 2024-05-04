@@ -5,14 +5,20 @@ import UserList from "./UserList";
 import WordList from "./WordList";
 import WordRequestList from "./WordRequestList";
 import { api } from "@/src/trpc/react";
-import { SelectWordWithMeanings } from "@/db/schema";
 import { Link } from "@/src/navigation";
+import { SelectWord } from "@/db/schema/words";
+import { SelectMeaning } from "@/db/schema/meanings";
+import { Prettify } from "@/types";
+
+type Words = Prettify<{
+  // TODO: build a type for queried words
+}>;
 
 export default function Dashboard({
   words,
   locale,
 }: {
-  words: SelectWordWithMeanings[];
+  words: Words
   locale: string;
 }) {
   // const wordsQuery = api.word.getWords.useQuery(
@@ -28,7 +34,7 @@ export default function Dashboard({
       </CardHeader>
       <CardBody>
         <Link href="/dashboard/create-word">Create Word</Link>
-        {/* <WordList words={words} /> */}
+        <WordList />
         <UserList />
         <WordRequestList />
       </CardBody>

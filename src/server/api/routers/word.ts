@@ -7,6 +7,7 @@ import {
 } from "../trpc";
 import { eq } from "drizzle-orm";
 import { words } from "@/db/schema/words";
+import { meanings } from "@/db/schema/meanings";
 
 export const wordRouter = createTRPCRouter({
   /**
@@ -20,7 +21,9 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx: { db } }) => {
-      // TODO
+      const wordsWithMeanings = await db.select().from(words).fullJoin(meanings, eq(words.id, meanings.wordId)).limit(input.take).offset(input.skip)
+      return wordsWithMeanings
+      // console.log(wordsWithMeanings)
     }),
   /**
    * Get a word by name quering the database
