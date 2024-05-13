@@ -35,3 +35,4 @@ export const db = drizzle(sql, { schema });
 export const migrateToLatest = async () => {
   await migrate(db, { migrationsFolder: "drizzle/migrations" });
 };
+

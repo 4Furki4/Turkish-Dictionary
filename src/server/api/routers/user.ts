@@ -1,28 +1,13 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { users } from "@/db/schema/users";
 import { savedWords } from "@/db/schema/saved_words";
 export const userRouter = createTRPCRouter({
   getSavedWords: protectedProcedure.query(async ({ ctx: { session, db } }) => {
-    const userWithSavedWords = await db.query.users
-      .findFirst({
-        where: eq(users.email, session.user.email!),
-        with: {
-          savedWords: {
-            with: {
-              word: {
-                with: {
-                  meanings: true,
-                },
-              },
-            },
-          },
-        },
-      })
-      .execute();
-    const savedWords = userWithSavedWords?.savedWords;
-    return savedWords;
+    const userWithSavedWords = await db.select().from(users).leftJoin(savedWords, eq(users.id, savedWords.userId)).where(eq(users.id, session.user.id))
+    console.log('userWithSavedWords', userWithSavedWords)
+    return userWithSavedWords
   }),
   getWordSaveStatus: protectedProcedure
     .input(z.number())
@@ -38,6 +23,22 @@ export const userRouter = createTRPCRouter({
       //     })
       //     .execute();
       //   return user?.usersToWords? ? true : false;
+      console.log('session', session)
+      const result = await db.execute(
+        sql`
+        SELECT
+          *
+        FROM
+          saved_words
+          WHERE
+          user_id = ${session.user.id}
+          AND word_id = ${input}
+        `
+      )
+      if (result.length > 0) {
+        return true
+      }
+      return false
     }),
   /**
    * Save a word to user's saved word list

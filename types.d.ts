@@ -56,3 +56,27 @@ type WordForm = Prettify<
     meanings: MeaningInputs[];
   }
 >;
+
+type WordSearchResult = {
+  word_data: {
+    word_id: number;
+    word_name: string;
+    phonetic: string;
+    prefix: string;
+    suffix: string;
+    attributes: {
+      attribute_id: number;
+      attribute: string;
+    }[];
+    root: {
+      root: string;
+      language: string;
+    };
+    meanings: {
+      meaning_id: number;
+      meaning: string;
+      part_of_speech: string;
+    }[];
+  }
+}
+

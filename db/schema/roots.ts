@@ -15,15 +15,11 @@ export const roots = pgTable("roots", {
   root: varchar("root", { length: 255 }),
   language: varchar("language", { length: 255 }).notNull(),
   userId: text("user_id"),
-  wordId: integer("word_id").notNull(),
+  wordId: integer("word_id").notNull().references(() => words.id),
   requestType: varchar("request_type", { length: 255 }).default("root"),
 });
 
 export const rootsRelations = relations(roots, ({ one }) => ({
-  word: one(words, {
-    fields: [roots.wordId],
-    references: [words.id],
-  }),
   user: one(users, {
     fields: [roots.userId],
     references: [users.id],

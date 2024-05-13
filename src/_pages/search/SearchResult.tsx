@@ -5,7 +5,7 @@ import WordCard from "../../components/customs/WordCard";
 export default async function SearchResult({ word }: { word: string }) {
   const response = await api.word.getWord.query(word);
   return response.length > 0 ? (
-    response.map((word) => <WordCard key={word.id} word={word} />)
+    response.map((word) => <WordCard key={word.word_data.word_id} word={word} />)
   ) : (
     <>
       <h1 className="text-center text-fs-3">{word}</h1>

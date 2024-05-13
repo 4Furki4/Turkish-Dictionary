@@ -1,29 +1,29 @@
 DO $$ BEGIN
- CREATE TYPE "partOfSpeech" AS ENUM('isim', 'fiil', 'sıfat', 'zarf', 'zamir', 'ünlem', 'edat', 'bağlaç');
+ CREATE TYPE "public"."partOfSpeech" AS ENUM('isim', 'fiil', 'sıfat', 'zarf', 'zamir', 'ünlem', 'edat', 'bağlaç');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "action" AS ENUM('create', 'update', 'delete');
+ CREATE TYPE "public"."action" AS ENUM('create', 'update', 'delete');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "entity_type" AS ENUM('words', 'meanings', 'roots', 'related_words', 'part_of_speechs', 'examples', 'authors', 'word_attributes', 'meaning_attributes');
+ CREATE TYPE "public"."entity_type" AS ENUM('words', 'meanings', 'roots', 'related_words', 'part_of_speechs', 'examples', 'authors', 'word_attributes', 'meaning_attributes');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "status" AS ENUM('pending', 'approved', 'rejected');
+ CREATE TYPE "public"."status" AS ENUM('pending', 'approved', 'rejected');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "role" AS ENUM('user', 'moderator', 'admin');
+ CREATE TYPE "public"."role" AS ENUM('user', 'moderator', 'admin');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS "meanings" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "part_of_speechs" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"partOfSpeech" "partOfSpeech" NOT NULL,
+	"part_of_speech" "partOfSpeech" NOT NULL,
 	"request_type" varchar(255) DEFAULT 'partOfSpeech'
 );
 --> statement-breakpoint
@@ -165,109 +165,115 @@ CREATE TABLE IF NOT EXISTS "words" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "examples" ADD CONSTRAINT "examples_author_id_authors_id_fk" FOREIGN KEY ("author_id") REFERENCES "authors"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "examples" ADD CONSTRAINT "examples_author_id_authors_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."authors"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "examples" ADD CONSTRAINT "examples_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "examples" ADD CONSTRAINT "examples_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "meanings_attributes" ADD CONSTRAINT "meanings_attributes_meaning_id_meanings_id_fk" FOREIGN KEY ("meaning_id") REFERENCES "meanings"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "meanings_attributes" ADD CONSTRAINT "meanings_attributes_meaning_id_meanings_id_fk" FOREIGN KEY ("meaning_id") REFERENCES "public"."meanings"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "meanings_attributes" ADD CONSTRAINT "meanings_attributes_attribute_id_meaning_attributes_id_fk" FOREIGN KEY ("attribute_id") REFERENCES "meaning_attributes"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "meanings_attributes" ADD CONSTRAINT "meanings_attributes_attribute_id_meaning_attributes_id_fk" FOREIGN KEY ("attribute_id") REFERENCES "public"."meaning_attributes"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "meanings" ADD CONSTRAINT "meanings_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "meanings" ADD CONSTRAINT "meanings_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "meanings" ADD CONSTRAINT "meanings_part_of_speech_id_part_of_speechs_id_fk" FOREIGN KEY ("part_of_speech_id") REFERENCES "part_of_speechs"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "meanings" ADD CONSTRAINT "meanings_part_of_speech_id_part_of_speechs_id_fk" FOREIGN KEY ("part_of_speech_id") REFERENCES "public"."part_of_speechs"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "pronounciations" ADD CONSTRAINT "pronounciations_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "pronounciations" ADD CONSTRAINT "pronounciations_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "pronounciations" ADD CONSTRAINT "pronounciations_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "pronounciations" ADD CONSTRAINT "pronounciations_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "related_phrases" ADD CONSTRAINT "related_phrases_phrase_id_words_id_fk" FOREIGN KEY ("phrase_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "related_phrases" ADD CONSTRAINT "related_phrases_phrase_id_words_id_fk" FOREIGN KEY ("phrase_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "related_phrases" ADD CONSTRAINT "related_phrases_related_phrase_id_words_id_fk" FOREIGN KEY ("related_phrase_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "related_phrases" ADD CONSTRAINT "related_phrases_related_phrase_id_words_id_fk" FOREIGN KEY ("related_phrase_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "related_words" ADD CONSTRAINT "related_words_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "related_words" ADD CONSTRAINT "related_words_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "related_words" ADD CONSTRAINT "related_words_related_word_id_words_id_fk" FOREIGN KEY ("related_word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "related_words" ADD CONSTRAINT "related_words_related_word_id_words_id_fk" FOREIGN KEY ("related_word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "requests" ADD CONSTRAINT "requests_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "requests" ADD CONSTRAINT "requests_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "saved_words" ADD CONSTRAINT "saved_words_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "roots" ADD CONSTRAINT "roots_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "saved_words" ADD CONSTRAINT "saved_words_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "saved_words" ADD CONSTRAINT "saved_words_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "words_attributes" ADD CONSTRAINT "words_attributes_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "words"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "saved_words" ADD CONSTRAINT "saved_words_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "words_attributes" ADD CONSTRAINT "words_attributes_attribute_id_word_attributes_id_fk" FOREIGN KEY ("attribute_id") REFERENCES "word_attributes"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "words_attributes" ADD CONSTRAINT "words_attributes_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "words_attributes" ADD CONSTRAINT "words_attributes_attribute_id_word_attributes_id_fk" FOREIGN KEY ("attribute_id") REFERENCES "public"."word_attributes"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

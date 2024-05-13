@@ -48,13 +48,13 @@ export default function Search({
             return;
           }
           setWordInput("");
-          setInputError("");
+          setInputError("")
           router.push({
-            pathname: "search",
+            pathname: "/search",
             query: {
-              query: formattedInput,
+              word: formattedInput,
             },
-          });
+          })
         }}
       >
         <Card className="my-4 bg-content1 text-primary-foreground">

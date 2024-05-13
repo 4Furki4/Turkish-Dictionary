@@ -16,7 +16,7 @@ export type PartOfSpeech = (typeof partOfSpeechEnum.enumValues)[number];
 
 export const partOfSpeechs = pgTable("part_of_speechs", {
   id: serial("id").primaryKey(),
-  partOfSpeech: partOfSpeechEnum("partOfSpeech").notNull(),
+  partOfSpeech: partOfSpeechEnum("part_of_speech").notNull(),
   requestType: varchar("request_type", { length: 255 }).default("partOfSpeech"),
 });
 

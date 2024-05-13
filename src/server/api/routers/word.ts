@@ -5,9 +5,11 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../trpc";
-import { eq } from "drizzle-orm";
-import { words } from "@/db/schema/words";
+import { eq, sql } from "drizzle-orm";
+import { SelectWordWithMeanings, words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
+import { WordSearchResult } from "@/types";
+
 
 export const wordRouter = createTRPCRouter({
   /**
@@ -36,6 +38,59 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input: name, ctx: { db } }) => {
-      //TODO
+      // TODO: join word and meaning attributes...
+      const wordsWithMeanings =
+        await db.execute(sql`
+        SELECT
+        JSON_BUILD_OBJECT(
+          'word_id',
+          w.id,
+          'word_name',
+          w.name,
+          'attributes',
+          (
+            SELECT
+              JSON_AGG(
+                JSON_BUILD_OBJECT(
+                  'attribute_id',
+                  w_a.id,
+                  'attribute',
+                  w_a.attribute
+                )
+              )
+            FROM
+              words_attributes ws_a
+              JOIN word_attributes w_a ON ws_a.attribute_id = w_a.id
+            WHERE
+              ws_a.word_id = w.id
+          ),
+          'root',
+          JSON_BUILD_OBJECT('root', r.root, 'language', r.language),
+          'meanings',
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'meaning_id',
+              m.id,
+              'meaning',
+              m.meaning,
+              'part_of_speech',
+              pos.part_of_speech
+            )
+          )
+        ) AS word_data
+      FROM
+        words w
+        LEFT JOIN meanings m ON w.id = m.word_id
+        LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
+        LEFT JOIN roots r ON r.word_id = w.id
+      WHERE
+        w.name = ${name}
+      GROUP BY
+        w.id,
+        w.name,
+        r.root,
+        r.language
+          `) as WordSearchResult[]
+      return wordsWithMeanings
     }),
 });
