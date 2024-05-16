@@ -11,6 +11,7 @@ import { authors } from "@/db/schema/authors";
 import { Meaning, MeaningInputs, WordForm } from "@/types";
 import { PartOfSpeech, partOfSpeechs } from "@/db/schema/part_of_speechs";
 import { examples } from "@/db/schema/examples";
+import { languages } from "@/db/schema/languages";
 const CreateWordSchema = z.ZodType<WordForm>
 export const adminRouter = createTRPCRouter({
   // deleteWord: adminProcedure
@@ -39,7 +40,7 @@ export const adminRouter = createTRPCRouter({
     name: z.string(),
     language: z.string().optional(),
     phonetic: z.string().optional(),
-    root: z.string(),
+    root: z.string().optional(),
     prefix: z.string().optional(),
     suffix: z.string().optional(),
     requestType: z.string().optional(),
@@ -56,6 +57,14 @@ export const adminRouter = createTRPCRouter({
     ))
   })).mutation(async ({ ctx: { db }, input: { meanings: meaningData, ...word } }) => {
     const [addedWord] = await db.insert(words).values(word).returning()
+    const [languageQueryResult] = word.language && word.root ? await db.select({ id: languages.id }).from(languages).where(eq(languages.language_code, word.language)) : [{ id: null }]
+    if (languageQueryResult.id) {
+      await db.insert(roots).values({
+        root: word.root,
+        languageId: languageQueryResult.id,
+        wordId: addedWord.id,
+      })
+    }
     const addedMeanings = meaningData.map(async (meaning) => {
       let addedMeaning: InsertMeaning | undefined;
       try {
@@ -73,6 +82,7 @@ export const adminRouter = createTRPCRouter({
         })
       }
       // when the author is an id, it means the author is already in the database
+      const isAuthorAlreadyInDB = Boolean(meaning.example?.author && typeof meaning.example.author === "number")
       if (meaning.example?.author && typeof meaning.example.author === "number") {
         try {
           await db.insert(examples).values({
@@ -183,4 +193,8 @@ export const adminRouter = createTRPCRouter({
     const partOfSpeechData = await db.select({ id: partOfSpeechs.id, partOfSpeech: partOfSpeechs.partOfSpeech }).from(partOfSpeechs)
     return partOfSpeechData
   }),
+  getLanguages: adminProcedure.query(async ({ ctx: { db } }) => {
+    const languageData = await db.select().from(languages)
+    return languageData
+  })
 });

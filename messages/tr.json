@@ -82,5 +82,9 @@
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
     "GoBackToHomepage": "Ana sayfaya dön"
+  },
+  "LanguageAndRootInput": {
+    "rootInputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
+    "languageInputError": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
   }
 }

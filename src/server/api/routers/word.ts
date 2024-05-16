@@ -65,7 +65,7 @@ export const wordRouter = createTRPCRouter({
               ws_a.word_id = w.id
           ),
           'root',
-          JSON_BUILD_OBJECT('root', r.root, 'language', r.language),
+          JSON_BUILD_OBJECT('root', r.root, 'language', l.language_en),
           'meanings',
           JSON_AGG(
             JSON_BUILD_OBJECT(
@@ -83,14 +83,15 @@ export const wordRouter = createTRPCRouter({
         LEFT JOIN meanings m ON w.id = m.word_id
         LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
         LEFT JOIN roots r ON r.word_id = w.id
+        LEFT JOIN languages l ON r.language_id::integer = l.id
       WHERE
         w.name = ${name}
       GROUP BY
         w.id,
         w.name,
         r.root,
-        r.language
-          `) as WordSearchResult[]
+		l.language_en;`
+        ) as WordSearchResult[]
       return wordsWithMeanings
     }),
 });

@@ -1,5 +1,6 @@
 import { WordForm } from '@/types';
 import { Input } from '@nextui-org/react';
+import { useTranslations } from 'next-intl';
 import React from 'react'
 import { Control, Controller, UseFormClearErrors, UseFormGetFieldState, UseFormSetError, UseFormWatch } from 'react-hook-form';
 
@@ -16,6 +17,7 @@ export default function WordRootOriginInput({
     clearErrors: UseFormClearErrors<WordForm>,
     getFieldState: UseFormGetFieldState<WordForm>
 }) {
+    const t = useTranslations('LanguageAndRootInput')
     return (
         <Controller
             control={control}
@@ -27,10 +29,10 @@ export default function WordRootOriginInput({
                         !value &&
                         getFieldState("root").isTouched
                     ) {
-                        return "Root is required when language is selected";
+                        return t("rootInputError");
                     } else if (!watch("language") && value) {
                         setError("language", {
-                            message: "Language is required when root specified",
+                            message: t("languageInputError")
                         });
                         return true;
                     } else {

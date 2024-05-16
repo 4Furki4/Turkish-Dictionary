@@ -1,5 +1,5 @@
 "use client";
-import { MeaningInputs, WordForm } from "@/types";
+import { MeaningInputs, WordForm, WordFormSubmit } from "@/types";
 import {
   Button,
   Card,
@@ -7,7 +7,6 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import langs from "@/db/static/langs.json";
 import WordNameInput from "./CreateWordForm/Inputs/Word/NameInput";
 import WordPhoneticInput from "./CreateWordForm/Inputs/Word/PhoneticInput";
 import WordRootLanguageInput from "./CreateWordForm/Inputs/Word/RootLanguageInput";
@@ -85,7 +84,11 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     },
   });
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
-  const wordMutation = api.admin.addWord.useMutation({});
+  const wordMutation = api.admin.addWord.useMutation({
+    onSuccess: () => {
+      toast.success("Word created!")
+    }
+  });
   const [isUploading, setIsUploading] = React.useState(false);
   const onSubmit = async (data: WordForm) => {
     let { meanings } = data;
@@ -142,12 +145,12 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     }
     console.log('word', word)
     // TODO: handle object creation required in the backend
-    wordMutation.mutate(word as any)
+    wordMutation.mutate(word as WordFormSubmit)
     // reset();
   };
 
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
-  console.log(watch('meanings'))
+
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -155,7 +158,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         <div className="grid sm:grid-cols-2 gap-2">
           <WordNameInput control={control} watch={watch} setError={setError} />
           <WordPhoneticInput control={control} />
-          <WordRootLanguageInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} locale={locale} langs={langs} />
+          <WordRootLanguageInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} locale={locale} />
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
           <WordPrefixInput control={control} />
           <WordSuffixInput control={control} />

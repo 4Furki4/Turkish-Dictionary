@@ -83,5 +83,9 @@
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",
     "GoBackToHomepage": "Go back to homepage"
+  },
+  "LanguageInput": {
+    "rootInputError": "Root is required when language specified",
+    "languageInputError": "Language is required when root specified"
   }
 }

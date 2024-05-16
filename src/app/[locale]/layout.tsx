@@ -12,7 +12,8 @@ import { GeistSans } from "geist/font/sans";
 import Providers from "@/src/components/customs/Provider";
 import { getServerAuthSession } from "@/src/server/auth";
 import Navbar from "@/src/components/customs/Navbar";
-import { getTranslations } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -30,29 +31,24 @@ export default async function LocaleLayout({
 }) {
   const session = await getServerAuthSession();
   const t = await getTranslations("Navbar");
+  const messages = await getMessages();
+
   return (
     <html lang={locale} className="dark">
       <body className={`${GeistSans.className} min-h-[100dvh]`}>
         <TRPCReactProvider headers={headers()}>
-          <Suspense
-            fallback={
-              <Loader2
-                size={"32px"}
-                color="hsl(var(--background) / 0.7)"
-                className="fixed inset-0 m-auto animate-spin duration-500"
-              />
-            }
-          >
-            <NextSSRPlugin
-              /**
-               * The `extractRouterConfig` will extract **only** the route configs
-               * from the router to prevent additional information from being
-               * leaked to the client. The data passed to the client is the same
-               * as if you were to fetch `/api/uploadthing` directly.
-               */
-              routerConfig={extractRouterConfig(ourFileRouter)}
-            />
-            <Providers>
+
+          <NextSSRPlugin
+            /**
+             * The `extractRouterConfig` will extract **only** the route configs
+             * from the router to prevent additional information from being
+             * leaked to the client. The data passed to the client is the same
+             * as if you were to fetch `/api/uploadthing` directly.
+             */
+            routerConfig={extractRouterConfig(ourFileRouter)}
+          />
+          <Providers>
+            <NextIntlClientProvider messages={messages}>
               <Navbar
                 HomeIntl={t("Home")}
                 session={session}
@@ -60,8 +56,9 @@ export default async function LocaleLayout({
                 WordListIntl={t("Word List")}
               />
               {children}
-            </Providers>
-          </Suspense>
+            </NextIntlClientProvider>
+          </Providers>
+
         </TRPCReactProvider>
       </body>
     </html>

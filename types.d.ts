@@ -27,13 +27,15 @@ type ToUndefinedProps<T> = {
   [P in keyof T]: ReplaceNullWithUndefined<T[P]>;
 };
 
-type RootInput = Pick<InsertRoot, "root" | "language">;
 type WordInput = ToUndefinedProps<
   // Replace null with undefined since null is not allowed in Input value prop of NextUI
   Prettify<
     Partial<
       Omit<InsertWord, "rootId" | "created_at" | "updated_at" | "id"> &
-      RootInput
+      {
+        language: string
+        root: string;
+      }
     >
   >
 >;
@@ -56,6 +58,23 @@ type WordForm = Prettify<
     meanings: MeaningInputs[];
   }
 >;
+type WordFormSubmit = Prettify<{
+  name: string;
+  language?: string;
+  phonetic?: string;
+  root?: string;
+  prefix?: string;
+  suffix?: string;
+  meanings: {
+    meaning: string;
+    partOfSpeechId: number;
+    attributes?: string;
+    example?: {
+      sentence: string;
+      author: 'string | number';
+    }
+  }[]
+}>;
 
 type WordSearchResult = {
   word_data: {

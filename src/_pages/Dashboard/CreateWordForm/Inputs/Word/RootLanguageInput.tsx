@@ -1,5 +1,7 @@
+import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types';
 import { Autocomplete, AutocompleteItem } from '@nextui-org/react';
+import { useTranslations } from 'next-intl';
 import React from 'react'
 import { Control, Controller, UseFormClearErrors, UseFormGetFieldState, UseFormSetError, UseFormWatch } from 'react-hook-form';
 
@@ -10,7 +12,6 @@ export default function WordRootLanguageInput({
     clearErrors,
     getFieldState,
     locale,
-    langs,
 }: {
     control: Control<WordForm>,
     watch: UseFormWatch<WordForm>,
@@ -18,8 +19,10 @@ export default function WordRootLanguageInput({
     clearErrors: UseFormClearErrors<WordForm>,
     getFieldState: UseFormGetFieldState<WordForm>,
     locale: string,
-    langs: any[],
 }) {
+    const { data: langs, isLoading, isError, isSuccess, error: fetchError } = api.admin.getLanguages.useQuery();
+    const t = useTranslations('LanguageAndRootInput')
+
     return (
         <Controller
             control={control}
@@ -31,10 +34,10 @@ export default function WordRootLanguageInput({
                         !!watch("root") &&
                         getFieldState("language").isTouched
                     ) {
-                        return "Language is required when root specified";
+                        return t("languageInputError");
                     } else if (!watch("root") && value) {
                         setError("root", {
-                            message: "Root is required when language is selected",
+                            message: t("rootInputError")
                         });
                         return true;
                     } else {
@@ -46,18 +49,18 @@ export default function WordRootLanguageInput({
             render={({ field, fieldState: { error } }) => (
                 <Autocomplete
                     placeholder="You can search for a language"
-                    defaultItems={langs}
+                    isLoading={isLoading}
+                    defaultItems={isSuccess ? langs : []}
                     label="Select an language"
-                    {...field}
                     onSelectionChange={(item) => {
                         field.onChange(item);
                         clearErrors("language");
                     }}
-                    errorMessage={error?.message}
+                    errorMessage={isError ? fetchError?.message : error?.message ? error.message : ""}
                 >
                     {(item) => (
-                        <AutocompleteItem key={item.name}>
-                            {locale === "en" ? item.name : item.turkishName}
+                        <AutocompleteItem key={item.language_code}>
+                            {locale === "en" ? item.language_en : item.language_tr}
                         </AutocompleteItem>
                     )}
                 </Autocomplete>
