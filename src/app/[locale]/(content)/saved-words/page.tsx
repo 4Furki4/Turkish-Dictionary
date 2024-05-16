@@ -7,7 +7,7 @@ export default async function SavedWords() {
   return (
     <section className="max-w-5xl mx-auto grid gap-5 mt-5">
       {savedWords?.map((word) => (
-        <WordCard word={word} />
+        <WordCard key={word.word_data.word_id} word={word} />
       ))}
     </section>
   );

@@ -27,7 +27,7 @@ export const pathnames = {
     en: "/forgot-password",
     tr: "/sifremi-unuttum",
   },
-  "saved-words": {
+  "/saved-words": {
     en: "/saved-words",
     tr: "/kaydedilen-kelimeler",
   },

@@ -42,6 +42,7 @@ export default async function middleware(req: NextRequest) {
     `^(/(${locales.join("|")}))?(${publicPages.join("|")})?/?$`,
     "i"
   );
+  console.log('req.nextUrl.pathname', req.nextUrl.pathname)
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
   if (isPublicPage) {
