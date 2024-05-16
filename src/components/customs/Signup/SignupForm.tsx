@@ -5,7 +5,7 @@ import { Button, Divider, Input } from "@nextui-org/react";
 import Image from "next/image";
 import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -56,18 +56,13 @@ export default function SignupForm({
   const router = useRouter();
   const params = useSearchParams();
   const { theme } = useTheme();
+
   const createUserMutation = api.auth.createUser.useMutation({
     onError: (error) => {
       if (error.data?.zodError?.fieldErrors) {
         // Validation error messages from zod
         for (const field in error.data?.zodError?.fieldErrors) {
           toast.error(t(error.data?.zodError?.fieldErrors[field]?.at(0)), {
-            theme:
-              theme === "dark"
-                ? "dark"
-                : theme === "light"
-                ? "light"
-                : "colored",
             position: "bottom-center",
           });
         }
@@ -75,15 +70,11 @@ export default function SignupForm({
       }
 
       toast.error(error.message, {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
     },
     onSuccess: async (data) => {
       toast.success(SuccessMessageIntl, {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
       console.log(params.get("callbackUrl"));
@@ -107,8 +98,6 @@ export default function SignupForm({
     }).then((res) => {
       if (res?.error) {
         toast.error(res.error, {
-          theme:
-            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
           position: "bottom-center",
         });
       }

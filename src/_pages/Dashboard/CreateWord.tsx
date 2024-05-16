@@ -21,7 +21,7 @@ import MeaningExampleAuthorInput from "./CreateWordForm/Inputs/Meaning/ExampleAu
 import MeaningImageInput from "./CreateWordForm/Inputs/Meaning/ImageInput";
 import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons";
 import { uploadFiles } from "@/src/lib/uploadthing";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 
@@ -200,6 +200,9 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           className="w-full"
         >
           Submit
+        </Button>
+        <Button onPress={() => toast.success('SUCCESS!')}>
+          Toast
         </Button>
       </form>
     </section>

@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import { Edit3, MoreVertical, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Link as NextUILink } from "@nextui-org/react";
 import { Link } from "@/src/navigation";
 import { SelectWord } from "@/db/schema/words";

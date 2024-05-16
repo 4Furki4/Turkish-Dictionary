@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 // You need to import our styles for the button to look right. Best to import in the root /layout.tsx but this is fine
 
 import { UploadButton } from "@/src/lib/uploadthing";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useState } from "react";
 
 export default function Profile() {

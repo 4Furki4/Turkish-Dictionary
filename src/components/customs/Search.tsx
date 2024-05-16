@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { useSearchParams } from "next/navigation";
 import { Button, Card, CardBody, Input } from "@nextui-org/react";
 import React, { useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "@/src/navigation";
 export default function Search({
@@ -20,10 +20,7 @@ export default function Search({
   useEffect(() => {
     const warningParam = params.get("warning");
     if (warningParam === "alreadySignedIn") {
-      toast.warning(warningParamIntl, {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
-      });
+      toast.warning(warningParamIntl);
       router.replace("/");
     }
   }, []);

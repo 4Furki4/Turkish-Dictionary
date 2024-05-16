@@ -5,7 +5,7 @@ import { Button, Divider, Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import React, { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
@@ -70,8 +70,6 @@ export default function SigninForm({
     const result = credentialSchema.safeParse(data);
     if (!result.success) {
       toast.error(CorruptedLoginDataIntl, {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
       return;
@@ -97,8 +95,6 @@ export default function SigninForm({
     }).then((res) => {
       if (res?.error) {
         toast.error(res.error, {
-          theme:
-            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
           position: "bottom-center",
         });
       }
@@ -107,8 +103,6 @@ export default function SigninForm({
   useEffect(() => {
     if (params.get("error") === "CredentialsSignin") {
       toast.error(InvalidUsernameEmailOrPasswordIntl, {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
       router.replace({
@@ -120,8 +114,6 @@ export default function SigninForm({
     }
     if (params.get("error") === "OAuthAccountNotLinked") {
       toast.error(OAuthAccountNotLinked, {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
       router.replace({

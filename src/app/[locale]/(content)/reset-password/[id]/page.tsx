@@ -6,7 +6,7 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "@/src/components/customs/Signup/PasswordEye";
@@ -46,10 +46,8 @@ export default function Page({
   const forgotPasswordMutation = api.auth.verifyResetPasswordToken.useMutation({
     onError(error) {
       toast.info("Redirecting to signup page", {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
-        autoClose: 2500,
+        duration: 2500
       });
       setTimeout(() => {
         router.replace("/signup");
@@ -59,16 +57,12 @@ export default function Page({
   const resetPasswordMutation = api.auth.resetPassword.useMutation({
     onError(error) {
       toast.error(t(error.message), {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
     },
     onSuccess(data) {
       toast.success(t("PasswordResetSuccess"), {
-        autoClose: 1500,
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        duration: 1500,
         position: "bottom-center",
       });
       // wait 2 seconds before redirecting to login

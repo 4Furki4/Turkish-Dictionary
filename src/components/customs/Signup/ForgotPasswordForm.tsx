@@ -4,7 +4,7 @@ import { ForgotPassword } from "@/types";
 import { Button, Input } from "@nextui-org/react";
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
@@ -55,12 +55,6 @@ export default function ForgotPasswordForm({
             ? UnknownEmailError
             : GoogleAuthError,
           {
-            theme:
-              theme === "dark"
-                ? "dark"
-                : theme === "light"
-                ? "light"
-                : "colored",
             position: "bottom-center",
           }
         );
@@ -68,8 +62,6 @@ export default function ForgotPasswordForm({
       onSuccess: async (data) => {
         console.log(data);
         toast.success(EmailSentIntl, {
-          theme:
-            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
           position: "bottom-center",
         });
         router.push(
