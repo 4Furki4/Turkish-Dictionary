@@ -86,8 +86,7 @@ export const authRouter = createTRPCRouter({
       if (!user)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User with this email does not exist",
-          cause: "UnknownEmailError",
+          message: "UnknownEmailError",
         });
       if (user && !user.password)
         throw new TRPCError({

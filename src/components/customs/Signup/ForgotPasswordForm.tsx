@@ -51,7 +51,7 @@ export default function ForgotPasswordForm({
     api.auth.createUniqueForgotPasswordLink.useMutation({
       onError: (error) => {
         toast.error(
-          error.cause === "UknownEmailError"
+          error.message === "UnknownEmailError"
             ? UnknownEmailError
             : GoogleAuthError,
           {

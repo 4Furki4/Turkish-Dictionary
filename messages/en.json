@@ -58,7 +58,9 @@
     "Login": "Login",
     "Remembered Password": "Remembered Password?",
     "EmailRequired": "Email is required",
-    "InvalidEmail": "Invalid email"
+    "InvalidEmail": "Invalid email",
+    "GoogleAuthError": "User created with Google auth. Please sign in with Google.",
+    "UnknownEmailError": "User with this email does not exist"
   },
   "ResetPassword": {
     "Password": "Password",

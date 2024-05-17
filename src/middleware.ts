@@ -5,11 +5,14 @@ import { pathnames, localePrefix, locales } from "./navigation";
 const publicPages = [
   "/",
   "/search",
+  "/search?word=(.*)",
+  "/search(.*)",
   "/signup",
   "/signin",
   "/forgot-password",
   "/reset-password/(.*)",
-  "/ara",
+  "/arama",
+  "/arama?word=(.*)",
   "/giris-yap",
   "/kayit-ol",
   "/sifremi-unuttum",
@@ -42,7 +45,6 @@ export default async function middleware(req: NextRequest) {
     `^(/(${locales.join("|")}))?(${publicPages.join("|")})?/?$`,
     "i"
   );
-  console.log('req.nextUrl.pathname', req.nextUrl.pathname)
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
   if (isPublicPage) {

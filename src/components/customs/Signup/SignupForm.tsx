@@ -1,6 +1,6 @@
 "use client";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
-import { SignupForm, SignupRequest } from "@/types";
+import { SignupForm as SignupFormType, SignupRequest } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "./PasswordEye";
 import { Link, useRouter } from "@/src/navigation";
+import { useTranslations } from "next-intl";
 
 type SignUpFormProps = Record<
   | "SuccessMessageIntl"
@@ -56,7 +57,7 @@ export default function SignupForm({
   const router = useRouter();
   const params = useSearchParams();
   const { theme } = useTheme();
-
+  const t = useTranslations("SignupForm");
   const createUserMutation = api.auth.createUser.useMutation({
     onError: (error) => {
       if (error.data?.zodError?.fieldErrors) {
@@ -81,7 +82,7 @@ export default function SignupForm({
       router.push("/signin", { scroll: false });
     },
   });
-  const onSignupSubmit: SubmitHandler<SignupForm> = (data: SignupRequest) => {
+  const onSignupSubmit: SubmitHandler<SignupFormType> = (data: SignupRequest) => {
     const user = {
       name: data.name,
       username: data.username,
@@ -109,7 +110,7 @@ export default function SignupForm({
     watch,
     clearErrors,
     formState: { errors },
-  } = useForm<SignupForm>({ mode: "all" });
+  } = useForm<SignupFormType>({ mode: "all" });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);

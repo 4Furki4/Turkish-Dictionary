@@ -57,7 +57,9 @@
     "Login": "Giriş Yapın",
     "Remembered Password": "Şifrenizi hatırladınız mı?",
     "EmailRequired": "E-posta girmeniz gereklidir",
-    "InvalidEmail": "Geçersiz e-posta"
+    "InvalidEmail": "Geçersiz e-posta",
+    "GoogleAuthError": "Bu kullanıcı Google kimlik doğrulamasıyla oluşturulmuş, lütfen Google ile giriş yapın.",
+    "UnknownEmailError": "Bu e-posta adresiyle ilişkili bir hesap bulunamadı."
   },
   "ResetPassword": {
     "Password": "Şifre",
