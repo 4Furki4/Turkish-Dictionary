@@ -13,7 +13,6 @@ import {
   Accordion,
   AccordionItem,
 } from "@nextui-org/react";
-import { Link } from "@/src/navigation";
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "sonner";
@@ -34,16 +33,30 @@ export default function WordCard({ word: { word_data } }: { word: WordSearchResu
   });
   const [optimisticIsSaved, setOptimisticIsSave] = useOptimistic(
     savedWordsQuery.data,
-    (state, action) => !state
+    (currentState, optimisticValue) => currentState!
   );
-  // const t = useTranslations("WordCard");
+  const t = useTranslations("WordCard");
   const saveWordMutation = api.user.saveWord.useMutation({
     onError: (error) => {
       switch (error.message) {
         case "UNAUTHORIZED":
-          // toast.error(t("UnauthSave"), {
-          //   position: "bottom-center",
-          // });
+          toast.error(t("UnauthSave"), {
+            position: "bottom-center",
+          });
+          break;
+      }
+    },
+    onSuccess: async () => {
+      await savedWordsQuery.refetch();
+    },
+  });
+  const unsaveWordMutation = api.user.unsaveWord.useMutation({
+    onError: (error) => {
+      switch (error.message) {
+        case "UNAUTHORIZED":
+          toast.error(t("UnauthUnsave"), {
+            position: "bottom-center",
+          });
           break;
       }
     },
@@ -63,13 +76,17 @@ export default function WordCard({ word: { word_data } }: { word: WordSearchResu
         className="absolute top-2 right-2 cursor-pointer z-50 sm:hover:scale-125 transition-all"
         onClick={async () => {
           setOptimisticIsSave(!optimisticIsSaved);
+          if (savedWordsQuery.data) {
+            await unsaveWordMutation.mutateAsync(word_data.word_id);
+            return;
+          }
           await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
         }}
       >
         <Bookmark
           aria-label="bookmark icon"
           size={32}
-          fill={optimisticIsSaved ? "#F59E0B" : "#fff"}
+          fill={savedWordsQuery.data ? "#F59E0B" : "#fff"}
         />
       </button>
 
