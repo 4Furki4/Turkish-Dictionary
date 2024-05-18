@@ -26,14 +26,13 @@ const itemClasses = {
   indicator: "text-fs-0",
   content: "px-2 text-fs--1",
 };
-export default function WordCard({ word: { word_data }, isSavedWord }: { word: WordSearchResult, isSavedWord: boolean }) {
+export default function WordCard({ word: { word_data }, isSavedWord }: { word: WordSearchResult, isSavedWord?: boolean }) {
   // const savedWords = api.user.getSavedWords.useQuery();
   const utils = api.useUtils()
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word_data.word_id, {
     queryKey: ["user.getWordSaveStatus", word_data.word_id],
     initialData: isSavedWord,
   });
-  console.log('savedWordsQuery', savedWordsQuery.data)
   const t = useTranslations("WordCard");
   const saveWordMutation = api.user.saveWord.useMutation({
     onMutate: async ({ wordId }) => {
