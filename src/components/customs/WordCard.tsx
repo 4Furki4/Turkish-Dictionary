@@ -19,51 +19,45 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { SelectWordWithMeanings } from "@/db/schema/words";
 import { WordSearchResult } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 const itemClasses = {
   title: "font-normal text-fs-1 text-primary",
   trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
   indicator: "text-fs-0",
   content: "px-2 text-fs--1",
 };
-export default function WordCard({ word: { word_data } }: { word: WordSearchResult }) {
-  const savedWords = api.user.getSavedWords.useQuery();
+export default function WordCard({ word: { word_data }, isSavedWord }: { word: WordSearchResult, isSavedWord: boolean }) {
+  // const savedWords = api.user.getSavedWords.useQuery();
+  const utils = api.useUtils()
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word_data.word_id, {
     queryKey: ["user.getWordSaveStatus", word_data.word_id],
-    staleTime: Infinity,
+    initialData: isSavedWord,
   });
-  const [optimisticIsSaved, setOptimisticIsSave] = useOptimistic(
-    savedWordsQuery.data,
-    (currentState, optimisticValue) => currentState!
-  );
+  console.log('savedWordsQuery', savedWordsQuery.data)
   const t = useTranslations("WordCard");
   const saveWordMutation = api.user.saveWord.useMutation({
-    onError: (error) => {
+    onMutate: async ({ wordId }) => {
+      await utils.user.getWordSaveStatus.cancel(wordId)
+      const previousValue = utils.user.getWordSaveStatus.getData(wordId);
+      utils.user.getWordSaveStatus.setData(wordId, !previousValue);
+      return { previousValue };
+    },
+    onError: (error, { wordId }, context) => {
       switch (error.message) {
         case "UNAUTHORIZED":
           toast.error(t("UnauthSave"), {
             position: "bottom-center",
           });
+          utils.user.getWordSaveStatus.setData(wordId, context?.previousValue)
           break;
       }
     },
-    onSuccess: async () => {
-      await savedWordsQuery.refetch();
+    // Always refetch after error or success:
+    onSettled: (newValue, error, { wordId }) => {
+      void utils.user.getWordSaveStatus.invalidate(wordId)
     },
   });
-  const unsaveWordMutation = api.user.unsaveWord.useMutation({
-    onError: (error) => {
-      switch (error.message) {
-        case "UNAUTHORIZED":
-          toast.error(t("UnauthUnsave"), {
-            position: "bottom-center",
-          });
-          break;
-      }
-    },
-    onSuccess: async () => {
-      await savedWordsQuery.refetch();
-    },
-  });
+
 
   return (
     <Card
@@ -75,13 +69,9 @@ export default function WordCard({ word: { word_data } }: { word: WordSearchResu
       <button
         className="absolute top-2 right-2 cursor-pointer z-50 sm:hover:scale-125 transition-all"
         onClick={async () => {
-          setOptimisticIsSave(!optimisticIsSaved);
-          if (savedWordsQuery.data) {
-            await unsaveWordMutation.mutateAsync(word_data.word_id);
-            return;
-          }
           await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
         }}
+        disabled={saveWordMutation.isLoading}
       >
         <Bookmark
           aria-label="bookmark icon"

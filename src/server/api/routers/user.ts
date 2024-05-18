@@ -90,16 +90,18 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx: { session, db } }) => {
-      const savedWord = await db.insert(savedWords).values({
-        userId: session.user.id,
-        wordId: input.wordId,
-      }).returning().execute()
-      console.log('savedWord', savedWord);
-      return savedWord
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      try {
+        const savedWord = await db.insert(savedWords).values({
+          userId: session.user.id,
+          wordId: input.wordId,
+        }).returning().execute()
+      } catch (error) {
+        await db.delete(savedWords).where(sql`user_id = ${session.user.id} AND word_id = ${input.wordId}`).execute()
+        return false
+      }
+      return true
     }),
-  unsaveWord: protectedProcedure.input(z.number()).mutation(async ({ input, ctx: { session, db } }) => {
-    await db.delete(savedWords).where(sql`user_id = ${session.user.id} AND word_id = ${input}`).execute()
-  }),
   // console.log(session);
   // const user = await db.query.users
   //   .findFirst({
