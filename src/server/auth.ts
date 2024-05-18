@@ -75,27 +75,29 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
+        console.log('credentials', credentials)
+
         if (
           (credentials?.email === undefined &&
             credentials?.username === undefined) || // no email or username
           credentials?.password === undefined || // no password
           (credentials?.password && credentials?.password.length < 8) // password too short
-        )
-          return Promise.resolve(null);
+        ) return Promise.resolve(null);
 
+        const userLoggedInWithEmail = credentials?.email !== undefined;
         let user = null;
-        if (credentials?.email !== undefined) {
+
+        if (userLoggedInWithEmail) {
           user = await db.query.users.findFirst({
             where: eq(users.email, credentials?.email),
           });
         }
-
         user =
-          user !== null
+          user!!
             ? user
             : await db.query.users.findFirst({
-                where: eq(users.username, credentials?.username),
-              });
+              where: eq(users.username, credentials?.username),
+            });
 
         if (user === undefined) return Promise.resolve(null); // user not found
 
