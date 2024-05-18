@@ -1,20 +1,29 @@
 import { withAuth } from "next-auth/middleware";
 import createIntlMiddleware from "next-intl/middleware";
 import { NextRequest } from "next/server";
-
-const locales = ["en", "tr"];
+import { pathnames, localePrefix, locales } from "./navigation";
 const publicPages = [
   "/",
   "/search",
+  "/search?word=(.*)",
+  "/search(.*)",
   "/signup",
   "/signin",
   "/forgot-password",
   "/reset-password/(.*)",
+  "/arama",
+  "/arama?word=(.*)",
+  "/giris-yap",
+  "/kayit-ol",
+  "/sifremi-unuttum",
+  "/sifreyi-yenile/(.*)",
 ];
 
 const intlMiddleware = createIntlMiddleware({
   locales,
   defaultLocale: "en",
+  localePrefix,
+  pathnames,
 });
 
 const authMiddleware = withAuth(

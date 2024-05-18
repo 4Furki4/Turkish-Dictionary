@@ -2,18 +2,40 @@
 import "react-toastify/dist/ReactToastify.css";
 import { ForgotPassword } from "@/types";
 import { Button, Input } from "@nextui-org/react";
-import { useLocale, useTranslations } from "next-intl";
 import React from "react";
-import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import Link from "next-intl/link";
 import { api } from "@/src/trpc/react";
+import { Link, useRouter } from "@/src/navigation";
+import { useLocale } from "next-intl";
 
-export default function ForgotPasswordForm() {
-  const t = useTranslations("ForgotPasswordForm");
+type ForgotPassowrdFormProps = Record<
+  | "UnknownEmailError"
+  | "GoogleAuthError"
+  | "EmailIntl"
+  | "InvalidEmailIntl"
+  | "RememberedPasswordIntl"
+  | "LoginIntl"
+  | "EmailSentIntl"
+  | "ForgotPasswordIntl"
+  | "EmailRequiredIntl"
+  | "EmailRequiredIntl",
+  string
+>;
+
+export default function ForgotPasswordForm({
+  EmailIntl,
+  LoginIntl,
+  RememberedPasswordIntl,
+  InvalidEmailIntl,
+  EmailSentIntl,
+  ForgotPasswordIntl,
+  EmailRequiredIntl,
+  GoogleAuthError,
+  UnknownEmailError,
+}: ForgotPassowrdFormProps) {
   const router = useRouter();
   const params = useSearchParams();
   const locale = useLocale();
@@ -28,25 +50,27 @@ export default function ForgotPasswordForm() {
   const forgotPasswordMutation =
     api.auth.createUniqueForgotPasswordLink.useMutation({
       onError: (error) => {
-        toast.error(t(error.message), {
-          theme:
-            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
-          position: "bottom-center",
-        });
+        toast.error(
+          error.message === "UnknownEmailError"
+            ? UnknownEmailError
+            : GoogleAuthError,
+          {
+            position: "bottom-center",
+          }
+        );
       },
       onSuccess: async (data) => {
         console.log(data);
-        toast.success(t("Email Sent"), {
-          theme:
-            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+        toast.success(EmailSentIntl, {
           position: "bottom-center",
         });
         router.push(
-          `${
-            params.get("callbackUrl")
-              ? `?callbackUrl=${params.get("callbackUrl")}`
-              : ""
-          }`,
+          {
+            pathname: "/signin",
+            query: params.get("callbackUrl")
+              ? { callbackUrl: params.get("callbackUrl") }
+              : undefined,
+          },
           { scroll: false }
         );
       },
@@ -64,18 +88,18 @@ export default function ForgotPasswordForm() {
         className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
       >
         <h1 className="text-fs-2 font-bold text-center">
-          {t("Forgot Password")}
+          {ForgotPasswordIntl}
         </h1>
         <Controller
           name="forgotPasswordEmail"
           rules={{
             required: {
               value: true,
-              message: t("EmailRequired"),
+              message: EmailRequiredIntl,
             },
             pattern: {
               value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-              message: t("InvalidEmail"),
+              message: InvalidEmailIntl,
             },
           }}
           control={control}
@@ -88,7 +112,7 @@ export default function ForgotPasswordForm() {
               inputMode="email"
               dir="auto"
               {...field}
-              label={t("Email")}
+              label={EmailIntl}
               color="primary"
               variant="underlined"
               errorMessage={errors.forgotPasswordEmail?.message}
@@ -97,16 +121,19 @@ export default function ForgotPasswordForm() {
           )}
         />
         <Button color="primary" variant="ghost" type="submit">
-          {t("Send Email")}
+          {EmailSentIntl}
         </Button>
         <p>
-          {t("Remembered Password")}
+          {RememberedPasswordIntl}
           {` `}
           <Link
             className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-            href={`/signin?${decodeURIComponent(params.toString())}`}
+            href={{
+              pathname: "/signin",
+              query: decodeURIComponent(params.toString()),
+            }}
           >
-            {t("Login")}
+            {LoginIntl}
           </Link>
         </p>
       </form>

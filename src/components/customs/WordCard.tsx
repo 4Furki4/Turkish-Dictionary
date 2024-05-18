@@ -1,7 +1,8 @@
-"use client";
+'use client'
+// @ts-nocheck
 import React, {
   Fragment,
-  experimental_useOptimistic as useOptimistic,
+  useOptimistic,
 } from "react";
 import {
   Card,
@@ -12,43 +13,50 @@ import {
   Accordion,
   AccordionItem,
 } from "@nextui-org/react";
-import Link from "next-intl/link";
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { SelectWordWithMeanings } from "@/db/schema";
+import { SelectWordWithMeanings } from "@/db/schema/words";
+import { WordSearchResult } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 const itemClasses = {
   title: "font-normal text-fs-1 text-primary",
   trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
   indicator: "text-fs-0",
   content: "px-2 text-fs--1",
 };
-export default function WordCard({ word }: { word: SelectWordWithMeanings }) {
-  const savedWords = api.user.getSavedWords.useQuery();
-  const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word.id, {
-    queryKey: ["user.getWordSaveStatus", word.id],
-    staleTime: Infinity,
+export default function WordCard({ word: { word_data }, isSavedWord }: { word: WordSearchResult, isSavedWord?: boolean }) {
+  // const savedWords = api.user.getSavedWords.useQuery();
+  const utils = api.useUtils()
+  const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word_data.word_id, {
+    queryKey: ["user.getWordSaveStatus", word_data.word_id],
+    initialData: isSavedWord,
   });
-  const [optimisticIsSaved, setOptimisticIsSave] = useOptimistic(
-    savedWordsQuery.data,
-    (state, action) => !state
-  );
   const t = useTranslations("WordCard");
   const saveWordMutation = api.user.saveWord.useMutation({
-    onError: (error) => {
+    onMutate: async ({ wordId }) => {
+      await utils.user.getWordSaveStatus.cancel(wordId)
+      const previousValue = utils.user.getWordSaveStatus.getData(wordId);
+      utils.user.getWordSaveStatus.setData(wordId, !previousValue);
+      return { previousValue };
+    },
+    onError: (error, { wordId }, context) => {
       switch (error.message) {
         case "UNAUTHORIZED":
           toast.error(t("UnauthSave"), {
             position: "bottom-center",
           });
+          utils.user.getWordSaveStatus.setData(wordId, context?.previousValue)
           break;
       }
     },
-    onSuccess: async () => {
-      await savedWordsQuery.refetch();
+    // Always refetch after error or success:
+    onSettled: (newValue, error, { wordId }) => {
+      void utils.user.getWordSaveStatus.invalidate(wordId)
     },
   });
+
 
   return (
     <Card
@@ -60,53 +68,57 @@ export default function WordCard({ word }: { word: SelectWordWithMeanings }) {
       <button
         className="absolute top-2 right-2 cursor-pointer z-50 sm:hover:scale-125 transition-all"
         onClick={async () => {
-          setOptimisticIsSave(!optimisticIsSaved);
-          await saveWordMutation.mutateAsync({ wordId: word.id });
+          await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
         }}
+        disabled={saveWordMutation.isLoading}
       >
         <Bookmark
           aria-label="bookmark icon"
           size={32}
-          fill={optimisticIsSaved ? "#F59E0B" : "#fff"}
+          fill={savedWordsQuery.data ? "#F59E0B" : "#fff"}
         />
       </button>
 
       <CardHeader className="justify-center">
         <h2 className="text-fs-6 text-center w-full self-start">
-          {word.prefix && (
+          {word_data.prefix && (
             <span className="text-fs-4">
-              <span aria-label="word prefix">{word.prefix}</span>
+              <span aria-label="word prefix">{word_data.prefix}</span>
               <span aria-hidden>-,</span>
             </span>
           )}
-          {word.name}
-          {word.suffix && (
+          {word_data.word_name}
+          {word_data.suffix && (
             <span className="text-fs-4">
-              <span aria-hidden>, -</span>
-              <span aria-label="word-suffix">{word.suffix}</span>
+              <span aria-hidden></span>
+              <span aria-label="word-suffix">{word_data.suffix}</span>
             </span>
           )}
         </h2>
       </CardHeader>
       <CardBody>
         <>
-          <h3 className="text-fs-0">{word.root}</h3>
+          <div className="flex space-x-4">
+            <h3 className="text-fs-0">{word_data.root.root}</h3>
+            <Divider orientation="vertical"></Divider>
+            <h3 className="text-fs-0">{word_data.root.language}</h3>
+          </div>
           <div className="grid gap-2 mt-4">
-            {word.meanings.map((meaning) => (
-              <Fragment key={meaning.id}>
+            {word_data.meanings.map((meaning) => (
+              <Fragment key={meaning.meaning_id}>
                 <p className="text-fs-1">
-                  {meaning.partOfSpeech ? `${meaning.partOfSpeech}` : null}
-                  {meaning.attributes && <span aria-hidden>, </span>}
-                  {meaning.attributes ? `${meaning.attributes}` : null}
+                  {meaning.part_of_speech ? `${meaning.part_of_speech}` : null}
+                  {/* {meaning.attributes && <span aria-hidden>, </span>}
+                  {meaning.attributes ? `${meaning.attributes}` : null} */}
                   <span aria-hidden>{": "}</span>
-                  {meaning.definition}
+                  {meaning.meaning}
                 </p>
-                {meaning.exampleSentece ? (
+                {/* {meaning.exampleSentece ? (
                   <p className="text-center italic px-2 text-fs--1">
                     <q>{meaning.exampleSentece}</q>{" "}
                     {"- " + meaning.exampleSentenceAuthor}
                   </p>
-                ) : null}
+                ) : null} */}
                 <Divider />
               </Fragment>
             ))}
@@ -114,15 +126,15 @@ export default function WordCard({ word }: { word: SelectWordWithMeanings }) {
         </>
       </CardBody>
       <CardFooter>
-        <Accordion selectionMode="multiple" itemClasses={itemClasses}>
+        {/* <Accordion selectionMode="multiple" itemClasses={itemClasses}>
           <AccordionItem
             key={1}
             aria-label="Related Words"
             title="Related Words"
           >
             <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {word.related_words ? (
-                word.related_words.map((word, index) => (
+              {word_data.related_words ? (
+                word_data.related_words.map((word, index) => (
                   <Fragment key={index}>
                     <Link
                       className="text-center underline"
@@ -155,7 +167,7 @@ export default function WordCard({ word }: { word: SelectWordWithMeanings }) {
               )}
             </div>
           </AccordionItem>
-        </Accordion>
+        </Accordion> */}
       </CardFooter>
     </Card>
   );

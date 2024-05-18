@@ -6,6 +6,8 @@
   },
   "SigninForm": {
     "Sign in with Google": "Google ile giriş yap",
+    "Sign in with GitHub": "GitHub ile giriş yap",
+    "Sign in with Discord": "Discord ile giriş yap",
     "Don't have an account?": "Hesabınız yok mu?",
     "Sign Up": "Kaydolun",
     "Sign In": "Giriş Yap",
@@ -23,7 +25,7 @@
   "SignupForm": {
     "Sign up with Google": "Google ile kaydol",
     "Sign in with Google": "Google ile giriş yap",
-    "Create a new account": "Yeni hesap oluştur",
+    "CreateNewAccount": "Yeni hesap oluştur",
     "Name": "İsim",
     "Username": "Kullanıcı Adı",
     "Email": "E-posta",
@@ -32,7 +34,7 @@
     "Sign Up Button": "Kaydol",
     "Already have an account?": "Zaten hesabınız var mı?",
     "Login": "Giriş Yapın",
-    "Account created successfully, please sign in": "Hesap başarıyla oluşturuldu. Lütfen giriş yapın.",
+    "SignupSuccess": "Hesap başarıyla oluşturuldu. Lütfen giriş yapın.",
     "User created with google auth": "Google kimlik doğrulamasıyla kullanıcı oluşturulmuş. Lütfen Google ile giriş yapın.",
     "Passwords do not match": "Şifreler eşleşmiyor",
     "PasswordPatternErrorMessage": "Şifre en az 8 karakter, bir büyük harf ve bir sayı içermelidir",
@@ -55,7 +57,9 @@
     "Login": "Giriş Yapın",
     "Remembered Password": "Şifrenizi hatırladınız mı?",
     "EmailRequired": "E-posta girmeniz gereklidir",
-    "InvalidEmail": "Geçersiz e-posta"
+    "InvalidEmail": "Geçersiz e-posta",
+    "GoogleAuthError": "Bu kullanıcı Google kimlik doğrulamasıyla oluşturulmuş, lütfen Google ile giriş yapın.",
+    "UnknownEmailError": "Bu e-posta adresiyle ilişkili bir hesap bulunamadı."
   },
   "ResetPassword": {
     "Password": "Şifre",
@@ -80,5 +84,9 @@
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
     "GoBackToHomepage": "Ana sayfaya dön"
+  },
+  "LanguageAndRootInput": {
+    "rootInputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
+    "languageInputError": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
   }
 }

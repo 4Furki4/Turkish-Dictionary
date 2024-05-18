@@ -1,11 +1,11 @@
 {
-  "id": "44670f32-0ce9-4803-878f-2fe1ca0cea6d",
+  "id": "2c9cbe1e-5742-473c-bbc4-2e41c861f36c",
   "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "account": {
-      "name": "account",
+    "public.accounts": {
+      "name": "accounts",
       "schema": "",
       "columns": {
         "userId": {
@@ -84,10 +84,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "account_userId_user_id_fk": {
-          "name": "account_userId_user_id_fk",
-          "tableFrom": "account",
-          "tableTo": "user",
+        "accounts_userId_users_id_fk": {
+          "name": "accounts_userId_users_id_fk",
+          "tableFrom": "accounts",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
@@ -99,8 +99,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "account_provider_providerAccountId": {
-          "name": "account_provider_providerAccountId",
+        "accounts_provider_providerAccountId_pk": {
+          "name": "accounts_provider_providerAccountId_pk",
           "columns": [
             "provider",
             "providerAccountId"
@@ -109,7 +109,190 @@
       },
       "uniqueConstraints": {}
     },
-    "meanings": {
+    "public.authors": {
+      "name": "authors",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'author'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.examples": {
+      "name": "examples",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sentence": {
+          "name": "sentence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author_id": {
+          "name": "author_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'example'"
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "examples_author_id_authors_id_fk": {
+          "name": "examples_author_id_authors_id_fk",
+          "tableFrom": "examples",
+          "tableTo": "authors",
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "examples_word_id_words_id_fk": {
+          "name": "examples_word_id_words_id_fk",
+          "tableFrom": "examples",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.meaning_attributes": {
+      "name": "meaning_attributes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "attribute": {
+          "name": "attribute",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.meanings_attributes": {
+      "name": "meanings_attributes",
+      "schema": "",
+      "columns": {
+        "meaning_id": {
+          "name": "meaning_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "attribute_id": {
+          "name": "attribute_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'meaningAttribute'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "meanings_attributes_meaning_id_meanings_id_fk": {
+          "name": "meanings_attributes_meaning_id_meanings_id_fk",
+          "tableFrom": "meanings_attributes",
+          "tableTo": "meanings",
+          "columnsFrom": [
+            "meaning_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "meanings_attributes_attribute_id_meaning_attributes_id_fk": {
+          "name": "meanings_attributes_attribute_id_meaning_attributes_id_fk",
+          "tableFrom": "meanings_attributes",
+          "tableTo": "meaning_attributes",
+          "columnsFrom": [
+            "attribute_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "meanings_attributes_meaning_id_attribute_id_pk": {
+          "name": "meanings_attributes_meaning_id_attribute_id_pk",
+          "columns": [
+            "meaning_id",
+            "attribute_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.meanings": {
       "name": "meanings",
       "schema": "",
       "columns": {
@@ -119,23 +302,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "definition": {
-          "name": "definition",
+        "meaning": {
+          "name": "meaning",
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        },
-        "exampleSentence": {
-          "name": "exampleSentence",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "exampleAuthor": {
-          "name": "exampleAuthor",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
         },
         "word_id": {
           "name": "word_id",
@@ -149,17 +320,18 @@
           "primaryKey": false,
           "notNull": false
         },
-        "partOfSpeech": {
-          "name": "partOfSpeech",
-          "type": "partOfSpeech",
+        "part_of_speech_id": {
+          "name": "part_of_speech_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "attributes": {
-          "name": "attributes",
-          "type": "varchar(255)[]",
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'meaning'"
         }
       },
       "indexes": {},
@@ -176,13 +348,417 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "meanings_part_of_speech_id_part_of_speechs_id_fk": {
+          "name": "meanings_part_of_speech_id_part_of_speechs_id_fk",
+          "tableFrom": "meanings",
+          "tableTo": "part_of_speechs",
+          "columnsFrom": [
+            "part_of_speech_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user": {
-      "name": "user",
+    "public.part_of_speechs": {
+      "name": "part_of_speechs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "part_of_speech": {
+          "name": "part_of_speech",
+          "type": "partOfSpeech",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'partOfSpeech'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.pronounciations": {
+      "name": "pronounciations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "audio_url": {
+          "name": "audio_url",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pronounciations_word_id_words_id_fk": {
+          "name": "pronounciations_word_id_words_id_fk",
+          "tableFrom": "pronounciations",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "pronounciations_user_id_users_id_fk": {
+          "name": "pronounciations_user_id_users_id_fk",
+          "tableFrom": "pronounciations",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.related_phrases": {
+      "name": "related_phrases",
+      "schema": "",
+      "columns": {
+        "phrase_id": {
+          "name": "phrase_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "related_phrase_id": {
+          "name": "related_phrase_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "related_phrases_phrase_id_words_id_fk": {
+          "name": "related_phrases_phrase_id_words_id_fk",
+          "tableFrom": "related_phrases",
+          "tableTo": "words",
+          "columnsFrom": [
+            "phrase_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "related_phrases_related_phrase_id_words_id_fk": {
+          "name": "related_phrases_related_phrase_id_words_id_fk",
+          "tableFrom": "related_phrases",
+          "tableTo": "words",
+          "columnsFrom": [
+            "related_phrase_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.related_words": {
+      "name": "related_words",
+      "schema": "",
+      "columns": {
+        "word_id": {
+          "name": "word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "related_word_id": {
+          "name": "related_word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "related_words_word_id_words_id_fk": {
+          "name": "related_words_word_id_words_id_fk",
+          "tableFrom": "related_words",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "related_words_related_word_id_words_id_fk": {
+          "name": "related_words_related_word_id_words_id_fk",
+          "tableFrom": "related_words",
+          "tableTo": "words",
+          "columnsFrom": [
+            "related_word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.requests": {
+      "name": "requests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entity_type": {
+          "name": "entity_type",
+          "type": "entity_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entity_id": {
+          "name": "entity_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "action": {
+          "name": "action",
+          "type": "action",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "new_data": {
+          "name": "new_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "request_date": {
+          "name": "request_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "status": {
+          "name": "status",
+          "type": "status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'pending'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "requests_user_id_users_id_fk": {
+          "name": "requests_user_id_users_id_fk",
+          "tableFrom": "requests",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.roots": {
+      "name": "roots",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "root": {
+          "name": "root",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "language": {
+          "name": "language",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'root'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "roots_word_id_words_id_fk": {
+          "name": "roots_word_id_words_id_fk",
+          "tableFrom": "roots",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.saved_words": {
+      "name": "saved_words",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "saved_words_user_id_users_id_fk": {
+          "name": "saved_words_user_id_users_id_fk",
+          "tableFrom": "saved_words",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "saved_words_word_id_words_id_fk": {
+          "name": "saved_words_word_id_words_id_fk",
+          "tableFrom": "saved_words",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "saved_words_user_id_word_id_pk": {
+          "name": "saved_words_user_id_word_id_pk",
+          "columns": [
+            "user_id",
+            "word_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.users": {
+      "name": "users",
       "schema": "",
       "columns": {
         "id": {
@@ -230,6 +806,7 @@
         "role": {
           "name": "role",
           "type": "role",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'user'"
@@ -240,48 +817,57 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users_to_groups": {
-      "name": "users_to_groups",
+    "public.word_attributes": {
+      "name": "word_attributes",
       "schema": "",
       "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "attribute": {
+          "name": "attribute",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'wordAttribute'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.words_attributes": {
+      "name": "words_attributes",
+      "schema": "",
+      "columns": {
         "word_id": {
           "name": "word_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
+        "attribute_id": {
+          "name": "attribute_id",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
+          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "users_to_groups_user_id_user_id_fk": {
-          "name": "users_to_groups_user_id_user_id_fk",
-          "tableFrom": "users_to_groups",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "users_to_groups_word_id_words_id_fk": {
-          "name": "users_to_groups_word_id_words_id_fk",
-          "tableFrom": "users_to_groups",
+        "words_attributes_word_id_words_id_fk": {
+          "name": "words_attributes_word_id_words_id_fk",
+          "tableFrom": "words_attributes",
           "tableTo": "words",
           "columnsFrom": [
             "word_id"
@@ -291,20 +877,33 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "words_attributes_attribute_id_word_attributes_id_fk": {
+          "name": "words_attributes_attribute_id_word_attributes_id_fk",
+          "tableFrom": "words_attributes",
+          "tableTo": "word_attributes",
+          "columnsFrom": [
+            "attribute_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "users_to_groups_user_id_word_id": {
-          "name": "users_to_groups_user_id_word_id",
+        "words_attributes_word_id_attribute_id_pk": {
+          "name": "words_attributes_word_id_attribute_id_pk",
           "columns": [
-            "user_id",
-            "word_id"
+            "word_id",
+            "attribute_id"
           ]
         }
       },
       "uniqueConstraints": {}
     },
-    "words": {
+    "public.words": {
       "name": "words",
       "schema": "",
       "columns": {
@@ -326,21 +925,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "root": {
-          "name": "root",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "attributes": {
-          "name": "attributes",
-          "type": "varchar(255)[]",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "audio": {
-          "name": "audio",
-          "type": "varchar(255)",
+        "root_id": {
+          "name": "root_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -357,18 +944,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "related_words": {
-          "name": "related_words",
-          "type": "varchar(255)[]",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "related_phrases": {
-          "name": "related_phrases",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false
-        },
         "prefix": {
           "name": "prefix",
           "type": "varchar(255)",
@@ -380,6 +955,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'word'"
         }
       },
       "indexes": {},
@@ -389,32 +971,67 @@
     }
   },
   "enums": {
-    "partOfSpeech": {
+    "public.partOfSpeech": {
       "name": "partOfSpeech",
-      "values": {
-        "isim": "isim",
-        "fiil": "fiil",
-        "sıfat": "sıfat",
-        "zarf": "zarf",
-        "zamir": "zamir",
-        "ünlem": "ünlem",
-        "edat": "edat",
-        "bağlaç": "bağlaç"
-      }
+      "schema": "public",
+      "values": [
+        "isim",
+        "fiil",
+        "sıfat",
+        "zarf",
+        "zamir",
+        "ünlem",
+        "edat",
+        "bağlaç"
+      ]
     },
-    "role": {
+    "public.action": {
+      "name": "action",
+      "schema": "public",
+      "values": [
+        "create",
+        "update",
+        "delete"
+      ]
+    },
+    "public.entity_type": {
+      "name": "entity_type",
+      "schema": "public",
+      "values": [
+        "words",
+        "meanings",
+        "roots",
+        "related_words",
+        "part_of_speechs",
+        "examples",
+        "authors",
+        "word_attributes",
+        "meaning_attributes"
+      ]
+    },
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "approved",
+        "rejected"
+      ]
+    },
+    "public.role": {
       "name": "role",
-      "values": {
-        "user": "user",
-        "moderator": "moderator",
-        "admin": "admin"
-      }
+      "schema": "public",
+      "values": [
+        "user",
+        "moderator",
+        "admin"
+      ]
     }
   },
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   }
 }

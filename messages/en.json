@@ -6,6 +6,8 @@
   },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
+    "Sign in with GitHub": "Sign in with GitHub",
+    "Sign in with Discord": "Sign in with Discord",
     "Don't have an account?": "Don't have an account?",
     "Sign Up": "Sign Up",
     "Sign In": "Sign In",
@@ -23,7 +25,7 @@
   "SignupForm": {
     "Sign up with Google": "Sign up with Google",
     "Sign in with Google": "Sign in with Google",
-    "Create a new account": "Create new account",
+    "CreateNewAccount": "Create new account",
     "Name": "Name",
     "Username": "Username",
     "Email": "Email",
@@ -32,7 +34,7 @@
     "Sign Up Button": "Sign Up",
     "Already have an account?": "Already have an account?",
     "Login": "Login",
-    "Account created successfully, please sign in": "Account created successfully. Please sign in.",
+    "SignupSuccess": "Account created successfully. Please sign in.",
     "User created with google auth": "User created with Google auth. Please sign in with Google.",
     "Passwords do not match": "Passwords do not match",
     "PasswordPatternErrorMessage": "Password must contain at least 8 characters, one uppercase, and one number",
@@ -56,7 +58,9 @@
     "Login": "Login",
     "Remembered Password": "Remembered Password?",
     "EmailRequired": "Email is required",
-    "InvalidEmail": "Invalid email"
+    "InvalidEmail": "Invalid email",
+    "GoogleAuthError": "User created with Google auth. Please sign in with Google.",
+    "UnknownEmailError": "User with this email does not exist"
   },
   "ResetPassword": {
     "Password": "Password",
@@ -81,5 +85,9 @@
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",
     "GoBackToHomepage": "Go back to homepage"
+  },
+  "LanguageInput": {
+    "rootInputError": "Root is required when language specified",
+    "languageInputError": "Language is required when root specified"
   }
 }

@@ -1,4 +1,7 @@
-import type { SelectWord } from "./db/schema";
+import { InsertMeaning } from "./db/schema/meanings";
+import { PartOfSpeech } from "./db/schema/part_of_speechs";
+import { InsertRoot } from "./db/schema/roots";
+import { InsertWord } from "./db/schema/words";
 
 type LoginInputs = {
   usernameOrEmail: string;
@@ -24,36 +27,75 @@ type ToUndefinedProps<T> = {
   [P in keyof T]: ReplaceNullWithUndefined<T[P]>;
 };
 
-type WordInputs = Prettify<
-  ToUndefinedProps<
-    // to avoid react hook form type errors
-    Omit<
-      SelectWord,
-      | "id"
-      | "createdAt"
-      | "updatedAt"
-      | "attributes"
-      | "relatedWords"
-      | "relatedPhrases"
+type WordInput = ToUndefinedProps<
+  // Replace null with undefined since null is not allowed in Input value prop of NextUI
+  Prettify<
+    Partial<
+      Omit<InsertWord, "rootId" | "created_at" | "updated_at" | "id"> &
+      {
+        language: string
+        root: string;
+      }
     >
-  > &
-    Record<"attributes" | "relatedWords" | "relatedPhrases", string | undefined>
+  >
 >;
 
-type MeaningInputs = {
-  definition: {
-    definition: string;
-    image: FileList | null | undefined;
-    example?: {
-      sentence: string;
-      author: string | undefined;
-    };
+type Meaning = {
+  meaning: string;
+  image: FileList | null;
+  example?: {
+    sentence: string | undefined;
+    author: string | undefined;
   };
-  partOfSpeech: string;
-  attributes: string | undefined;
+  partOfSpeechId: number | undefined;
+  attributes: string;
 };
+
+type MeaningInputs = Partial<Meaning>;
+
 type WordForm = Prettify<
-  WordInputs & {
+  WordInput & {
     meanings: MeaningInputs[];
   }
 >;
+type WordFormSubmit = Prettify<{
+  name: string;
+  language?: string;
+  phonetic?: string;
+  root?: string;
+  prefix?: string;
+  suffix?: string;
+  meanings: {
+    meaning: string;
+    partOfSpeechId: number;
+    attributes?: string;
+    example?: {
+      sentence: string;
+      author: 'string | number';
+    }
+  }[]
+}>;
+
+type WordSearchResult = {
+  word_data: {
+    word_id: number;
+    word_name: string;
+    phonetic: string;
+    prefix: string;
+    suffix: string;
+    attributes: {
+      attribute_id: number;
+      attribute: string;
+    }[];
+    root: {
+      root: string;
+      language: string;
+    };
+    meanings: {
+      meaning_id: number;
+      meaning: string;
+      part_of_speech: string;
+    }[];
+  }
+}
+

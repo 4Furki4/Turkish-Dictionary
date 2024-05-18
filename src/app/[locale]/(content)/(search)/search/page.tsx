@@ -19,7 +19,7 @@ export async function generateMetadata({
     const response = await api.word.getWord.query(parsedWord);
     return {
       title: parsedWord,
-      description: response[0]?.meanings[0].partOfSpeech,
+      description: response[0]?.word_data.meanings.map((meaning) => meaning.meaning).join(", "),
     };
   }
 }

@@ -5,8 +5,11 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../trpc";
-import { eq } from "drizzle-orm";
-import { words } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
+import { SelectWordWithMeanings, words } from "@/db/schema/words";
+import { meanings } from "@/db/schema/meanings";
+import { WordSearchResult } from "@/types";
+
 
 export const wordRouter = createTRPCRouter({
   /**
@@ -20,15 +23,9 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx: { db } }) => {
-      return await db.query.words
-        .findMany({
-          limit: input.take,
-          offset: input.skip,
-          with: {
-            meanings: true,
-          },
-        })
-        .execute();
+      const wordsWithMeanings = await db.select().from(words).fullJoin(meanings, eq(words.id, meanings.wordId)).limit(input.take).offset(input.skip)
+      return wordsWithMeanings
+      // console.log(wordsWithMeanings)
     }),
   /**
    * Get a word by name quering the database
@@ -41,12 +38,60 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input: name, ctx: { db } }) => {
-      const queriedWords = await db.query.words.findMany({
-        where: eq(words.name, name),
-        with: {
-          meanings: true,
-        },
-      });
-      return queriedWords || "Word not found";
+      // TODO: join word and meaning attributes...
+      const wordsWithMeanings =
+        await db.execute(sql`
+        SELECT
+        JSON_BUILD_OBJECT(
+          'word_id',
+          w.id,
+          'word_name',
+          w.name,
+          'attributes',
+          (
+            SELECT
+              JSON_AGG(
+                JSON_BUILD_OBJECT(
+                  'attribute_id',
+                  w_a.id,
+                  'attribute',
+                  w_a.attribute
+                )
+              )
+            FROM
+              words_attributes ws_a
+              JOIN word_attributes w_a ON ws_a.attribute_id = w_a.id
+            WHERE
+              ws_a.word_id = w.id
+          ),
+          'root',
+          JSON_BUILD_OBJECT('root', r.root, 'language', l.language_en),
+          'meanings',
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'meaning_id',
+              m.id,
+              'meaning',
+              m.meaning,
+              'part_of_speech',
+              pos.part_of_speech
+            )
+          )
+        ) AS word_data
+      FROM
+        words w
+        LEFT JOIN meanings m ON w.id = m.word_id
+        LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
+        LEFT JOIN roots r ON r.word_id = w.id
+        LEFT JOIN languages l ON r.language_id::integer = l.id
+      WHERE
+        w.name = ${name}
+      GROUP BY
+        w.id,
+        w.name,
+        r.root,
+		l.language_en;`
+        ) as WordSearchResult[]
+      return wordsWithMeanings
     }),
 });

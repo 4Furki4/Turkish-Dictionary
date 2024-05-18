@@ -4,9 +4,16 @@
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1701023971128,
-      "tag": "0000_slippery_rick_jones",
+      "version": "6",
+      "when": 1715505991788,
+      "tag": "0000_previous_scrambler",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1715816323134,
+      "tag": "0001_nostalgic_blob",
       "breakpoints": true
     }
   ]
