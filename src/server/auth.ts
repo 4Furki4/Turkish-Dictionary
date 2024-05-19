@@ -4,6 +4,7 @@ import {
   type NextAuthOptions,
   DefaultUser,
   User,
+  Session,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
@@ -14,6 +15,11 @@ import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { users } from "@/db/schema/users";
 import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { accounts } from "@/db/schema/accounts";
+import { sessions } from "@/db/schema/session";
+import { verificationTokens } from "@/db/schema/verification_tokens";
+import { randomUUID } from "crypto";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -114,34 +120,48 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          role: token.role,
-          username: token.username,
-        },
+    async session({ session: defaultSession, user }) {
+      // Make our own custom session object.
+      const session: Session = {
+        user,
+        expires: defaultSession.expires,
       };
+
+      return session;
     },
-    jwt({ token, user }) {
-      if (user) {
-        return {
-          ...token,
-          username: user.username,
-          role: user.role,
-          id: user.id,
-        };
-      }
-      return token;
+    async jwt({ user }) {
+      const session = await DrizzleAdapter(db).createSession?.({
+        expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
+        sessionToken: randomUUID(),
+        userId: user.id,
+      });
+
+      return { id: session?.sessionToken };
+    },
+  },
+  jwt: {
+    async encode({ token }) {
+      // This is the string returned from the `jwt` callback above.
+      // It represents the session token that will be set in the browser.
+      return token?.id as unknown as string;
+    },
+    async decode() {
+      // Disable default JWT decoding.
+      // This method is really only used when using the email provider.
+      return null;
     },
   },
   session: {
-    strategy: "jwt",
+    strategy: "database",
+    maxAge: 60 * 60 * 24 * 30, // 3 days
   },
   //@ts-ignore
-  adapter,
+  adapter: DrizzleAdapter(db, {
+    accountsTable: accounts,
+    usersTable: users,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens
+  }),
   pages: {
     signIn: "/signin",
   },

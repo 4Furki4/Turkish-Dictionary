@@ -1,19 +1,19 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
       "version": "6",
-      "when": 1715505991788,
-      "tag": "0000_previous_scrambler",
+      "when": 1716084679732,
+      "tag": "0000_unusual_epoch",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "6",
-      "when": 1715816323134,
-      "tag": "0001_nostalgic_blob",
+      "when": 1716086573922,
+      "tag": "0001_hot_justin_hammer",
       "breakpoints": true
     }
   ]

@@ -5,7 +5,6 @@ import { Adapter, AdapterUser } from "next-auth/adapters";
 import { AdapterAccount } from "next-auth/adapters";
 import { Role, users } from "./schema/users";
 import { accounts } from "./schema/accounts";
-
 export function CustomDrizzleAdapter(
   client: InstanceType<typeof PgDatabase>
 ): Adapter {

@@ -18,7 +18,9 @@ export const rolesEnum = pgEnum("role", ["user", "moderator", "admin"]);
 export type Role = (typeof rolesEnum.enumValues)[number];
 
 export const users = pgTable("users", {
-  id: text("id").notNull().primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),

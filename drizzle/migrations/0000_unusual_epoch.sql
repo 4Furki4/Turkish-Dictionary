@@ -58,6 +58,13 @@ CREATE TABLE IF NOT EXISTS "examples" (
 	"word_id" integer NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "languages" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"language_en" varchar(255) NOT NULL,
+	"language_tr" varchar(255) NOT NULL,
+	"language_code" varchar(255) NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "meaning_attributes" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"attribute" varchar(255) NOT NULL
@@ -116,7 +123,7 @@ CREATE TABLE IF NOT EXISTS "requests" (
 CREATE TABLE IF NOT EXISTS "roots" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"root" varchar(255),
-	"language" varchar(255) NOT NULL,
+	"language_id" integer NOT NULL,
 	"user_id" text,
 	"word_id" integer NOT NULL,
 	"request_type" varchar(255) DEFAULT 'root'
@@ -129,6 +136,12 @@ CREATE TABLE IF NOT EXISTS "saved_words" (
 	CONSTRAINT "saved_words_user_id_word_id_pk" PRIMARY KEY("user_id","word_id")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "session" (
+	"sessionToken" text PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL,
+	"expires" timestamp NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text,
@@ -138,6 +151,13 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"username" varchar(255),
 	"password" varchar(510),
 	"role" "role" DEFAULT 'user' NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "verificationToken" (
+	"identifier" text NOT NULL,
+	"token" text NOT NULL,
+	"expires" timestamp NOT NULL,
+	CONSTRAINT "verificationToken_identifier_token_pk" PRIMARY KEY("identifier","token")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "word_attributes" (
@@ -249,6 +269,12 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "roots" ADD CONSTRAINT "roots_language_id_languages_id_fk" FOREIGN KEY ("language_id") REFERENCES "public"."languages"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "roots" ADD CONSTRAINT "roots_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -262,6 +288,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "saved_words" ADD CONSTRAINT "saved_words_word_id_words_id_fk" FOREIGN KEY ("word_id") REFERENCES "public"."words"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "session" ADD CONSTRAINT "session_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
