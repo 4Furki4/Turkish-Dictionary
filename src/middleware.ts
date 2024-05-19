@@ -2,6 +2,7 @@ import { withAuth } from "next-auth/middleware";
 import createIntlMiddleware from "next-intl/middleware";
 import { NextRequest } from "next/server";
 import { pathnames, localePrefix, locales } from "./navigation";
+import { Session } from "next-auth";
 const publicPages = [
   "/",
   "/search",
@@ -25,22 +26,37 @@ const intlMiddleware = createIntlMiddleware({
   localePrefix,
   pathnames,
 });
-
+let session: Session | null = null
 const authMiddleware = withAuth(
   // Note that this callback is only invoked if
   // the `authorized` callback has returned `true`
   // and not for pages listed in `pages`.
-  function onSuccess(req) {
+  async function onSuccess(req) {
     return intlMiddleware(req);
   },
   {
     callbacks: {
-      authorized: ({ token }) => token != null,
+      authorized: async ({ req }) => {
+        if (session?.user?.id != null) return true;
+        return false;
+
+      },
     },
+
   }
 );
 
 export default async function middleware(req: NextRequest) {
+  const resSession = await fetch(
+    process.env.NEXTAUTH_URL + '/api/auth/session',
+    {
+      method: 'GET',
+      headers: {
+        ...Object.fromEntries(req.headers),
+      },
+    },
+  );
+  session = await resSession.json();
   const publicPathnameRegex = RegExp(
     `^(/(${locales.join("|")}))?(${publicPages.join("|")})?/?$`,
     "i"
