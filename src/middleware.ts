@@ -54,6 +54,10 @@ const authMiddleware = withAuth(
       // },
       authorized: ({ req: { cookies } }) => {
         const sessionToken = cookies.get("next-auth.session-token");
+        if (sessionToken == null) {
+          const sessionToken = cookies.get("__Secure-next-auth.session-token");
+          return sessionToken != null;
+        }
         return sessionToken != null;
       },
     },
