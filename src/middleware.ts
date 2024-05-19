@@ -36,24 +36,20 @@ const authMiddleware = withAuth(
   {
     callbacks: {
       authorized: async ({ req }) => {
-        try {
-          const resSession = await fetch(
-            process.env.NEXTAUTH_URL + '/api/auth/session',
-            {
-              method: 'GET',
-              headers: {
-                ...Object.fromEntries(req.headers),
-              },
+
+        const resSession = await fetch(
+          process.env.NEXTAUTH_URL + '/api/auth/session',
+          {
+            method: 'GET',
+            headers: {
+              ...Object.fromEntries(req.headers),
             },
-          );
-          const session = await resSession.json();
-          console.log('session', session)
-          if (session?.user?.id != null) return true;
-          return false;
-        } catch (error) {
-          console.error(error);
-          return false;
-        }
+          },
+        );
+        const session = await resSession.json();
+        console.log('session', session)
+        if (session?.user?.id != null) return true;
+        return false;
 
       },
     },
