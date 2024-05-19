@@ -83,10 +83,10 @@ export const adminRouter = createTRPCRouter({
       }
       // when the author is an id, it means the author is already in the database
       const isAuthorAlreadyInDB = Boolean(meaning.example?.author && typeof meaning.example.author === "number")
-      if (meaning.example?.author && typeof meaning.example.author === "number") {
+      if (meaning.example?.author && typeof meaning.example.author === "number" && addedMeaning.id) {
         try {
           await db.insert(examples).values({
-            wordId: addedWord.id,
+            meaningId: addedMeaning.id,
             sentence: meaning.example.sentence,
             authorId: meaning.example.author,
           })
@@ -99,13 +99,13 @@ export const adminRouter = createTRPCRouter({
 
       }
       // when the author is a string, it means the author is not in the database
-      else if (meaning.example && typeof meaning.example.author === "string") {
+      else if (meaning.example && typeof meaning.example.author === "string" && addedMeaning.id) {
         try {
           const [author] = await db.insert(authors).values({
             name: meaning.example.author
           }).returning()
           await db.insert(examples).values({
-            wordId: addedWord.id,
+            meaningId: addedMeaning.id,
             sentence: meaning.example.sentence,
             authorId: author.id,
           })
@@ -116,10 +116,10 @@ export const adminRouter = createTRPCRouter({
           })
         }
       }
-      else if (meaning.example && typeof meaning.example.author === "undefined") {
+      else if (meaning.example && typeof meaning.example.author === "undefined" && addedMeaning.id) {
         try {
           await db.insert(examples).values({
-            wordId: addedWord.id,
+            meaningId: addedMeaning.id,
             sentence: meaning.example.sentence,
           })
         } catch (error) {

@@ -95,6 +95,8 @@ type WordSearchResult = {
       meaning_id: number;
       meaning: string;
       part_of_speech: string;
+      sentence: string | null;
+      author: string | null;
     }[];
   }
 }

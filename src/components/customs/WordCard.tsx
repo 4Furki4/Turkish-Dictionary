@@ -113,12 +113,11 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
                   <span aria-hidden>{": "}</span>
                   {meaning.meaning}
                 </p>
-                {/* {meaning.exampleSentece ? (
+                {meaning.sentence ? (
                   <p className="text-center italic px-2 text-fs--1">
-                    <q>{meaning.exampleSentece}</q>{" "}
-                    {"- " + meaning.exampleSentenceAuthor}
+                    <q>{meaning.sentence}</q>{meaning.author ? ` - ${meaning.author}` : null}
                   </p>
-                ) : null} */}
+                ) : null}
                 <Divider />
               </Fragment>
             ))}

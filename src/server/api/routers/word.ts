@@ -74,7 +74,11 @@ export const wordRouter = createTRPCRouter({
               'meaning',
               m.meaning,
               'part_of_speech',
-              pos.part_of_speech
+              pos.part_of_speech,
+              'sentence',
+              ex.sentence,
+              'author',
+              a.name
             )
           )
         ) AS word_data
@@ -84,6 +88,8 @@ export const wordRouter = createTRPCRouter({
         LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
         LEFT JOIN roots r ON r.word_id = w.id
         LEFT JOIN languages l ON r.language_id::integer = l.id
+        LEFT JOIN examples ex ON ex.meaning_id = m.id
+        LEFT JOIN authors a ON ex.author_id = a.id
       WHERE
         w.name = ${name}
       GROUP BY
