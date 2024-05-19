@@ -35,23 +35,6 @@ const authMiddleware = withAuth(
   },
   {
     callbacks: {
-      // authorized: async ({ req }) => {
-
-      //   const resSession = await fetch(
-      //     process.env.NEXTAUTH_URL + '/api/auth/session',
-      //     {
-      //       method: 'GET',
-      //       headers: {
-      //         ...Object.fromEntries(req.headers),
-      //       },
-      //     },
-      //   );
-      //   const session = await resSession.json();
-      //   console.log('session', session)
-      //   if (session?.user?.id != null) return true;
-      //   return false;
-
-      // },
       authorized: ({ req: { cookies } }) => {
         const sessionToken = cookies.get("next-auth.session-token");
         if (sessionToken == null) {
@@ -83,14 +66,3 @@ export default async function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/((?!api|_next|.*\\..*).*)"],
 };
-
-// export default createMiddleware({
-//   locales: ["en", "tr"],
-//   defaultLocale: "en",
-// });
-
-// export const config = {
-//   // Skip all paths that should not be internationalized. This example skips
-//   // certain folders and all pathnames with a dot (e.g. favicon.ico)
-//   matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
-// };
