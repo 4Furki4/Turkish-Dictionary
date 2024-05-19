@@ -16,10 +16,8 @@ import {
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
-import { SelectWordWithMeanings } from "@/db/schema/words";
+import { useLocale, useTranslations } from "next-intl";
 import { WordSearchResult } from "@/types";
-import { useQueryClient } from "@tanstack/react-query";
 const itemClasses = {
   title: "font-normal text-fs-1 text-primary",
   trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
@@ -28,6 +26,8 @@ const itemClasses = {
 };
 export default function WordCard({ word: { word_data }, isSavedWord }: { word: WordSearchResult, isSavedWord?: boolean }) {
   // const savedWords = api.user.getSavedWords.useQuery();
+  console.log(word_data)
+  const locale = useLocale() as "en" | "tr";
   const utils = api.useUtils()
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word_data.word_id, {
     queryKey: ["user.getWordSaveStatus", word_data.word_id],
@@ -98,18 +98,19 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
       </CardHeader>
       <CardBody>
         <>
-          <div className="flex space-x-4">
+          <div className="flex h-6 items-center space-x-1">
             <h3 className="text-fs-0">{word_data.root.root}</h3>
             <Divider orientation="vertical"></Divider>
-            <h3 className="text-fs-0">{word_data.root.language}</h3>
+            <h3 className="text-fs-0">{word_data.root[`language_${locale}`]}</h3>
           </div>
           <div className="grid gap-2 mt-4">
             {word_data.meanings.map((meaning) => (
               <Fragment key={meaning.meaning_id}>
                 <p className="text-fs-1">
                   {meaning.part_of_speech ? `${meaning.part_of_speech}` : null}
-                  {/* {meaning.attributes && <span aria-hidden>, </span>}
-                  {meaning.attributes ? `${meaning.attributes}` : null} */}
+                  {meaning.attributes.length > 0
+                    ? `, ${meaning.attributes.map((attr) => attr.attribute).join(", ")}`
+                    : null}
                   <span aria-hidden>{": "}</span>
                   {meaning.meaning}
                 </p>

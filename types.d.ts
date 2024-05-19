@@ -89,7 +89,9 @@ type WordSearchResult = {
     }[];
     root: {
       root: string;
-      language: string;
+      language_en: string;
+      language_tr: string;
+      language_code: string;
     };
     meanings: {
       meaning_id: number;
@@ -97,6 +99,12 @@ type WordSearchResult = {
       part_of_speech: string;
       sentence: string | null;
       author: string | null;
+      attributes: [
+        {
+          attribute_id: number;
+          attribute: string;
+        }
+      ]
     }[];
   }
 }
