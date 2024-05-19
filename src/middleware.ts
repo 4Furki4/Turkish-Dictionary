@@ -35,22 +35,26 @@ const authMiddleware = withAuth(
   },
   {
     callbacks: {
-      authorized: async ({ req }) => {
+      // authorized: async ({ req }) => {
 
-        const resSession = await fetch(
-          process.env.NEXTAUTH_URL + '/api/auth/session',
-          {
-            method: 'GET',
-            headers: {
-              ...Object.fromEntries(req.headers),
-            },
-          },
-        );
-        const session = await resSession.json();
-        console.log('session', session)
-        if (session?.user?.id != null) return true;
-        return false;
+      //   const resSession = await fetch(
+      //     process.env.NEXTAUTH_URL + '/api/auth/session',
+      //     {
+      //       method: 'GET',
+      //       headers: {
+      //         ...Object.fromEntries(req.headers),
+      //       },
+      //     },
+      //   );
+      //   const session = await resSession.json();
+      //   console.log('session', session)
+      //   if (session?.user?.id != null) return true;
+      //   return false;
 
+      // },
+      authorized: ({ req: { cookies } }) => {
+        const sessionToken = cookies.get("next-auth.session-token");
+        return sessionToken != null;
       },
     },
 
