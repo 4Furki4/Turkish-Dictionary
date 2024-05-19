@@ -26,7 +26,6 @@ const intlMiddleware = createIntlMiddleware({
   localePrefix,
   pathnames,
 });
-let session: Session | null = null
 const authMiddleware = withAuth(
   // Note that this callback is only invoked if
   // the `authorized` callback has returned `true`
@@ -37,6 +36,16 @@ const authMiddleware = withAuth(
   {
     callbacks: {
       authorized: async ({ req }) => {
+        const resSession = await fetch(
+          process.env.NEXTAUTH_URL + '/api/auth/session',
+          {
+            method: 'GET',
+            headers: {
+              ...Object.fromEntries(req.headers),
+            },
+          },
+        );
+        const session = await resSession.json();
         if (session?.user?.id != null) return true;
         return false;
 
@@ -47,16 +56,7 @@ const authMiddleware = withAuth(
 );
 
 export default async function middleware(req: NextRequest) {
-  const resSession = await fetch(
-    process.env.NEXTAUTH_URL + '/api/auth/session',
-    {
-      method: 'GET',
-      headers: {
-        ...Object.fromEntries(req.headers),
-      },
-    },
-  );
-  session = await resSession.json();
+
   const publicPathnameRegex = RegExp(
     `^(/(${locales.join("|")}))?(${publicPages.join("|")})?/?$`,
     "i"
