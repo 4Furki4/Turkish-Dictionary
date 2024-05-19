@@ -47,13 +47,13 @@ const authMiddleware = withAuth(
             },
           );
           const session = await resSession.json();
+          console.log('session', session)
           if (session?.user?.id != null) return true;
           return false;
         } catch (error) {
-          console.error("Error while checking session", error);
+          console.error(error);
           return false;
         }
-
 
       },
     },
