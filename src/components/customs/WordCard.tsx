@@ -98,17 +98,17 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
       </CardHeader>
       <CardBody>
         <>
-          <div className="flex h-6 items-center space-x-1">
+          {word_data.root.root && word_data.root[`language_${locale}`] ? <div className="flex h-6 items-center space-x-1">
             <h3 className="text-fs-0">{word_data.root.root}</h3>
-            <Divider orientation="vertical"></Divider>
+            {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider orientation="vertical"></Divider> : null}
             <h3 className="text-fs-0">{word_data.root[`language_${locale}`]}</h3>
-          </div>
+          </div> : null}
           <div className="grid gap-2 mt-4">
             {word_data.meanings.map((meaning) => (
               <Fragment key={meaning.meaning_id}>
                 <p className="text-fs-1">
                   {meaning.part_of_speech ? `${meaning.part_of_speech}` : null}
-                  {meaning.attributes.length > 0
+                  {meaning.attributes && meaning.attributes.length > 0
                     ? `, ${meaning.attributes.map((attr) => attr.attribute).join(", ")}`
                     : null}
                   <span aria-hidden>{": "}</span>

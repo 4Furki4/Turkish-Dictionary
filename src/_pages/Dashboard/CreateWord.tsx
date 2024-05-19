@@ -24,6 +24,7 @@ import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
+import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -35,7 +36,7 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches }: {
+export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches, wordAttributes }: {
   locale: string;
   meaningAttributes: {
     id: number;
@@ -48,6 +49,10 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
   partOfSpeeches: {
     id: number;
     partOfSpeech: PartOfSpeech;
+  }[]
+  wordAttributes: {
+    id: number;
+    attribute: string;
   }[]
 }) {
   const {
@@ -68,6 +73,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       root: '',
       prefix: '',
       suffix: '',
+      attributes: '',
       meanings: [meaningDefaultValues],
     },
     mode: "all",
@@ -102,7 +108,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         } : undefined,
       }
     })
-    console.log('mapped meanings', meanings)
     const uploadedPictures = meanings.map(async (meaning) => {
       if (meaning.image?.[0]) {
         const files = [meaning.image[0]];
@@ -138,19 +143,15 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         image: uploadedPicturesUrls[index],
       };
     });
-    // console.log('meaningsWithImages', meaningsWithImages)
     const word = {
       ...data,
       meanings: meaningsWithImages,
     }
-    console.log('word', word)
-    // TODO: handle object creation required in the backend
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
   };
 
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
-
   return (
     <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -162,6 +163,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
           <WordPrefixInput control={control} />
           <WordSuffixInput control={control} />
+          <WordAttributesInput wordAttributues={wordAttributes} control={control} />
         </div>
 
         <div className="w-full mt-2">

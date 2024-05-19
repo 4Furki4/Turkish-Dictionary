@@ -35,6 +35,7 @@ type WordInput = ToUndefinedProps<
       {
         language: string
         root: string;
+        attributes: string;
       }
     >
   >
@@ -83,7 +84,7 @@ type WordSearchResult = {
     phonetic: string;
     prefix: string;
     suffix: string;
-    attributes: {
+    attributes?: {
       attribute_id: number;
       attribute: string;
     }[];
@@ -99,7 +100,7 @@ type WordSearchResult = {
       part_of_speech: string;
       sentence: string | null;
       author: string | null;
-      attributes: [
+      attributes?: [
         {
           attribute_id: number;
           attribute: string;

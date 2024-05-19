@@ -12,6 +12,7 @@ import { Meaning, MeaningInputs, WordForm } from "@/types";
 import { PartOfSpeech, partOfSpeechs } from "@/db/schema/part_of_speechs";
 import { examples } from "@/db/schema/examples";
 import { languages } from "@/db/schema/languages";
+import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
 const CreateWordSchema = z.ZodType<WordForm>
 export const adminRouter = createTRPCRouter({
   // deleteWord: adminProcedure
@@ -44,6 +45,7 @@ export const adminRouter = createTRPCRouter({
     prefix: z.string().optional(),
     suffix: z.string().optional(),
     requestType: z.string().optional(),
+    attributes: z.union([z.string(), z.number()]).optional(),
     meanings: z.array(z.object({
       meaning: z.string(),
       partOfSpeechId: z.number(),
@@ -64,6 +66,36 @@ export const adminRouter = createTRPCRouter({
         languageId: languageQueryResult.id,
         wordId: addedWord.id,
       })
+    }
+    if (typeof word.attributes === 'number' && word.attributes !== undefined) {
+      try {
+        await db.insert(wordsAttributes).values({
+          attributeId: word.attributes,
+          wordId: addedWord.id
+        })
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong while setting meaning attributes.",
+        })
+      }
+    }
+
+    else if (typeof word.attributes === 'string') {
+      try {
+        const [attribute] = await db.insert(wordAttributes).values({
+          attribute: word.attributes
+        }).returning()
+        await db.insert(wordsAttributes).values({
+          attributeId: attribute.id,
+          wordId: addedWord.id
+        })
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong while adding new meaning attributes to the database.",
+        })
+      }
     }
     const addedMeanings = meaningData.map(async (meaning) => {
       let addedMeaning: InsertMeaning | undefined;
@@ -196,5 +228,9 @@ export const adminRouter = createTRPCRouter({
   getLanguages: adminProcedure.query(async ({ ctx: { db } }) => {
     const languageData = await db.select().from(languages)
     return languageData
-  })
+  }),
+  getWordAttributes: adminProcedure.query(async ({ ctx: { db } }) => {
+    const attributesData = await db.select().from(wordAttributes)
+    return attributesData
+  }),
 });
