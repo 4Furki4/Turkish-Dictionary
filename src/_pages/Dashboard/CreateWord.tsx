@@ -203,9 +203,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         >
           Submit
         </Button>
-        <Button onPress={() => toast.success('SUCCESS!')}>
-          Toast
-        </Button>
       </form>
     </section>
   );
