@@ -1,5 +1,4 @@
 "use client";
-import "react-toastify/dist/ReactToastify.css";
 import { LoginInputs } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useTranslations } from "next-intl";

@@ -1,5 +1,5 @@
 "use client";
-import "react-toastify/dist/ReactToastify.css";
+
 import { Button, Spinner } from "@nextui-org/react";
 import React, { useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";

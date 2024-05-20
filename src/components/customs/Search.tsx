@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { Button, Card, CardBody, Input } from "@nextui-org/react";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
-import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "@/src/navigation";
 export default function Search({
   children,
