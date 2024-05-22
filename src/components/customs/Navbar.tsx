@@ -136,27 +136,20 @@ export default function Navbar({
             <Button
               aria-disabled={isAuthPage}
               isDisabled={isAuthPage}
-              onKeyDown={(e) =>
-                onEnterAndSpace(e, () => {
-                  if (!isAuthPage)
-                    route.push({
-                      pathname: "/signin",
-                      query: { callbackUrl: pathName },
-                    });
-                })
-              }
-              onClick={() => {
-                if (!isAuthPage)
-                  route.push({
-                    pathname: "/signin",
-                    query: { callbackUrl: pathName },
-                  });
-              }}
               variant="ghost"
               color="primary"
             >
-              {SignInIntl}
+              <NextIntlLink
+                href={{
+                  pathname: '/signin',
+                  query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
+                }}
+                locale="en"
+              >
+                {SignInIntl}
+              </NextIntlLink>
             </Button>
+
           </NavbarItem>
         ) : (
           <>
