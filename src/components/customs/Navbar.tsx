@@ -74,7 +74,7 @@ export default function Navbar({
       />
       <NavbarContent className="hidden sm:flex" justify="start">
         <NavbarItem>
-          <Link as={NextLink} href="/">
+          <Link as={NextIntlLink} href="/">
             <HomeIcon aria-label="Home Icon" size={32} />
           </Link>
         </NavbarItem>
@@ -94,42 +94,14 @@ export default function Navbar({
                 {locale === "en" ? "English" : "Turkish"}
               </Button>
             </DropdownTrigger>
-            <DropdownMenu
-              onAction={(key) => {
-                const queryParams = new URLSearchParams(searchParams);
-                switch (key) {
-                  case "tr":
-                    route.push({
-                      pathname: pathName,
-                      query: queryParams as any,
-                      params: {
-                        token: params.token as any,
-                      },
-                    });
-                    break;
-                  case "en":
-                    route.push({
-                      pathname: pathName,
-                      query: queryParams as any,
-                      params: {
-                        token: params.token as any,
-                      },
-                    });
-                    break;
-                }
-              }}
-            >
+            <DropdownMenu>
               {locale === "en" ? (
                 <DropdownItem color="primary" key={"tr"}>
                   <NextIntlLink
                     className="w-full block"
                     href={{
                       pathname: pathName,
-                      query: searchParams.get("callbackUrl")
-                        ? {
-                            callbackUrl: searchParams.get("callbackUrl"),
-                          }
-                        : undefined,
+                      query: searchParams.toString(),
                       params: {
                         token: params.token as any,
                       },
@@ -145,11 +117,7 @@ export default function Navbar({
                     className="w-full block"
                     href={{
                       pathname: pathName,
-                      query: searchParams.get("callbackUrl")
-                        ? {
-                            callbackUrl: searchParams.get("callbackUrl"),
-                          }
-                        : undefined,
+                      query: searchParams.toString(),
                       params: {
                         token: params.token as any,
                       },
@@ -168,33 +136,26 @@ export default function Navbar({
             <Button
               aria-disabled={isAuthPage}
               isDisabled={isAuthPage}
-              onKeyDown={(e) =>
-                onEnterAndSpace(e, () => {
-                  if (!isAuthPage)
-                    route.push({
-                      pathname: "/signin",
-                      query: { callbackUrl: pathName },
-                    });
-                })
-              }
-              onClick={() => {
-                if (!isAuthPage)
-                  route.push({
-                    pathname: "/signin",
-                    query: { callbackUrl: pathName },
-                  });
-              }}
               variant="ghost"
               color="primary"
             >
-              {SignInIntl}
+              <NextIntlLink
+                href={{
+                  pathname: '/signin',
+                  query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
+                }}
+                locale="en"
+              >
+                {SignInIntl}
+              </NextIntlLink>
             </Button>
+
           </NavbarItem>
         ) : (
           <>
             {session?.user.role === "user" ? null : (
               <NavbarItem className="hidden sm:flex">
-                <Link as={NextLink} href={"/dashboard"}>
+                <Link as={NextIntlLink} href={"/dashboard"}>
                   Dashboard
                 </Link>
               </NavbarItem>
@@ -220,12 +181,12 @@ export default function Navbar({
                   }}
                 >
                   <DropdownItem key={"saved-words"} className="text-center">
-                    <Link as={NextLink} className="w-full" href="/saved-words">
+                    <Link as={NextIntlLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"profile"}>
-                    <Link as={NextLink} className="w-full" href="/profile">
+                    <Link as={NextIntlLink} className="w-full" href="/profile">
                       Profile
                     </Link>
                   </DropdownItem>
@@ -280,7 +241,7 @@ export default function Navbar({
       <NavbarMenu className="bg-content1 sm:hidden">
         <NavbarMenuItem>
           <Link
-            as={NextLink}
+            as={NextIntlLink}
             href={"/"}
             className={pathName === "/" ? "underline" : ""}
           >
@@ -289,7 +250,7 @@ export default function Navbar({
         </NavbarMenuItem>
         <NavbarMenuItem>
           <Link
-            as={NextLink}
+            as={NextIntlLink}
             href={"/word-list"}
             className={pathName.includes("word-list") ? "underline" : ""}
           >
@@ -298,7 +259,7 @@ export default function Navbar({
         </NavbarMenuItem>
         <NavbarMenuItem>
           <Link
-            as={NextLink}
+            as={NextIntlLink}
             className={pathName.includes("dashboard") ? "underline" : ""}
             href="/dashboard"
           >

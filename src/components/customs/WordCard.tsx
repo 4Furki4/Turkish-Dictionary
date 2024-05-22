@@ -26,7 +26,7 @@ const itemClasses = {
 };
 export default function WordCard({ word: { word_data }, isSavedWord }: { word: WordSearchResult, isSavedWord?: boolean }) {
   // const savedWords = api.user.getSavedWords.useQuery();
-  console.log(word_data)
+
   const locale = useLocale() as "en" | "tr";
   const utils = api.useUtils()
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word_data.word_id, {
