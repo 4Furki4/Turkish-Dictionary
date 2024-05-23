@@ -133,22 +133,24 @@ export default function Navbar({
         </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
-            <Button
+
+            <NextIntlLink
+              className="w-full block"
+              href={{
+                pathname: '/signin',
+                query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
+              }}
+            ><Button
               aria-disabled={isAuthPage}
               isDisabled={isAuthPage}
               variant="ghost"
               color="primary"
+              className="flex"
             >
-              <NextIntlLink
-                href={{
-                  pathname: '/signin',
-                  query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
-                }}
-                locale="en"
-              >
                 {SignInIntl}
-              </NextIntlLink>
-            </Button>
+              </Button>
+            </NextIntlLink>
+
 
           </NavbarItem>
         ) : (
