@@ -3,7 +3,7 @@ import { Session } from 'next-auth'
 import React from 'react'
 import Navbar from './Navbar'
 import Sidebar from './Sidebar'
-
+import { useLocalStorage } from "@uidotdev/usehooks";
 export default function Wrapper({
     children,
     session,
@@ -20,7 +20,7 @@ export default function Wrapper({
 
 
 }) {
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(true)
+    const [isSidebarOpen, saveIsSidebarOpen] = useLocalStorage("isSidebarOpen", true)
     return (
         <>
             <section className={`transition-all ${isSidebarOpen ? 'lg:w-[calc(100%-var(--sidebar-width))] ' : 'lg:w-[calc(100%-var(--sidebar-width-collapsed))]'}`}>
@@ -32,7 +32,7 @@ export default function Wrapper({
                 />
                 {children}
             </section>
-            <Sidebar session={session} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+            <Sidebar session={session} isSidebarOpen={isSidebarOpen} saveIsSidebarOpen={saveIsSidebarOpen} />
         </>
     )
 }

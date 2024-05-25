@@ -3,7 +3,18 @@ import { ChevronLeftIcon, ChevronRightIcon, HistoryIcon, HomeIcon, LayoutDashboa
 import React from 'react'
 import { Link as NextIntlLink } from "@/src/navigation";
 import { Session } from 'next-auth';
-export default function Sidebar({ session, isSidebarOpen, setIsSidebarOpen }: { session: Session | null, isSidebarOpen: boolean, setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function Sidebar(
+    {
+        session,
+        isSidebarOpen,
+        saveIsSidebarOpen
+    }
+        : {
+            session: Session | null,
+            isSidebarOpen: boolean,
+            saveIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
+        }
+) {
     return (
         <aside className={`transition-all absolute right-0 min-h-screen border-1 p-4 pt-[var(--navbar-height)] hidden lg:flex ${isSidebarOpen ? 'w-[var(--sidebar-width)]' : 'flex w-[var(--sidebar-width-collapsed)]'}`}>
             <nav>
@@ -39,7 +50,9 @@ export default function Sidebar({ session, isSidebarOpen, setIsSidebarOpen }: { 
                     )}
                 </ul>
             </nav>
-            <button onClick={() => setIsSidebarOpen(value => !value)} className='p-2 hover:bg-background-foreground/25'>
+            <button onClick={() => {
+                saveIsSidebarOpen(!isSidebarOpen)
+            }} className='p-2 hover:bg-background-foreground/25'>
                 {isSidebarOpen ? <ChevronRightIcon className="h-5 w-5 transition-transform absolute top-1/2 left-0 translate-y-1/2" /> : <ChevronLeftIcon className="h-5 w-5 transition-transform absolute top-1/2 left-0 translate-y-1/2" />}
             </button>
         </aside>

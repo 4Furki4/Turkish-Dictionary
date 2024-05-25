@@ -79,7 +79,7 @@ export default function Navbar({
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger>
-              <Button variant="light" color="primary" disableRipple>
+              <Button variant="light" color="primary" disableRipple className="rounded-sm">
                 <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
               </Button>
             </DropdownTrigger>
@@ -168,7 +168,8 @@ export default function Navbar({
               isDisabled={isAuthPage}
               variant="ghost"
               color="primary"
-              className="flex"
+              className="rounded-sm"
+
             >
                 {SignInIntl}
               </Button>
