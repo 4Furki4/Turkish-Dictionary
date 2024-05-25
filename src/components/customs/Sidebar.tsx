@@ -25,7 +25,6 @@ export default function Sidebar({ session, isSidebarOpen, setIsSidebarOpen }: { 
                         </NextIntlLink>
                     </li>
                     <li>
-                        {/* TODO: history path will be added */}
                         <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50' href={'/saved-words'}>
                             <ListTree className="h-6 w-6" /> <span className={`text-nowrap ${isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'}`}>Word List</span>
                         </NextIntlLink>

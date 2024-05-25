@@ -15,12 +15,10 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@nextui-org/react";
-import { Book, HomeIcon, Languages, Palette } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import NextLink from "next/link";
+import { Book, HistoryIcon, HomeIcon, Languages, LayoutDashboard, ListTree, Palette } from "lucide-react";
+import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { usePathname, useRouter, Link as NextIntlLink } from "@/src/navigation";
@@ -40,7 +38,6 @@ export default function Navbar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
   const searchParams = useSearchParams();
-  const route = useRouter();
   const locale = useLocale();
   const params = useParams();
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
@@ -123,6 +120,40 @@ export default function Navbar({
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
+        <NavbarItem>
+          <Dropdown>
+            <DropdownTrigger className="cursor-pointer">
+              <Button className="bg-transparent" variant="flat">
+                <Palette aria-label="palette icon" size={32} />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              color="primary"
+              disabledKeys={[theme!]}
+              onAction={(key) => {
+                switch (key) {
+                  case "dark-purple":
+                    setTheme("dark-purple");
+                    break;
+                  case "light-purple":
+                    setTheme("light-purple");
+                    break;
+                  case "dark":
+                    setTheme("dark");
+                    break;
+                  case "light":
+                    setTheme("light");
+                    break;
+                }
+              }}
+            >
+              <DropdownItem key={"dark-purple"}>Dark Purple</DropdownItem>
+              <DropdownItem key={"light-purple"}>Light Purple</DropdownItem>
+              <DropdownItem key={"dark"}>Dark</DropdownItem>
+              <DropdownItem key={"light"}>Light</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
 
@@ -190,68 +221,28 @@ export default function Navbar({
             </NavbarItem>
           </>
         )}
-        <NavbarItem>
-          <Dropdown>
-            <DropdownTrigger className="cursor-pointer">
-              <Button className="bg-transparent" variant="flat">
-                <Palette aria-label="palette icon" size={32} />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              color="primary"
-              disabledKeys={[theme!]}
-              onAction={(key) => {
-                switch (key) {
-                  case "dark-purple":
-                    setTheme("dark-purple");
-                    break;
-                  case "light-purple":
-                    setTheme("light-purple");
-                    break;
-                  case "dark":
-                    setTheme("dark");
-                    break;
-                  case "light":
-                    setTheme("light");
-                    break;
-                }
-              }}
-            >
-              <DropdownItem key={"dark-purple"}>Dark Purple</DropdownItem>
-              <DropdownItem key={"light-purple"}>Light Purple</DropdownItem>
-              <DropdownItem key={"dark"}>Dark</DropdownItem>
-              <DropdownItem key={"light"}>Light</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </NavbarItem>
+
       </NavbarContent>
       <NavbarMenu className="bg-content1 sm:hidden">
         <NavbarMenuItem>
-          <Link
-            as={NextIntlLink}
-            href={"/"}
-            className={pathName === "/" ? "underline" : ""}
-          >
-            {HomeIntl}
-          </Link>
+          <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50' href={'/'}>
+            <HomeIcon className="h-6 w-6" /> <span>{HomeIntl}</span>
+          </NextIntlLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link
-            as={NextIntlLink}
-            href={"/word-list"}
-            className={pathName.includes("word-list") ? "underline" : ""}
-          >
-            {WordListIntl}
-          </Link>
+          <NextIntlLink href={"/saved-words"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'>
+            <ListTree /> {WordListIntl}
+          </NextIntlLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link
-            as={NextIntlLink}
-            className={pathName.includes("dashboard") ? "underline" : ""}
-            href="/dashboard"
-          >
-            Dashboard
-          </Link>
+          <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'>
+            <LayoutDashboard className='h-6 w-6' /> <span>Dashboard</span>
+          </NextIntlLink>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50' href={'/saved-words'}>
+            <HistoryIcon className="h-6 w-6" /> <span>Search History</span>
+          </NextIntlLink>
         </NavbarMenuItem>
       </NavbarMenu>
     </NextuiNavbar>

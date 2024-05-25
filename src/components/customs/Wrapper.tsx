@@ -23,7 +23,7 @@ export default function Wrapper({
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(true)
     return (
         <>
-            <main className={`transition-all relative ${isSidebarOpen ? 'lg:w-[calc(100%-var(--sidebar-width))] ' : 'lg:w-[calc(100%-var(--sidebar-width-collapsed))]'}`}>
+            <section className={`transition-all ${isSidebarOpen ? 'lg:w-[calc(100%-var(--sidebar-width))] ' : 'lg:w-[calc(100%-var(--sidebar-width-collapsed))]'}`}>
                 <Navbar
                     session={session}
                     HomeIntl={HomeIntl}
@@ -31,7 +31,7 @@ export default function Wrapper({
                     WordListIntl={WordListIntl}
                 />
                 {children}
-            </main>
+            </section>
             <Sidebar session={session} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
         </>
     )
