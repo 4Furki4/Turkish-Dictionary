@@ -10,8 +10,9 @@
   }
   :root {
     /* @link https://utopia.fyi/type/calculator?c=320,18,1.2,1024,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
-
-
+  --navbar-height: 4rem;
+  --sidebar-width: 16rem;
+  --sidebar-width-collapsed: 4rem;
   --step--2: clamp(0.7813rem, 0.7727rem + 0.0426vw, 0.8rem);
   --step--1: clamp(0.9375rem, 0.9091rem + 0.142vw, 1rem);
   --step-0: clamp(1.125rem, 1.0682rem + 0.2841vw, 1.25rem);

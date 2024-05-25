@@ -14,6 +14,8 @@ import { getServerAuthSession } from "@/src/server/auth";
 import Navbar from "@/src/components/customs/Navbar";
 import { getMessages, getTranslations } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import Sidebar from "@/src/components/customs/Sidebar";
+import Wrapper from "@/src/components/customs/Wrapper";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -35,7 +37,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className="dark">
-      <body className={`${GeistSans.className} min-h-[100dvh]`}>
+      <body className={`${GeistSans.className} min-h-[100dvh] overflow-hidden`}>
         <TRPCReactProvider headers={headers()}>
 
           <NextSSRPlugin
@@ -49,13 +51,14 @@ export default async function LocaleLayout({
           />
           <Providers>
             <NextIntlClientProvider messages={messages}>
-              <Navbar
-                HomeIntl={t("Home")}
+
+              <Wrapper HomeIntl={t("Home")}
                 session={session}
                 SignInIntl={t("Sign In")}
                 WordListIntl={t("Word List")}
-              />
-              {children}
+              >
+                {children}
+              </Wrapper>
             </NextIntlClientProvider>
           </Providers>
 

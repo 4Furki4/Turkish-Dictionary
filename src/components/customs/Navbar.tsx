@@ -13,8 +13,9 @@ import {
   DropdownItem,
   DropdownTrigger,
   DropdownMenu,
+  NavbarBrand,
 } from "@nextui-org/react";
-import { HomeIcon, Palette } from "lucide-react";
+import { Book, HomeIcon, Languages, Palette } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
@@ -47,8 +48,9 @@ export default function Navbar({
   );
   return (
     <NextuiNavbar
-      className="bg-content1"
+      className="bg-background-foreground/100 border-b border-border "
       shouldHideOnScroll
+      maxWidth="full"
       classNames={{
         item: [
           "relative",
@@ -68,30 +70,20 @@ export default function Navbar({
         // wrapper: ["max-w-7xl"],
       }}
     >
+
       <NavbarMenuToggle
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         className="sm:hidden"
       />
-      <NavbarContent className="hidden sm:flex" justify="start">
-        <NavbarItem>
-          <Link as={NextIntlLink} href="/">
-            <HomeIcon aria-label="Home Icon" size={32} />
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent className="hidden sm:flex" justify="center">
-        <NavbarItem isActive={pathName.includes("/word-list")}>
-          <Link as={NextLink} href={"/word-list"}>
-            {WordListIntl}
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
+      <NavbarBrand className="hidden sm:flex gap-2">
+        <Book aria-label="book icon" className="w-8 h-8" /> <h1>Turkish Dictionary</h1>
+      </NavbarBrand>
       <NavbarContent justify="end">
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger>
-              <Button variant="light" color="primary">
-                {locale === "en" ? "English" : "Turkish"}
+              <Button variant="light" color="primary" disableRipple>
+                <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
               </Button>
             </DropdownTrigger>
             <DropdownMenu>
@@ -155,20 +147,13 @@ export default function Navbar({
           </NavbarItem>
         ) : (
           <>
-            {session?.user.role === "user" ? null : (
-              <NavbarItem className="hidden sm:flex">
-                <Link as={NextIntlLink} href={"/dashboard"}>
-                  Dashboard
-                </Link>
-              </NavbarItem>
-            )}
             <NavbarItem className="cursor-pointer">
               <Dropdown>
                 <DropdownTrigger>
                   <button>
                     <Avatar
                       showFallback
-                      src="https://images.unsplash.com/broken"
+                      src={session.user.image ?? "https://images.unsplash.com/broken"}
                       size="sm"
                     />
                   </button>
