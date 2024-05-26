@@ -162,6 +162,7 @@ export default function Navbar({
               href={{
                 pathname: '/signin',
                 query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
+                search: searchParams.toString(),
               }}
             ><Button
               aria-disabled={isAuthPage}
