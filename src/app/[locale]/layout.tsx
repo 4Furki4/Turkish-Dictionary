@@ -37,7 +37,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className="dark">
-      <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden`}>
+      <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden relative`}>
         <TRPCReactProvider headers={headers()}>
 
           <NextSSRPlugin

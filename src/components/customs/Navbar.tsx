@@ -77,7 +77,9 @@ export default function Navbar({
       </NavbarBrand>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Dropdown>
+          <Dropdown classNames={{
+            content: ["rounded-sm"],
+          }}>
             <DropdownTrigger>
               <Button variant="light" color="primary" disableRipple className="rounded-sm">
                 <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
@@ -85,7 +87,7 @@ export default function Navbar({
             </DropdownTrigger>
             <DropdownMenu>
               {locale === "en" ? (
-                <DropdownItem color="primary" key={"tr"}>
+                <DropdownItem color="primary" key={"tr"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     href={{
@@ -101,7 +103,7 @@ export default function Navbar({
                   </NextIntlLink>
                 </DropdownItem>
               ) : (
-                <DropdownItem color="primary" key={"en"}>
+                <DropdownItem color="primary" key={"en"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     href={{
@@ -121,10 +123,12 @@ export default function Navbar({
           </Dropdown>
         </NavbarItem>
         <NavbarItem>
-          <Dropdown>
+          <Dropdown classNames={{
+            content: ["rounded-sm"],
+          }}>
             <DropdownTrigger className="cursor-pointer">
               <Button className="bg-transparent" variant="flat">
-                <Palette aria-label="palette icon" size={32} />
+                <Palette aria-label="palette icon" className="h-7 w-7" />
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -147,10 +151,10 @@ export default function Navbar({
                 }
               }}
             >
-              <DropdownItem key={"dark-purple"}>Dark Purple</DropdownItem>
-              <DropdownItem key={"light-purple"}>Light Purple</DropdownItem>
-              <DropdownItem key={"dark"}>Dark</DropdownItem>
-              <DropdownItem key={"light"}>Light</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"dark-purple"}>Dark Purple</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"light-purple"}>Light Purple</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"dark"}>Dark</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"light"}>Light</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
@@ -181,7 +185,9 @@ export default function Navbar({
         ) : (
           <>
             <NavbarItem className="cursor-pointer">
-              <Dropdown>
+              <Dropdown classNames={{
+                content: ["rounded-sm"],
+              }}>
                 <DropdownTrigger>
                   <button>
                     <Avatar
@@ -200,18 +206,18 @@ export default function Navbar({
                     }
                   }}
                 >
-                  <DropdownItem key={"saved-words"} className="text-center">
+                  <DropdownItem key={"saved-words"} className="text-center rounded-sm">
                     <Link as={NextIntlLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
                   </DropdownItem>
-                  <DropdownItem key={"profile"}>
+                  <DropdownItem key={"profile"} className="rounded-sm">
                     <Link as={NextIntlLink} className="w-full" href="/profile">
                       Profile
                     </Link>
                   </DropdownItem>
                   <DropdownItem
-                    className="text-danger"
+                    className="text-danger rounded-sm"
                     key={"sign-out"}
                     color="danger"
                     onClick={() => signOut()}
