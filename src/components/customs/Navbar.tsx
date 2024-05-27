@@ -75,15 +75,15 @@ export default function Navbar({
       <NavbarBrand className="hidden sm:flex gap-2">
         <Book aria-label="book icon" className="w-8 h-8" /> <h1>Turkish Dictionary</h1>
       </NavbarBrand>
-      <NavbarContent justify="end">
+      <NavbarContent justify="end" className="gap-8">
         <NavbarItem>
           <Dropdown classNames={{
             content: ["rounded-sm"],
           }}>
             <DropdownTrigger>
-              <Button variant="light" color="primary" disableRipple className="rounded-sm">
+              <button className="bg-transparent flex items-center gap-2">
                 <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
-              </Button>
+              </button>
             </DropdownTrigger>
             <DropdownMenu>
               {locale === "en" ? (
@@ -127,9 +127,9 @@ export default function Navbar({
             content: ["rounded-sm"],
           }}>
             <DropdownTrigger className="cursor-pointer">
-              <Button className="bg-transparent" variant="flat">
+              <button className="bg-transparent flex items-center gap-2">
                 <Palette aria-label="palette icon" className="h-7 w-7" />
-              </Button>
+              </button>
             </DropdownTrigger>
             <DropdownMenu
               color="primary"

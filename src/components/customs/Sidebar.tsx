@@ -19,7 +19,7 @@ export default function Sidebar(
         <>
             <div onClick={() => {
                 saveIsSidebarOpen(!isSidebarOpen)
-            }} className='p-4 z-50 h-max cursor-pointer sticky top-1' >
+            }} className='p-4 z-50 h-max cursor-pointer sticky top-1 hidden lg:block' >
                 {isSidebarOpen ? <SidebarOpen className='h-7 w-7' /> : <SidebarClose className='h-7 w-7' />}
             </div>
             <aside className={`transition-all absolute right-0 h-full border-1 p-4 pt-[calc(var(--navbar-height)+.5rem)] hidden lg:flex ${isSidebarOpen ? 'w-[var(--sidebar-width)]' : 'flex w-[var(--sidebar-width-collapsed)]'}`}>
