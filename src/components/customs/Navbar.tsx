@@ -81,14 +81,14 @@ export default function Navbar({
             content: ["rounded-sm"],
           }}>
             <DropdownTrigger>
-              <button className="bg-transparent flex items-center gap-2">
+              <button className="bg-transparent flex items-center gap-2 rounded-sm">
                 <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
               </button>
             </DropdownTrigger>
             <DropdownMenu>
               {locale === "en" ? (
                 <DropdownItem color="primary" key={"tr"} className="rounded-sm">
-                  <NextIntlLink
+                  {/* <NextIntlLink
                     className="w-full block"
                     href={{
                       pathname: pathName,
@@ -99,12 +99,12 @@ export default function Navbar({
                     }}
                     locale="tr"
                   >
-                    Türkçe
-                  </NextIntlLink>
+                  </NextIntlLink> */}
+                  Türkçe
                 </DropdownItem>
               ) : (
                 <DropdownItem color="primary" key={"en"} className="rounded-sm">
-                  <NextIntlLink
+                  {/* <NextIntlLink
                     className="w-full block"
                     href={{
                       pathname: pathName,
@@ -115,8 +115,8 @@ export default function Navbar({
                     }}
                     locale="en"
                   >
-                    English
-                  </NextIntlLink>
+                  </NextIntlLink> */}
+                  English
                 </DropdownItem>
               )}
             </DropdownMenu>
@@ -127,7 +127,7 @@ export default function Navbar({
             content: ["rounded-sm"],
           }}>
             <DropdownTrigger className="cursor-pointer">
-              <button className="bg-transparent flex items-center gap-2">
+              <button className="bg-transparent flex items-center gap-2 rounded-sm">
                 <Palette aria-label="palette icon" className="h-7 w-7" />
               </button>
             </DropdownTrigger>
@@ -189,7 +189,7 @@ export default function Navbar({
                 content: ["rounded-sm"],
               }}>
                 <DropdownTrigger>
-                  <button>
+                  <button className="rounded-sm">
                     <Avatar
                       showFallback
                       src={session.user.image ?? "https://images.unsplash.com/broken"}
