@@ -88,7 +88,7 @@ export default function Navbar({
             <DropdownMenu>
               {locale === "en" ? (
                 <DropdownItem color="primary" key={"tr"} className="rounded-sm">
-                  {/* <NextIntlLink
+                  <NextIntlLink
                     className="w-full block"
                     href={{
                       pathname: pathName,
@@ -99,12 +99,12 @@ export default function Navbar({
                     }}
                     locale="tr"
                   >
-                  </NextIntlLink> */}
-                  Türkçe
+                    Türkçe
+                  </NextIntlLink>
                 </DropdownItem>
               ) : (
                 <DropdownItem color="primary" key={"en"} className="rounded-sm">
-                  {/* <NextIntlLink
+                  <NextIntlLink
                     className="w-full block"
                     href={{
                       pathname: pathName,
@@ -115,8 +115,8 @@ export default function Navbar({
                     }}
                     locale="en"
                   >
-                  </NextIntlLink> */}
-                  English
+                    English
+                  </NextIntlLink>
                 </DropdownItem>
               )}
             </DropdownMenu>
@@ -166,7 +166,7 @@ export default function Navbar({
               href={{
                 pathname: '/signin',
                 query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
-                search: searchParams.toString(),
+                search: pathName === "/signin" ? searchParams.toString() : undefined,
               }}
             ><Button
               aria-disabled={isAuthPage}
