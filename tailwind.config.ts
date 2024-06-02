@@ -169,6 +169,11 @@ export default withUt({
           },
         },
       },
+      layout: {
+        radius: {
+          small: "calc(var(--radius) - 4px)",
+        },
+      }
     }),
   ],
 });

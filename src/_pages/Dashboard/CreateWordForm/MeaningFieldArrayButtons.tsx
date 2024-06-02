@@ -13,9 +13,9 @@ export default function MeaningFieldArrayButtons({
     meaningDefaultValues: Partial<Meaning>
 }) {
     return (
-        <ButtonGroup className="w-full">
+        <ButtonGroup radius='sm' className="w-full">
             <Button
-                className="w-full"
+                className="w-full rounded-sm"
                 type="button"
                 variant="ghost"
                 onClick={() => {
@@ -25,7 +25,7 @@ export default function MeaningFieldArrayButtons({
                 Append <span className="max-sm:hidden">Meaning</span>
             </Button>
             <Button
-                className="w-full"
+                className="w-full rounded-sm"
                 type="button"
                 variant="ghost"
                 onClick={() => {

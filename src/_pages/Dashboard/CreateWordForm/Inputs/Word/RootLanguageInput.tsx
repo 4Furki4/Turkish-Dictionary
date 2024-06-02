@@ -48,6 +48,7 @@ export default function WordRootLanguageInput({
             }}
             render={({ field, fieldState: { error } }) => (
                 <Autocomplete
+                    radius='sm'
                     placeholder="You can search for a language"
                     isLoading={isLoading}
                     defaultItems={isSuccess ? langs : []}
@@ -55,6 +56,11 @@ export default function WordRootLanguageInput({
                     onSelectionChange={(item) => {
                         field.onChange(item);
                         clearErrors("language");
+                    }}
+                    classNames={{
+                        listboxWrapper: 'rounded-sm',
+                        popoverContent: 'rounded-sm',
+                        base: 'rounded-sm',
                     }}
                     errorMessage={isError ? fetchError?.message : error?.message ? error.message : ""}
                 >
