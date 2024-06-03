@@ -60,7 +60,9 @@ export default function Search({
             classNames={{
               inputWrapper: ["rounded-sm"]
             }}
-            startContent={<SearchIcon className="w-6 h-6" />}
+            endContent={<button type="submit">
+              <SearchIcon className="w-6 h-6" />
+            </button>}
             aria-required
             autoFocus
 
