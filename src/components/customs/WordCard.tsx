@@ -1,8 +1,7 @@
 'use client'
-// @ts-nocheck
+
 import React, {
-  Fragment,
-  useOptimistic,
+  Fragment
 } from "react";
 import {
   Card,
@@ -12,6 +11,7 @@ import {
   Divider,
   Accordion,
   AccordionItem,
+  Chip,
 } from "@nextui-org/react";
 import { Bookmark } from "lucide-react";
 import { api } from "@/src/trpc/react";
@@ -63,10 +63,10 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
       aria-label="word card"
       role="article"
       isBlurred
-      className="bg-content1 text-primary-foreground"
+      className="border border-border rounded-sm p-4"
     >
       <button
-        className="absolute top-2 right-2 cursor-pointer z-50 sm:hover:scale-125 transition-all"
+        className="absolute top-4 right-6 cursor-pointer z-50 sm:hover:scale-125 transition-all"
         onClick={async () => {
           await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
         }}
@@ -79,8 +79,8 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
         />
       </button>
 
-      <CardHeader className="justify-center">
-        <h2 className="text-fs-6 text-center w-full self-start">
+      <CardHeader className="block sm:flex justify-center ">
+        <h2 className="text-fs-6 w-full text-center sm:text-start">
           {word_data.prefix && (
             <span className="text-fs-4">
               <span aria-label="word prefix">{word_data.prefix}</span>
@@ -95,23 +95,28 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
             </span>
           )}
         </h2>
+        {word_data.root.root && word_data.root[`language_${locale}`] ? (
+          <Chip size="sm" className="rounded-sm">
+            <div className="flex h-6 items-center space-x-1">
+              <h3 >{word_data.root.root}</h3>
+              {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider orientation="vertical"></Divider> : null}
+              <h3 >{word_data.root[`language_${locale}`]}</h3>
+            </div>
+          </Chip>
+        ) : null}
       </CardHeader>
       <CardBody>
         <>
-          {word_data.root.root && word_data.root[`language_${locale}`] ? <div className="flex h-6 items-center space-x-1">
-            <h3 className="text-fs-0">{word_data.root.root}</h3>
-            {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider orientation="vertical"></Divider> : null}
-            <h3 className="text-fs-0">{word_data.root[`language_${locale}`]}</h3>
-          </div> : null}
-          <div className="grid gap-2 mt-4">
-            {word_data.meanings.map((meaning) => (
+          <div className="grid gap-2">
+            {word_data.meanings.map((meaning, index) => (
               <Fragment key={meaning.meaning_id}>
-                <p className="text-fs-1">
-                  {meaning.part_of_speech ? `${meaning.part_of_speech}` : null}
+                <p>
+                  {meaning.part_of_speech}
                   {meaning.attributes && meaning.attributes.length > 0
                     ? `, ${meaning.attributes.map((attr) => attr.attribute).join(", ")}`
                     : null}
-                  <span aria-hidden>{": "}</span>
+                </p>
+                <p className="text-fs-1">
                   {meaning.meaning}
                 </p>
                 {meaning.sentence ? (
@@ -119,7 +124,8 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
                     <q>{meaning.sentence}</q>{meaning.author ? ` - ${meaning.author}` : null}
                   </p>
                 ) : null}
-                <Divider />
+                {/* do not render a divider after the last meaning. */}
+                {index === word_data.meanings.length - 1 ? null : <Divider />}
               </Fragment>
             ))}
           </div>

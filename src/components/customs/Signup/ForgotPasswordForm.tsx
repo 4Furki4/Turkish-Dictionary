@@ -84,7 +84,7 @@ export default function ForgotPasswordForm({
     <>
       <form
         onSubmit={handleSubmit(onForgotPasswordSubmit)}
-        className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+        className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
       >
         <h1 className="text-fs-2 font-bold text-center">
           {ForgotPasswordIntl}
@@ -119,7 +119,8 @@ export default function ForgotPasswordForm({
             />
           )}
         />
-        <Button color="primary" variant="ghost" type="submit">
+        <Button className="rounded-sm"
+          color="primary" variant="ghost" type="submit">
           {EmailSentIntl}
         </Button>
         <p>

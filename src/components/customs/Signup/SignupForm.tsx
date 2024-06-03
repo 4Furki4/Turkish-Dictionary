@@ -117,9 +117,10 @@ export default function SignupForm({
   return (
     <form
       onSubmit={handleSubmit(onSignupSubmit)}
-      className="flex flex-col gap-2 w-11/12 sm:w-full shadow-md max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+      className="flex flex-col gap-2 w-11/12 sm:w-full shadow-md max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
     >
       <Button
+        className="rounded-sm"
         variant="bordered"
         color="primary"
         onClick={() => onProviderSignin("google")}
@@ -281,7 +282,8 @@ export default function SignupForm({
         )}
       />
 
-      <Button color="primary" variant="ghost" type="submit">
+      <Button className="rounded-sm"
+        color="primary" variant="ghost" type="submit">
         {SignupButtonIntl}
       </Button>
       <p>

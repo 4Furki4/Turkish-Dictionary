@@ -127,9 +127,10 @@ export default function SigninForm({
   return (
     <form
       onSubmit={handleSubmit(onLoginSubmit)}
-      className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+      className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
     >
       <Button
+        className="rounded-sm"
         variant="bordered"
         color="primary"
         onClick={() => onProviderSignin("google")}
@@ -146,6 +147,7 @@ export default function SigninForm({
         {SigninWithGoogleIntl}
       </Button>
       <Button
+        className="rounded-sm"
         variant="bordered"
         color="primary"
         onClick={() => onProviderSignin("discord")}
@@ -154,6 +156,7 @@ export default function SigninForm({
         {SigninWithDiscordIntl}
       </Button>
       <Button
+        className="rounded-sm"
         variant="bordered"
         color="primary"
         onClick={() => onProviderSignin("github")}
@@ -222,7 +225,7 @@ export default function SigninForm({
           />
         )}
       />
-      <Button color="primary" variant="ghost" type="submit">
+      <Button className="rounded-sm" color="primary" variant="ghost" type="submit">
         {SigninIntl}
       </Button>
       <p>

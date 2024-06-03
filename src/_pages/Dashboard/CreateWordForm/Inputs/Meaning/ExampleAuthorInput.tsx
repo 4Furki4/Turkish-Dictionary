@@ -64,6 +64,12 @@ export default function MeaningxampleSentenceAuthorInput({
                                 field.onChange(key)
                             }
                         }}
+                        radius='sm'
+                        classNames={{
+                            listboxWrapper: 'rounded-sm',
+                            popoverContent: 'rounded-sm',
+                            base: 'rounded-sm',
+                        }}
                         onInputChange={(value) => {
                             const author = defaultExampleSentenceAuthors.find((attribute) => attribute.name === value)
                             if (author) {

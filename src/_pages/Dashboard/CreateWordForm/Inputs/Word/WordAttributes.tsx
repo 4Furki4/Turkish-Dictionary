@@ -27,6 +27,12 @@ export default function WordAttributesInput({
             render={({ field, fieldState: { error } }) => (
                 <Autocomplete {...field}
                     label={'Attribute'}
+                    radius='sm'
+                    classNames={{
+                        listboxWrapper: 'rounded-sm',
+                        popoverContent: 'rounded-sm',
+                        base: 'rounded-sm',
+                    }}
                     defaultItems={wordAttributues ?? []}
                     allowsCustomValue
                     onSelectionChange={(key) => {

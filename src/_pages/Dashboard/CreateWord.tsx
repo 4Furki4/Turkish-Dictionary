@@ -170,7 +170,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <h2 className="text-center text-fs-1">Meanings</h2>
 
           {fields.map((field, index) => (
-            <Card key={field.id} className="mb-4">
+            <Card key={field.id} className="mb-4 rounded-sm">
               <CardBody className="flex flex-col gap-2">
                 <WordMeaningInput index={index} control={control} />
                 <div className="grid sm:grid-cols-2 gap-2">
@@ -182,7 +182,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
                 <div className="grid gap-2">
                   <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
                 </div>
-                <Button onClick={() => remove(index)}>Remove Meaning</Button>
+                <Button className="rounded-sm" onClick={() => remove(index)}>Remove Meaning</Button>
               </CardBody>
             </Card>
           ))}
@@ -199,7 +199,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           // isLoading={wordMutation.isLoading || isUploading}
           type="submit"
           variant="ghost"
-          className="w-full"
+          className="w-full rounded-sm"
         >
           Submit
         </Button>

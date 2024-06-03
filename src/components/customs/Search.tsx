@@ -6,6 +6,7 @@ import { Button, Card, CardBody, Input } from "@nextui-org/react";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "@/src/navigation";
+import { SearchIcon } from "lucide-react";
 export default function Search({
   children,
   warningParamIntl,
@@ -53,29 +54,32 @@ export default function Search({
           })
         }}
       >
-        <Card className="my-4 bg-content1 text-primary-foreground">
-          <CardBody className="flex-row gap-2 ">
-            <Input
-              aria-required
-              autoFocus
-              role="search"
-              aria-label="search words"
-              value={wordInput}
-              onValueChange={(val) => {
-                setWordInput(val);
-                if (val.trim()) setInputError("");
-              }}
-              color="primary"
-              name="search"
-              placeholder="Search Words..."
-              isInvalid={!!inputError}
-              errorMessage={inputError}
-            />
-            <Button color="primary" variant="ghost" type="submit">
-              Search
-            </Button>
-          </CardBody>
-        </Card>
+
+        <div className="p-6 flex">
+          <Input
+            classNames={{
+              inputWrapper: ["rounded-sm"]
+            }}
+            endContent={<button type="submit">
+              <SearchIcon className="w-6 h-6" />
+            </button>}
+            aria-required
+            autoFocus
+
+            role="search"
+            aria-label="search words"
+            value={wordInput}
+            onValueChange={(val) => {
+              setWordInput(val);
+              if (val.trim()) setInputError("");
+            }}
+            color="primary"
+            name="search"
+            placeholder="Search Words..."
+            isInvalid={!!inputError}
+            errorMessage={inputError}
+          />
+        </div>
       </form>
       {children}
     </>

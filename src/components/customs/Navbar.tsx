@@ -13,13 +13,12 @@ import {
   DropdownItem,
   DropdownTrigger,
   DropdownMenu,
+  NavbarBrand,
 } from "@nextui-org/react";
-import { HomeIcon, Palette } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import NextLink from "next/link";
+import { Book, HistoryIcon, HomeIcon, Languages, LayoutDashboard, ListTree, Palette } from "lucide-react";
+import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { usePathname, useRouter, Link as NextIntlLink } from "@/src/navigation";
@@ -39,7 +38,6 @@ export default function Navbar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
   const searchParams = useSearchParams();
-  const route = useRouter();
   const locale = useLocale();
   const params = useParams();
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
@@ -47,8 +45,9 @@ export default function Navbar({
   );
   return (
     <NextuiNavbar
-      className="bg-content1"
+      className="bg-background-foreground/100 border-b border-border"
       shouldHideOnScroll
+      maxWidth="full"
       classNames={{
         item: [
           "relative",
@@ -68,35 +67,22 @@ export default function Navbar({
         // wrapper: ["max-w-7xl"],
       }}
     >
-      <NavbarMenuToggle
-        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        className="sm:hidden"
-      />
-      <NavbarContent className="hidden sm:flex" justify="start">
+      <NavbarBrand className="gap-2">
+        <Book aria-label="book icon" className="w-6 h-6 lg:w-8 lg:h-8" /> <h1 className="text-fs-0">Turkish Dictionary</h1>
+      </NavbarBrand>
+      <NavbarContent justify="end" className="gap-8 hidden lg:flex">
         <NavbarItem>
-          <Link as={NextIntlLink} href="/">
-            <HomeIcon aria-label="Home Icon" size={32} />
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent className="hidden sm:flex" justify="center">
-        <NavbarItem isActive={pathName.includes("/word-list")}>
-          <Link as={NextLink} href={"/word-list"}>
-            {WordListIntl}
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent justify="end">
-        <NavbarItem>
-          <Dropdown>
+          <Dropdown classNames={{
+            content: ["rounded-sm"],
+          }}>
             <DropdownTrigger>
-              <Button variant="light" color="primary">
-                {locale === "en" ? "English" : "Turkish"}
-              </Button>
+              <button className="bg-transparent flex items-center gap-2 rounded-sm">
+                <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
+              </button>
             </DropdownTrigger>
             <DropdownMenu>
               {locale === "en" ? (
-                <DropdownItem color="primary" key={"tr"}>
+                <DropdownItem color="primary" key={"tr"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     href={{
@@ -112,7 +98,7 @@ export default function Navbar({
                   </NextIntlLink>
                 </DropdownItem>
               ) : (
-                <DropdownItem color="primary" key={"en"}>
+                <DropdownItem color="primary" key={"en"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     href={{
@@ -131,86 +117,14 @@ export default function Navbar({
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        {!session?.user ? (
-          <NavbarItem>
-
-            <NextIntlLink
-              className="w-full block"
-              href={{
-                pathname: '/signin',
-                query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
-              }}
-            ><Button
-              aria-disabled={isAuthPage}
-              isDisabled={isAuthPage}
-              variant="ghost"
-              color="primary"
-              className="flex"
-            >
-                {SignInIntl}
-              </Button>
-            </NextIntlLink>
-
-
-          </NavbarItem>
-        ) : (
-          <>
-            {session?.user.role === "user" ? null : (
-              <NavbarItem className="hidden sm:flex">
-                <Link as={NextIntlLink} href={"/dashboard"}>
-                  Dashboard
-                </Link>
-              </NavbarItem>
-            )}
-            <NavbarItem className="cursor-pointer">
-              <Dropdown>
-                <DropdownTrigger>
-                  <button>
-                    <Avatar
-                      showFallback
-                      src="https://images.unsplash.com/broken"
-                      size="sm"
-                    />
-                  </button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  onAction={(key) => {
-                    switch (key) {
-                      case "sign-out":
-                        signOut();
-                        break;
-                    }
-                  }}
-                >
-                  <DropdownItem key={"saved-words"} className="text-center">
-                    <Link as={NextIntlLink} className="w-full" href="/saved-words">
-                      Saved Words
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key={"profile"}>
-                    <Link as={NextIntlLink} className="w-full" href="/profile">
-                      Profile
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem
-                    className="text-danger"
-                    key={"sign-out"}
-                    color="danger"
-                    onClick={() => signOut()}
-                  >
-                    Sign Out
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </NavbarItem>
-          </>
-        )}
         <NavbarItem>
-          <Dropdown>
+          <Dropdown classNames={{
+            content: ["rounded-sm"],
+          }}>
             <DropdownTrigger className="cursor-pointer">
-              <Button className="bg-transparent" variant="flat">
-                <Palette aria-label="palette icon" size={32} />
-              </Button>
+              <button className="bg-transparent flex items-center gap-2 rounded-sm">
+                <Palette aria-label="palette icon" className="h-7 w-7" />
+              </button>
             </DropdownTrigger>
             <DropdownMenu
               color="primary"
@@ -232,42 +146,274 @@ export default function Navbar({
                 }
               }}
             >
-              <DropdownItem key={"dark-purple"}>Dark Purple</DropdownItem>
-              <DropdownItem key={"light-purple"}>Light Purple</DropdownItem>
-              <DropdownItem key={"dark"}>Dark</DropdownItem>
-              <DropdownItem key={"light"}>Light</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"dark-purple"}>Dark Purple</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"light-purple"}>Light Purple</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"dark"}>Dark</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"light"}>Light</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
+        {!session?.user ? (
+          <NavbarItem>
+
+            <NextIntlLink
+              className="w-full block"
+              href={{
+                pathname: '/signin',
+                query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
+                search: pathName === "/signin" ? searchParams.toString() : undefined,
+              }}
+            ><Button
+              aria-disabled={isAuthPage}
+              isDisabled={isAuthPage}
+              variant="ghost"
+              color="primary"
+              className="rounded-sm"
+
+            >
+                {SignInIntl}
+              </Button>
+            </NextIntlLink>
+
+
+          </NavbarItem>
+        ) : (
+          <>
+            <NavbarItem className="cursor-pointer">
+              <Dropdown classNames={{
+                content: ["rounded-sm"],
+              }}>
+                <DropdownTrigger>
+                  <button className="rounded-sm">
+                    <Avatar
+                      showFallback
+                      src={session.user.image ?? "https://images.unsplash.com/broken"}
+                      size="sm"
+                    />
+                  </button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  onAction={(key) => {
+                    switch (key) {
+                      case "sign-out":
+                        signOut();
+                        break;
+                    }
+                  }}
+                >
+                  <DropdownItem key={"saved-words"} className="text-center rounded-sm">
+                    <Link as={NextIntlLink} className="w-full" href="/saved-words">
+                      Saved Words
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem key={"profile"} className="rounded-sm">
+                    <Link as={NextIntlLink} className="w-full" href="/profile">
+                      Profile
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="text-danger rounded-sm"
+                    key={"sign-out"}
+                    color="danger"
+                    onClick={() => signOut()}
+                  >
+                    Sign Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </NavbarItem>
+          </>
+        )}
+
       </NavbarContent>
-      <NavbarMenu className="bg-content1 sm:hidden">
-        <NavbarMenuItem>
-          <Link
-            as={NextIntlLink}
-            href={"/"}
-            className={pathName === "/" ? "underline" : ""}
-          >
-            {HomeIntl}
-          </Link>
+      <NavbarContent justify="end" className="lg:hidden">
+        {!session?.user ? (
+          <NavbarItem>
+
+            <NextIntlLink
+              className="w-full block"
+              href={{
+                pathname: '/signin',
+                query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
+                search: pathName === "/signin" ? searchParams.toString() : undefined,
+              }}
+            ><Button
+              aria-disabled={isAuthPage}
+              isDisabled={isAuthPage}
+              variant="ghost"
+              color="primary"
+              className="rounded-sm"
+
+            >
+                {SignInIntl}
+              </Button>
+            </NextIntlLink>
+
+
+          </NavbarItem>
+        ) : (
+          <>
+            <NavbarItem className="cursor-pointer">
+              <Dropdown classNames={{
+                content: ["rounded-sm"],
+              }}>
+                <DropdownTrigger>
+                  <button className="rounded-sm">
+                    <Avatar
+                      showFallback
+                      src={session.user.image ?? "https://images.unsplash.com/broken"}
+                      size="sm"
+                    />
+                  </button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  onAction={(key) => {
+                    switch (key) {
+                      case "sign-out":
+                        signOut();
+                        break;
+                    }
+                  }}
+                >
+                  <DropdownItem key={"saved-words"} className="text-center rounded-sm">
+                    <Link as={NextIntlLink} className="w-full" href="/saved-words">
+                      Saved Words
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem key={"profile"} className="rounded-sm">
+                    <Link as={NextIntlLink} className="w-full" href="/profile">
+                      Profile
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="text-danger rounded-sm"
+                    key={"sign-out"}
+                    color="danger"
+                    onClick={() => signOut()}
+                  >
+                    Sign Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </NavbarItem>
+          </>
+        )}
+      </NavbarContent>
+      <NavbarMenuToggle
+        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        className="lg:hidden"
+      />
+      <NavbarMenu className="bg-content1 lg:hidden">
+        <NavbarMenuItem className="flex justify-between">
+          <>
+            <Dropdown className="" classNames={{
+              content: ["rounded-sm"],
+            }}>
+              <DropdownTrigger>
+                <button className="bg-transparent flex items-center gap-2 rounded-sm">
+                  <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                {locale === "en" ? (
+                  <DropdownItem color="primary" key={"tr"} className="rounded-sm ">
+                    <NextIntlLink
+                      className="w-full block"
+                      href={{
+                        pathname: pathName,
+                        query: searchParams.toString(),
+                        params: {
+                          token: params.token as any,
+                        },
+                      }}
+                      locale="tr"
+                    >
+                      Türkçe
+                    </NextIntlLink>
+                  </DropdownItem>
+                ) : (
+                  <DropdownItem color="primary" key={"en"} className="rounded-sm w-full">
+                    <NextIntlLink
+                      className="w-full block"
+                      href={{
+                        pathname: pathName,
+                        query: searchParams.toString(),
+                        params: {
+                          token: params.token as any,
+                        },
+                      }}
+                      locale="en"
+                    >
+                      English
+                    </NextIntlLink>
+                  </DropdownItem>
+                )}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown classNames={{
+              content: ["rounded-sm"],
+            }}>
+              <DropdownTrigger className="cursor-pointer">
+                <button className="bg-transparent flex items-center gap-2 rounded-sm">
+                  <Palette aria-label="palette icon" className="h-7 w-7" />
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu
+                color="primary"
+                disabledKeys={[theme!]}
+                onAction={(key) => {
+                  switch (key) {
+                    case "dark-purple":
+                      setTheme("dark-purple");
+                      break;
+                    case "light-purple":
+                      setTheme("light-purple");
+                      break;
+                    case "dark":
+                      setTheme("dark");
+                      break;
+                    case "light":
+                      setTheme("light");
+                      break;
+                  }
+                }}
+              >
+                <DropdownItem className="rounded-sm" key={"dark-purple"}>Dark Purple</DropdownItem>
+                <DropdownItem className="rounded-sm" key={"light-purple"}>Light Purple</DropdownItem>
+                <DropdownItem className="rounded-sm" key={"dark"}>Dark</DropdownItem>
+                <DropdownItem className="rounded-sm" key={"light"}>Light</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </>
+
+
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link
-            as={NextIntlLink}
-            href={"/word-list"}
-            className={pathName.includes("word-list") ? "underline" : ""}
-          >
-            {WordListIntl}
-          </Link>
+          <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50' href={'/'}>
+            <HomeIcon className="h-6 w-6" /> <span>{HomeIntl}</span>
+          </NextIntlLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link
-            as={NextIntlLink}
-            className={pathName.includes("dashboard") ? "underline" : ""}
-            href="/dashboard"
-          >
-            Dashboard
-          </Link>
+          <NextIntlLink href={"/saved-words"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'>
+            <ListTree /> {WordListIntl}
+          </NextIntlLink>
         </NavbarMenuItem>
+
+        <NavbarMenuItem>
+          <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50' href={'/saved-words'}>
+            <HistoryIcon className="h-6 w-6" /> <span>Search History</span>
+          </NextIntlLink>
+        </NavbarMenuItem>
+        {
+          session?.user ? (
+            <NavbarMenuItem>
+              <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'>
+                <LayoutDashboard className='h-6 w-6' /> <span>Dashboard</span>
+              </NextIntlLink>
+            </NavbarMenuItem>
+          ) : null
+        }
+
       </NavbarMenu>
     </NextuiNavbar>
   );

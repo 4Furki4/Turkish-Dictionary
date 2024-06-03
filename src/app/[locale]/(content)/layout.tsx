@@ -6,7 +6,7 @@ import React from "react";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      <main>{children}</main>
+      {children}
       <Toaster />
     </SessionProvider>
   );

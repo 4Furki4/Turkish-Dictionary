@@ -5,13 +5,13 @@
 @tailwind utilities;
  
 @layer base {
-  html {
-    @apply scroll-smooth
-  }
+  
+  
   :root {
     /* @link https://utopia.fyi/type/calculator?c=320,18,1.2,1024,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
-
-
+  --navbar-height: 4rem;
+  --sidebar-width: 16rem;
+  --sidebar-width-collapsed: 4rem;
   --step--2: clamp(0.7813rem, 0.7727rem + 0.0426vw, 0.8rem);
   --step--1: clamp(0.9375rem, 0.9091rem + 0.142vw, 1rem);
   --step-0: clamp(1.125rem, 1.0682rem + 0.2841vw, 1.25rem);
@@ -56,6 +56,7 @@
   }
  
   .dark {
+    
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
  
@@ -84,16 +85,26 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
-}
- 
-@layer base {
+  html {
+    @apply scroll-smooth bg-background text-foreground;
+  }
   * {
     @apply border-border;
   }
-  html {
-    @apply bg-background text-foreground;
-  }
   ::file-selector-button {
     @apply border-0 p-2 bg-primary rounded-md cursor-pointer hover:opacity-70 active:opacity-100 transition-opacity;
+  }
+  button,
+  input[type=button],
+  a {
+    outline: none;
+  }
+  button::-moz-focus-inner,
+  input[type=button]::-moz-focus-inner {
+    border: 0;
+  }
+  button:focus, li a:focus{
+    box-shadow: 0 0 0 4px hsl(var(--background)), 0 0 0 6px hsl(var(--ring));
+    transition: box-shadow 0.1s ease-in;
   }
 }

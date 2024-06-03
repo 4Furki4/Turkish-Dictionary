@@ -36,6 +36,12 @@ export default function MeaningAttributesInput({
                             field.onChange(key)
                         }
                     }}
+                    radius='sm'
+                    classNames={{
+                        listboxWrapper: 'rounded-sm',
+                        popoverContent: 'rounded-sm',
+                        base: 'rounded-sm',
+                    }}
                     onInputChange={(value) => {
                         const item = meaningAttributes.find((attribute) => attribute.attribute === value)
                         if (item) {

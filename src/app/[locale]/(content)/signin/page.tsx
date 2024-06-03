@@ -29,7 +29,7 @@ export default async function page() {
   const t = await getTranslations("SigninForm");
   if (session) redirect("/?warning=alreadySignedIn");
   return (
-    <main className="absolute grid place-items-center w-full h-[calc(100%-64px)] p-2">
+    <main className="grid place-items-center w-full h-[calc(100vh-var(--navbar-height))] p-2">
       <SigninForm
         CorruptedLoginDataIntl={t("CorruptedLoginData")}
         WithCredentialsIntl={t("WithCredentials")}
