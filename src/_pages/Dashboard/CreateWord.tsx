@@ -73,7 +73,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       root: '',
       prefix: '',
       suffix: '',
-      attributes: '',
+      attributes: undefined,
       meanings: [meaningDefaultValues],
     },
     mode: "all",
