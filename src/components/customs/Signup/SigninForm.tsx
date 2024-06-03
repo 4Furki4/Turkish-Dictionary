@@ -101,9 +101,11 @@ export default function SigninForm({
   };
   useEffect(() => {
     if (params.get("error") === "CredentialsSignin") {
-      toast.error(InvalidUsernameEmailOrPasswordIntl, {
-        position: "bottom-center",
-      });
+      setTimeout(() => {
+        toast.error(InvalidUsernameEmailOrPasswordIntl, {
+          position: "bottom-center",
+        });
+      })
       router.replace({
         pathname: "/signin",
         query: {
@@ -112,9 +114,11 @@ export default function SigninForm({
       });
     }
     if (params.get("error") === "OAuthAccountNotLinked") {
-      toast.error(OAuthAccountNotLinked, {
-        position: "bottom-center",
-      });
+      setTimeout(() => {
+        toast.error(OAuthAccountNotLinked, {
+          position: "bottom-center",
+        });
+      })
       router.replace({
         pathname: "/signin",
         query: {
