@@ -1,4 +1,6 @@
 {
+  "id": "bce3f4ef-35b6-4fd3-8e24-eac990407c50",
+  "prevId": "a55b0011-9ec8-4fac-bc76-be97b0c3fc98",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -85,15 +87,15 @@
         "accounts_userId_users_id_fk": {
           "name": "accounts_userId_users_id_fk",
           "tableFrom": "accounts",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -165,8 +167,8 @@
           "notNull": false,
           "default": "'example'"
         },
-        "word_id": {
-          "name": "word_id",
+        "meaning_id": {
+          "name": "meaning_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -177,28 +179,28 @@
         "examples_author_id_authors_id_fk": {
           "name": "examples_author_id_authors_id_fk",
           "tableFrom": "examples",
+          "tableTo": "authors",
           "columnsFrom": [
             "author_id"
           ],
-          "tableTo": "authors",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
-        "examples_word_id_words_id_fk": {
-          "name": "examples_word_id_words_id_fk",
+        "examples_meaning_id_meanings_id_fk": {
+          "name": "examples_meaning_id_meanings_id_fk",
           "tableFrom": "examples",
+          "tableTo": "meanings",
           "columnsFrom": [
-            "word_id"
+            "meaning_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -289,28 +291,28 @@
         "meanings_attributes_meaning_id_meanings_id_fk": {
           "name": "meanings_attributes_meaning_id_meanings_id_fk",
           "tableFrom": "meanings_attributes",
+          "tableTo": "meanings",
           "columnsFrom": [
             "meaning_id"
           ],
-          "tableTo": "meanings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "meanings_attributes_attribute_id_meaning_attributes_id_fk": {
           "name": "meanings_attributes_attribute_id_meaning_attributes_id_fk",
           "tableFrom": "meanings_attributes",
+          "tableTo": "meaning_attributes",
           "columnsFrom": [
             "attribute_id"
           ],
-          "tableTo": "meaning_attributes",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -371,28 +373,28 @@
         "meanings_word_id_words_id_fk": {
           "name": "meanings_word_id_words_id_fk",
           "tableFrom": "meanings",
+          "tableTo": "words",
           "columnsFrom": [
             "word_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "meanings_part_of_speech_id_part_of_speechs_id_fk": {
           "name": "meanings_part_of_speech_id_part_of_speechs_id_fk",
           "tableFrom": "meanings",
+          "tableTo": "part_of_speechs",
           "columnsFrom": [
             "part_of_speech_id"
           ],
-          "tableTo": "part_of_speechs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -462,28 +464,28 @@
         "pronounciations_word_id_words_id_fk": {
           "name": "pronounciations_word_id_words_id_fk",
           "tableFrom": "pronounciations",
+          "tableTo": "words",
           "columnsFrom": [
             "word_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "pronounciations_user_id_users_id_fk": {
           "name": "pronounciations_user_id_users_id_fk",
           "tableFrom": "pronounciations",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -511,28 +513,28 @@
         "related_phrases_phrase_id_words_id_fk": {
           "name": "related_phrases_phrase_id_words_id_fk",
           "tableFrom": "related_phrases",
+          "tableTo": "words",
           "columnsFrom": [
             "phrase_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "related_phrases_related_phrase_id_words_id_fk": {
           "name": "related_phrases_related_phrase_id_words_id_fk",
           "tableFrom": "related_phrases",
+          "tableTo": "words",
           "columnsFrom": [
             "related_phrase_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -560,28 +562,28 @@
         "related_words_word_id_words_id_fk": {
           "name": "related_words_word_id_words_id_fk",
           "tableFrom": "related_words",
+          "tableTo": "words",
           "columnsFrom": [
             "word_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "related_words_related_word_id_words_id_fk": {
           "name": "related_words_related_word_id_words_id_fk",
           "tableFrom": "related_words",
+          "tableTo": "words",
           "columnsFrom": [
             "related_word_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -650,15 +652,15 @@
         "requests_user_id_users_id_fk": {
           "name": "requests_user_id_users_id_fk",
           "tableFrom": "requests",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -711,28 +713,28 @@
         "roots_language_id_languages_id_fk": {
           "name": "roots_language_id_languages_id_fk",
           "tableFrom": "roots",
+          "tableTo": "languages",
           "columnsFrom": [
             "language_id"
           ],
-          "tableTo": "languages",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "roots_word_id_words_id_fk": {
           "name": "roots_word_id_words_id_fk",
           "tableFrom": "roots",
+          "tableTo": "words",
           "columnsFrom": [
             "word_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -767,28 +769,28 @@
         "saved_words_user_id_users_id_fk": {
           "name": "saved_words_user_id_users_id_fk",
           "tableFrom": "saved_words",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "saved_words_word_id_words_id_fk": {
           "name": "saved_words_word_id_words_id_fk",
           "tableFrom": "saved_words",
+          "tableTo": "words",
           "columnsFrom": [
             "word_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -830,15 +832,15 @@
         "session_userId_users_id_fk": {
           "name": "session_userId_users_id_fk",
           "tableFrom": "session",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -991,28 +993,28 @@
         "words_attributes_word_id_words_id_fk": {
           "name": "words_attributes_word_id_words_id_fk",
           "tableFrom": "words_attributes",
+          "tableTo": "words",
           "columnsFrom": [
             "word_id"
           ],
-          "tableTo": "words",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "words_attributes_attribute_id_word_attributes_id_fk": {
           "name": "words_attributes_attribute_id_word_attributes_id_fk",
           "tableFrom": "words_attributes",
+          "tableTo": "word_attributes",
           "columnsFrom": [
             "attribute_id"
           ],
-          "tableTo": "word_attributes",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1087,7 +1089,23 @@
           "default": "'word'"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "name_idx": {
+          "name": "name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -1153,10 +1171,8 @@
   },
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "id": "60727672-f106-4f26-95f1-49090da3589e",
-  "prevId": "ea6f6cf7-db83-4ed9-9cbd-6167b78f5372"
+    "tables": {}
+  }
 }

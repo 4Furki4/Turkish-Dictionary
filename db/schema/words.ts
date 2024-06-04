@@ -5,6 +5,7 @@ import {
   text,
   date,
   integer,
+  index,
 } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { SelectMeaning, meanings } from "./meanings";
@@ -21,6 +22,10 @@ export const words = pgTable("words", {
   prefix: varchar("prefix", { length: 255 }),
   suffix: varchar("suffix", { length: 255 }),
   requestType: varchar("request_type", { length: 255 }).default("word"),
+}, (t) => {
+  return {
+    name_index: index("name_idx").on(t.name)
+  }
 });
 
 export const wordsRelations = relations(words, ({ many, one }) => ({

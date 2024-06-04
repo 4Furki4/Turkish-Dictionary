@@ -22,6 +22,13 @@
       "when": 1716140760065,
       "tag": "0002_amusing_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1717528098281,
+      "tag": "0003_square_mole_man",
+      "breakpoints": true
     }
   ]
 }

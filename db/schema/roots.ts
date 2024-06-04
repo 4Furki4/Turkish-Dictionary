@@ -15,7 +15,9 @@ export const roots = pgTable("roots", {
   root: varchar("root", { length: 255 }),
   languageId: integer('language_id').notNull().references(() => languages.id),
   userId: text("user_id"),
-  wordId: integer("word_id").notNull().references(() => words.id),
+  wordId: integer("word_id").notNull().references(() => words.id, {
+    onDelete: "cascade",
+  }),
   requestType: varchar("request_type", { length: 255 }).default("root"),
 });
 
