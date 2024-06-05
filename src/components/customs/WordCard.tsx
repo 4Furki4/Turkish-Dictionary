@@ -80,16 +80,16 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
       </button>
 
       <CardHeader className="block sm:flex justify-center ">
-        <h2 className="text-fs-6 w-full text-center sm:text-start">
+        <h2 className="text-fs-4 w-full text-center sm:text-start">
           {word_data.prefix && (
-            <span className="text-fs-4">
+            <span className="text-fs-2">
               <span aria-label="word prefix">{word_data.prefix}</span>
               <span aria-hidden>-,</span>
             </span>
           )}
           {word_data.word_name}
           {word_data.suffix && (
-            <span className="text-fs-4">
+            <span className="text-fs-2">
               <span aria-hidden></span>
               <span aria-label="word-suffix">{word_data.suffix}</span>
             </span>
