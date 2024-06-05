@@ -1,5 +1,5 @@
 "use client"
-import { ChevronLeftIcon, ChevronRightIcon, HistoryIcon, HomeIcon, LayoutDashboard, ListTree, SidebarClose, SidebarOpen, StarIcon } from 'lucide-react'
+import { HistoryIcon, HomeIcon, LayoutDashboard, ListTree, SidebarClose, SidebarOpen, StarIcon } from 'lucide-react'
 import React from 'react'
 import { Link as NextIntlLink } from "@/src/navigation";
 import { Session } from 'next-auth';
@@ -37,7 +37,6 @@ export default function Sidebar(
                             </NextIntlLink>
                         </li>
                         <li>
-                            {/* TODO: history path will be added */}
                             <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={'/saved-words'}>
                                 <HistoryIcon className="h-6 w-6" /> <span className={`text-nowrap ${isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'}`}>Search History</span>
                             </NextIntlLink>
@@ -47,24 +46,16 @@ export default function Sidebar(
                                 <ListTree className="h-6 w-6" /> <span className={`text-nowrap ${isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'}`}>Word List</span>
                             </NextIntlLink>
                         </li>
-                        {session?.user.role === "user" ? null : (
+                        {session?.user.role === "admin" ? (
                             <li>
-                                {/* TODO: history path will be added */}
                                 <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
                                     <LayoutDashboard className='h-6 w-6' /> <span className={`text-nowrap ${isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'}`}>Dashboard</span>
                                 </NextIntlLink>
                             </li>
-                        )}
-
+                        ) : null}
                     </ul>
-
                 </nav>
             </aside>
-            {/* <button onClick={() => {
-                saveIsSidebarOpen(!isSidebarOpen)
-            }} className='p-2 hover:bg-background-foreground/25'>
-                {isSidebarOpen ? <ChevronRightIcon className="h-5 w-5 transition-transform sticky translate-y-1/2 top-1/2 right-16" /> : <ChevronLeftIcon className="h-5 w-5 transition-transform sticky top-1/2 right-16 translate-y-1/2" />}
-            </button> */}
         </>
     )
 }
