@@ -3,7 +3,7 @@ import React from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "@/src/server/auth";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 export async function generateMetadata({
   params: { locale },
@@ -24,7 +24,12 @@ export async function generateMetadata({
   }
 }
 
-export default async function page() {
+export default async function page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  unstable_setRequestLocale(locale)
   const session = await getServerAuthSession();
   const t = await getTranslations("SigninForm");
   if (session) redirect("/?warning=alreadySignedIn");

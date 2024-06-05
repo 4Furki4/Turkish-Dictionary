@@ -1,7 +1,7 @@
 import SignupForm from "@/src/components/customs/Signup/SignupForm";
 import { getServerAuthSession } from "@/src/server/auth";
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -26,7 +26,14 @@ export async function generateMetadata({
   }
 }
 
-export default async function Page() {
+export default async function Page({
+  params: { locale },
+}: {
+  params: {
+    locale: string;
+  };
+}) {
+  unstable_setRequestLocale(locale)
   const session = await getServerAuthSession();
   if (session) {
     redirect("/?warning=alreadySignedIn");

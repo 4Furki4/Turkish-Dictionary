@@ -1,13 +1,9 @@
 import { api } from "@/src/trpc/server";
 import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
-import dynamic from "next/dynamic";
 import Loading from "./loading";
 import SearchResult from "@/src/_pages/search/SearchResult";
-const WordCard = dynamic(() => import("@/components/customs/WordCard"), {
-  ssr: false,
-  loading: () => <Loading />,
-}); // if the first searched word is not found, this will reduce bundle size by not importing WordCard component.
+// if the first searched word is not found, this will reduce bundle size by not importing WordCard component.
 export async function generateMetadata({
   searchParams,
 }: {

@@ -11,6 +11,7 @@ import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "@/src/components/customs/Signup/PasswordEye";
 import { useRouter } from "@/src/navigation";
+import { unstable_setRequestLocale } from "next-intl/server";
 type ForgotPasswordForm = {
   resetPassword: string;
   resetPasswordConfirm: string;
@@ -23,8 +24,10 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
   params: {
     id: string;
+    locale: string;
   };
 }) {
+  unstable_setRequestLocale(params.locale)
   const { handleSubmit, control, watch, clearErrors } =
     useForm<ForgotPasswordForm>({
       mode: "all",
