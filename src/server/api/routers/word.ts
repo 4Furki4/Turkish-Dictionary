@@ -96,7 +96,7 @@ export const wordRouter = createTRPCRouter({
               ex.sentence,
               'author',
               a.name
-            )
+            ) ORDER BY m.id
           )
         ) AS word_data
       FROM
