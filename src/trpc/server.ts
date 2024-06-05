@@ -1,29 +1,23 @@
-import {
-  createTRPCProxyClient,
-  loggerLink,
-  unstable_httpBatchStreamLink,
-} from "@trpc/client";
+import "server-only";
+
 import { headers } from "next/headers";
+import { cache } from "react";
 
-import { type AppRouter } from "@/src/server/api/root";
-import { getUrl, transformer } from "./shared";
+import { createCaller } from "@/src/server/api/root";
+import { createTRPCContext } from "@/src/server/api/trpc";
 
-export const api = createTRPCProxyClient<AppRouter>({
-  transformer,
-  links: [
-    loggerLink({
-      enabled: (op) =>
-        process.env.NODE_ENV === "development" ||
-        (op.direction === "down" && op.result instanceof Error),
-    }),
-    unstable_httpBatchStreamLink({
-      url: getUrl(),
-      headers() {
-        const heads = new Map(headers());
-        heads.set("x-trpc-source", "rsc");
-        heads.set("cache-control", `s-maxage=1, stale-while-revalidate=60`);
-        return Object.fromEntries(heads);
-      },
-    }),
-  ],
+/**
+ * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
+ * handling a tRPC call from a React Server Component.
+ */
+
+const createContext = cache(() => {
+  const heads = new Headers(headers());
+  heads.set("x-trpc-source", "rsc");
+
+  return createTRPCContext({
+    headers: heads,
+  });
 });
+
+export const api = createCaller(createContext);

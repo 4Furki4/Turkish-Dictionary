@@ -14,7 +14,6 @@ import Wrapper from "@/src/components/customs/Wrapper";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
-export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: "Turkish Dictionary",
   description:
@@ -35,7 +34,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="dark">
       <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden relative`}>
-        <TRPCReactProvider headers={headers()}>
+        <TRPCReactProvider>
 
           <NextSSRPlugin
             /**

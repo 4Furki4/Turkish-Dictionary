@@ -30,9 +30,8 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
   const locale = useLocale() as "en" | "tr";
   const utils = api.useUtils()
   const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word_data.word_id, {
-    queryKey: ["user.getWordSaveStatus", word_data.word_id],
-    initialData: isSavedWord,
-  });
+    initialData: isSavedWord
+  })
   const t = useTranslations("WordCard");
   const saveWordMutation = api.user.saveWord.useMutation({
     onMutate: async ({ wordId }) => {
@@ -70,7 +69,7 @@ export default function WordCard({ word: { word_data }, isSavedWord }: { word: W
         onClick={async () => {
           await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
         }}
-        disabled={saveWordMutation.isLoading}
+        disabled={saveWordMutation.isPending}
       >
         <Bookmark
           aria-label="bookmark icon"

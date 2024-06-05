@@ -7,9 +7,9 @@ export default async function Page({
 }: {
   params: { locale: string };
 }) {
-  const meaningAttributes = await api.admin.getMeaningAttributes.query()
-  const authors = await api.admin.getExampleSentenceAuthors.query()
-  const partOfSpeeches = await api.admin.getPartOfSpeeches.query();
-  const wordAttributes = await api.admin.getWordAttributes.query();
+  const meaningAttributes = await api.admin.getMeaningAttributes()
+  const authors = await api.admin.getExampleSentenceAuthors()
+  const partOfSpeeches = await api.admin.getPartOfSpeeches();
+  const wordAttributes = await api.admin.getWordAttributes();
   return <CreateWord locale={locale} meaningAttributes={meaningAttributes} authors={authors} partOfSpeeches={partOfSpeeches} wordAttributes={wordAttributes} />;
 }

@@ -12,7 +12,7 @@ export async function generateMetadata({
   const word = searchParams.word as string;
   if (word) {
     const parsedWord = decodeURIComponent(word); // parse the word to utf-8 format string
-    const response = await api.word.getWord.query(parsedWord);
+    const response = await api.word.getWord(parsedWord);
     return {
       title: parsedWord,
       description: response[0]?.word_data.meanings.map((meaning) => meaning.meaning).join(", "),

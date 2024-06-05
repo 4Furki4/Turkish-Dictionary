@@ -85,7 +85,7 @@ export default function Page({
   }, []);
   return (
     <>
-      {forgotPasswordMutation.status === "loading" && (
+      {forgotPasswordMutation.isPending && (
         <Spinner size="lg" className="fixed inset-0 m-auto" />
       )}
       {forgotPasswordMutation.error && (
