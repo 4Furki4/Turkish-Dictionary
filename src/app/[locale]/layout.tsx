@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { ourFileRouter } from "@/src/app/api/uploadthing/core";
 import "@/app/globals.css";
 import { TRPCReactProvider } from "@/src/trpc/react";
 import { headers } from "next/headers";
@@ -11,6 +11,8 @@ import { getServerAuthSession } from "@/src/server/auth";
 import { getMessages, getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import Wrapper from "@/src/components/customs/Wrapper";
+import { ClientOnly } from "@/src/components/customs/ClientOnly";
+import { Toaster } from "@/src/components/customs/Sonner";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -35,30 +37,30 @@ export default async function LocaleLayout({
     <html lang={locale} className="dark">
       <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden relative`}>
         <TRPCReactProvider>
-
           <NextSSRPlugin
-            /**
-             * The `extractRouterConfig` will extract **only** the route configs
-             * from the router to prevent additional information from being
-             * leaked to the client. The data passed to the client is the same
-             * as if you were to fetch `/api/uploadthing` directly.
-             */
+
+            //   The `extractRouterConfig` will extract **only** the route configs
+            // from the router to prevent additional information from being
+            // leaked to the client. The data passed to the client is the same
+            // as if you were to fetch `/api/uploadthing` directly.
+
             routerConfig={extractRouterConfig(ourFileRouter)}
           />
           <Providers>
             <NextIntlClientProvider messages={messages}>
-
-              <Wrapper HomeIntl={t("Home")}
-                session={session}
-                SignInIntl={t("Sign In")}
-                WordListIntl={t("Word List")}
-              >
-                {children}
-              </Wrapper>
+              <ClientOnly>
+                <Wrapper HomeIntl={t("Home")}
+                  session={session}
+                  SignInIntl={t("Sign In")}
+                  WordListIntl={t("Word List")}
+                >
+                  {children}
+                </Wrapper>
+              </ClientOnly>
             </NextIntlClientProvider>
           </Providers>
-
         </TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   );

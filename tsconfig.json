@@ -20,10 +20,17 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/app/*":["./src/app/*"],
-      "@/components/*":["./src/components/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/components/*": ["./src/components/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "tailwind.config.ts"
+  ],
   "exclude": ["node_modules"]
 }
+

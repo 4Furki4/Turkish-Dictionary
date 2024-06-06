@@ -1,8 +1,6 @@
 "use client";
-import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import { useSearchParams } from "next/navigation";
-import { Button, Card, CardBody, Input } from "@nextui-org/react";
+import { Input } from "@nextui-org/input";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "@/src/navigation";
@@ -16,7 +14,6 @@ export default function Search({
 }) {
   const params = useSearchParams();
   const router = useRouter();
-  const { theme } = useTheme();
   useEffect(() => {
     const warningParam = params.get("warning");
     if (warningParam === "alreadySignedIn") {
