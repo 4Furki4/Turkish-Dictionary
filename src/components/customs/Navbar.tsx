@@ -1,4 +1,4 @@
-"use client";
+
 import {
   Navbar as NextuiNavbar,
   NavbarContent,
@@ -15,17 +15,18 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@nextui-org/react";
-import { Book, HistoryIcon, HomeIcon, Languages, LayoutDashboard, ListTree, Palette } from "lucide-react";
+import { Book, HistoryIcon, HomeIcon, Languages, LayoutDashboard, ListTree, Menu, Palette } from "lucide-react";
 import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
-import { usePathname, useRouter, Link as NextIntlLink } from "@/src/navigation";
+import { usePathname, Link as NextIntlLink } from "@/src/navigation";
 import { Session } from "next-auth";
 
 type NavbarProps = {
   session: Session | null;
+  setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & Record<"WordListIntl" | "SignInIntl" | "HomeIntl", string>;
 
 export default function Navbar({
@@ -33,9 +34,9 @@ export default function Navbar({
   WordListIntl,
   SignInIntl,
   HomeIntl,
+  setIsSidebarOpen
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
   const searchParams = useSearchParams();
   const locale = useLocale();
@@ -254,7 +255,7 @@ export default function Navbar({
         ) : (
           <>
             <NavbarItem className="cursor-pointer">
-              <Dropdown classNames={{
+              {/* <Dropdown classNames={{
                 content: ["rounded-sm"],
               }}>
                 <DropdownTrigger>
@@ -294,12 +295,15 @@ export default function Navbar({
                     Sign Out
                   </DropdownItem>
                 </DropdownMenu>
-              </Dropdown>
+              </Dropdown> */}
+              <button>
+                <Menu aria-label="menu icon" className="w-6 h-6 lg:w-8 lg:h-8" onClick={() => setIsSidebarOpen(true)} />
+              </button>
             </NavbarItem>
           </>
         )}
       </NavbarContent>
-      <NavbarMenuToggle
+      {/* <NavbarMenuToggle
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         className="lg:hidden"
       />
@@ -414,7 +418,7 @@ export default function Navbar({
           ) : null
         }
 
-      </NavbarMenu>
+      </NavbarMenu> */}
     </NextuiNavbar>
   );
 }

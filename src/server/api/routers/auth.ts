@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
-import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
+import { PasswordResetEmail } from "@/src/components/customs/PasswordResetEmail";
 import { z } from "zod";
 import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 import { eq } from "drizzle-orm";

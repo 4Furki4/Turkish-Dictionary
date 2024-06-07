@@ -4,15 +4,13 @@ import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/src/app/api/uploadthing/core";
 import "@/app/globals.css";
 import { TRPCReactProvider } from "@/src/trpc/react";
-import { headers } from "next/headers";
 import { GeistSans } from "geist/font/sans";
 import Providers from "@/src/components/customs/Provider";
 import { getServerAuthSession } from "@/src/server/auth";
 import { getMessages, getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
-import Wrapper from "@/src/components/customs/Wrapper";
-import { ClientOnly } from "@/src/components/customs/ClientOnly";
 import { Toaster } from "@/src/components/customs/Sonner";
+import { Wrapper } from "@/src/components/customs/Wrapper";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -21,7 +19,7 @@ export const metadata: Metadata = {
   description:
     "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later.",
 };
-export default async function LocaleLayout({
+export default async function RootLayout({
   children,
   params: { locale },
 }: {
@@ -48,15 +46,11 @@ export default async function LocaleLayout({
           />
           <Providers>
             <NextIntlClientProvider messages={messages}>
-              <ClientOnly>
-                <Wrapper HomeIntl={t("Home")}
-                  session={session}
-                  SignInIntl={t("Sign In")}
-                  WordListIntl={t("Word List")}
-                >
-                  {children}
-                </Wrapper>
-              </ClientOnly>
+              <Wrapper HomeIntl={t("Home")}
+                session={session}
+                SignInIntl={t("Sign In")}
+                WordListIntl={t("Word List")} />
+              {children}
             </NextIntlClientProvider>
           </Providers>
         </TRPCReactProvider>
