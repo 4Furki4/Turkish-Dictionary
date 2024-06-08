@@ -26,7 +26,7 @@ export default function Search({
   return (
     <>
       <form
-        className="max-w-5xl mx-auto"
+        className="max-w-7xl mx-auto"
         onSubmit={(e) => {
           e.preventDefault();
           const input: string = e.currentTarget.search.value;

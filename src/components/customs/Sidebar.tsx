@@ -10,7 +10,6 @@ import {
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet"
-import { Button } from '@nextui-org/react';
 
 export default function Sidebar(
     {
@@ -29,7 +28,7 @@ export default function Sidebar(
             <Sheet open={isSidebarOpen} onOpenChange={(isOpen) => {
                 setIsSidebarOpen(isOpen)
             }}>
-                <SheetContent side={'left'} className="w-[200px] sm:w-[240px] max-sm:p-0 max-sm:pt-8">
+                <SheetContent hideCloseButton={true} side={'left'} className="w-[200px] sm:w-[240px] max-sm:p-0 max-sm:pt-8">
                     <SheetHeader>
                         <SheetTitle>Turkish Dictionary</SheetTitle>
                     </SheetHeader>

@@ -33,7 +33,7 @@ export default async function Page({
   }
 
   return (
-    <section className="flex flex-col gap-4 px-6 max-w-5xl mx-auto">
+    <section className="flex flex-col gap-4 px-6 max-w-7xl mx-auto">
       <Suspense key={parsedWord} fallback={<Loading />}>
         <SearchResult word={parsedWord} />
       </Suspense>
