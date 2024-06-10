@@ -234,28 +234,6 @@ export default function Navbar({
           </>
         )}
       </NavbarContent>
-      {!session?.user ? (<NavbarContent justify="end" className="lg:hidden">
-        <NavbarItem>
-          <NextIntlLink
-            className="w-full block"
-            href={{
-              pathname: '/signin',
-              query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
-              search: pathName === "/signin" ? searchParams.toString() : undefined,
-            }}
-          ><Button
-            aria-disabled={isAuthPage}
-            isDisabled={isAuthPage}
-            variant="ghost"
-            color="primary"
-            className="rounded-sm"
-          >
-              {SignInIntl}
-            </Button>
-          </NextIntlLink>
-        </NavbarItem>
-      </NavbarContent>
-      ) : null}
     </NextuiNavbar>
   );
 }
