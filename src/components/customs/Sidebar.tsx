@@ -75,62 +75,6 @@ export default function Sidebar(
                                     </NextIntlLink>
                                 </li>
                             ) : null}
-                            <Separator />
-                            <li className='w-full'>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger className="bg-transparent flex items-center gap-2 rounded-sm cursor-pointer w-full">
-                                        <Palette aria-label="palette icon" className="h-7 w-7" /> <span className={`text-nowrap`}>{theme}</span>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent color="primary">
-                                        <DropdownMenuItem onClick={() => setTheme('dark-purple')} className="rounded-sm">Dark Purple</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => setTheme('light-purple')} className="rounded-sm">Light Purple</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => setTheme('dark')} className="rounded-sm">Dark</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => setTheme('light')} className="rounded-sm">Light</DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </li>
-                            <li className='w-full'>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger className="bg-transparent flex items-center gap-2 rounded-sm cursor-pointer w-full">
-                                        <Languages aria-label="languages icon" className="h-7 w-7" />
-                                        <span className={`text-nowrap`}>
-                                            {locale === "tr" ? "Türkçe" : "English"}
-                                        </span>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent color="primary">
-                                        <DropdownMenuItem className="rounded-sm">
-                                            <NextIntlLink
-                                                className="w-full block"
-                                                href={{
-                                                    pathname: pathName,
-                                                    query: searchParams.toString(),
-                                                    params: {
-                                                        token: params.token as any,
-                                                    },
-                                                }}
-                                                locale="tr"
-                                            >
-                                                Türkçe
-                                            </NextIntlLink>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem className="rounded-sm">
-                                            <NextIntlLink
-                                                className="w-full block"
-                                                href={{
-                                                    pathname: pathName,
-                                                    query: searchParams.toString(),
-                                                    params: {
-                                                        token: params.token as any,
-                                                    },
-                                                }}
-                                                locale="en"
-                                            >
-                                                English
-                                            </NextIntlLink>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </li>
                         </ul>
                     </nav>
                 </SheetContent>

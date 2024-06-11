@@ -78,8 +78,8 @@ export default function Navbar({
           </button>
         </NavbarBrand>
       </NavbarContent>
-      <NavbarContent justify="end" className="gap-8">
-        <NavbarItem className="hidden sm:flex">
+      <NavbarContent justify="end" className="gap-4 sm:gap-8">
+        <NavbarItem>
           <Dropdown classNames={{
             content: ["rounded-sm"],
           }}>
@@ -125,7 +125,7 @@ export default function Navbar({
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        <NavbarItem className="hidden sm:flex">
+        <NavbarItem>
           <Dropdown classNames={{
             content: ["rounded-sm"],
           }}>
