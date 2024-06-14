@@ -1,6 +1,4 @@
-import SearchResult from '@/src/_pages/search/SearchResult'
 import React, { Suspense } from 'react'
-import Loading from '../loading'
 import { api } from '@/src/trpc/server'
 import WordCard from '@/src/components/customs/WordCard'
 

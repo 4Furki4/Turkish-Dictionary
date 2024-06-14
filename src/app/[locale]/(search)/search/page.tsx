@@ -1,8 +1,6 @@
 import { api } from "@/src/trpc/server";
 import { redirect } from "next/navigation";
-import React, { Suspense } from "react";
-import Loading from "./loading";
-import SearchResult from "@/src/_pages/search/SearchResult";
+import React from "react";
 // if the first searched word is not found, this will reduce bundle size by not importing WordCard component.
 export async function generateMetadata({
   searchParams,
