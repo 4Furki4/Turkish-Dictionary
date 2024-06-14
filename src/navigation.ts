@@ -47,7 +47,10 @@ export const pathnames = {
     en: "/search",
     tr: "/arama",
   },
-
+  "/search/[word]": {
+    en: "/search/[word]",
+    tr: "/arama/[word]",
+  },
   // Dynamic params are supported via square brackets
   "/reset-password/[token]": {
     en: "/reset-password/[token]",

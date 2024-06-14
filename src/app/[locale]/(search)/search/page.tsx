@@ -30,13 +30,7 @@ export default async function Page({
   if (!parsedWord) {
     // redirect to home page if word param is empty
     redirect("/");
+  } else {
+    redirect(decodeURI(`/search/${parsedWord}`));
   }
-
-  return (
-    <section className="flex flex-col gap-4 px-6 max-w-7xl mx-auto">
-      <Suspense key={parsedWord} fallback={<Loading />}>
-        <SearchResult word={parsedWord} />
-      </Suspense>
-    </section>
-  );
 }

@@ -93,11 +93,13 @@ export default function Navbar({
                 <DropdownItem color="primary" key={"tr"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
+                    // @ts-ignore
                     href={{
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
                         token: params.token as any,
+                        word: params.word as any,
                       },
                     }}
                     locale="tr"
@@ -109,11 +111,13 @@ export default function Navbar({
                 <DropdownItem color="primary" key={"en"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
+                    // @ts-ignore
                     href={{
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
                         token: params.token as any,
+                        word: params.word as any,
                       },
                     }}
                     locale="en"
