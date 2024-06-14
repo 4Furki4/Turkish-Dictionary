@@ -19,6 +19,7 @@ const itemClasses = {
 export default function WordCard({ word: { word_data }, isSavedWord, locale }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr" }) {
   return (
     <Card
+      as={"article"}
       aria-label="word card"
       role="article"
       isBlurred
@@ -44,37 +45,42 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
         {word_data.root.root && word_data.root[`language_${locale}`] ? (
           <Chip size="sm" className="rounded-sm">
             <div className="flex h-6 items-center space-x-1">
-              <h3 >{word_data.root.root}</h3>
+              <span className="sr-only">Root:</span>
+              <h3 aria-label="the root of the word">{word_data.root.root}</h3>
               {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider orientation="vertical"></Divider> : null}
-              <h3 >{word_data.root[`language_${locale}`]}</h3>
+              <span className="sr-only">Root Language:</span>
+              <h3 aria-label="the root language">{word_data.root[`language_${locale}`]}</h3>
             </div>
           </Chip>
         ) : null}
       </CardHeader>
       <CardBody>
         <>
-          <div className="grid gap-2">
+          <ul className="grid gap-2">
             {word_data.meanings.map((meaning, index) => (
-              <Fragment key={meaning.meaning_id}>
-                <p>
-                  {meaning.part_of_speech}
-                  {meaning.attributes && meaning.attributes.length > 0
-                    ? `, ${meaning.attributes.map((attr) => attr.attribute).join(", ")}`
-                    : null}
-                </p>
+              <li key={meaning.meaning_id} className="grid gap-1">
+                <div className="flex gap-2" >
+                  <Divider orientation="vertical" className="w-[2px]" />
+                  <p>
+                    {meaning.part_of_speech}
+                    {meaning.attributes && meaning.attributes.length > 0
+                      ? `, ${meaning.attributes.map((attr) => attr.attribute).join(", ")}`
+                      : null}
+                  </p>
+                </div>
                 <p className="text-fs-1">
                   {meaning.meaning}
                 </p>
                 {meaning.sentence ? (
-                  <p className="text-center italic px-2 text-fs--1">
-                    <q>{meaning.sentence}</q>{meaning.author ? ` - ${meaning.author}` : null}
-                  </p>
+                  <div className="w-full italic px-2 text-fs--1 flex justify-center">
+                    <q>{meaning.sentence}</q>{meaning.author ? <p> -{meaning.author}</p> : null}
+                  </div>
                 ) : null}
                 {/* do not render a divider after the last meaning. */}
                 {index === word_data.meanings.length - 1 ? null : <Divider />}
-              </Fragment>
+              </li>
             ))}
-          </div>
+          </ul>
         </>
       </CardBody>
       <CardFooter>
