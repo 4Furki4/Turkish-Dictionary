@@ -1,6 +1,9 @@
 import React, { Suspense } from 'react'
 import { api } from '@/src/trpc/server'
 import WordCard from '@/src/components/customs/WordCard'
+import { db } from '@/db';
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
     params: { word }
@@ -17,6 +20,14 @@ export async function generateMetadata({
     }
 }
 
+export async function generateStaticParams() {
+    const data = await db.query.words.findMany({
+        columns: {
+            name: true
+        }
+    })
+    return data.map((word) => ({ word: word.name.split(" ").join("-") }))
+}
 
 export default async function SearchResultPage({
     params: { locale, word }
