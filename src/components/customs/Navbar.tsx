@@ -79,6 +79,13 @@ export default function Navbar({
         </NavbarBrand>
       </NavbarContent>
       <NavbarContent justify="end" className="gap-4 sm:gap-8">
+        {session?.user.role === "admin" ? (
+          <NavbarItem className="hidden sm:flex">
+            <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+              <span className={`text-nowrap`}>Dashboard</span>
+            </NextIntlLink>
+          </NavbarItem>
+        ) : null}
         <NavbarItem>
           <Dropdown classNames={{
             content: ["rounded-sm"],
@@ -93,11 +100,13 @@ export default function Navbar({
                 <DropdownItem color="primary" key={"tr"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
+                    // @ts-ignore
                     href={{
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
                         token: params.token as any,
+                        word: params.word as any,
                       },
                     }}
                     locale="tr"
@@ -109,11 +118,13 @@ export default function Navbar({
                 <DropdownItem color="primary" key={"en"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
+                    // @ts-ignore
                     href={{
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
                         token: params.token as any,
+                        word: params.word as any,
                       },
                     }}
                     locale="en"
