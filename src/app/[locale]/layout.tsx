@@ -14,10 +14,16 @@ import { Wrapper } from "@/src/components/customs/Wrapper";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
-export const metadata: Metadata = {
-  title: "Turkish Dictionary",
-  description:
-    "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later.",
+export function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  const metadata: Metadata = {
+    title: locale === "en" ? "Turkish Dictionary - Words, Definitions and Examples" : "Türkçe Sözlük - Kelimeler, Anlamları ve Örnek Cümleler",
+    description:
+      locale === "en" ? "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later." : "Türkçe kelimeleri arayabileceğiniz ve daha sonra hesabınıza kaydedebileceğiniz çevrimiçi Türkçe Sözlük.",
+  }
 };
 export default async function RootLayout({
   children,

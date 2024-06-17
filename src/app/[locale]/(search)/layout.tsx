@@ -1,6 +1,20 @@
 import Search from "@/src/components/customs/Search";
+import { Metadata } from "next";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import React from "react";
+
+export function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Metadata {
+  return {
+    title: {
+      template: `${locale === "en" ? "%s | Turkish Meaning - Turkish Dictionary" : "%s | Anlamı - Türkçe Sözlük"}`,
+      default: locale === "en" ? "Turkish Dictionary" : "Türkçe Sözlük",
+    },
+  };
+}
 
 export default async function SearchLayout({
   children,
