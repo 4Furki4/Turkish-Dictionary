@@ -3,7 +3,9 @@ import { api } from "../../trpc/server";
 import WordCard from "../../components/customs/WordCard";
 
 export default async function SearchResult({ word, locale }: { word: string, locale: "en" | "tr" }) {
+  console.log('word', word, "... azmanı", word === "... azmanı")
   const response = await api.word.getWord(word)
+  console.log('response', response)
   const isSavedWords = await Promise.all(response.map(async (word) => {
     try {
       const isSaved = await api.user.getWordSaveStatus(word.word_data.word_id)

@@ -34,7 +34,7 @@ export default function SearchForm({
                     setWordInput("");
                     return;
                 }
-                const formattedInput = input.trim().split(" ").join("-");
+                const formattedInput = input.trim()
                 if (!formattedInput) {
                     setInputError("Please enter a word to search");
                     setWordInput("");
@@ -43,6 +43,7 @@ export default function SearchForm({
                 setWordInput("");
                 setInputError("")
                 const decodedInput = decodeURI(formattedInput);
+                console.log(decodedInput)
                 router.push({
                     pathname: "/search/[word]",
                     params: { word: decodedInput },

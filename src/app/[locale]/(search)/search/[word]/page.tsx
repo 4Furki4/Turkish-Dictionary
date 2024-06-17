@@ -13,11 +13,11 @@ export async function generateMetadata({
 }: {
     params: { word: string, locale: string }
 }) {
-    const parsedWord = decodeURIComponent(word).split('-').join(' ') // parse the word to utf-8 format string
+    const parsedWord = decodeURIComponent(word) // parse the word to utf-8 format string
     const response = await api.word.getWord(parsedWord);
-    const defString = response[0].word_data.meanings.map((meaning, idx) => {
+    const defString = response.length > 0 ? response[0].word_data.meanings.map((meaning, idx) => {
         return `${idx + 1}. ${meaning.meaning}:`
-    }).join(" ")
+    }).join(" ") : "No definition found for this word"
     if (word) {
         const meta: Metadata = {
             title: locale === "en" ? `${parsedWord}` : `${parsedWord}`,
@@ -35,7 +35,7 @@ export async function generateStaticParams() {
             name: true
         }
     })
-    return data.map((word) => ({ word: word.name.split(" ").join("-") }))
+    return data.map((word) => ({ word: word.name }))
 }
 
 export default function SearchResultPage({
@@ -44,7 +44,7 @@ export default function SearchResultPage({
     params: { locale: string, word: string }
 
 }) {
-    const formattedWord = decodeURI(word).trim().split("-").join(" ")
+    const formattedWord = decodeURI(word).trim()
     return (
         <section className="flex flex-col gap-4 px-6 max-w-7xl mx-auto">
             <Suspense fallback={<Loading />}>
