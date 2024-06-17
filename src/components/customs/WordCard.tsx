@@ -72,8 +72,11 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
                   {meaning.meaning}
                 </p>
                 {meaning.sentence ? (
-                  <div className="w-full italic px-2 text-fs--1 flex justify-center">
-                    <q>{meaning.sentence}</q>{meaning.author ? <p> -{meaning.author}</p> : null}
+                  <div className="w-full italic px-2 text-fs--1 text-center">
+                    <p>
+                      <q>{meaning.sentence}</q>
+                      {meaning.author ? ` -${meaning.author}` : null}
+                    </p>
                   </div>
                 ) : null}
                 {/* do not render a divider after the last meaning. */}
