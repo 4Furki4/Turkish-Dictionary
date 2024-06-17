@@ -24,6 +24,7 @@ export function generateMetadata({
     description:
       locale === "en" ? "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later." : "Türkçe kelimeleri arayabileceğiniz ve daha sonra hesabınıza kaydedebileceğiniz çevrimiçi Türkçe Sözlük.",
   }
+  return metadata;
 };
 export default async function RootLayout({
   children,
