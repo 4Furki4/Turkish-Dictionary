@@ -11,7 +11,7 @@ export function generateMetadata({
   return {
     title: {
       template: `${locale === "en" ? "%s | Turkish Meaning - Turkish Dictionary" : "%s | Anlamı - Türkçe Sözlük"}`,
-      default: locale === "en" ? "Turkish Dictionary" : "Türkçe Sözlük",
+      default: locale === "en" ? "Turkish Dictionary - Words, Definitions and Examples" : "Türkçe Sözlük - Kelimeler, Anlamları ve Örnek Cümleler"
     },
   };
 }
