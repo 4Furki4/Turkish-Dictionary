@@ -9,6 +9,7 @@ import { z } from "zod";
 import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 import { eq } from "drizzle-orm";
 import { users } from "@/db/schema/users";
+import { purifyObject } from "@/src/lib/utils";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
@@ -28,8 +29,9 @@ export const authRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx: { db, session } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
       const userQueriedWUsername = await db.query.users.findFirst({
-        where: eq(users.username, input.username),
+        where: eq(users.username, purifiedInput.username),
       });
       if (userQueriedWUsername)
         throw new TRPCError({
@@ -37,7 +39,7 @@ export const authRouter = createTRPCRouter({
           message: "User with this username already exists",
         });
       const userQueriedWEmail = await db.query.users.findFirst({
-        where: eq(users.email, input.email),
+        where: eq(users.email, purifiedInput.email),
       });
       if (userQueriedWEmail)
         throw new TRPCError({
@@ -45,13 +47,13 @@ export const authRouter = createTRPCRouter({
           message: "User with this email already exists",
         });
       try {
-        const hashedPassword = await bycrypt.hash(input.password, 10);
+        const hashedPassword = await bycrypt.hash(purifiedInput.password, 10);
         const user = await db
           .insert(users)
           .values({
-            name: input.name,
-            email: input.email,
-            username: input.username,
+            name: purifiedInput.name,
+            email: purifiedInput.email,
+            username: purifiedInput.username,
             password: hashedPassword,
             role: "user",
             id: crypto.randomUUID(),
@@ -80,8 +82,9 @@ export const authRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
       const user = await db.query.users.findFirst({
-        where: eq(users.email, input.email),
+        where: eq(users.email, purifiedInput.email),
       });
       if (!user)
         throw new TRPCError({
@@ -102,7 +105,7 @@ export const authRouter = createTRPCRouter({
       const token = jwt.sign(payload, secret, {
         expiresIn: "30m",
       });
-      const link = `${process.env.NEXT_PUBLIC_URL}/${input.locale}/reset-password/${user.id}?token=${token}`;
+      const link = `${process.env.NEXT_PUBLIC_URL}/${purifiedInput.locale}/reset-password/${user.id}?token=${token}`;
       const transporter = nodemailler.createTransport({
         service: "gmail",
         host: "smtp.gmail.com",
@@ -145,10 +148,11 @@ export const authRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
       let user;
       try {
         user = await db.query.users.findFirst({
-          where: eq(users.id, input.id),
+          where: eq(users.id, purifiedInput.id),
         });
       } catch (error) {
         throw new TRPCError({
@@ -169,7 +173,7 @@ export const authRouter = createTRPCRouter({
       }
       try {
         const payload = jwt.verify(
-          input.token,
+          purifiedInput.token,
           process.env.NEXTAUTH_SECRET! + user.password
         );
         return payload;
@@ -189,8 +193,9 @@ export const authRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
       const user = await db.query.users.findFirst({
-        where: eq(users.id, input.id),
+        where: eq(users.id, purifiedInput.id),
       });
       if (!user)
         throw new TRPCError({
@@ -205,7 +210,7 @@ export const authRouter = createTRPCRouter({
       }
       try {
         const payload = jwt.verify(
-          input.token,
+          purifiedInput.token,
           process.env.NEXTAUTH_SECRET! + user.password
         );
       } catch (error) {
@@ -215,7 +220,7 @@ export const authRouter = createTRPCRouter({
         });
       }
       const isPasswordSame = await bycrypt.compare(
-        input.newPassword,
+        purifiedInput.newPassword,
         user.password!
       );
       if (isPasswordSame) {
@@ -224,11 +229,11 @@ export const authRouter = createTRPCRouter({
           message: "New password cannot be the same as the old password",
         });
       }
-      const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
+      const newHashedPassword = await bycrypt.hash(purifiedInput.newPassword, 10);
       await db
         .update(users)
         .set({ password: newHashedPassword })
-        .where(eq(users.id, input.id));
+        .where(eq(users.id, purifiedInput.id));
       return {
         message: "Password changed successfully",
       };
