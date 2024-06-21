@@ -9,6 +9,8 @@ import { eq, sql } from "drizzle-orm";
 import { SelectWordWithMeanings, words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
 import { WordSearchResult } from "@/types";
+import DOMPurify from "isomorphic-dompurify";
+import { purifyObject } from "@/src/lib/utils";
 
 
 export const wordRouter = createTRPCRouter({
@@ -23,7 +25,8 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx: { db } }) => {
-      const wordsWithMeanings = await db.select().from(words).fullJoin(meanings, eq(words.id, meanings.wordId)).limit(input.take).offset(input.skip)
+      const purifiedInput = purifyObject(input)
+      const wordsWithMeanings = await db.select().from(words).fullJoin(meanings, eq(words.id, meanings.wordId)).limit(purifiedInput.take).offset(purifiedInput.skip)
       return wordsWithMeanings
       // console.log(wordsWithMeanings)
     }),
@@ -39,6 +42,7 @@ export const wordRouter = createTRPCRouter({
     )
     .query(async ({ input: name, ctx: { db } }) => {
       // TODO: join word and meaning attributes...
+      const purifiedName = DOMPurify.sanitize(name)
       const wordsWithMeanings =
         await db.execute(sql`
           -- word attributes
@@ -113,7 +117,7 @@ export const wordRouter = createTRPCRouter({
               LEFT JOIN languages l ON r.language_id = l.id
               LEFT JOIN meanings_agg ma ON w.id = ma.word_id
             WHERE
-              w.name = ${name}
+              w.name = ${purifiedName}
           )
           -- finally combine all data as a single json object
           SELECT
