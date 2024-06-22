@@ -28,7 +28,6 @@ export const wordRouter = createTRPCRouter({
       const purifiedInput = purifyObject(input)
       const wordsWithMeanings = await db.select().from(words).fullJoin(meanings, eq(words.id, meanings.wordId)).limit(purifiedInput.take).offset(purifiedInput.skip)
       return wordsWithMeanings
-      // console.log(wordsWithMeanings)
     }),
   /**
    * Get a word by name quering the database

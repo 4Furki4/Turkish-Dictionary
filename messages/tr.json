@@ -88,5 +88,10 @@
   "LanguageAndRootInput": {
     "rootInputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
     "languageInputError": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
+  },
+  "SearchResults": {
+    "NoResults": "Sonuç bulunamadı",
+    "NoMeaningError": "Kelime bulundu ancak anlamı bulunamadı. Lütfen yöneticiyle iletişime geçin.",
+    "Contact": "İletişime Geçin"
   }
 }

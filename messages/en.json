@@ -89,5 +89,10 @@
   "LanguageInput": {
     "rootInputError": "Root is required when language specified",
     "languageInputError": "Language is required when root specified"
+  },
+  "SearchResults": {
+    "NoResults": "Word not found",
+    "NoMeaningError": "Word found but no meanings found. Please contact with admins!",
+    "Contact": "Contact Admins"
   }
 }

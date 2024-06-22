@@ -43,7 +43,6 @@ export default function Navbar({
   );
   const getDynamicPathnames = useCallback((path: typeof pathName) => {
     if (path === "/search/[word]") {
-      console.log(`/search/${params.word}`)
       return `/search/${params.word}`;
     }
     if (path === "/reset-password/[token]") {

@@ -22,7 +22,6 @@ export default function MeaningExampleSentenceInput({
     clearErrors: UseFormClearErrors<WordForm>,
     watch: UseFormWatch<WordForm>,
 }) {
-    console.log('sentence error:', errors)
     return (
         <Controller
             name={`meanings.${index}.example.sentence`}

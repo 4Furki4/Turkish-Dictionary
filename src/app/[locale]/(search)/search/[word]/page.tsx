@@ -1,10 +1,12 @@
 import React, { Suspense } from 'react'
 import { api } from '@/src/trpc/server'
-import WordCard from '@/src/components/customs/WordCard'
 import { db } from '@/db';
 import SearchResult from '@/src/_pages/search/SearchResult';
 import Loading from '../_loading';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { eq } from 'drizzle-orm';
+import { words } from '@/db/schema/words';
 
 export const dynamic = "force-dynamic";
 
@@ -38,13 +40,19 @@ export async function generateStaticParams() {
     return data.map((word) => ({ word: word.name }))
 }
 
-export default function SearchResultPage({
+export default async function SearchResultPage({
     params: { locale, word }
 }: {
     params: { locale: string, word: string }
 
 }) {
     const formattedWord = decodeURI(word).trim()
+    const response = await db.query.words.findMany({
+        where: eq(words.name, formattedWord)
+    })
+    if (response.length === 0) {
+        notFound()
+    }
     return (
         <section className="flex flex-col gap-4 px-6 max-w-7xl mx-auto">
             <Suspense fallback={<Loading />}>

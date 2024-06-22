@@ -86,7 +86,6 @@ export default function SigninForm({
     });
   };
   const onProviderSignin = (provider: "google" | "discord" | "github") => {
-    console.log(params.get("callbackUrl"))
     signIn(provider, {
       callbackUrl: encodeURI(
         (params.get("callbackUrl") as string) ?? "/"
