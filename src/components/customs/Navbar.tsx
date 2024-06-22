@@ -3,9 +3,6 @@ import {
   Navbar as NextuiNavbar,
   NavbarContent,
   NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
   Button,
   Avatar,
   Link,
@@ -15,13 +12,14 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@nextui-org/react";
-import { Book, HistoryIcon, HomeIcon, Languages, LayoutDashboard, ListTree, Menu, Palette } from "lucide-react";
+import { Book, Languages, Menu, Palette } from "lucide-react";
 import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { usePathname, Link as NextIntlLink } from "@/src/navigation";
 import { Session } from "next-auth";
+import { useCallback } from "react";
 
 type NavbarProps = {
   session: Session | null;
@@ -43,6 +41,16 @@ export default function Navbar({
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
     pathName
   );
+  const getDynamicPathnames = useCallback((path: typeof pathName) => {
+    if (path === "/search/[word]") {
+      console.log(`/search/${params.word}`)
+      return `/search/${params.word}`;
+    }
+    if (path === "/reset-password/[token]") {
+      return `/reset-password/${params.token}`;
+    }
+    return path;
+  }, [pathName, params.token, params.word])
   return (
     <NextuiNavbar
       className="bg-background-foreground/100 border-b border-border"
@@ -176,9 +184,10 @@ export default function Navbar({
           <NavbarItem>
             <NextIntlLink
               className="w-full block"
+              // @ts-ignore
               href={{
                 pathname: '/signin',
-                query: { callbackUrl: `${pathName}?${searchParams.toString()}` },
+                query: { callbackUrl: decodeURI(`${getDynamicPathnames(pathName)}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`) },
                 search: pathName === "/signin" ? searchParams.toString() : undefined,
               }}
             ><Button

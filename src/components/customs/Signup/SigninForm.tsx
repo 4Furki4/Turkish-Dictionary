@@ -1,7 +1,6 @@
 "use client";
 import { LoginInputs } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
-import { useTranslations } from "next-intl";
 import React, { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -87,8 +86,9 @@ export default function SigninForm({
     });
   };
   const onProviderSignin = (provider: "google" | "discord" | "github") => {
+    console.log(params.get("callbackUrl"))
     signIn(provider, {
-      callbackUrl: decodeURIComponent(
+      callbackUrl: encodeURI(
         (params.get("callbackUrl") as string) ?? "/"
       ),
     }).then((res) => {

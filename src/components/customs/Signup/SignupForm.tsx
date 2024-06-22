@@ -78,8 +78,14 @@ export default function SignupForm({
       toast.success(SuccessMessageIntl, {
         position: "bottom-center",
       });
-      console.log(params.get("callbackUrl"));
-      router.push("/signin", { scroll: false });
+      router.push({
+        pathname: "/signin",
+        query: {
+          callbackUrl: decodeURIComponent(
+            (params.get("callbackUrl") as string) ?? "/"
+          )
+        },
+      }, { scroll: false });
     },
   });
   const onSignupSubmit: SubmitHandler<SignupFormType> = (data: SignupRequest) => {
@@ -291,7 +297,7 @@ export default function SignupForm({
         <Link
           href={{
             pathname: "/signin",
-            query: new URLSearchParams(params) as any,
+            query: decodeURIComponent(params.toString()),
           }}
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
         >
