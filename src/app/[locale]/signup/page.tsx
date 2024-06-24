@@ -40,7 +40,7 @@ export default async function Page({
   }
   const t = await getTranslations("SignupForm");
   return (
-    <main className="grid place-items-center w-full h-[calc(100vh-var(--navbar-height))] p-2">
+    <main className="grid place-items-center w-full mt-auto p-2">
       <SignupForm
         CreateNewAccIntl={t("CreateNewAccount")}
         SuccessMessageIntl={t("SignupSuccess")}

@@ -11,6 +11,7 @@ import { getMessages, getTranslations, unstable_setRequestLocale } from "next-in
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/src/components/customs/Sonner";
 import { Wrapper } from "@/src/components/customs/Wrapper";
+import Footer from "@/src/components/customs/Footer";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -61,6 +62,7 @@ export default async function RootLayout({
                 SignInIntl={t("Sign In")}
                 WordListIntl={t("Word List")} />
               {children}
+              <Footer />
             </NextIntlClientProvider>
           </Providers>
         </TRPCReactProvider>

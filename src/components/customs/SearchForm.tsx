@@ -25,7 +25,7 @@ export default function SearchForm({
 
     return (
         <form
-            className="max-w-7xl mx-auto"
+            className="max-w-7xl w-full mx-auto"
             onSubmit={(e) => {
                 e.preventDefault();
                 const input: string = e.currentTarget.search.value;
@@ -50,7 +50,7 @@ export default function SearchForm({
             }}
         >
 
-            <div className="p-6 flex">
+            <div className="p-6">
                 <Input
                     classNames={{
                         inputWrapper: ["rounded-sm"]

@@ -24,6 +24,9 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
       role="article"
       isBlurred
       className="border border-border rounded-sm p-4"
+      classNames={{
+        base: ["p-6"]
+      }}
     >
       <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
       <CardHeader className="block sm:flex justify-center ">

@@ -54,7 +54,7 @@ export default async function SearchResultPage({
         notFound()
     }
     return (
-        <section className="flex flex-col gap-4 px-6 max-w-7xl mx-auto">
+        <section className='p-6 mx-auto max-w-7xl w-full'>
             <Suspense fallback={<Loading />}>
                 <SearchResult word={formattedWord} locale={locale as "en" | "tr"} />
             </Suspense>

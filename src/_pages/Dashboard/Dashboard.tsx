@@ -28,7 +28,7 @@ export default function Dashboard({
   //   }
   // );
   return (
-    <Card className="max-w-5xl mx-auto my-4">
+    <Card className="max-w-7xl w-full mx-auto my-4" radius="sm">
       <CardHeader>
         <h1 className="text-fs-3 font-bold text-center">Dashboard</h1>
       </CardHeader>

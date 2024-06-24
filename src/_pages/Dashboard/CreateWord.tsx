@@ -153,7 +153,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
 
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
   return (
-    <section className="max-w-5xl mx-auto max-sm:px-4 py-4">
+    <section className="max-w-7xl w-full mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
         <div className="grid sm:grid-cols-2 gap-2">
