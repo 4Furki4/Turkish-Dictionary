@@ -21,11 +21,7 @@ export default async function Page({
 }: {
   params: { locale: string };
 }) {
-  // const words = await api.word.getWords.query({});
-  const words = [] as any;
   return (
-    <>
-      <Dashboard locale={locale} words={words} />
-    </>
+    <Dashboard locale={locale} />
   );
 }

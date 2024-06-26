@@ -8,7 +8,7 @@ import {
 import { eq, sql } from "drizzle-orm";
 import { SelectWordWithMeanings, words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
-import { WordSearchResult } from "@/types";
+import { DashboardWordList, WordSearchResult } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";
 
@@ -26,7 +26,31 @@ export const wordRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx: { db } }) => {
       const purifiedInput = purifyObject(input)
-      const wordsWithMeanings = await db.select().from(words).fullJoin(meanings, eq(words.id, meanings.wordId)).limit(purifiedInput.take).offset(purifiedInput.skip)
+      const wordsWithMeanings = await db.execute(
+        sql
+          `
+        SELECT
+            w.id AS word_id,
+            w.name AS name,
+            m.meaning AS meaning
+        FROM
+            words w
+            JOIN (
+                SELECT DISTINCT ON (word_id)
+                    id,
+                    word_id,
+                    meaning
+                FROM
+                    meanings
+                ORDER BY
+                    word_id,
+                    id
+            ) m ON w.id = m.word_id
+        ORDER BY
+            w.id
+        LIMIT ${purifiedInput.take} OFFSET ${purifiedInput.skip};
+        `
+      ) as DashboardWordList[]
       return wordsWithMeanings
     }),
   /**

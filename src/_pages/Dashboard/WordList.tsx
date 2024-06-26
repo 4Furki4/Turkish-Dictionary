@@ -20,15 +20,14 @@ import { api } from "@/src/trpc/react";
 import { toast } from "sonner";
 import { Link as NextUILink } from "@nextui-org/react";
 import { Link } from "@/src/navigation";
-import { SelectWord } from "@/db/schema/words";
-import { SelectMeaning } from "@/db/schema/meanings";
-type SelectWordWithMeanings = SelectWord & SelectMeaning
+import { DashboardWordList } from "@/types";
 export default function WordList(
-  //   {
-  //   words,
-  // }: {
-  //   words: SelectWordWithMeanings[];
-  // }
+  {
+    words,
+  }:
+    {
+      words: DashboardWordList[]
+    }
 ) {
   const wordsQuery = api.word.getWords.useQuery({
     take: undefined,
@@ -45,92 +44,79 @@ export default function WordList(
   //     });
   //   },
   // });
-  // type Row = (typeof rows)[0];
-  // const rows = wordsQuery.data.map((word, idx) => {
-  //   return {
-  //     name: word.name,
-  //     key: idx,
-  //     root: word.root,
-  //     partOfSpeech: word.meanings[0].partOfSpeech,
-  //     attributes: word.meanings[0].attributes?.join(", "),
-  //     id: word.id,
-  //   };
-  // });
+  type Row = (typeof rows)[0];
+  const rows = words.map((word, idx) => {
+    return {
+      name: word.name,
+      key: word.word_id,
+      meaning: word.meaning,
+    };
+  });
   const columns = [
     {
       key: "name",
-      label: "Word",
+      label: "word",
     },
     {
-      key: "partOfSpeech",
-      label: "Part of Speech",
-    },
-    {
-      key: "attributes",
-      label: "Attributes",
-    },
-    {
-      key: "root",
-      label: "Root",
+      key: "meaning",
+      label: "meaning",
     },
     {
       key: "actions",
       label: "Actions",
     },
   ];
-  // const renderCell = useCallback((item: Row, columnKey: React.Key) => {
-  //   const cellValue = item[columnKey as keyof Row];
-  //   switch (columnKey) {
-  //     case "actions":
-  //       return (
-  //         <div className="flex">
-  //           <Link
-  //             className="hover:underline"
-  //             href={{
-  //               pathname: "/search",
-  //               query: {
-  //                 word: item.name,
-  //               },
-  //             }}
-  //           >
-  //             {`${item.name}`}
-  //           </Link>
-  //           <Dropdown>
-  //             <DropdownTrigger className="w-full flex justify-around items-center">
-  //               <button className="ml-auto">
-  //                 <MoreVertical aria-description="more action button" />
-  //               </button>
-  //             </DropdownTrigger>
-  //             <DropdownMenu
-  //               onAction={(key) => {
-  //                 if (key === "Delete") {
-  //                   wordMutation.mutate({ id: item.id });
-  //                 }
-  //               }}
-  //             >
-  //               <DropdownSection title={"Actions"}>
-  //                 <DropdownItem
-  //                   key={"Delete"}
-  //                   startContent={<Trash2 />}
-  //                   color={"danger"}
-  //                 >
-  //                   Delete
-  //                 </DropdownItem>
-  //                 <DropdownItem startContent={<Edit3 />} color={"warning"}>
-  //                   Edit
-  //                 </DropdownItem>
-  //               </DropdownSection>
-  //             </DropdownMenu>
-  //           </Dropdown>
-  //         </div>
-  //       );
-  //     default:
-  //       return cellValue;
-  //   }
-  // }, []);
+  const renderCell = useCallback((item: Row, columnKey: React.Key) => {
+    const cellValue = item[columnKey as keyof Row];
+    switch (columnKey) {
+      case "actions":
+        return (
+          <Dropdown>
+            <DropdownTrigger className="flex justify-around items-center">
+              <button className="ml-auto">
+                <MoreVertical aria-description="more action button" />
+              </button>
+            </DropdownTrigger>
+            <DropdownMenu
+              onAction={(key) => {
+                // if (key === "Delete") {
+                //   wordMutation.mutate({ id: item.id });
+                // }
+              }}
+            >
+              <DropdownSection title={"Actions"}>
+                <DropdownItem
+                  key={"Delete"}
+                  startContent={<Trash2 />}
+                  color={"danger"}
+                >
+                  Delete
+                </DropdownItem>
+                <DropdownItem startContent={<Edit3 />} color={"warning"}>
+                  Edit
+                </DropdownItem>
+              </DropdownSection>
+            </DropdownMenu>
+          </Dropdown>
+        );
+      case "name":
+        return (
+          <NextUILink as={'div'}>
+            <Link target="_blank" href={{
+              pathname: '/search/[word]',
+              params: { word: item.name }
+            }}>
+              {cellValue}
+            </Link>
+          </NextUILink>
+        );
+      default:
+        return cellValue;
+    }
+  }, []);
   return (
     <section>
-      {/* <NextUILink as={Link} href={"/dashboard/create"}>
+      <NextUILink as={Link} href={"/dashboard/create"}>
         Create new word
       </NextUILink>
       <Table aria-label="Example table with dynamic content">
@@ -148,7 +134,7 @@ export default function WordList(
             </TableRow>
           )}
         </TableBody>
-      </Table> */}
+      </Table>
     </section>
   );
 }

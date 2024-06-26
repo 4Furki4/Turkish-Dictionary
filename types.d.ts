@@ -110,3 +110,9 @@ type WordSearchResult = {
   }
 }
 
+type DashboardWordList = {
+  word_id: number;
+  name: string;
+  meaning: string;
+}
+
