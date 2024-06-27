@@ -32,8 +32,9 @@ export default function WordList(
   const wordsQuery = api.word.getWords.useQuery({
     take: undefined,
     skip: undefined
+  }, {
+    initialData: words
   })
-  console.log(wordsQuery.data)
   const deleteMutation = api.admin.deleteWord.useMutation({
     onSuccess: async () => {
       await wordsQuery.refetch();
@@ -45,7 +46,7 @@ export default function WordList(
     },
   });
   type Row = (typeof rows)[0];
-  const rows = words.map((word, idx) => {
+  const rows = wordsQuery.data.map((word, idx) => {
     return {
       name: word.name,
       key: word.word_id,
