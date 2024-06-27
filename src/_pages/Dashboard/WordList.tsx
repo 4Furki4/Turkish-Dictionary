@@ -7,6 +7,8 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  useDisclosure,
+  Button,
 } from "@nextui-org/react";
 import {
   Dropdown,
@@ -21,6 +23,7 @@ import { toast } from "sonner";
 import { Link as NextUILink } from "@nextui-org/react";
 import { Link } from "@/src/navigation";
 import { DashboardWordList } from "@/types";
+import WordListDeleteModal from "./WordListDeleteModal";
 export default function WordList(
   {
     words,
@@ -29,22 +32,17 @@ export default function WordList(
       words: DashboardWordList[]
     }
 ) {
+  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
+  const [selectedWord, setSelectedWord] = React.useState<{
+    wordId: number;
+    name: string;
+  }>({ wordId: 0, name: "" });
   const wordsQuery = api.word.getWords.useQuery({
     take: undefined,
     skip: undefined
   }, {
     initialData: words
   })
-  const deleteMutation = api.admin.deleteWord.useMutation({
-    onSuccess: async () => {
-      await wordsQuery.refetch();
-    },
-    onError: (err) => {
-      toast.error(err.message, {
-        position: "top-center",
-      });
-    },
-  });
   type Row = (typeof rows)[0];
   const rows = wordsQuery.data.map((word, idx) => {
     return {
@@ -81,7 +79,11 @@ export default function WordList(
             <DropdownMenu
               onAction={(key) => {
                 if (key === "Delete") {
-                  deleteMutation.mutate({ id: item.key });
+                  setSelectedWord({
+                    wordId: item.key,
+                    name: item.name,
+                  });
+                  onDeleteModalOpen();
                 }
               }}
             >
@@ -133,6 +135,7 @@ export default function WordList(
           )}
         </TableBody>
       </Table>
+      <WordListDeleteModal key={selectedWord.wordId} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} />
     </section>
   );
 }
