@@ -34,16 +34,16 @@ export default function WordList(
     skip: undefined
   })
   console.log(wordsQuery.data)
-  // const wordMutation = api.admin.deleteWord.useMutation({
-  //   onSuccess: async () => {
-  //     await wordsQuery.refetch();
-  //   },
-  //   onError: (err) => {
-  //     toast.error(err.message, {
-  //       position: "top-center",
-  //     });
-  //   },
-  // });
+  const deleteMutation = api.admin.deleteWord.useMutation({
+    onSuccess: async () => {
+      await wordsQuery.refetch();
+    },
+    onError: (err) => {
+      toast.error(err.message, {
+        position: "top-center",
+      });
+    },
+  });
   type Row = (typeof rows)[0];
   const rows = words.map((word, idx) => {
     return {
@@ -79,9 +79,9 @@ export default function WordList(
             </DropdownTrigger>
             <DropdownMenu
               onAction={(key) => {
-                // if (key === "Delete") {
-                //   wordMutation.mutate({ id: item.id });
-                // }
+                if (key === "Delete") {
+                  deleteMutation.mutate({ id: item.key });
+                }
               }}
             >
               <DropdownSection title={"Actions"}>
@@ -116,9 +116,6 @@ export default function WordList(
   }, []);
   return (
     <section>
-      <NextUILink as={Link} href={"/dashboard/create"}>
-        Create new word
-      </NextUILink>
       <Table aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => (

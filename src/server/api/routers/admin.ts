@@ -15,27 +15,22 @@ import { languages } from "@/db/schema/languages";
 import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
 const CreateWordSchema = z.ZodType<WordForm>
 export const adminRouter = createTRPCRouter({
-  // deleteWord: adminProcedure
-  //   .input(
-  //     z.object({
-  //       id: z.number(),
-  //     })
-  //   )
-  //   .mutation(async ({ input: { id }, ctx: { db, session } }) => {
-  //     try {
-  //       await db.delete(words).where(eq(words.id, id));
-  //     } catch (error) {
-  //       throw new TRPCError({
-  //         code: "INTERNAL_SERVER_ERROR",
-  //         message: "Something went wrong",
-  //       });
-  //     }
-  //   }),
-  // createWord: adminProcedure
-  //   .input(createWordSchema)
-  //   .mutation(async ({ ctx: { db }, input: { word } }) => {
-  //     // todo
-  //   }),
+  deleteWord: adminProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .mutation(async ({ input: { id }, ctx: { db, session } }) => {
+      try {
+        await db.delete(words).where(eq(words.id, id));
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
 
   addWord: adminProcedure.input(z.object({
     name: z.string(),
