@@ -8,7 +8,6 @@ import {
   TableRow,
   TableCell,
   useDisclosure,
-  Button,
 } from "@nextui-org/react";
 import {
   Dropdown,
@@ -19,17 +18,38 @@ import {
 } from "@nextui-org/react";
 import { Edit3, MoreVertical, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
-import { toast } from "sonner";
 import { Link as NextUILink } from "@nextui-org/react";
 import { Link } from "@/src/navigation";
 import { DashboardWordList } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
+import { Pagination } from "@nextui-org/pagination";
+import { Select, SelectSection, SelectItem } from "@nextui-org/select";
+const wordPerPageOptions = [
+  {
+    label: "5",
+    key: "5"
+  },
+  {
+    label: "10",
+    key: "10"
+  },
+  {
+    label: "20",
+    key: "20"
+  },
+  {
+    label: "50",
+    key: "50"
+  }
+]
 export default function WordList(
   {
     words,
+    wordCount
   }:
     {
-      words: DashboardWordList[]
+      words: DashboardWordList[],
+      wordCount: number
     }
 ) {
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
@@ -37,9 +57,12 @@ export default function WordList(
     wordId: number;
     name: string;
   }>({ wordId: 0, name: "" });
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
+  const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
+  const totalPageNumber = Math.ceil(wordCount / wordsPerPage);
   const wordsQuery = api.word.getWords.useQuery({
-    take: undefined,
-    skip: undefined
+    take: wordsPerPage,
+    skip: (pageNumber - 1) * 10
   }, {
     initialData: words
   })
@@ -118,8 +141,23 @@ export default function WordList(
     }
   }, []);
   return (
-    <section>
-      <Table aria-label="Example table with dynamic content">
+    <section className="w-full">
+      <Select label={"Words per page"} defaultSelectedKeys={["10"]}
+        size="sm"
+        classNames={{
+          base: ["flex ml-auto w-1/6"],
+        }} onChange={(e) => {
+          setWordsPerPage(parseInt(e.target.value));
+        }}>
+        {wordPerPageOptions.map((pageCount) => (
+          <SelectItem key={pageCount.key}>
+            {pageCount.label}
+          </SelectItem>
+        ))}
+      </Select>
+      <Table classNames={{
+        base: ["min-h-[300px]"],
+      }} isStriped aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key}>{column.label}</TableColumn>
@@ -135,6 +173,11 @@ export default function WordList(
           )}
         </TableBody>
       </Table>
+      <Pagination classNames={{
+        wrapper: ["mx-auto"]
+      }} isCompact showControls total={totalPageNumber} initialPage={1} onChange={async (page) => {
+        setPageNumber(page);
+      }} />
       <WordListDeleteModal key={selectedWord.wordId} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} />
     </section>
   );

@@ -26,13 +26,14 @@ export default async function Dashboard({
     take: 10,
     skip: 0
   })
+  const wordCount = await api.word.getWordCount()
   return (
     <Card className="max-w-7xl w-full mx-auto my-4" radius="sm">
       <CardHeader>
         <h1 className="text-fs-3 font-bold text-center">Dashboard</h1>
       </CardHeader>
       <CardBody>
-        <WordList words={wordList} />
+        <WordList words={wordList} wordCount={wordCount} />
         <NextIntlLink href="/dashboard/create-word">Create Word</NextIntlLink>
         <UserList />
         <WordRequestList />

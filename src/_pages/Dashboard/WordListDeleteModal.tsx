@@ -3,6 +3,7 @@ import React from 'react'
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 import { api } from '@/src/trpc/react';
 import { toast } from 'sonner';
+
 export default function WordListDeleteModal({
     isOpen,
     onOpen,
@@ -16,13 +17,13 @@ export default function WordListDeleteModal({
     wordId: number;
     name: string;
 }) {
-    const wordsQuery = api.word.getWords.useQuery({
-        take: undefined,
-        skip: undefined
-    })
+    const utils = api.useUtils()
     const deleteMutation = api.admin.deleteWord.useMutation({
         onSuccess: async () => {
-            await wordsQuery.refetch()
+            await utils.word.getWords.invalidate({
+                take: 10,
+                skip: 0
+            })
         },
         onError: (err) => {
             toast.error(err.message, {

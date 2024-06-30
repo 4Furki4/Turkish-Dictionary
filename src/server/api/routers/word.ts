@@ -1,13 +1,10 @@
 import { z } from "zod";
 import {
-  adminProcedure,
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "../trpc";
-import { eq, sql } from "drizzle-orm";
-import { SelectWordWithMeanings, words } from "@/db/schema/words";
-import { meanings } from "@/db/schema/meanings";
+import { sql, count } from "drizzle-orm";
+import { words } from "@/db/schema/words";
 import { DashboardWordList, WordSearchResult } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";
@@ -156,5 +153,10 @@ export const wordRouter = createTRPCRouter({
           `,
         ) as WordSearchResult[]
       return wordsWithMeanings
+    }),
+  getWordCount: publicProcedure
+    .query(async ({ ctx: { db } }) => {
+      const countOfWords = await db.select({ count: count() }).from(words);
+      return countOfWords[0].count
     }),
 });
