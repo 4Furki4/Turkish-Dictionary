@@ -60,8 +60,12 @@ export default function WordList(
   }>({ wordId: 0, name: "" });
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
-  const totalPageNumber = Math.ceil(wordCount / wordsPerPage);
-  console.log('totalPageNumber', totalPageNumber)
+  const wordCountQuery = api.word.getWordCount.useQuery(undefined, {
+    initialData: wordCount
+  });
+  console.log('word count', wordCountQuery.data)
+  console.log('page count', Math.ceil(wordCountQuery.data / wordsPerPage))
+  const totalPageNumber = Math.ceil(wordCountQuery.data / wordsPerPage);
   const wordsQuery = api.word.getWords.useQuery({
     take: wordsPerPage,
     skip: (pageNumber - 1) * wordsPerPage
@@ -187,7 +191,7 @@ export default function WordList(
         </TableBody>
       </Table>
 
-      <WordListDeleteModal key={selectedWord.wordId} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} />
+      <WordListDeleteModal key={selectedWord.wordId} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
     </section>
   );
 }

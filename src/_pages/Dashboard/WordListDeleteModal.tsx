@@ -9,21 +9,27 @@ export default function WordListDeleteModal({
     onOpen,
     onOpenChange,
     wordId,
-    name
+    name,
+    take,
+    skip
 }: {
     isOpen: boolean;
     onOpen: () => void;
     onOpenChange: () => void;
     wordId: number;
     name: string;
+    take: number;
+    skip: number;
 }) {
     const utils = api.useUtils()
     const deleteMutation = api.admin.deleteWord.useMutation({
         onSuccess: async () => {
-            await utils.word.getWords.invalidate({
-                take: 10,
-                skip: 0
+            const getWordsInvalidation = utils.word.getWords.invalidate({
+                take,
+                skip
             })
+            const getWordCountInvalidation = utils.word.getWordCount.invalidate()
+            await Promise.all([getWordsInvalidation, getWordCountInvalidation])
         },
         onError: (err) => {
             toast.error(err.message, {
