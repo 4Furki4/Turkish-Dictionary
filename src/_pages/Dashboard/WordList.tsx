@@ -8,6 +8,7 @@ import {
   TableRow,
   TableCell,
   useDisclosure,
+  Spinner,
 } from "@nextui-org/react";
 import {
   Dropdown,
@@ -60,11 +61,12 @@ export default function WordList(
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
   const totalPageNumber = Math.ceil(wordCount / wordsPerPage);
+  console.log('totalPageNumber', totalPageNumber)
   const wordsQuery = api.word.getWords.useQuery({
     take: wordsPerPage,
-    skip: (pageNumber - 1) * 10
+    skip: (pageNumber - 1) * wordsPerPage
   }, {
-    initialData: words
+    initialData: words,
   })
   type Row = (typeof rows)[0];
   const rows = wordsQuery.data.map((word, idx) => {
@@ -155,7 +157,13 @@ export default function WordList(
           </SelectItem>
         ))}
       </Select>
-      <Table classNames={{
+      <Table bottomContent={
+        <Pagination classNames={{
+          wrapper: ["mx-auto"]
+        }} isCompact showControls total={totalPageNumber} initialPage={1} onChange={async (page) => {
+          setPageNumber(page);
+        }} />
+      } classNames={{
         base: ["min-h-[300px]"],
       }} isStriped aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
@@ -163,7 +171,12 @@ export default function WordList(
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={rows}>
+        <TableBody items={rows}
+          loadingContent={<Spinner />}
+          loadingState={
+            wordsQuery.isFetching ? "loading" : "idle"
+          }
+        >
           {(item) => (
             <TableRow key={item.key}>
               {(columnKey) => (
@@ -173,11 +186,7 @@ export default function WordList(
           )}
         </TableBody>
       </Table>
-      <Pagination classNames={{
-        wrapper: ["mx-auto"]
-      }} isCompact showControls total={totalPageNumber} initialPage={1} onChange={async (page) => {
-        setPageNumber(page);
-      }} />
+
       <WordListDeleteModal key={selectedWord.wordId} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} />
     </section>
   );
