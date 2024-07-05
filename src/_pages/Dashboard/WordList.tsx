@@ -63,8 +63,6 @@ export default function WordList(
   const wordCountQuery = api.word.getWordCount.useQuery(undefined, {
     initialData: wordCount
   });
-  console.log('word count', wordCountQuery.data)
-  console.log('page count', Math.ceil(wordCountQuery.data / wordsPerPage))
   const totalPageNumber = Math.ceil(wordCountQuery.data / wordsPerPage);
   const wordsQuery = api.word.getWords.useQuery({
     take: wordsPerPage,
