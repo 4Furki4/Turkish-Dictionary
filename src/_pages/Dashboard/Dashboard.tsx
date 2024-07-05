@@ -1,9 +1,8 @@
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React from "react";
 import UserList from "./UserList";
-import WordList from "./WordList";
+import WordList from "./WordList/WordList";
 import WordRequestList from "./WordRequestList";
-import { Link } from "@/src/navigation";
 import { Prettify } from "@/types";
 import { Link as NextIntlLink } from "@/src/navigation";
 import { api } from "@/src/trpc/server";
@@ -16,12 +15,6 @@ export default async function Dashboard({
 }: {
   locale: string;
 }) {
-  // const wordsQuery = api.word.getWords.useQuery(
-  //   {},
-  //   {
-  //     initialData: words,
-  //   }
-  // );
   const wordList = await api.word.getWords({
     take: 10,
     skip: 0

@@ -25,6 +25,7 @@ import { DashboardWordList } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
 import { Pagination } from "@nextui-org/pagination";
 import { Select, SelectSection, SelectItem } from "@nextui-org/select";
+import EditWordModal from "./EditWordModal";
 const wordPerPageOptions = [
   {
     label: "5",
@@ -54,6 +55,7 @@ export default function WordList(
     }
 ) {
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
+  const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalChange } = useDisclosure();
   const [selectedWord, setSelectedWord] = React.useState<{
     wordId: number;
     name: string;
@@ -112,6 +114,13 @@ export default function WordList(
                   });
                   onDeleteModalOpen();
                 }
+                if (key === "Edit") {
+                  setSelectedWord({
+                    wordId: item.key,
+                    name: item.name,
+                  });
+                  onEditModalOpen();
+                }
               }}
             >
               <DropdownSection title={"Actions"}>
@@ -122,7 +131,7 @@ export default function WordList(
                 >
                   Delete
                 </DropdownItem>
-                <DropdownItem startContent={<Edit3 />} color={"warning"}>
+                <DropdownItem key={'Edit'} startContent={<Edit3 />} color={"warning"}>
                   Edit
                 </DropdownItem>
               </DropdownSection>
@@ -145,21 +154,23 @@ export default function WordList(
     }
   }, []);
   return (
-    <section className="w-full">
-      <Select label={"Words per page"} defaultSelectedKeys={["10"]}
-        size="sm"
-        classNames={{
-          base: ["flex ml-auto w-1/6"],
-        }} onChange={(e) => {
-          setWordsPerPage(parseInt(e.target.value));
-        }}>
-        {wordPerPageOptions.map((pageCount) => (
-          <SelectItem key={pageCount.key}>
-            {pageCount.label}
-          </SelectItem>
-        ))}
-      </Select>
-      <Table bottomContent={
+    <section>
+
+      <Table topContent={
+        <Select label={"Words per page"} defaultSelectedKeys={["10"]}
+          size="sm"
+          classNames={{
+            base: "flex ml-auto md:w-1/6",
+          }} onChange={(e) => {
+            setWordsPerPage(parseInt(e.target.value));
+          }}>
+          {wordPerPageOptions.map((pageCount) => (
+            <SelectItem key={pageCount.key}>
+              {pageCount.label}
+            </SelectItem>
+          ))}
+        </Select>
+      } bottomContent={
         <Pagination classNames={{
           wrapper: ["mx-auto"]
         }} isCompact showControls total={totalPageNumber} initialPage={1} onChange={async (page) => {
@@ -190,6 +201,7 @@ export default function WordList(
       </Table>
 
       <WordListDeleteModal key={selectedWord.wordId} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
+      <EditWordModal key={selectedWord.wordId} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} />
     </section>
   );
 }
