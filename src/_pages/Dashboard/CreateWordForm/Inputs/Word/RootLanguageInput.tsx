@@ -63,6 +63,7 @@ export default function WordRootLanguageInput({
                         base: 'rounded-sm',
                     }}
                     errorMessage={isError ? fetchError?.message : error?.message ? error.message : ""}
+                    isInvalid={isError || error !== undefined}
                 >
                     {(item) => (
                         <AutocompleteItem key={item.language_code}>
