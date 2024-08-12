@@ -1,7 +1,10 @@
 import { api } from '@/src/trpc/react';
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
+import { EditWordForm } from '@/types';
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import React from 'react'
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import WordNameInput from './WordNameInput';
+import WordAttribtesInput from './WordAttribtesInput';
 
 export default function EditWordModal({
     isOpen,
@@ -14,10 +17,10 @@ export default function EditWordModal({
     onOpenChange: () => void;
     wordName: string;
 }) {
-    const wordQuery = api.word.getWord.useQuery(wordName, {
+    const wordQuery = api.admin.getWordToEdit.useQuery(wordName, {
         enabled: isOpen
     })
-    const word = wordQuery.data ? wordQuery.data[0].word_data : null
+    const { control } = useForm<EditWordForm>()
     return (
         <Modal size='2xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange}>
             <ModalContent>
@@ -27,9 +30,9 @@ export default function EditWordModal({
                             <h5>Edit Word: <b>{wordName}</b></h5>
                         </ModalHeader>
                         <ModalBody>
+                            <WordNameInput control={control} />
                         </ModalBody>
                         <ModalFooter>
-
                         </ModalFooter>
                     </>
                 )}

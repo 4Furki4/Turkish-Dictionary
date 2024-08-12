@@ -25,7 +25,7 @@ import { DashboardWordList } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
 import { Pagination } from "@nextui-org/pagination";
 import { Select, SelectSection, SelectItem } from "@nextui-org/select";
-import EditWordModal from "./EditWordModal";
+import EditWordModal from "./EditModal/EditWordModal";
 const wordPerPageOptions = [
   {
     label: "5",
@@ -191,7 +191,7 @@ export default function WordList(
           }
         >
           {(item) => (
-            <TableRow key={item.key}>
+            <TableRow key={item.key + item.name}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

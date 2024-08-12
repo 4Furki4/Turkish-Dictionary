@@ -116,3 +116,7 @@ type DashboardWordList = {
   meaning: string;
 }
 
+type EditWordForm = {
+  name: string
+  attributes: string
+}

@@ -2,13 +2,13 @@ import { TRPCError } from "@trpc/server";
 import { adminProcedure, createTRPCRouter } from "../trpc";
 import { z } from "zod";
 import { createWordSchema } from "@/src/lib/zod-schemas";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { InsertWord, words } from "@/db/schema/words";
 import { InsertMeaning, meanings } from "@/db/schema/meanings";
 import { roots } from "@/db/schema/roots";
 import { meaningAttributes, meaningsAttributes } from "@/db/schema/meaning_attributes";
 import { authors } from "@/db/schema/authors";
-import { Meaning, MeaningInputs, WordForm } from "@/types";
+import { Meaning, MeaningInputs, WordForm, WordSearchResult } from "@/types";
 import { PartOfSpeech, partOfSpeechs } from "@/db/schema/part_of_speechs";
 import { examples } from "@/db/schema/examples";
 import { languages } from "@/db/schema/languages";
@@ -228,4 +228,97 @@ export const adminRouter = createTRPCRouter({
     const attributesData = await db.select().from(wordAttributes)
     return attributesData
   }),
+  getWordToEdit: adminProcedure.input(z.string()).query(async ({ ctx: { db }, input: queriedWord }) => {
+    const result = await db.execute(sql
+      `
+        -- word attributes
+        WITH word_attributes_agg AS
+        (
+          SELECT
+            ws_a.word_id,
+            JSON_AGG(
+              JSON_BUILD_OBJECT(
+                'attribute_id', w_a.id,
+                'attribute', w_a.attribute
+              )
+            ) AS attributes
+          FROM words_attributes ws_a
+          JOIN word_attributes w_a ON ws_a.attribute_id = w_a.id
+          GROUP BY ws_a.word_id
+        ),
+        -- meaning attributes
+        meaning_attributes_agg AS
+        (
+          SELECT
+          ms_a.meaning_id,
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'attribute_id', m_a.id,
+              'attribute', m_a.attribute
+            )
+          ) AS attributes
+          FROM meanings_attributes ms_a
+          JOIN meaning_attributes m_a ON ms_a.attribute_id = m_a.id
+          GROUP BY ms_a.meaning_id
+        ),
+        -- meanings
+        meanings_agg AS
+        (
+          SELECT
+            m.word_id,
+            JSON_AGG(
+              JSON_BUILD_OBJECT(
+                'meaning_id', m.id,
+                'meaning', m.meaning,
+                'part_of_speech', pos.part_of_speech,
+                'part_of_speech_id', pos.id,
+                'sentence', ex.sentence,
+                'sentence_id', ex.id,
+                'author', aut.name,
+                'author_id', aut.id
+              ) ORDER BY m.id
+            ) AS meanings
+          FROM meanings m
+          LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
+          LEFT JOIN examples ex ON ex.meaning_id = m.id
+          LEFT JOIN authors aut ON ex.author_id = aut.id
+          LEFT JOIN meaning_attributes_agg ma_agg ON ma_agg.meaning_id = m.id
+          GROUP BY m.word_id
+        ),
+        -- word with meanings and root
+        words_with_meanings AS
+        (
+          SELECT
+            w.id AS word_id,
+            w.name AS word_name,
+            COALESCE(wa_agg.attributes, '[]'::json) AS word_attributes,
+            JSON_BUILD_OBJECT(
+            'root', r.root,
+            'language_en', langs.language_en,
+            'language_tr', langs.language_tr,
+            'language_code', langs.language_code
+            ) AS root,
+            COALESCE(m_agg.meanings, '[]'::json) AS meanings
+          FROM words w
+          LEFT JOIN word_attributes_agg wa_agg ON w.id = wa_agg.word_id
+          LEFT JOIN roots r ON r.word_id = w.id
+          LEFT JOIN languages langs ON r.language_id = langs.id
+          LEFT JOIN meanings_agg m_agg ON m_agg.word_id = w.id
+          WHERE w.name = ${queriedWord}
+        )
+          -- combine all data as a single json object
+          SELECT
+            JSON_BUILD_OBJECT(
+            'word_id', word_id,
+            'word_name', word_name,
+            'attributes', word_attributes,
+            'root', root,
+            'meanings', meanings
+          ) AS word_data
+          FROM words_with_meanings;
+      `
+    ) as WordSearchResult[]
+    console.log('result', result)
+    return result
+  })
 });
