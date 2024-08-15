@@ -1,14 +1,14 @@
+"use client"
 import { api } from '@/src/trpc/react';
 import { EditWordForm } from '@/types';
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
 import React from 'react'
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import WordNameInput from './WordNameInput';
-import WordAttribtesInput from './WordAttribtesInput';
+import WordAttribtesInput from './WordAttributesInput';
 
 export default function EditWordModal({
     isOpen,
-    onOpen,
     onOpenChange,
     wordName
 }: {
@@ -17,12 +17,19 @@ export default function EditWordModal({
     onOpenChange: () => void;
     wordName: string;
 }) {
-    const wordQuery = api.admin.getWordToEdit.useQuery(wordName, {
-        enabled: isOpen
+    const { data, isFetching, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
+        enabled: isOpen,
     })
+    const { data: wordAttributes } = api.admin.getWordAttributes.useQuery()
     const { control } = useForm<EditWordForm>()
+    if (isFetching || isLoading) {
+        return <Spinner />
+    }
+    if (!data) {
+        return <></>
+    }
     return (
-        <Modal size='2xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal size='2xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key="edit-word-modal">
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -31,6 +38,7 @@ export default function EditWordModal({
                         </ModalHeader>
                         <ModalBody>
                             <WordNameInput control={control} />
+                            <WordAttribtesInput control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
                         </ModalBody>
                         <ModalFooter>
                         </ModalFooter>

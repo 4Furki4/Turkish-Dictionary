@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardBody,
+  useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -25,6 +26,7 @@ import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
+import AddWordAttributeModal from "@/src/components/customs/Modals/AddWordAttribute";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -36,7 +38,7 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches, wordAttributes }: {
+export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches }: {
   locale: string;
   meaningAttributes: {
     id: number;
@@ -49,10 +51,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
   partOfSpeeches: {
     id: number;
     partOfSpeech: PartOfSpeech;
-  }[]
-  wordAttributes: {
-    id: number;
-    attribute: string;
   }[]
 }) {
   const {
@@ -73,11 +71,12 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       root: '',
       prefix: '',
       suffix: '',
-      attributes: undefined,
+      attributes: [],
       meanings: [meaningDefaultValues],
     },
     mode: "all",
   });
+  const { isOpen: isWordAttModalOpen, onOpenChange: onWordAttModalOpenChange, onOpen: onWordAttModalOpen, onClose: onWordAttributeClose } = useDisclosure()
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
     control,
@@ -163,7 +162,8 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
           <WordPrefixInput control={control} />
           <WordSuffixInput control={control} />
-          <WordAttributesInput wordAttributues={wordAttributes} control={control} />
+          <WordAttributesInput control={control} onOpen={onWordAttModalOpen} />
+
         </div>
 
         <div className="w-full mt-2">
@@ -204,6 +204,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           Submit
         </Button>
       </form>
+      <AddWordAttributeModal isOpen={isWordAttModalOpen} onClose={onWordAttributeClose} onOpenChange={onWordAttModalOpenChange} />
     </section>
   );
 }

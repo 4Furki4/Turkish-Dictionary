@@ -225,7 +225,10 @@ export const adminRouter = createTRPCRouter({
     return languageData
   }),
   getWordAttributes: adminProcedure.query(async ({ ctx: { db } }) => {
-    const attributesData = await db.select().from(wordAttributes)
+    const attributesData = await db.select({
+      id: wordAttributes.id,
+      attribute: wordAttributes.attribute
+    }).from(wordAttributes)
     return attributesData
   }),
   getWordToEdit: adminProcedure.input(z.string()).query(async ({ ctx: { db }, input: queriedWord }) => {
@@ -320,5 +323,19 @@ export const adminRouter = createTRPCRouter({
     ) as WordSearchResult[]
     console.log('result', result)
     return result
+  }),
+  addNewWordAttribute: adminProcedure.input(z.string().min(2)).mutation(async ({ input: newWordAttribute, ctx: { db } }) => {
+    try {
+      const result = await db.insert(wordAttributes).values({
+        attribute: newWordAttribute
+      }).returning()
+      return result
+    } catch (error) {
+      console.log(error)
+      return new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: "Unexpected Error."
+      })
+    }
   })
 });

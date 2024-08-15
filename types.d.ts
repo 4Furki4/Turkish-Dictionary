@@ -35,7 +35,7 @@ type WordInput = ToUndefinedProps<
       {
         language: string
         root: string;
-        attributes: string;
+        attributes: string[];
       }
     >
   >
@@ -119,4 +119,8 @@ type DashboardWordList = {
 type EditWordForm = {
   name: string
   attributes: string
+}
+
+type NewAttributeForm = {
+  attribute: string
 }

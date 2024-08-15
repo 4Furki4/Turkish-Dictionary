@@ -1,19 +1,19 @@
+"use client"
+import { api } from '@/src/trpc/react'
 import { WordForm } from '@/types'
-import { Autocomplete, AutocompleteItem, Chip } from '@nextui-org/react'
+import { Button, Select, SelectItem } from '@nextui-org/react'
+import { Plus, X } from 'lucide-react'
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
 
 export default function WordAttributesInput({
     control,
-    wordAttributues
+    onOpen
 }: {
     control: Control<WordForm>,
-    wordAttributues: {
-        id: number;
-        attribute: string;
-    }[]
+    onOpen: () => void
 }) {
-    {/* TODO: LET THEM SELECT THE ADDED ATTRIBUTES OR ADD NEW ONE */ }
+    const { data: wordAttributes, isLoading, isFetching, isRefetching } = api.admin.getWordAttributes.useQuery()
     return (
         <Controller
             name={`attributes`}
@@ -25,37 +25,45 @@ export default function WordAttributesInput({
                 }
             }}
             render={({ field, fieldState: { error } }) => (
-                <Autocomplete {...field}
-                    label={'Attribute'}
-                    radius='sm'
+                <Select
                     classNames={{
-                        listboxWrapper: 'rounded-sm',
-                        popoverContent: 'rounded-sm',
-                        base: 'rounded-sm',
+                        trigger: "pl-0"
                     }}
-                    defaultItems={wordAttributues ?? []}
-                    allowsCustomValue
-                    onSelectionChange={(key) => {
-                        if (key) {
-                            field.onChange(key)
-                        }
-                    }}
-                    onInputChange={(value) => {
-                        const item = wordAttributues.find((attribute) => attribute.attribute === value)
-                        if (item) {
-                            field.onChange(item.id)
-                            return
-                        }
-                        field.onChange(value)
-                    }}
-                >
-                    {(item) => (
-                        <AutocompleteItem key={item.id} className="capitalize">
-                            {item && item.attribute}
-                        </AutocompleteItem>
+                    placeholder='Select an attribute...'
+                    as={"div"}
+                    isLoading={isLoading || isFetching || isRefetching}
+                    isInvalid={error !== undefined} errorMessage={error?.message}
+                    {...field}
+                    startContent={(
+                        <Button
+                            variant='light'
+                            radius='full'
+                            isIconOnly
+                            color='danger'
+                            onPress={() => { }} //TODO: implement removing all selected options when pressed on X on the left.s
+                        >
+                            <X />
+                        </Button>
+
                     )}
-                </Autocomplete>
-            )}
+                    endContent={(
+                        <Button
+                            isIconOnly
+                            onPress={onOpen}
+                            color='primary'
+                        >
+                            <Plus></Plus>
+                        </Button>
+                    )}
+                    selectionMode='multiple'>
+                    {wordAttributes?.map((wordAttribute => (
+                        <SelectItem key={wordAttribute.id}>
+                            {wordAttribute.attribute}
+                        </SelectItem>
+                    ))) ?? []}
+                </Select>
+            )
+            }
         />
     )
 }
