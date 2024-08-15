@@ -4,28 +4,29 @@ import { WordForm } from '@/types'
 import { Button, Select, Selection, SelectItem } from '@nextui-org/react'
 import { Plus, X } from 'lucide-react'
 import React from 'react'
-import { Control, Controller } from 'react-hook-form'
+import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 
 export default function WordAttributesInput({
     control,
-    onOpen
+    onOpen,
+    setValue: setFieldValue
 }: {
     control: Control<WordForm>,
     onOpen: () => void
+    setValue: UseFormSetValue<WordForm>
 }) {
     const { data: wordAttributes, isLoading, isFetching, isRefetching } = api.admin.getWordAttributes.useQuery()
-    const [value, setValue] = React.useState<Selection>(new Set([]));
+    const [values, setValues] = React.useState<Selection>(new Set([]));
 
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedAttributes = e.target.value.split(",")
+        setValues(() => new Set(selectedAttributes))
+        setFieldValue("attributes", selectedAttributes)
+    };
     return (
         <Controller
             name={`attributes`}
             control={control}
-            rules={{
-                min: {
-                    value: 1,
-                    message: "Please select at least one attribute"
-                }
-            }}
             render={({ field, fieldState: { error } }) => (
                 <Select
                     classNames={{
@@ -33,17 +34,20 @@ export default function WordAttributesInput({
                     }}
                     placeholder='Select an attribute...'
                     as={"div"}
-                    selectedKeys={value}
-                    onSelectionChange={setValue}
+                    selectedKeys={values}
                     isLoading={isLoading || isFetching || isRefetching}
                     isInvalid={error !== undefined} errorMessage={error?.message}
                     {...field}
+                    onChange={handleSelectionChange}
                     startContent={(
                         <Button
                             variant='light'
                             isIconOnly
                             color='danger'
-                            onPress={() => { setValue(new Set([])) }}
+                            onPress={() => {
+                                setValues(new Set([]));
+                                setFieldValue("attributes", [])
+                            }}
                         >
                             <X aria-description='Reset all selected values button' />
                             <div className='sr-only'>

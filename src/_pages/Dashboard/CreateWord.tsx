@@ -62,7 +62,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     reset,
     setError,
     getFieldState,
-
+    setValue
   } = useForm<WordForm>({
     defaultValues: {
       name: '',
@@ -142,14 +142,15 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         image: uploadedPicturesUrls[index],
       };
     });
+    console.log('attributes', data.attributes)
     const word = {
       ...data,
+      attributes: data.attributes?.map((val) => parseInt(val)),
       meanings: meaningsWithImages,
     }
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
   };
-
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
   return (
     <section className="max-w-7xl w-full mx-auto max-sm:px-4 py-4">
@@ -162,7 +163,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
           <WordPrefixInput control={control} />
           <WordSuffixInput control={control} />
-          <WordAttributesInput control={control} onOpen={onWordAttModalOpen} />
+          <WordAttributesInput setValue={setValue} control={control} onOpen={onWordAttModalOpen} />
 
         </div>
 

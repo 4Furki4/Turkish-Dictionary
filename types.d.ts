@@ -66,6 +66,7 @@ type WordFormSubmit = Prettify<{
   root?: string;
   prefix?: string;
   suffix?: string;
+  attributes: number[]
   meanings: {
     meaning: string;
     partOfSpeechId: number;
