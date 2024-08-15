@@ -43,6 +43,9 @@ export default function WordAttribtesInput({
                                 onPress={onOpen}
                                 color='primary'
                             >
+                                <div className='sr-only'>
+                                    Add new word attribute
+                                </div>
                                 <Plus></Plus>
                             </Button>
                         )}
