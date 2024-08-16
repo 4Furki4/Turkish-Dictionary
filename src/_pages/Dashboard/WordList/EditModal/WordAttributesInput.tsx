@@ -24,7 +24,7 @@ export default function WordAttribtesInput({
     const selecetedKeys = selectedWordAttributes.map(wordAttribute => wordAttribute.attribute_id + wordAttribute.attribute)
     return (
         <>
-            <AddWordAttributeModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+            <AddWordAttributeModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} isDismissable={false} />
             <Controller
                 name={`attributes`}
                 control={control}

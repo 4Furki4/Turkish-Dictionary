@@ -1,19 +1,22 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import React from 'react'
-import { Button, ButtonGroup, Input, Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
+import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalVariantProps } from '@nextui-org/react'
 import { NewAttributeForm } from '@/types';
 import { toast } from 'sonner';
 import { Controller, useForm } from 'react-hook-form';
-export default function AddWordAttributeModal({
-    onClose,
-    isOpen,
-    onOpenChange
-}: {
+import { AriaModalOverlayProps } from '@react-aria/overlays';
+type AddWordAttributeModalProps = {
     onClose: () => void,
     isOpen: boolean,
     onOpenChange: () => void
-}) {
+} & AriaModalOverlayProps & ModalVariantProps
+export default function AddWordAttributeModal({
+    onClose,
+    isOpen,
+    onOpenChange,
+    ...modalProps
+}: AddWordAttributeModalProps) {
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
     const adminUtils = api.useUtils().admin
     const addWordAttributeMutation = api.admin.addNewWordAttribute.useMutation({
@@ -32,7 +35,7 @@ export default function AddWordAttributeModal({
         addWordAttributeMutation.mutate(newAttribute.attribute)
     }
     return (
-        <Modal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal">
+        <Modal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal" {...modalProps}>
             <ModalContent>
                 {(close) => (
                     <>
