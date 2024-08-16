@@ -305,7 +305,6 @@ export const adminRouter = createTRPCRouter({
           FROM words_with_meanings;
       `
     ) as WordSearchResult[]
-    console.log('result', result)
     return result
   }),
   addNewWordAttribute: adminProcedure.input(z.string().min(2)).mutation(async ({ input: newWordAttribute, ctx: { db } }) => {
