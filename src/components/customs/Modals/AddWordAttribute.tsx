@@ -1,10 +1,10 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import React from 'react'
-import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
-import { Controller, useForm } from 'react-hook-form';
+import { Button, ButtonGroup, Input, Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
 import { NewAttributeForm } from '@/types';
 import { toast } from 'sonner';
+import { Controller, useForm } from 'react-hook-form';
 export default function AddWordAttributeModal({
     onClose,
     isOpen,
@@ -32,7 +32,7 @@ export default function AddWordAttributeModal({
         addWordAttributeMutation.mutate(newAttribute.attribute)
     }
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal">
+        <Modal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal">
             <ModalContent>
                 {(close) => (
                     <>
@@ -53,9 +53,14 @@ export default function AddWordAttributeModal({
                                 }} render={({ field, fieldState: { error } }) => (
                                     <Input placeholder='Type new attribute' {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
                                 )} />
-                                <Button type='submit' color='primary' isLoading={addWordAttributeMutation.isPending}>
-                                    Submit
-                                </Button>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <Button size='sm' type='submit' color='primary' isLoading={addWordAttributeMutation.isPending}>
+                                        Submit
+                                    </Button>
+                                    <Button size='sm' onPress={close}>
+                                        Cancel
+                                    </Button>
+                                </div>
                             </form>
                         </ModalBody>
                     </>

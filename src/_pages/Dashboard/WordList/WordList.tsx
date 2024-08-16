@@ -100,7 +100,7 @@ export default function WordList(
       case "actions":
         return (
           <Dropdown>
-            <DropdownTrigger className="flex justify-around items-center">
+            <DropdownTrigger key={cellValue} className="flex justify-around items-center">
               <button className="ml-auto">
                 <MoreVertical aria-description="more action button" />
               </button>
@@ -155,7 +155,6 @@ export default function WordList(
   }, []);
   return (
     <section>
-
       <Table topContent={
         <Select label={"Words per page"} defaultSelectedKeys={["10"]}
           size="sm"
@@ -200,8 +199,8 @@ export default function WordList(
         </TableBody>
       </Table>
 
-      <WordListDeleteModal key={selectedWord.wordId} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
-      <EditWordModal key={selectedWord.wordId} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} />
+      <WordListDeleteModal key={`word-delete-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
+      <EditWordModal key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} />
     </section>
   );
 }

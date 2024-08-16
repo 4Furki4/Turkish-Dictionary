@@ -29,7 +29,7 @@ export default function EditWordModal({
         return <></>
     }
     return (
-        <Modal size='2xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key="edit-word-modal">
+        <Modal placement='center' size='2xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -38,7 +38,7 @@ export default function EditWordModal({
                         </ModalHeader>
                         <ModalBody>
                             <WordNameInput control={control} />
-                            <WordAttribtesInput control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
+                            <WordAttribtesInput key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
                         </ModalBody>
                         <ModalFooter>
                         </ModalFooter>
