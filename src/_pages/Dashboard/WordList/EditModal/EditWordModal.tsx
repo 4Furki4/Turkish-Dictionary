@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import WordNameInput from './WordNameInput';
 import WordAttribtesInput from './WordAttributesInput';
 import WordLanguageInput from './WordLanguageInput';
+import WordRootInput from './WordRootInput';
 
 export default function EditWordModal({
     isOpen,
@@ -25,15 +26,13 @@ export default function EditWordModal({
     })
     const { data: wordAttributes } = api.admin.getWordAttributes.useQuery()
     const { control, watch, setValue, reset } = useForm<EditWordForm>()
-    const attributes = data ? data[0].word_data.attributes?.map(att => (att.attribute_id.toString())) : []
-    const language = data ? data[0].word_data.root.language_code : ''
-    const name = data ? data[0].word_data.word_name : ''
+    const word_data = data ? data[0].word_data : undefined
+    const attributes = word_data?.attributes?.map(att => (att.attribute_id.toString())) ?? []
+    const language = word_data?.root.language_code ?? ''
+    const name = word_data?.word_name ?? ''
+    const root = word_data?.root.root ?? ''
     useEffect(() => {
-        const defaultValues = {
-            attributes,
-            language,
-            name
-        }
+        const defaultValues = { attributes, language, name, root }
         reset(defaultValues)
     }, [wordName, language, JSON.stringify(attributes)])
     if (isFetching || isLoading) {
@@ -54,7 +53,10 @@ export default function EditWordModal({
                         <ModalBody>
                             <WordNameInput control={control} />
                             <WordAttribtesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
-                            <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
+                            <div className='grid grid-cols-2 gap-2'>
+                                <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
+                                <WordRootInput control={control} />
+                            </div>
                         </ModalBody>
                         <ModalFooter>
                         </ModalFooter>
