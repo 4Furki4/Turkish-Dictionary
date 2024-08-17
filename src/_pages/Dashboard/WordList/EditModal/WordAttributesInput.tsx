@@ -46,6 +46,7 @@ export default function WordAttribtesInput({
                 }}
                 render={({ field }) => (
                     <Select
+                        variant='underlined'
                         selectedKeys={values}
                         items={wordAttributes}
                         as={"div"}
@@ -54,7 +55,8 @@ export default function WordAttribtesInput({
                             <Button
                                 isIconOnly
                                 onPress={onOpen}
-                                color='primary'
+                                variant='light'
+                            // color='primary'
                             >
                                 <div className='sr-only'>
                                     Add new word attribute

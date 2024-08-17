@@ -15,7 +15,10 @@ export default function WordSuffixInput({
             render={({ field }) => (
                 <Input
                     {...field}
-                    placeholder="Suffix"
+                    classNames={{
+                        base: "h-10",
+                    }}
+                    label="Suffix"
                     color="primary"
                     variant="underlined"
                 />

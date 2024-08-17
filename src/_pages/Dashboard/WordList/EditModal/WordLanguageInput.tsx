@@ -15,6 +15,7 @@ export default function WordLanguageInput({
     return (
         <Controller name='language' control={control} render={({ field, fieldState }) => (
             <Autocomplete
+                variant='underlined'
                 {...field}
                 placeholder="Language"
                 defaultSelectedKey={selectedLanguage}

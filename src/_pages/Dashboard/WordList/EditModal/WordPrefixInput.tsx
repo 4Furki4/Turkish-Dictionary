@@ -15,7 +15,10 @@ export default function WordPrefixInput({
             render={({ field }) => (
                 <Input
                     {...field}
-                    placeholder="Prefix"
+                    classNames={{
+                        base: "h-10",
+                    }}
+                    label="Prefix"
                     color="primary"
                     variant="underlined"
                 />

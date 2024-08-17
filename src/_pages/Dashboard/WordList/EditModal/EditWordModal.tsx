@@ -60,7 +60,7 @@ export default function EditWordModal({
                         <ModalBody>
                             <WordNameInput control={control} />
                             <WordAttribtesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
-                            <div className='grid grid-cols-2 gap-2'>
+                            <div className='grid grid-cols-2 gap-2 justify-center'>
                                 <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
                                 <WordRootInput control={control} />
                             </div>

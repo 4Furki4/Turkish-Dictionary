@@ -10,7 +10,10 @@ export default function WordNameInput({
 }) {
     return (
         <Controller name='name' control={control} render={({ field }) => (
-            <Input variant='underlined' placeholder="Word name" {...field} name='word' />
+            <Input variant='underlined' label="Word name" {...field} name='word'
+                classNames={{
+                    base: "h-10",
+                }} />
         )} />
     )
 }
