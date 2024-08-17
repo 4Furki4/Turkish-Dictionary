@@ -9,6 +9,8 @@ import WordAttribtesInput from './WordAttributesInput';
 import WordLanguageInput from './WordLanguageInput';
 import WordRootInput from './WordRootInput';
 import WordPhoneticInput from './WordPhoneticInput';
+import WordSuffixInput from './WordSuffixInput';
+import WordPrefixInput from './WordPrefixInput';
 
 export default function EditWordModal({
     isOpen,
@@ -34,8 +36,10 @@ export default function EditWordModal({
     const name = word_data?.word_name ?? ''
     const root = word_data?.root.root ?? ''
     const phonetic = word_data?.phonetic ?? ''
+    const prefix = word_data?.prefix ?? ''
+    const suffix = word_data?.suffix ?? ''
     useEffect(() => {
-        const defaultValues = { attributes, language, name, root, phonetic }
+        const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix }
         reset(defaultValues)
     }, [name, language, JSON.stringify(attributes), language, root, phonetic])
     if (isFetching || isLoading) {
@@ -61,6 +65,10 @@ export default function EditWordModal({
                                 <WordRootInput control={control} />
                             </div>
                             <WordPhoneticInput control={control} />
+                            <div className='grid grid-cols-2 gap-2'>
+                                <WordSuffixInput control={control} />
+                                <WordPrefixInput control={control} />
+                            </div>
                         </ModalBody>
                         <ModalFooter>
                         </ModalFooter>

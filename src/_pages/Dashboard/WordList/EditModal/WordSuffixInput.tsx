@@ -3,7 +3,7 @@ import { Input } from '@nextui-org/react'
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
 
-export default function WordPhoneticInput({
+export default function WordSuffixInput({
     control
 }: {
     control: Control<EditWordForm>
@@ -11,11 +11,11 @@ export default function WordPhoneticInput({
     return (
         <Controller
             control={control}
-            name="phonetic"
-            render={({ field, fieldState: { error } }) => (
+            name="suffix"
+            render={({ field }) => (
                 <Input
                     {...field}
-                    label="Phonetic"
+                    placeholder="Suffix"
                     color="primary"
                     variant="underlined"
                 />
