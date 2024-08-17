@@ -125,6 +125,7 @@ type EditWordForm = {
   attributes: string[]
   language: string
   root: string
+  phonetic: string
 }
 
 type NewAttributeForm = {

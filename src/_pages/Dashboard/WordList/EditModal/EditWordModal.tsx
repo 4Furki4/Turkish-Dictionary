@@ -8,6 +8,7 @@ import WordNameInput from './WordNameInput';
 import WordAttribtesInput from './WordAttributesInput';
 import WordLanguageInput from './WordLanguageInput';
 import WordRootInput from './WordRootInput';
+import WordPhoneticInput from './WordPhoneticInput';
 
 export default function EditWordModal({
     isOpen,
@@ -25,16 +26,18 @@ export default function EditWordModal({
         enabled: isOpen,
     })
     const { data: wordAttributes } = api.admin.getWordAttributes.useQuery()
+    console.log(data)
     const { control, watch, setValue, reset } = useForm<EditWordForm>()
     const word_data = data ? data[0].word_data : undefined
     const attributes = word_data?.attributes?.map(att => (att.attribute_id.toString())) ?? []
     const language = word_data?.root.language_code ?? ''
     const name = word_data?.word_name ?? ''
     const root = word_data?.root.root ?? ''
+    const phonetic = word_data?.phonetic ?? ''
     useEffect(() => {
-        const defaultValues = { attributes, language, name, root }
+        const defaultValues = { attributes, language, name, root, phonetic }
         reset(defaultValues)
-    }, [wordName, language, JSON.stringify(attributes)])
+    }, [name, language, JSON.stringify(attributes), language, root, phonetic])
     if (isFetching || isLoading) {
         return <Spinner />
     }
@@ -57,6 +60,7 @@ export default function EditWordModal({
                                 <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
                                 <WordRootInput control={control} />
                             </div>
+                            <WordPhoneticInput control={control} />
                         </ModalBody>
                         <ModalFooter>
                         </ModalFooter>
