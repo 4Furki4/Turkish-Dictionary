@@ -3,12 +3,14 @@ import AddWordAttributeModal from '@/src/components/customs/Modals/AddWordAttrib
 import { EditWordForm } from '@/types'
 import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
 import { Plus } from 'lucide-react';
-import { Control, Controller } from 'react-hook-form'
+import { useState } from 'react';
+import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 
 export default function WordAttribtesInput({
     control,
     wordAttributes,
-    selectedWordAttributes
+    selectedWordAttributes,
+    setFieldValue
 }: {
     control: Control<EditWordForm>,
     wordAttributes: {
@@ -18,10 +20,18 @@ export default function WordAttribtesInput({
     selectedWordAttributes: {
         attribute_id: number;
         attribute: string;
-    }[]
+    }[],
+    setFieldValue: UseFormSetValue<EditWordForm>
 }) {
+    const selecetedKeys = selectedWordAttributes.map(wordAttribute => wordAttribute.attribute_id.toString())
+    const [values, setValues] = useState<Selection>(new Set(selecetedKeys));
+
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedAttributes = e.target.value.split(",").filter((val) => val)
+        setValues(() => new Set(selectedAttributes))
+        setFieldValue("attributes", selectedAttributes)
+    };
     const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
-    const selecetedKeys = selectedWordAttributes.map(wordAttribute => wordAttribute.attribute_id + wordAttribute.attribute)
     return (
         <>
             <AddWordAttributeModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} isDismissable={false} />
@@ -36,6 +46,7 @@ export default function WordAttribtesInput({
                 }}
                 render={({ field }) => (
                     <Select
+                        selectedKeys={values}
                         items={wordAttributes}
                         as={"div"}
                         {...field}
@@ -51,11 +62,12 @@ export default function WordAttribtesInput({
                                 <Plus></Plus>
                             </Button>
                         )}
+                        onChange={handleSelectionChange}
                         placeholder='Please select an attribute'
                         defaultSelectedKeys={selecetedKeys}
                         selectionMode='multiple'>
                         {wordAttributes?.map((wordAttribute => (
-                            <SelectItem key={wordAttribute.id + wordAttribute.attribute}>
+                            <SelectItem textValue={wordAttribute.attribute} key={wordAttribute.id}>
                                 {wordAttribute.attribute}
                             </SelectItem>
                         )))}

@@ -122,7 +122,7 @@ type DashboardWordList = {
 
 type EditWordForm = {
   name: string
-  attributes: string
+  attributes: string[]
   language: string
 }
 

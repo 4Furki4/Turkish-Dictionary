@@ -14,7 +14,14 @@ export default function WordLanguageInput({
 }) {
     return (
         <Controller name='language' control={control} render={({ field, fieldState }) => (
-            <Autocomplete placeholder="Language" defaultSelectedKey={selectedLanguage}>
+            <Autocomplete
+                {...field}
+                placeholder="Language"
+                defaultSelectedKey={selectedLanguage}
+                onSelectionChange={(item) => {
+                    field.onChange(item);
+                }}
+            >
                 {languages.map((lang) => (
                     <AutocompleteItem key={lang.language_code} value={lang.language_code}>
                         {lang.language_en}

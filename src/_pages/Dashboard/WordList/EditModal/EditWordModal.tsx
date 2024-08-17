@@ -2,7 +2,7 @@
 import { api } from '@/src/trpc/react';
 import { EditWordForm, Language } from '@/types';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import WordNameInput from './WordNameInput';
 import WordAttribtesInput from './WordAttributesInput';
@@ -24,13 +24,25 @@ export default function EditWordModal({
         enabled: isOpen,
     })
     const { data: wordAttributes } = api.admin.getWordAttributes.useQuery()
-    const { control } = useForm<EditWordForm>()
+    const { control, watch, setValue, reset } = useForm<EditWordForm>()
+    const attributes = data ? data[0].word_data.attributes?.map(att => (att.attribute_id.toString())) : []
+    const language = data ? data[0].word_data.root.language_code : ''
+    const name = data ? data[0].word_data.word_name : ''
+    useEffect(() => {
+        const defaultValues = {
+            attributes,
+            language,
+            name
+        }
+        reset(defaultValues)
+    }, [wordName, language, JSON.stringify(attributes)])
     if (isFetching || isLoading) {
         return <Spinner />
     }
     if (!data) {
         return <></>
     }
+    console.log(watch())
     return (
         <Modal placement='center' size='2xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
             <ModalContent>
@@ -41,7 +53,7 @@ export default function EditWordModal({
                         </ModalHeader>
                         <ModalBody>
                             <WordNameInput control={control} />
-                            <WordAttribtesInput key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
+                            <WordAttribtesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
                             <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
                         </ModalBody>
                         <ModalFooter>
