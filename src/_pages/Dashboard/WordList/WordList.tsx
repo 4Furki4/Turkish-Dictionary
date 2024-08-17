@@ -21,7 +21,7 @@ import { Edit3, MoreVertical, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { Link as NextUILink } from "@nextui-org/react";
 import { Link } from "@/src/navigation";
-import { DashboardWordList } from "@/types";
+import { DashboardWordList, Language } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
 import { Pagination } from "@nextui-org/pagination";
 import { Select, SelectSection, SelectItem } from "@nextui-org/select";
@@ -47,11 +47,13 @@ const wordPerPageOptions = [
 export default function WordList(
   {
     words,
-    wordCount
+    wordCount,
+    languages
   }:
     {
       words: DashboardWordList[],
-      wordCount: number
+      wordCount: number | undefined
+      languages: Language[]
     }
 ) {
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
@@ -63,9 +65,9 @@ export default function WordList(
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
   const wordCountQuery = api.word.getWordCount.useQuery(undefined, {
-    initialData: wordCount
+    initialData: wordCount,
   });
-  const totalPageNumber = Math.ceil(wordCountQuery.data / wordsPerPage);
+  const totalPageNumber = wordCountQuery.data ? Math.ceil(wordCountQuery.data / wordsPerPage) : undefined;
   const wordsQuery = api.word.getWords.useQuery({
     take: wordsPerPage,
     skip: (pageNumber - 1) * wordsPerPage
@@ -170,9 +172,9 @@ export default function WordList(
           ))}
         </Select>
       } bottomContent={
-        <Pagination classNames={{
+        <Pagination isDisabled={totalPageNumber === undefined} classNames={{
           wrapper: ["mx-auto"]
-        }} isCompact showControls total={totalPageNumber} initialPage={1} onChange={async (page) => {
+        }} isCompact showControls total={totalPageNumber ?? 1} initialPage={1} onChange={async (page) => {
           setPageNumber(page);
         }} />
       } classNames={{
@@ -200,7 +202,7 @@ export default function WordList(
       </Table>
 
       <WordListDeleteModal key={`word-delete-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
-      <EditWordModal key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} />
+      <EditWordModal languages={languages} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} />
     </section>
   );
 }

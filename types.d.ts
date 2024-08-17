@@ -59,6 +59,7 @@ type WordForm = Prettify<
     meanings: MeaningInputs[];
   }
 >;
+
 type WordFormSubmit = Prettify<{
   name: string;
   language?: string;
@@ -77,7 +78,12 @@ type WordFormSubmit = Prettify<{
     }
   }[]
 }>;
-
+type Language = {
+  id: number;
+  language_en: string;
+  language_tr: string;
+  language_code: string;
+}
 type WordSearchResult = {
   word_data: {
     word_id: number;
@@ -91,10 +97,7 @@ type WordSearchResult = {
     }[];
     root: {
       root: string;
-      language_en: string;
-      language_tr: string;
-      language_code: string;
-    };
+    } & Omit<Language, "id">
     meanings: {
       meaning_id: number;
       meaning: string;
@@ -120,6 +123,7 @@ type DashboardWordList = {
 type EditWordForm = {
   name: string
   attributes: string
+  language: string
 }
 
 type NewAttributeForm = {

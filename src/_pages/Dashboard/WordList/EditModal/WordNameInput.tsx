@@ -10,7 +10,7 @@ export default function WordNameInput({
 }) {
     return (
         <Controller name='name' control={control} render={({ field }) => (
-            <Input {...field} name='word' />
+            <Input placeholder="Word name" {...field} name='word' />
         )} />
     )
 }
