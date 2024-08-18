@@ -102,8 +102,10 @@ type WordSearchResult = {
       meaning_id: number;
       meaning: string;
       part_of_speech: string;
+      part_of_speech_id: number
       sentence: string | null;
       author: string | null;
+      author_id: number | null
       attributes?: [
         {
           attribute_id: number;
@@ -120,6 +122,14 @@ type DashboardWordList = {
   meaning: string;
 }
 
+type EditMeaningForm = {
+  meaning: string
+  attributes: number[] | undefined
+  partOfSpeechId: number
+  exampleSentence: string | null
+  authorId: number | null
+}
+
 type EditWordForm = {
   name: string
   attributes: string[]
@@ -128,6 +138,7 @@ type EditWordForm = {
   phonetic: string
   suffix: string
   prefix: string
+  meanings: EditMeaningForm[]
 }
 
 type NewAttributeForm = {

@@ -1,9 +1,9 @@
 "use client"
 import { api } from '@/src/trpc/react';
-import { EditWordForm, Language } from '@/types';
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
+import { EditMeaningForm, EditWordForm, Language } from '@/types';
+import { Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
 import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import WordNameInput from './WordNameInput';
 import WordAttribtesInput from './WordAttributesInput';
 import WordLanguageInput from './WordLanguageInput';
@@ -11,6 +11,7 @@ import WordRootInput from './WordRootInput';
 import WordPhoneticInput from './WordPhoneticInput';
 import WordSuffixInput from './WordSuffixInput';
 import WordPrefixInput from './WordPrefixInput';
+import MeaningInput from './MeaningInput';
 
 export default function EditWordModal({
     isOpen,
@@ -28,8 +29,17 @@ export default function EditWordModal({
         enabled: isOpen,
     })
     const { data: wordAttributes } = api.admin.getWordAttributes.useQuery()
-    console.log(data)
     const { control, watch, setValue, reset } = useForm<EditWordForm>()
+    const { fields, append } = useFieldArray({
+        name: "meanings",
+        control,
+        rules: {
+            required: {
+                message: "words must have at least one meaning.",
+                value: true
+            }
+        }
+    })
     const word_data = data ? data[0].word_data : undefined
     const attributes = word_data?.attributes?.map(att => (att.attribute_id.toString())) ?? []
     const language = word_data?.root.language_code ?? ''
@@ -38,8 +48,16 @@ export default function EditWordModal({
     const phonetic = word_data?.phonetic ?? ''
     const prefix = word_data?.prefix ?? ''
     const suffix = word_data?.suffix ?? ''
+
     useEffect(() => {
-        const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix }
+        const meanings: EditMeaningForm[] | undefined = word_data?.meanings.map((m) => ({
+            meaning: m.meaning,
+            exampleSentence: m.sentence,
+            partOfSpeechId: m.part_of_speech_id,
+            attributes: m.attributes?.map((att) => att.attribute_id),
+            authorId: m.author_id
+        }))
+        const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix, meanings }
         reset(defaultValues)
     }, [name, language, JSON.stringify(attributes), language, root, phonetic])
     if (isFetching || isLoading) {
@@ -50,7 +68,7 @@ export default function EditWordModal({
     }
     console.log(watch())
     return (
-        <Modal placement='center' size='2xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
+        <Modal placement='center' size='4xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -69,6 +87,13 @@ export default function EditWordModal({
                                 <WordSuffixInput control={control} />
                                 <WordPrefixInput control={control} />
                             </div>
+                            <Card className="rounded-sm">
+                                {fields.map((field, index) => (
+                                    <CardBody key={field.id} className="flex flex-col gap-2">
+                                        <MeaningInput key={field.id} index={index} control={control} />
+                                    </CardBody>
+                                ))}
+                            </Card>
                         </ModalBody>
                         <ModalFooter>
                         </ModalFooter>
