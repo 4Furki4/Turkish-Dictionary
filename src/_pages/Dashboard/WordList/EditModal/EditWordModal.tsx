@@ -12,18 +12,25 @@ import WordPhoneticInput from './Inputs/Word/WordPhoneticInput';
 import WordSuffixInput from './Inputs/Word/WordSuffixInput';
 import WordPrefixInput from './Inputs/Word/WordPrefixInput';
 import MeaningInput from './Inputs/Meaning/MeaningInput';
+import PartOfSpeechInput from './Inputs/Meaning/PartOfSpeechInput';
+import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 
 export default function EditWordModal({
     isOpen,
     onOpenChange,
     wordName,
-    languages
+    languages,
+    partOfSpeeches
 }: {
     isOpen: boolean;
     onOpen: () => void;
     onOpenChange: () => void;
     wordName: string;
-    languages: Language[]
+    languages: Language[],
+    partOfSpeeches: {
+        id: string;
+        partOfSpeech: PartOfSpeech;
+    }[]
 }) {
     const { data, isFetching, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
         enabled: isOpen,
@@ -48,15 +55,15 @@ export default function EditWordModal({
     const phonetic = word_data?.phonetic ?? ''
     const prefix = word_data?.prefix ?? ''
     const suffix = word_data?.suffix ?? ''
-
+    const meanings: EditMeaningForm[] = word_data?.meanings.map((m) => ({
+        meaning: m.meaning,
+        exampleSentence: m.sentence,
+        partOfSpeechId: m.part_of_speech_id.toString(),
+        attributes: m.attributes?.map((att) => att.attribute_id.toString()),
+        authorId: m.author_id
+    })) ?? []
     useEffect(() => {
-        const meanings: EditMeaningForm[] | undefined = word_data?.meanings.map((m) => ({
-            meaning: m.meaning,
-            exampleSentence: m.sentence,
-            partOfSpeechId: m.part_of_speech_id,
-            attributes: m.attributes?.map((att) => att.attribute_id),
-            authorId: m.author_id
-        }))
+
         const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix, meanings }
         reset(defaultValues)
     }, [name, language, JSON.stringify(attributes), language, root, phonetic])
@@ -90,7 +97,8 @@ export default function EditWordModal({
                             <Card className="rounded-sm">
                                 {fields.map((field, index) => (
                                     <CardBody key={field.id} className="flex flex-col gap-2">
-                                        <MeaningInput key={field.id} index={index} control={control} />
+                                        <MeaningInput index={index} control={control} />
+                                        <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index].partOfSpeechId} />
                                     </CardBody>
                                 ))}
                             </Card>

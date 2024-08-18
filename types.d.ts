@@ -124,8 +124,8 @@ type DashboardWordList = {
 
 type EditMeaningForm = {
   meaning: string
-  attributes: number[] | undefined
-  partOfSpeechId: number
+  attributes: string[] | undefined
+  partOfSpeechId: string
   exampleSentence: string | null
   authorId: number | null
 }
