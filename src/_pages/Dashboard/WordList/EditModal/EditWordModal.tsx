@@ -4,14 +4,14 @@ import { EditMeaningForm, EditWordForm, Language } from '@/types';
 import { Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form';
-import WordNameInput from './WordNameInput';
-import WordAttribtesInput from './WordAttributesInput';
-import WordLanguageInput from './WordLanguageInput';
-import WordRootInput from './WordRootInput';
-import WordPhoneticInput from './WordPhoneticInput';
-import WordSuffixInput from './WordSuffixInput';
-import WordPrefixInput from './WordPrefixInput';
-import MeaningInput from './MeaningInput';
+import WordNameInput from './Inputs/Word/WordNameInput';
+import WordAttribtesInput from './Inputs/Word/WordAttributesInput';
+import WordLanguageInput from './Inputs/Word/WordLanguageInput';
+import WordRootInput from './Inputs/Word/WordRootInput';
+import WordPhoneticInput from './Inputs/Word/WordPhoneticInput';
+import WordSuffixInput from './Inputs/Word/WordSuffixInput';
+import WordPrefixInput from './Inputs/Word/WordPrefixInput';
+import MeaningInput from './Inputs/Meaning/MeaningInput';
 
 export default function EditWordModal({
     isOpen,
