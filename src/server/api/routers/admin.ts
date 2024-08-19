@@ -262,7 +262,8 @@ export const adminRouter = createTRPCRouter({
                 'sentence', ex.sentence,
                 'sentence_id', ex.id,
                 'author', aut.name,
-                'author_id', aut.id
+                'author_id', aut.id,
+                'attributes', ma_agg.attributes
               ) ORDER BY m.id
             ) AS meanings
           FROM meanings m

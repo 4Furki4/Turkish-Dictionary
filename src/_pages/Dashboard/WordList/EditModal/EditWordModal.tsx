@@ -14,13 +14,15 @@ import WordPrefixInput from './Inputs/Word/WordPrefixInput';
 import MeaningInput from './Inputs/Meaning/MeaningInput';
 import PartOfSpeechInput from './Inputs/Meaning/PartOfSpeechInput';
 import { PartOfSpeech } from '@/db/schema/part_of_speechs';
+import AttributesInput from './Inputs/Meaning/AttributesInput';
 
 export default function EditWordModal({
     isOpen,
     onOpenChange,
     wordName,
     languages,
-    partOfSpeeches
+    partOfSpeeches,
+    meaningAttributes
 }: {
     isOpen: boolean;
     onOpen: () => void;
@@ -30,6 +32,10 @@ export default function EditWordModal({
     partOfSpeeches: {
         id: string;
         partOfSpeech: PartOfSpeech;
+    }[],
+    meaningAttributes: {
+        id: string,
+        attribute: string
     }[]
 }) {
     const { data, isFetching, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
@@ -63,7 +69,6 @@ export default function EditWordModal({
         authorId: m.author_id
     })) ?? []
     useEffect(() => {
-
         const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix, meanings }
         reset(defaultValues)
     }, [name, language, JSON.stringify(attributes), language, root, phonetic])
@@ -73,6 +78,7 @@ export default function EditWordModal({
     if (!data) {
         return <></>
     }
+    console.log('word data', word_data)
     console.log(watch())
     return (
         <Modal placement='center' size='4xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
@@ -99,6 +105,7 @@ export default function EditWordModal({
                                     <CardBody key={field.id} className="flex flex-col gap-2">
                                         <MeaningInput index={index} control={control} />
                                         <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index].partOfSpeechId} />
+                                        <AttributesInput control={control} index={index} selectedAttributes={meanings[index].attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
                                     </CardBody>
                                 ))}
                             </Card>

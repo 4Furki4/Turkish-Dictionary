@@ -50,7 +50,8 @@ export default function WordList(
     words,
     wordCount,
     languages,
-    partOfSpeeches
+    partOfSpeeches,
+    meaningAttributes
   }:
     {
       words: DashboardWordList[],
@@ -59,6 +60,10 @@ export default function WordList(
       partOfSpeeches: {
         id: string
         partOfSpeech: PartOfSpeech
+      }[],
+      meaningAttributes: {
+        id: string,
+        attribute: string
       }[]
     }
 ) {
@@ -208,7 +213,7 @@ export default function WordList(
       </Table>
 
       <WordListDeleteModal key={`word-delete-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
-      <EditWordModal partOfSpeeches={partOfSpeeches} languages={languages} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} />
+      <EditWordModal partOfSpeeches={partOfSpeeches} languages={languages} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} meaningAttributes={meaningAttributes} />
     </section>
   );
 }
