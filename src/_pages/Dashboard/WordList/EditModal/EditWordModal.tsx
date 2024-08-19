@@ -16,6 +16,7 @@ import PartOfSpeechInput from './Inputs/Meaning/PartOfSpeechInput';
 import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 import AttributesInput from './Inputs/Meaning/AttributesInput';
 import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
+import AuthorInput from './Inputs/Meaning/AuthorInput';
 
 
 export default function EditWordModal({
@@ -40,6 +41,7 @@ export default function EditWordModal({
     })
     const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
+    const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
     const { control, watch, setValue, reset } = useForm<EditWordForm>()
     const { fields, append } = useFieldArray({
         name: "meanings",
@@ -63,12 +65,16 @@ export default function EditWordModal({
         ...meaningAttribute,
         id: meaningAttribute.id.toString()
     })) ?? []
+    const authors = authorsData?.map(author => ({
+        ...author,
+        id: author.id.toString()
+    })) ?? []
     const meanings: EditMeaningForm[] = word_data?.meanings.map((m) => ({
         meaning: m.meaning,
         exampleSentence: m.sentence,
         partOfSpeechId: m.part_of_speech_id.toString(),
         attributes: m.attributes?.map((att) => att.attribute_id.toString()),
-        authorId: m.author_id
+        authorId: m.author_id?.toString()
     })) ?? []
     useEffect(() => {
         const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix, meanings }
@@ -109,6 +115,7 @@ export default function EditWordModal({
                                         <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index].partOfSpeechId} />
                                         <AttributesInput control={control} index={index} selectedAttributes={meanings[index].attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
                                         <ExampleSentenceInput control={control} index={index} />
+                                        <AuthorInput control={control} index={index} authors={authors} selectedAuthor={meanings[index].authorId} setFieldValue={setValue} />
                                     </CardBody>
                                 ))}
                             </Card>

@@ -341,5 +341,21 @@ export const adminRouter = createTRPCRouter({
         message: "Unexpected Error."
       })
     }
-  })
+  }),
+  addAuthor: adminProcedure.input(z.string().min(2)).mutation(
+    async ({ input: name, ctx: { db } }) => {
+      try {
+        const result = await db.insert(authors).values({
+          name
+        }).returning()
+        return result
+      } catch (error) {
+        console.log(error)
+        return new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: "Unexpected Error."
+        })
+      }
+    }
+  )
 });

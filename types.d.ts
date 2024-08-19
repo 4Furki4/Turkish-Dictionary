@@ -127,7 +127,7 @@ type EditMeaningForm = {
   attributes: string[] | undefined
   partOfSpeechId: string
   exampleSentence: string | undefined
-  authorId: number | undefined
+  authorId: string | undefined
 }
 
 type EditWordForm = {
