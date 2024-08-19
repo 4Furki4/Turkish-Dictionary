@@ -103,9 +103,9 @@ type WordSearchResult = {
       meaning: string;
       part_of_speech: string;
       part_of_speech_id: number
-      sentence: string | null;
-      author: string | null;
-      author_id: number | null
+      sentence: string | undefined;
+      author: string | undefined;
+      author_id: number | undefined
       attributes?: [
         {
           attribute_id: number;
@@ -126,8 +126,8 @@ type EditMeaningForm = {
   meaning: string
   attributes: string[] | undefined
   partOfSpeechId: string
-  exampleSentence: string | null
-  authorId: number | null
+  exampleSentence: string | undefined
+  authorId: number | undefined
 }
 
 type EditWordForm = {

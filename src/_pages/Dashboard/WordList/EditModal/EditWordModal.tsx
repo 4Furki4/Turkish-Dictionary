@@ -15,6 +15,7 @@ import MeaningInput from './Inputs/Meaning/MeaningInput';
 import PartOfSpeechInput from './Inputs/Meaning/PartOfSpeechInput';
 import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 import AttributesInput from './Inputs/Meaning/AttributesInput';
+import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
 
 
 export default function EditWordModal({
@@ -82,7 +83,7 @@ export default function EditWordModal({
     console.log('word data', word_data)
     console.log(watch())
     return (
-        <Modal placement='center' size='4xl' backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
+        <Modal placement='center' size='5xl' backdrop='blur' scrollBehavior='outside' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -107,6 +108,7 @@ export default function EditWordModal({
                                         <MeaningInput index={index} control={control} />
                                         <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index].partOfSpeechId} />
                                         <AttributesInput control={control} index={index} selectedAttributes={meanings[index].attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
+                                        <ExampleSentenceInput control={control} index={index} />
                                     </CardBody>
                                 ))}
                             </Card>
