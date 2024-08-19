@@ -27,6 +27,7 @@ import { Pagination } from "@nextui-org/pagination";
 import { Select, SelectItem } from "@nextui-org/select";
 import EditWordModal from "./EditModal/EditWordModal";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
+
 const wordPerPageOptions = [
   {
     label: "5",
@@ -51,7 +52,6 @@ export default function WordList(
     wordCount,
     languages,
     partOfSpeeches,
-    meaningAttributes
   }:
     {
       words: DashboardWordList[],
@@ -61,10 +61,6 @@ export default function WordList(
         id: string
         partOfSpeech: PartOfSpeech
       }[],
-      meaningAttributes: {
-        id: string,
-        attribute: string
-      }[]
     }
 ) {
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
@@ -213,7 +209,7 @@ export default function WordList(
       </Table>
 
       <WordListDeleteModal key={`word-delete-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
-      <EditWordModal partOfSpeeches={partOfSpeeches} languages={languages} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} meaningAttributes={meaningAttributes} />
+      <EditWordModal partOfSpeeches={partOfSpeeches} languages={languages} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} />
     </section>
   );
 }

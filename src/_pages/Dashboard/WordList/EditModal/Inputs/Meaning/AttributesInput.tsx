@@ -1,5 +1,7 @@
+import AddMeaningAttributeModal from '@/src/components/customs/Modals/AddMeaningAttribute'
 import { EditWordForm } from '@/types'
-import { Select, Selection, SelectItem } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Plus } from 'lucide-react'
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 
@@ -19,6 +21,7 @@ export default function AttributesInput({
     setFieldValue: UseFormSetValue<EditWordForm>
     index: number
 }) {
+    const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
     const [values, setValues] = React.useState<Selection>(new Set(selectedAttributes));
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedAttributes = e.target.value.split(",").filter((val) => val)
@@ -27,20 +30,37 @@ export default function AttributesInput({
     };
     return (
         <Controller control={control} name={`meanings.${index}.attributes`} render={({ field }) => (
-            <Select
-                {...field}
-                onChange={handleSelectionChange}
-                selectedKeys={values}
-                selectionMode='multiple'
-            >
-                {
-                    attributes.map((att) => (
-                        <SelectItem key={att.id}>
-                            {att.attribute}
-                        </SelectItem>
-                    ))
-                }
-            </Select>
+            <>
+                <AddMeaningAttributeModal isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} isDismissable={false} />
+                <Select
+                    as={"div"}
+                    {...field}
+                    onChange={handleSelectionChange}
+                    selectedKeys={values}
+                    selectionMode='multiple'
+                    endContent={(
+                        <Button
+                            isIconOnly
+                            onPress={onOpen}
+                            variant='light'
+                        // color='primary'
+                        >
+                            <div className='sr-only'>
+                                Add new word attribute
+                            </div>
+                            <Plus></Plus>
+                        </Button>
+                    )}
+                >
+                    {
+                        attributes.map((att) => (
+                            <SelectItem key={att.id}>
+                                {att.attribute}
+                            </SelectItem>
+                        ))
+                    }
+                </Select>
+            </>
         )}
         />
     )

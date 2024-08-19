@@ -327,5 +327,19 @@ export const adminRouter = createTRPCRouter({
         message: "Unexpected Error."
       })
     }
+  }),
+  addNewMeaningAttribute: adminProcedure.input(z.string().min(2)).mutation(async ({ input: newMeaningAttribute, ctx: { db } }) => {
+    try {
+      const result = await db.insert(meaningAttributes).values({
+        attribute: newMeaningAttribute
+      }).returning()
+      return result
+    } catch (error) {
+      console.log(error)
+      return new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: "Unexpected Error."
+      })
+    }
   })
 });

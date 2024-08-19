@@ -19,11 +19,12 @@ export default async function Dashboard({
     take: 10,
     skip: 0
   })
+
+
   const wordCountPromise = api.word.getWordCount()
   const languagesPromise = api.admin.getLanguages()
   const partOfSpeechesPromise = api.admin.getPartOfSpeeches()
-  const meaningAttributesPromise = api.admin.getMeaningAttributes()
-  const results = await Promise.allSettled([wordListPromise, wordCountPromise, languagesPromise, partOfSpeechesPromise, meaningAttributesPromise])
+  const results = await Promise.allSettled([wordListPromise, wordCountPromise, languagesPromise, partOfSpeechesPromise])
   const wordList = results[0].status === "fulfilled" ? results[0].value : []
   const wordCount = results[1].status === "fulfilled" ? results[1].value : undefined
   const languages = results[2].status === "fulfilled" ? results[2].value : []
@@ -31,17 +32,13 @@ export default async function Dashboard({
     ...pos,
     id: pos.id.toString()
   })) : []
-  const meaningAttributes = results[4].status === "fulfilled" ? results[4].value.map((att) => ({
-    ...att,
-    id: att.id.toString(),
-  })) : []
   return (
     <Card className="max-w-7xl w-full mx-auto my-4" radius="sm">
       <CardHeader>
         <h1 className="text-fs-3 font-bold text-center">Dashboard</h1>
       </CardHeader>
       <CardBody>
-        <WordList words={wordList} wordCount={wordCount} languages={languages} partOfSpeeches={partOfSpeeches} meaningAttributes={meaningAttributes} />
+        <WordList words={wordList} wordCount={wordCount} languages={languages} partOfSpeeches={partOfSpeeches} />
         <NextIntlLink href="/dashboard/create-word">Create Word</NextIntlLink>
         <UserList />
         <WordRequestList />

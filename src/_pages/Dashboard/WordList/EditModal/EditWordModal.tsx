@@ -16,13 +16,13 @@ import PartOfSpeechInput from './Inputs/Meaning/PartOfSpeechInput';
 import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 import AttributesInput from './Inputs/Meaning/AttributesInput';
 
+
 export default function EditWordModal({
     isOpen,
     onOpenChange,
     wordName,
     languages,
     partOfSpeeches,
-    meaningAttributes
 }: {
     isOpen: boolean;
     onOpen: () => void;
@@ -33,15 +33,12 @@ export default function EditWordModal({
         id: string;
         partOfSpeech: PartOfSpeech;
     }[],
-    meaningAttributes: {
-        id: string,
-        attribute: string
-    }[]
 }) {
     const { data, isFetching, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
         enabled: isOpen,
     })
-    const { data: wordAttributes } = api.admin.getWordAttributes.useQuery()
+    const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
+    const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { control, watch, setValue, reset } = useForm<EditWordForm>()
     const { fields, append } = useFieldArray({
         name: "meanings",
@@ -61,6 +58,10 @@ export default function EditWordModal({
     const phonetic = word_data?.phonetic ?? ''
     const prefix = word_data?.prefix ?? ''
     const suffix = word_data?.suffix ?? ''
+    const meaningAttributes = meaningAttributesData?.map((meaningAttribute) => ({
+        ...meaningAttribute,
+        id: meaningAttribute.id.toString()
+    })) ?? []
     const meanings: EditMeaningForm[] = word_data?.meanings.map((m) => ({
         meaning: m.meaning,
         exampleSentence: m.sentence,
