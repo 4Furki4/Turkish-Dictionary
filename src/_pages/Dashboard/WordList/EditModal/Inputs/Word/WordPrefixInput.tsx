@@ -15,12 +15,10 @@ export default function WordPrefixInput({
             render={({ field }) => (
                 <Input
                     {...field}
-                    classNames={{
-                        base: "h-10",
-                    }}
+                    radius='sm'
                     label="Prefix"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
+                    placeholder='You can enter a prefix for the word here'
                 />
             )}
         />

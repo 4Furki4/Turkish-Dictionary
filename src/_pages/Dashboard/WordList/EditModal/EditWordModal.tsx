@@ -5,7 +5,6 @@ import { Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeade
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form';
 import WordNameInput from './Inputs/Word/WordNameInput';
-import WordAttribtesInput from './Inputs/Word/WordAttributesInput';
 import WordLanguageInput from './Inputs/Word/WordLanguageInput';
 import WordRootInput from './Inputs/Word/WordRootInput';
 import WordPhoneticInput from './Inputs/Word/WordPhoneticInput';
@@ -17,6 +16,7 @@ import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 import AttributesInput from './Inputs/Meaning/AttributesInput';
 import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
 import AuthorInput from './Inputs/Meaning/AuthorInput';
+import WordAttributesInput from './Inputs/Word/WordAttributesInput';
 
 
 export default function EditWordModal({
@@ -42,7 +42,9 @@ export default function EditWordModal({
     const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
-    const { control, watch, setValue, reset } = useForm<EditWordForm>()
+    const { control, watch, setValue, reset } = useForm<EditWordForm>({
+        mode: "onBlur"
+    })
     const { fields, append } = useFieldArray({
         name: "meanings",
         control,
@@ -51,7 +53,7 @@ export default function EditWordModal({
                 message: "words must have at least one meaning.",
                 value: true
             }
-        }
+        },
     })
     const word_data = data ? data[0].word_data : undefined
     const attributes = word_data?.attributes?.map(att => (att.attribute_id.toString())) ?? []
@@ -86,7 +88,6 @@ export default function EditWordModal({
     if (!data) {
         return <></>
     }
-    console.log('word data', word_data)
     console.log(watch())
     return (
         <Modal placement='center' size='5xl' backdrop='blur' scrollBehavior='outside' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
@@ -98,27 +99,33 @@ export default function EditWordModal({
                         </ModalHeader>
                         <ModalBody>
                             <WordNameInput control={control} />
-                            <WordAttribtesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
-                            <div className='grid grid-cols-2 gap-2 justify-center'>
+                            <div className='grid sm:grid-cols-2 gap-2 '>
+                                <WordPhoneticInput control={control} />
+                                <WordAttributesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
+                            </div>
+                            <div className='grid sm:grid-cols-2 gap-2 '>
                                 <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
                                 <WordRootInput control={control} />
                             </div>
-                            <WordPhoneticInput control={control} />
-                            <div className='grid grid-cols-2 gap-2'>
-                                <WordSuffixInput control={control} />
+                            <div className='grid sm:grid-cols-2 gap-2'>
                                 <WordPrefixInput control={control} />
+                                <WordSuffixInput control={control} />
                             </div>
-                            <Card className="rounded-sm">
-                                {fields.map((field, index) => (
-                                    <CardBody key={field.id} className="flex flex-col gap-2">
+                            {fields.map((field, index) => (
+                                <Card radius='sm' className="flex-col gap-4" key={field.id}>
+                                    <CardBody className="flex flex-col gap-2">
                                         <MeaningInput index={index} control={control} />
-                                        <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index].partOfSpeechId} />
-                                        <AttributesInput control={control} index={index} selectedAttributes={meanings[index].attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
-                                        <ExampleSentenceInput control={control} index={index} />
-                                        <AuthorInput control={control} index={index} authors={authors} selectedAuthor={meanings[index].authorId} setFieldValue={setValue} />
+                                        <div className='grid sm:grid-cols-2 gap-2 '>
+                                            <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index].partOfSpeechId} />
+                                            <AttributesInput control={control} index={index} selectedAttributes={meanings[index].attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
+                                        </div>
+                                        <div className='grid sm:grid-cols-2 gap-2 '>
+                                            <ExampleSentenceInput control={control} index={index} />
+                                            <AuthorInput control={control} index={index} authors={authors} selectedAuthor={meanings[index].authorId} setFieldValue={setValue} />
+                                        </div>
                                     </CardBody>
-                                ))}
-                            </Card>
+                                </Card>
+                            ))}
                         </ModalBody>
                         <ModalFooter>
                         </ModalFooter>

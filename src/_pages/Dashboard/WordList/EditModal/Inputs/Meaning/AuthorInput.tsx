@@ -41,6 +41,9 @@ export default function AuthorInput({
                     selectedKeys={values}
                     selectionMode='multiple'
                     radius='sm'
+                    label="Author"
+                    labelPlacement='outside'
+                    placeholder='You can select an author for the example sentence'
                     endContent={(
                         <Button
                             isIconOnly

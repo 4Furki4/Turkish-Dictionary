@@ -15,9 +15,11 @@ export default function ExampleSentenceInput({
             name={`meanings.${index}.exampleSentence`}
             control={control}
             render={({ field }) => (
-                <Input label="Example Sentence"
-                    color="primary"
-                    variant="underlined"
+                <Input
+                    placeholder='You can enter an example sentence for this meaning.'
+                    label="Example Sentence"
+                    labelPlacement='outside'
+                    radius='sm'
                     {...field}
                 />
             )}

@@ -6,7 +6,7 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 
-export default function WordAttribtesInput({
+export default function WordAttributesInput({
     control,
     wordAttributes,
     selectedWordAttributes,
@@ -46,7 +46,8 @@ export default function WordAttribtesInput({
                 }}
                 render={({ field }) => (
                     <Select
-                        variant='underlined'
+                        labelPlacement='outside'
+                        radius='sm'
                         selectedKeys={values}
                         items={wordAttributes}
                         as={"div"}
@@ -66,6 +67,7 @@ export default function WordAttribtesInput({
                         )}
                         onChange={handleSelectionChange}
                         placeholder='Please select an attribute'
+                        label="Attribute"
                         defaultSelectedKeys={selecetedKeys}
                         selectionMode='multiple'>
                         {wordAttributes?.map((wordAttribute => (

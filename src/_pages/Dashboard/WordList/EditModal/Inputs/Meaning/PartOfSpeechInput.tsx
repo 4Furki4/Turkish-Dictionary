@@ -29,7 +29,17 @@ export default function PartOfSpeechInput({
     return (
         <Controller control={control} name={`meanings.${index}.partOfSpeechId`}
             render={({ field }) => (
-                <Select items={partOfSpeeches} selectionMode='single' {...field} selectedKeys={value} onChange={handleSelectionChange}>
+                <Select
+                    items={partOfSpeeches}
+                    selectionMode='single'
+                    {...field}
+                    selectedKeys={value}
+                    onChange={handleSelectionChange}
+                    radius='sm'
+                    label="Part of speech"
+                    labelPlacement='outside'
+                    isRequired
+                >
                     {partOfSpeeches.map((key) => (
                         <SelectItem key={key.id} value={key.partOfSpeech}>
                             {key.partOfSpeech}

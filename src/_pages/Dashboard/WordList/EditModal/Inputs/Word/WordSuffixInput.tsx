@@ -15,12 +15,10 @@ export default function WordSuffixInput({
             render={({ field }) => (
                 <Input
                     {...field}
-                    classNames={{
-                        base: "h-10",
-                    }}
+                    radius='sm'
                     label="Suffix"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
+                    placeholder='You can enter a suffix for the word here'
                 />
             )}
         />

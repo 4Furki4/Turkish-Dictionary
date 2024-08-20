@@ -10,10 +10,14 @@ export default function WordNameInput({
 }) {
     return (
         <Controller name='name' control={control} render={({ field }) => (
-            <Input variant='underlined' label="Word name" {...field} name='word'
-                classNames={{
-                    base: "h-10",
-                }} />
+            <Input
+                {...field}
+                radius='sm'
+                labelPlacement='outside'
+                label="Word name"
+                placeholder='You must enter a word name here.'
+                isRequired
+            />
         )} />
     )
 }

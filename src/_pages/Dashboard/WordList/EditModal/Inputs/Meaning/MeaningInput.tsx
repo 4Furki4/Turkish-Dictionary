@@ -15,10 +15,11 @@ export default function MeaningInput({
             name={`meanings.${index}.meaning`}
             control={control}
             render={({ field }) => (
-                <Input {...field} label="Meaning"
-                    color="primary"
-                    variant="underlined"
-                    description="Meaning is required."
+                <Input {...field}
+                    label="Meaning"
+                    labelPlacement='outside'
+                    radius='sm'
+                    placeholder='You must enter a meaning here.'
                     isRequired
                 />
             )}

@@ -14,13 +14,11 @@ export default function WordRootInput({
             name="root"
             render={({ field, fieldState: { error } }) => (
                 <Input
-                    classNames={{
-                        base: "h-10",
-                    }}
                     // placeholder="Type the root word"
                     label="Root"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
+                    radius='sm'
+                    placeholder={`You can enter the word's root here`}
                     {...field}
                 />
             )}

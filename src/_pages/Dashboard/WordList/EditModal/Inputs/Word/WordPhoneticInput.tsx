@@ -15,12 +15,10 @@ export default function WordPhoneticInput({
             render={({ field, fieldState: { error } }) => (
                 <Input
                     {...field}
-                    classNames={{
-                        base: "h-10",
-                    }}
+                    radius='sm'
+                    labelPlacement='outside'
                     label="Phonetic"
-                    color="primary"
-                    variant="underlined"
+                    placeholder={`You can enter the word's phonetic here like ahva:li`}
                 />
             )}
         />
