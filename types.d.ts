@@ -138,7 +138,7 @@ type EditWordForm = {
   phonetic: string
   suffix: string
   prefix: string
-  meanings: EditMeaningForm[]
+  meanings: Partial<EditMeaningForm>[]
 }
 
 type NewAttributeForm = {

@@ -17,10 +17,10 @@ export default function PartOfSpeechInput({
         id: string;
         partOfSpeech: PartOfSpeech;
     }[],
-    selectedPartOfSpeechId: string
+    selectedPartOfSpeechId: string | undefined
     setFieldValue: UseFormSetValue<EditWordForm>
 }) {
-    const [value, setValue] = React.useState<Selection>(new Set([selectedPartOfSpeechId.toString()]));
+    const [value, setValue] = React.useState<Selection>(new Set([selectedPartOfSpeechId?.toString() ?? '']));
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedAttribute = e.target.value
         setValue(() => new Set([selectedAttribute]))

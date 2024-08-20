@@ -17,7 +17,7 @@ export default function AttributesInput({
         id: string,
         attribute: string
     }[]
-    selectedAttributes: string[]
+    selectedAttributes: string[] | undefined
     setFieldValue: UseFormSetValue<EditWordForm>
     index: number
 }) {

@@ -1,8 +1,8 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import { EditMeaningForm, EditWordForm, Language } from '@/types';
-import { Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
-import React, { useEffect } from 'react'
+import { Button, ButtonGroup, Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
+import React, { useCallback, useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form';
 import WordNameInput from './Inputs/Word/WordNameInput';
 import WordLanguageInput from './Inputs/Word/WordLanguageInput';
@@ -17,6 +17,7 @@ import AttributesInput from './Inputs/Meaning/AttributesInput';
 import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
 import AuthorInput from './Inputs/Meaning/AuthorInput';
 import WordAttributesInput from './Inputs/Word/WordAttributesInput';
+import { BetweenVerticalEnd, BetweenVerticalStart, X } from 'lucide-react';
 
 
 export default function EditWordModal({
@@ -45,7 +46,7 @@ export default function EditWordModal({
     const { control, setValue, reset } = useForm<EditWordForm>({
         mode: "onSubmit"
     })
-    const { fields, append } = useFieldArray({
+    const { fields, append, prepend, remove } = useFieldArray({
         name: "meanings",
         control,
         rules: {
@@ -67,10 +68,12 @@ export default function EditWordModal({
         ...meaningAttribute,
         id: meaningAttribute.id.toString()
     })) ?? []
+
     const authors = authorsData?.map(author => ({
         ...author,
         id: author.id.toString()
     })) ?? []
+
     const meanings: EditMeaningForm[] = word_data?.meanings.map((m) => ({
         meaning: m.meaning,
         exampleSentence: m.sentence,
@@ -78,16 +81,30 @@ export default function EditWordModal({
         attributes: m.attributes?.map((att) => att.attribute_id.toString()),
         authorId: m.author_id?.toString()
     })) ?? []
+    const emptyMeaningValues: Partial<EditMeaningForm> = {
+        attributes: [],
+        authorId: '',
+        exampleSentence: '',
+        meaning: '',
+        partOfSpeechId: ''
+    }
     useEffect(() => {
         const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix, meanings }
         reset(defaultValues)
     }, [name, language, JSON.stringify(attributes), language, root, phonetic])
+
+    const discardChanges = () => {
+        const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix, meanings }
+        reset(defaultValues)
+    }
+
     if (isFetching || isLoading) {
         return <Spinner />
     }
     if (!data) {
         return <></>
     }
+
     return (
         <Modal placement='center' size='5xl' backdrop='blur' scrollBehavior='outside' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
             <ModalContent>
@@ -112,21 +129,55 @@ export default function EditWordModal({
                             </div>
                             {fields.map((field, index) => (
                                 <Card radius='sm' className="flex-col gap-4" key={field.id}>
-                                    <CardBody className="flex flex-col gap-2">
+                                    <Button radius='sm' variant='light' color='danger' isIconOnly
+                                        className='absolute top-2 right-3 z-50'
+                                        onPress={() => remove(index)}
+                                    >
+                                        <X />
+                                    </Button>
+                                    <CardBody className="flex flex-col gap-2 mt-4">
                                         <MeaningInput index={index} control={control} />
                                         <div className='grid sm:grid-cols-2 gap-2 '>
-                                            <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index].partOfSpeechId} />
-                                            <AttributesInput control={control} index={index} selectedAttributes={meanings[index].attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
+                                            <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index]?.partOfSpeechId} />
+                                            <AttributesInput control={control} index={index} selectedAttributes={meanings[index]?.attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
                                         </div>
                                         <div className='grid sm:grid-cols-2 gap-2 '>
                                             <ExampleSentenceInput control={control} index={index} />
-                                            <AuthorInput control={control} index={index} authors={authors} selectedAuthor={meanings[index].authorId} setFieldValue={setValue} />
+                                            <AuthorInput control={control} index={index} authors={authors} selectedAuthor={meanings[index]?.authorId} setFieldValue={setValue} />
                                         </div>
                                     </CardBody>
                                 </Card>
                             ))}
                         </ModalBody>
                         <ModalFooter>
+                            <ButtonGroup radius='sm' className="w-full gap-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+                                <Button
+                                    type="button"
+                                    radius='sm'
+                                    onPress={() => {
+                                        prepend(emptyMeaningValues);
+                                    }}
+                                    endContent={<BetweenVerticalStart />}
+                                >
+                                    Prepend <span className="max-sm:hidden">Meaning</span>
+                                </Button>
+                                <Button
+                                    radius='sm'
+                                    type="button"
+                                    onPress={() => {
+                                        append(emptyMeaningValues);
+                                    }}
+                                    endContent={<BetweenVerticalEnd />}
+                                >
+                                    Append <span className="max-sm:hidden">Meaning</span>
+                                </Button>
+                                <Button onPress={discardChanges} color='danger'>
+                                    Discard Changes
+                                </Button>
+                                <Button color='primary'>
+                                    Submit
+                                </Button>
+                            </ButtonGroup>
                         </ModalFooter>
                     </>
                 )}
