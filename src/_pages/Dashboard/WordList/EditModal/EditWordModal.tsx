@@ -42,7 +42,7 @@ export default function EditWordModal({
     const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
-    const { control, watch, setValue, reset } = useForm<EditWordForm>({
+    const { control, setValue, reset } = useForm<EditWordForm>({
         mode: "onSubmit"
     })
     const { fields, append } = useFieldArray({
@@ -88,7 +88,6 @@ export default function EditWordModal({
     if (!data) {
         return <></>
     }
-    console.log(watch())
     return (
         <Modal placement='center' size='5xl' backdrop='blur' scrollBehavior='outside' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
             <ModalContent>
