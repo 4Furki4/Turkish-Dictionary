@@ -18,6 +18,7 @@ import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
 import AuthorInput from './Inputs/Meaning/AuthorInput';
 import WordAttributesInput from './Inputs/Word/WordAttributesInput';
 import { BetweenVerticalEnd, BetweenVerticalStart, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 
 export default function EditWordModal({
@@ -96,6 +97,7 @@ export default function EditWordModal({
     const discardChanges = () => {
         const defaultValues = { attributes, language, name, root, phonetic, prefix, suffix, meanings }
         reset(defaultValues)
+        toast.success("Changes discarded!")
     }
 
     if (isFetching || isLoading) {
@@ -133,6 +135,9 @@ export default function EditWordModal({
                                         className='absolute top-2 right-3 z-50'
                                         onPress={() => remove(index)}
                                     >
+                                        <div className='sr-only'>
+                                            Remove the meaning
+                                        </div>
                                         <X />
                                     </Button>
                                     <CardBody className="flex flex-col gap-2 mt-4">
