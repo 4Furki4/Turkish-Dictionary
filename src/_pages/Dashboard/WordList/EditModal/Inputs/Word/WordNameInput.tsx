@@ -9,7 +9,7 @@ export default function WordNameInput({
     control: Control<EditWordForm, any>
 }) {
     return (
-        <Controller name='name' control={control} render={({ field }) => (
+        <Controller name='name' control={control} render={({ field, formState: { errors } }) => (
             <Input
                 {...field}
                 radius='sm'
@@ -17,6 +17,8 @@ export default function WordNameInput({
                 label="Word name"
                 placeholder='You must enter a word name here.'
                 isRequired
+                errorMessage={errors.name?.message}
+                isInvalid={!!errors.name}
             />
         )} />
     )

@@ -28,7 +28,7 @@ export default function PartOfSpeechInput({
     };
     return (
         <Controller control={control} name={`meanings.${index}.partOfSpeechId`}
-            render={({ field }) => (
+            render={({ field, formState: { errors } }) => (
                 <Select
                     items={partOfSpeeches}
                     selectionMode='single'
@@ -39,6 +39,10 @@ export default function PartOfSpeechInput({
                     label="Part of speech"
                     labelPlacement='outside'
                     isRequired
+                    disallowEmptySelection
+                    required={false}
+                    isInvalid={errors.meanings ? !!errors.meanings[index]?.partOfSpeechId : undefined}
+                    errorMessage={errors.meanings ? errors.meanings[index]?.partOfSpeechId?.message : undefined}
                 >
                     {partOfSpeeches.map((key) => (
                         <SelectItem key={key.id} value={key.partOfSpeech}>

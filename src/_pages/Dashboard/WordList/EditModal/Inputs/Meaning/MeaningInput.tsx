@@ -14,13 +14,15 @@ export default function MeaningInput({
         <Controller
             name={`meanings.${index}.meaning`}
             control={control}
-            render={({ field }) => (
+            render={({ field, formState: { errors } }) => (
                 <Input {...field}
                     label="Meaning"
                     labelPlacement='outside'
                     radius='sm'
-                    placeholder='You must enter a meaning here.'
+                    // placeholder='You must enter a meaning here.'
                     isRequired
+                    errorMessage={errors.meanings ? errors.meanings[index]?.meaning?.message : undefined}
+                    isInvalid={errors.meanings ? !!errors.meanings[index]?.meaning : undefined}
                 />
             )}
         />

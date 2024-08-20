@@ -27,6 +27,8 @@ import { api } from "@/src/trpc/react";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
 import AddWordAttributeModal from "@/src/components/customs/Modals/AddWordAttribute";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -59,7 +61,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     formState,
     clearErrors,
     watch,
-    reset,
     setError,
     getFieldState,
     setValue
@@ -167,10 +168,12 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
 
         </div>
 
-        <div className="w-full mt-2">
-          <h2 className="text-center text-fs-1">Meanings</h2>
 
-          {fields.map((field, index) => (
+
+
+        {fields.length > 0 ? fields.map((field, index) => (
+          <div className="w-full mt-2">
+            <h2 className="text-center text-fs-1">Meanings</h2>
             <Card key={field.id} className="mb-4 rounded-sm">
               <CardBody className="flex flex-col gap-2">
                 <WordMeaningInput index={index} control={control} />
@@ -186,21 +189,25 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
                 <Button className="rounded-sm" onClick={() => remove(index)}>Remove Meaning</Button>
               </CardBody>
             </Card>
-          ))}
 
-          <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
 
-          {formState.errors.meanings && (
-            <p className="text-red-500">
-              {formState.errors.meanings.root?.message}
-            </p>
-          )}
-        </div>
+          </div>
+        )) : (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              You must add a meaning!
+            </AlertDescription>
+          </Alert>
+        )}
+        <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
         <Button
           // isLoading={wordMutation.isLoading || isUploading}
           type="submit"
           variant="ghost"
-          className="w-full rounded-sm"
+          className="w-full"
+          radius="sm"
         >
           Submit
         </Button>

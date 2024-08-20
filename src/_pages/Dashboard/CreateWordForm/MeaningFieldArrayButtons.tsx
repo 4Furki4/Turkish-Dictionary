@@ -15,7 +15,8 @@ export default function MeaningFieldArrayButtons({
     return (
         <ButtonGroup radius='sm' className="w-full">
             <Button
-                className="w-full rounded-sm"
+                radius='sm'
+                className="w-full"
                 type="button"
                 variant="ghost"
                 onPress={() => {
@@ -25,7 +26,8 @@ export default function MeaningFieldArrayButtons({
                 Append <span className="max-sm:hidden">Meaning</span>
             </Button>
             <Button
-                className="w-full rounded-sm"
+                radius='sm'
+                className="w-full"
                 type="button"
                 variant="ghost"
                 onPress={() => {

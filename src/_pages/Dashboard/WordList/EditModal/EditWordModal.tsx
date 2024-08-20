@@ -2,7 +2,7 @@
 import { api } from '@/src/trpc/react';
 import { EditMeaningForm, EditWordForm, Language } from '@/types';
 import { Button, ButtonGroup, Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form';
 import WordNameInput from './Inputs/Word/WordNameInput';
 import WordLanguageInput from './Inputs/Word/WordLanguageInput';
@@ -19,6 +19,29 @@ import AuthorInput from './Inputs/Meaning/AuthorInput';
 import WordAttributesInput from './Inputs/Word/WordAttributesInput';
 import { BetweenVerticalEnd, BetweenVerticalStart, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+
+const editMeaningFormSchema = z.object({
+    meaning: z.string().min(1, "Meaning input cannot be empty!"),
+    attributes: z.union([z.array(z.string()), z.undefined()]),
+    partOfSpeechId: z.string().min(1, "Please select a part of speech option."),
+    exampleSentence: z.union([z.string(), z.undefined()]),
+    authorId: z.union([z.string(), z.undefined()])
+})
+
+const editWordFormSchema = z.object({
+    name: z.string().min(1, "Word must have a name."),
+    attributes: z.array(z.string()).optional(),
+    language: z.string().optional(),
+    root: z.string().optional(),
+    phonetic: z.string().optional(),
+    suffix: z.string().optional(),
+    prefix: z.string().optional(),
+    meanings: z.array(editMeaningFormSchema.partial()).min(1)
+})
 
 
 export default function EditWordModal({
@@ -44,9 +67,11 @@ export default function EditWordModal({
     const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
-    const { control, setValue, reset } = useForm<EditWordForm>({
-        mode: "onSubmit"
+    const { control, setValue, reset, handleSubmit, formState: { errors } } = useForm<EditWordForm>({
+        mode: "onChange",
+        resolver: zodResolver(editWordFormSchema)
     })
+    console.log('errors', errors)
     const { fields, append, prepend, remove } = useFieldArray({
         name: "meanings",
         control,
@@ -54,6 +79,10 @@ export default function EditWordModal({
             required: {
                 message: "words must have at least one meaning.",
                 value: true
+            },
+            minLength: {
+                value: 1,
+                message: "words must have at least one meaning.",
             }
         },
     })
@@ -77,7 +106,7 @@ export default function EditWordModal({
 
     const meanings: EditMeaningForm[] = word_data?.meanings.map((m) => ({
         meaning: m.meaning,
-        exampleSentence: m.sentence,
+        exampleSentence: m.sentence ?? '',
         partOfSpeechId: m.part_of_speech_id.toString(),
         attributes: m.attributes?.map((att) => att.attribute_id.toString()),
         authorId: m.author_id?.toString()
@@ -99,14 +128,17 @@ export default function EditWordModal({
         reset(defaultValues)
         toast.success("Changes discarded!")
     }
+    function onSubmit(data: EditWordForm) {
+        console.log(data)
+        toast.success("changes submitted!")
+    }
 
     if (isFetching || isLoading) {
-        return <Spinner />
+        return <Spinner className='absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2' />
     }
     if (!data) {
         return <></>
     }
-
     return (
         <Modal placement='center' size='5xl' backdrop='blur' scrollBehavior='outside' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
             <ModalContent>
@@ -115,75 +147,86 @@ export default function EditWordModal({
                         <ModalHeader className="flex flex-col gap-1">
                             <h5>Edit Word: <b>{wordName}</b></h5>
                         </ModalHeader>
-                        <ModalBody>
-                            <WordNameInput control={control} />
-                            <div className='grid sm:grid-cols-2 gap-2 '>
-                                <WordPhoneticInput control={control} />
-                                <WordAttributesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
-                            </div>
-                            <div className='grid sm:grid-cols-2 gap-2 '>
-                                <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
-                                <WordRootInput control={control} />
-                            </div>
-                            <div className='grid sm:grid-cols-2 gap-2'>
-                                <WordPrefixInput control={control} />
-                                <WordSuffixInput control={control} />
-                            </div>
-                            {fields.map((field, index) => (
-                                <Card radius='sm' className="flex-col gap-4" key={field.id}>
-                                    <Button radius='sm' variant='light' color='danger' isIconOnly
-                                        className='absolute top-2 right-3 z-50'
-                                        onPress={() => remove(index)}
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <ModalBody>
+
+                                <WordNameInput control={control} />
+                                <div className='grid sm:grid-cols-2 gap-2 '>
+                                    <WordPhoneticInput control={control} />
+                                    <WordAttributesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
+                                </div>
+                                <div className='grid sm:grid-cols-2 gap-2 '>
+                                    <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
+                                    <WordRootInput control={control} />
+                                </div>
+                                <div className='grid sm:grid-cols-2 gap-2'>
+                                    <WordPrefixInput control={control} />
+                                    <WordSuffixInput control={control} />
+                                </div>
+                                {fields.length > 0 ? fields.map((field, index) => (
+                                    <Card radius='sm' className="flex-col gap-4" key={field.id}>
+                                        <Button radius='sm' variant='light' color='danger' isIconOnly
+                                            className='absolute top-2 right-3 z-50'
+                                            onPress={() => remove(index)}
+                                        >
+                                            <div className='sr-only'>
+                                                Remove the meaning
+                                            </div>
+                                            <X />
+                                        </Button>
+                                        <CardBody className="flex flex-col gap-2 mt-4">
+                                            <MeaningInput index={index} control={control} />
+                                            <div className='grid sm:grid-cols-2 gap-2 '>
+                                                <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index]?.partOfSpeechId} />
+                                                <AttributesInput control={control} index={index} selectedAttributes={meanings[index]?.attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
+                                            </div>
+                                            <div className='grid sm:grid-cols-2 gap-2 '>
+                                                <ExampleSentenceInput control={control} index={index} />
+                                                <AuthorInput control={control} index={index} authors={authors} selectedAuthor={meanings[index]?.authorId} setFieldValue={setValue} />
+                                            </div>
+                                        </CardBody>
+                                    </Card>
+                                )) : (
+                                    <Alert variant="destructive">
+                                        <AlertCircle className="h-4 w-4" />
+                                        <AlertTitle>Error</AlertTitle>
+                                        <AlertDescription>
+                                            You must add a meaning!
+                                        </AlertDescription>
+                                    </Alert>
+                                )}
+                            </ModalBody>
+                            <ModalFooter>
+                                <ButtonGroup radius='sm' className="w-full gap-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+                                    <Button
+                                        type="button"
+                                        radius='sm'
+                                        onPress={() => {
+                                            prepend(emptyMeaningValues);
+                                        }}
+                                        endContent={<BetweenVerticalStart />}
                                     >
-                                        <div className='sr-only'>
-                                            Remove the meaning
-                                        </div>
-                                        <X />
+                                        Prepend <span className="max-sm:hidden">Meaning</span>
                                     </Button>
-                                    <CardBody className="flex flex-col gap-2 mt-4">
-                                        <MeaningInput index={index} control={control} />
-                                        <div className='grid sm:grid-cols-2 gap-2 '>
-                                            <PartOfSpeechInput setFieldValue={setValue} index={index} control={control} partOfSpeeches={partOfSpeeches} selectedPartOfSpeechId={meanings[index]?.partOfSpeechId} />
-                                            <AttributesInput control={control} index={index} selectedAttributes={meanings[index]?.attributes ?? []} setFieldValue={setValue} attributes={meaningAttributes} />
-                                        </div>
-                                        <div className='grid sm:grid-cols-2 gap-2 '>
-                                            <ExampleSentenceInput control={control} index={index} />
-                                            <AuthorInput control={control} index={index} authors={authors} selectedAuthor={meanings[index]?.authorId} setFieldValue={setValue} />
-                                        </div>
-                                    </CardBody>
-                                </Card>
-                            ))}
-                        </ModalBody>
-                        <ModalFooter>
-                            <ButtonGroup radius='sm' className="w-full gap-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-                                <Button
-                                    type="button"
-                                    radius='sm'
-                                    onPress={() => {
-                                        prepend(emptyMeaningValues);
-                                    }}
-                                    endContent={<BetweenVerticalStart />}
-                                >
-                                    Prepend <span className="max-sm:hidden">Meaning</span>
-                                </Button>
-                                <Button
-                                    radius='sm'
-                                    type="button"
-                                    onPress={() => {
-                                        append(emptyMeaningValues);
-                                    }}
-                                    endContent={<BetweenVerticalEnd />}
-                                >
-                                    Append <span className="max-sm:hidden">Meaning</span>
-                                </Button>
-                                <Button onPress={discardChanges} color='danger'>
-                                    Discard Changes
-                                </Button>
-                                <Button color='primary'>
-                                    Submit
-                                </Button>
-                            </ButtonGroup>
-                        </ModalFooter>
+                                    <Button
+                                        radius='sm'
+                                        type="button"
+                                        onPress={() => {
+                                            append(emptyMeaningValues);
+                                        }}
+                                        endContent={<BetweenVerticalEnd />}
+                                    >
+                                        Append <span className="max-sm:hidden">Meaning</span>
+                                    </Button>
+                                    <Button type='button' onPress={discardChanges} color='danger'>
+                                        Discard Changes
+                                    </Button>
+                                    <Button type='submit' color='primary'>
+                                        Submit
+                                    </Button>
+                                </ButtonGroup>
+                            </ModalFooter>
+                        </form>
                     </>
                 )}
             </ModalContent>
