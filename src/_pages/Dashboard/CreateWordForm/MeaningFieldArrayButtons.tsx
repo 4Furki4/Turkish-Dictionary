@@ -18,7 +18,7 @@ export default function MeaningFieldArrayButtons({
                 className="w-full rounded-sm"
                 type="button"
                 variant="ghost"
-                onClick={() => {
+                onPress={() => {
                     append(meaningDefaultValues);
                 }}
             >
@@ -28,7 +28,7 @@ export default function MeaningFieldArrayButtons({
                 className="w-full rounded-sm"
                 type="button"
                 variant="ghost"
-                onClick={() => {
+                onPress={() => {
                     prepend(meaningDefaultValues);
                 }}
             >
