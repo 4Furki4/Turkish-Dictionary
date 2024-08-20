@@ -43,7 +43,7 @@ export default function EditWordModal({
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
     const { control, watch, setValue, reset } = useForm<EditWordForm>({
-        mode: "onBlur"
+        mode: "onSubmit"
     })
     const { fields, append } = useFieldArray({
         name: "meanings",
