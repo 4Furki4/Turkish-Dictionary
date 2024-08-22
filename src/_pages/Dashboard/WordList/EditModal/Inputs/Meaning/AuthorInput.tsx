@@ -23,23 +23,23 @@ export default function AuthorInput({
     index: number
 }) {
     const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
-    const [values, setValues] = React.useState<Selection>(new Set(selectedAuthor));
+    const [value, setValue] = React.useState<Selection>(new Set(selectedAuthor));
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedAttributes = e.target.value.split(",").filter((val) => val)
-        setValues(() => new Set(selectedAttributes))
-        setFieldValue(`meanings.${index}.attributes`, selectedAttributes)
+        const selectedAttributes = e.target.value
+        setValue(() => new Set(selectedAttributes))
+        setFieldValue(`meanings.${index}.authorId`, selectedAttributes)
     };
 
     return (
-        <Controller control={control} name={`meanings.${index}.attributes`} render={({ field }) => (
+        <Controller control={control} name={`meanings.${index}.authorId`} render={({ field }) => (
             <>
                 <AddAuthorModal isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} isDismissable={false} />
                 <Select
                     as={"div"}
                     {...field}
                     onChange={handleSelectionChange}
-                    selectedKeys={values}
-                    selectionMode='multiple'
+                    selectedKeys={value}
+                    selectionMode='single'
                     radius='sm'
                     label="Author"
                     labelPlacement='outside'
