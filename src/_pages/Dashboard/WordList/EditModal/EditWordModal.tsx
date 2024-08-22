@@ -35,14 +35,13 @@ const editMeaningFormSchema = z.object({
 const editWordFormSchema = z.object({
     name: z.string().min(1, "Word must have a name."),
     attributes: z.array(z.string()).optional(),
-    language: z.string().optional(),
+    language: z.string().or(z.null()).optional(),
     root: z.string().optional(),
     phonetic: z.string().optional(),
     suffix: z.string().optional(),
     prefix: z.string().optional(),
     meanings: z.array(editMeaningFormSchema.partial()).min(1)
 })
-
 
 export default function EditWordModal({
     isOpen,
@@ -68,10 +67,10 @@ export default function EditWordModal({
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
     const { control, setValue, reset, handleSubmit, formState: { errors } } = useForm<EditWordForm>({
-        mode: "onChange",
+        mode: "all",
         resolver: zodResolver(editWordFormSchema)
     })
-    console.log('errors', errors)
+    console.log("errors", errors)
     const { fields, append, prepend, remove } = useFieldArray({
         name: "meanings",
         control,
@@ -86,6 +85,13 @@ export default function EditWordModal({
             }
         },
     })
+    const editWordMutation = api.admin.editWord.useMutation({
+        onSettled: (data) => {
+            console.log(data)
+            toast.info("settled")
+        }
+    })
+
     const word_data = data ? data[0].word_data : undefined
     const attributes = word_data?.attributes?.map(att => (att.attribute_id.toString())) ?? []
     const language = word_data?.root.language_code ?? ''
@@ -111,7 +117,7 @@ export default function EditWordModal({
         attributes: m.attributes?.map((att) => att.attribute_id.toString()),
         authorId: m.author_id?.toString()
     })) ?? []
-    const emptyMeaningValues: Partial<EditMeaningForm> = {
+    const emptyMeaningValues: EditMeaningForm = {
         attributes: [],
         authorId: '',
         exampleSentence: '',
@@ -129,8 +135,24 @@ export default function EditWordModal({
         toast.success("Changes discarded!")
     }
     function onSubmit(data: EditWordForm) {
-        console.log(data)
-        toast.success("changes submitted!")
+        console.log("meanings", data.meanings)
+        const preparedData = {
+            name: data.name,
+            meanings: data.meanings.map((m) => ({
+                meaning: m.meaning,
+                attributes: m.attributes?.map((at) => parseInt(at)),
+                partOfSpeechId: parseInt(m.partOfSpeechId),
+                authorId: m.authorId ? parseInt(m.authorId) : undefined,
+                sentence: m.exampleSentence,
+            })),
+            attributes: data.attributes?.map((att) => (parseInt(att))),
+            language: data.language,
+            root: data.root,
+            phonetic: data.phonetic,
+            prefix: data.prefix,
+            suffix: data.suffix
+        }
+        editWordMutation.mutate(preparedData)
     }
 
     if (isFetching || isLoading) {

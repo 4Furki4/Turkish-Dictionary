@@ -14,6 +14,25 @@ import { examples } from "@/db/schema/examples";
 import { languages } from "@/db/schema/languages";
 import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
 const CreateWordSchema = z.ZodType<WordForm>
+const EditMeaningSchema = z.object({
+  meaning: z.string().min(1, "Meaning input cannot be empty!"),
+  attributes: z.array(z.number()).optional().nullable(),
+  partOfSpeechId: z.number({ required_error: "Part of Speech is required!" }),
+  exampleSentence: z.string().min(5).optional().nullable(),
+  authorId: z.number().optional().nullable()
+})
+
+const EditWordSchema = z.object({
+  name: z.string().min(1, "Word must have a name."),
+  attributes: z.array(z.number()).optional().nullable(),
+  language: z.string().optional().nullable(),
+  root: z.string().optional().nullable(),
+  phonetic: z.string().optional().nullable(),
+  suffix: z.string().optional().nullable(),
+  prefix: z.string().optional().nullable(),
+  meanings: z.array(EditMeaningSchema).min(1)
+})
+
 export const adminRouter = createTRPCRouter({
   deleteWord: adminProcedure
     .input(
@@ -357,5 +376,8 @@ export const adminRouter = createTRPCRouter({
         })
       }
     }
-  )
+  ),
+  editWord: adminProcedure.input(EditWordSchema).mutation(async ({ input, ctx: { db } }) => {
+    console.log(input)
+  })
 });
