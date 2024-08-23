@@ -13,6 +13,7 @@ import { PartOfSpeech, partOfSpeechs } from "@/db/schema/part_of_speechs";
 import { examples } from "@/db/schema/examples";
 import { languages } from "@/db/schema/languages";
 import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
+import { date } from "drizzle-orm/pg-core";
 const CreateWordSchema = z.ZodType<WordForm>
 const EditMeaningSchema = z.object({
   meaning: z.string().min(1, "Meaning input cannot be empty!"),
@@ -23,6 +24,7 @@ const EditMeaningSchema = z.object({
 })
 
 const EditWordSchema = z.object({
+  id: z.number(),
   name: z.string().min(1, "Word must have a name."),
   attributes: z.array(z.number()).optional().nullable(),
   language: z.string().optional().nullable(),
@@ -377,7 +379,15 @@ export const adminRouter = createTRPCRouter({
       }
     }
   ),
-  editWord: adminProcedure.input(EditWordSchema).mutation(async ({ input, ctx: { db } }) => {
-    console.log(input)
+  editWord: adminProcedure.input(EditWordSchema).mutation(async ({ input: word, ctx: { db } }) => {
+    console.log(new Date(Date.now()).toISOString())
+    const updatedWord = await db.update(words).set({
+      name: word.name,
+      prefix: word.prefix,
+      suffix: word.suffix,
+      phonetic: word.phonetic,
+      updated_at: new Date(Date.now()).toISOString()
+    }).where(eq(words.id, word.id)).returning().execute()
+    return updatedWord
   })
 });

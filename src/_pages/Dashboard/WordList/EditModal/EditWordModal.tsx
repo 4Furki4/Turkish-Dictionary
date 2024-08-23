@@ -41,6 +41,17 @@ const editWordFormSchema = z.object({
     suffix: z.string().optional(),
     prefix: z.string().optional(),
     meanings: z.array(editMeaningFormSchema.partial()).min(1)
+}).refine(schema => {
+    console.log("lang validation")
+    const hasLang = Boolean(schema.language)
+    const hasRoot = Boolean(schema.root)
+    if (!hasLang && hasRoot) {
+        return hasLang
+    }
+    return true
+}, {
+    message: "Language is required when root is specified",
+    path: ["language"],
 })
 
 export default function EditWordModal({
@@ -66,9 +77,8 @@ export default function EditWordModal({
     const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
-    const { control, setValue, reset, handleSubmit, formState: { errors } } = useForm<EditWordForm>({
-        mode: "all",
-        resolver: zodResolver(editWordFormSchema)
+    const { control, setValue, reset, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<EditWordForm>({
+        resolver: zodResolver(editWordFormSchema),
     })
     console.log("errors", errors)
     const { fields, append, prepend, remove } = useFieldArray({
@@ -136,7 +146,15 @@ export default function EditWordModal({
     }
     function onSubmit(data: EditWordForm) {
         console.log("meanings", data.meanings)
+        console.log("data", data)
+        if (data.language && !data.root) {
+            setError("root", {
+                message: "Please specify the root when language is selected"
+            })
+            return false
+        }
         const preparedData = {
+            id: word_data!.word_id,
             name: data.name,
             meanings: data.meanings.map((m) => ({
                 meaning: m.meaning,
@@ -178,7 +196,7 @@ export default function EditWordModal({
                                     <WordAttributesInput setFieldValue={setValue} key={wordName} control={control} wordAttributes={wordAttributes ?? []} selectedWordAttributes={data[0].word_data.attributes ?? []} />
                                 </div>
                                 <div className='grid sm:grid-cols-2 gap-2 '>
-                                    <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} />
+                                    <WordLanguageInput control={control} languages={languages} selectedLanguage={data[0].word_data.root.language_code} setFieldValue={setValue} />
                                     <WordRootInput control={control} />
                                 </div>
                                 <div className='grid sm:grid-cols-2 gap-2'>

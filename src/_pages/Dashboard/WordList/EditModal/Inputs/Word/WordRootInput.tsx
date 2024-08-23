@@ -19,6 +19,8 @@ export default function WordRootInput({
                     labelPlacement='outside'
                     radius='sm'
                     placeholder={`You can enter the word's root here`}
+                    isInvalid={error !== undefined}
+                    errorMessage={error?.message}
                     {...field}
                 />
             )}

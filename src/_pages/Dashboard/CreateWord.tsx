@@ -77,6 +77,9 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     },
     mode: "all",
   });
+  console.log('errors', formState.errors)
+  console.log('lang', watch("language"))
+  console.log('root', watch("root"))
   const { isOpen: isWordAttModalOpen, onOpenChange: onWordAttModalOpenChange, onOpen: onWordAttModalOpen, onClose: onWordAttributeClose } = useDisclosure()
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
