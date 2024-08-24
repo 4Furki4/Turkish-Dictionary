@@ -1,40 +1,18 @@
 import { TRPCError } from "@trpc/server";
 import { adminProcedure, createTRPCRouter } from "../trpc";
 import { z } from "zod";
-import { createWordSchema } from "@/src/lib/zod-schemas";
 import { eq, sql } from "drizzle-orm";
-import { InsertWord, words } from "@/db/schema/words";
+import { words } from "@/db/schema/words";
 import { InsertMeaning, meanings } from "@/db/schema/meanings";
 import { roots } from "@/db/schema/roots";
 import { meaningAttributes, meaningsAttributes } from "@/db/schema/meaning_attributes";
 import { authors } from "@/db/schema/authors";
-import { Meaning, MeaningInputs, WordForm, WordSearchResult } from "@/types";
-import { PartOfSpeech, partOfSpeechs } from "@/db/schema/part_of_speechs";
+import { WordSearchResult } from "@/types";
+import { partOfSpeechs } from "@/db/schema/part_of_speechs";
 import { examples } from "@/db/schema/examples";
 import { languages } from "@/db/schema/languages";
 import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
-import { date } from "drizzle-orm/pg-core";
-const CreateWordSchema = z.ZodType<WordForm>
-const EditMeaningSchema = z.object({
-  meaning: z.string().min(1, "Meaning input cannot be empty!"),
-  attributes: z.array(z.number()).optional().nullable(),
-  partOfSpeechId: z.number({ required_error: "Part of Speech is required!" }),
-  exampleSentence: z.string().min(5).optional().nullable(),
-  authorId: z.number().optional().nullable()
-})
-
-const EditWordSchema = z.object({
-  id: z.number(),
-  name: z.string().min(1, "Word must have a name."),
-  attributes: z.array(z.number()).optional().nullable(),
-  language: z.string().optional().nullable(),
-  root: z.string().optional().nullable(),
-  phonetic: z.string().optional().nullable(),
-  suffix: z.string().optional().nullable(),
-  prefix: z.string().optional().nullable(),
-  meanings: z.array(EditMeaningSchema).min(1)
-})
-
+import { EditWordSchema } from "../schemas/admin";
 export const adminRouter = createTRPCRouter({
   deleteWord: adminProcedure
     .input(
@@ -380,7 +358,7 @@ export const adminRouter = createTRPCRouter({
     }
   ),
   editWord: adminProcedure.input(EditWordSchema).mutation(async ({ input: word, ctx: { db } }) => {
-    console.log(new Date(Date.now()).toISOString())
+
     const updatedWord = await db.update(words).set({
       name: word.name,
       prefix: word.prefix,
@@ -388,6 +366,81 @@ export const adminRouter = createTRPCRouter({
       phonetic: word.phonetic,
       updated_at: new Date(Date.now()).toISOString()
     }).where(eq(words.id, word.id)).returning().execute()
+    const existingMeaningIdsResponse = await db.query.meanings.findMany({
+      where: eq(meanings.wordId, word.id),
+      columns: {
+        id: true
+      }
+    })
+
+    const brandNewMeanings = word.meanings.filter((value) => value.id === '')
+    const existingMeaningIds = existingMeaningIdsResponse.map((val) => val.id)
+    const meaningIdsRecieved = word.meanings.map(meaning => meaning.id)
+    const meaningIdsToBeDeleted = existingMeaningIds.filter((receivedId) => !meaningIdsRecieved.includes(receivedId as number))
+    const meaningsToUpdate = word.meanings.filter(meaning => meaning.id !== '')
+
+    if (meaningsToUpdate.length > 0) {
+      for (const meaning of meaningsToUpdate) {
+        await db.update(meanings).set({
+          meaning: meaning.meaning,
+          partOfSpeechId: meaning.partOfSpeechId,
+        }).where(eq(meanings.id, meaning.id! as number))
+
+        if (meaning.attributes) {
+          if (meaning.attributes.length === 0) {
+            await db.delete(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id! as number))
+          } else {
+            for (const attributeId of meaning.attributes) {
+              await db.insert(meaningsAttributes).values({
+                attributeId: attributeId,
+                meaningId: meaning.id as number,
+              }).onConflictDoNothing()
+            }
+          }
+        }
+
+        if (meaning.exampleSentence) {
+          await db.update(examples).set({
+            authorId: meaning.authorId,
+            meaningId: meaning.id as number,
+            sentence: meaning.exampleSentence
+          }).where(eq(examples.meaningId, meaning.id! as number))
+        }
+      }
+    }
+
+
+    if (brandNewMeanings.length > 0) {
+      for (const newMeaning of brandNewMeanings) {
+        const insertedMeaning = await db.insert(meanings).values({
+          meaning: newMeaning.meaning,
+          partOfSpeechId: newMeaning.partOfSpeechId,
+          wordId: word.id,
+        }).returning()
+
+        if (newMeaning.exampleSentence)
+          await db.insert(examples).values({
+            sentence: newMeaning.exampleSentence,
+            authorId: newMeaning.authorId,
+            meaningId: insertedMeaning[0].id
+          })
+
+        if (newMeaning.attributes && newMeaning.attributes.length > 0) {
+          for (const attribute of newMeaning.attributes) {
+            await db.insert(meaningsAttributes).values({
+              attributeId: attribute,
+              meaningId: insertedMeaning[0].id,
+            })
+          }
+        }
+      }
+    }
+
+    if (meaningIdsToBeDeleted.length > 0)
+      for (const meaningId of meaningIdsToBeDeleted) {
+        await db.delete(meanings).where(eq(meanings.id, meaningId))
+      }
+
     return updatedWord
   })
 });

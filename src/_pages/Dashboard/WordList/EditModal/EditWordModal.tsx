@@ -25,6 +25,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 const editMeaningFormSchema = z.object({
+    id: z.string().or(z.number()).optional().nullable(),
     meaning: z.string().min(1, "Meaning input cannot be empty!"),
     attributes: z.union([z.array(z.string()), z.undefined()]),
     partOfSpeechId: z.string().min(1, "Please select a part of speech option."),
@@ -77,10 +78,11 @@ export default function EditWordModal({
     const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
     const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
     const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
-    const { control, setValue, reset, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<EditWordForm>({
+    const { control, setValue, reset, handleSubmit, setError, watch, formState: { errors } } = useForm<EditWordForm>({
         resolver: zodResolver(editWordFormSchema),
     })
-    console.log("errors", errors)
+    console.log('errors', errors)
+    console.log("meanings", watch("meanings"))
     const { fields, append, prepend, remove } = useFieldArray({
         name: "meanings",
         control,
@@ -96,9 +98,9 @@ export default function EditWordModal({
         },
     })
     const editWordMutation = api.admin.editWord.useMutation({
-        onSettled: (data) => {
-            console.log(data)
-            toast.info("settled")
+        onSuccess: (data) => {
+            console.log("onsuccess data", data)
+            toast.success("Successfully updated.")
         }
     })
 
@@ -119,8 +121,8 @@ export default function EditWordModal({
         ...author,
         id: author.id.toString()
     })) ?? []
-
     const meanings: EditMeaningForm[] = word_data?.meanings.map((m) => ({
+        id: m.meaning_id,
         meaning: m.meaning,
         exampleSentence: m.sentence ?? '',
         partOfSpeechId: m.part_of_speech_id.toString(),
@@ -128,6 +130,7 @@ export default function EditWordModal({
         authorId: m.author_id?.toString()
     })) ?? []
     const emptyMeaningValues: EditMeaningForm = {
+        id: '',
         attributes: [],
         authorId: '',
         exampleSentence: '',
@@ -157,6 +160,7 @@ export default function EditWordModal({
             id: word_data!.word_id,
             name: data.name,
             meanings: data.meanings.map((m) => ({
+                id: m.id,
                 meaning: m.meaning,
                 attributes: m.attributes?.map((at) => parseInt(at)),
                 partOfSpeechId: parseInt(m.partOfSpeechId),

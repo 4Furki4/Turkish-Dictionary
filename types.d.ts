@@ -123,6 +123,7 @@ type DashboardWordList = {
 }
 
 type EditMeaningForm = {
+  id: string | number
   meaning: string
   attributes?: string[]
   partOfSpeechId: string
