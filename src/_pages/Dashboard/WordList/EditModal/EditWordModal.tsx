@@ -72,7 +72,7 @@ export default function EditWordModal({
         partOfSpeech: PartOfSpeech;
     }[],
 }) {
-    const { data, isFetching, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
+    const { data, isError, status, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
         enabled: isOpen,
     })
     const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
@@ -173,12 +173,11 @@ export default function EditWordModal({
         console.log(preparedData.meanings)
         editWordMutation.mutate(preparedData)
     }
-
-    if (isFetching || isLoading) {
+    if (isOpen && isLoading) {
         return <Spinner className='absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2' />
     }
-    if (!data) {
-        return <></>
+    if (isError || !data) {
+        return <></> // TODO: handle error management when no data for the word wanted to be edited
     }
     return (
         <Modal placement='center' size='5xl' backdrop='blur' scrollBehavior='outside' isOpen={isOpen} onOpenChange={onOpenChange} key={`edit-word-modal-${wordName}`}>
