@@ -148,8 +148,6 @@ export default function EditWordModal({
         toast.success("Changes discarded!")
     }
     function onSubmit(data: EditWordForm) {
-        console.log("meanings", data.meanings)
-        console.log("data", data)
         if (data.language && !data.root) {
             setError("root", {
                 message: "Please specify the root when language is selected"
@@ -164,8 +162,8 @@ export default function EditWordModal({
                 meaning: m.meaning,
                 attributes: m.attributes?.map((at) => parseInt(at)),
                 partOfSpeechId: parseInt(m.partOfSpeechId),
-                authorId: m.authorId ? parseInt(m.authorId) : undefined,
-                exampleSentence: m.exampleSentence,
+                authorId: m.authorId ? parseInt(m.authorId) : null,
+                exampleSentence: m.exampleSentence === "" ? null : m.exampleSentence,
             })),
             attributes: data.attributes?.map((att) => (parseInt(att))),
             language: data.language,
@@ -174,6 +172,7 @@ export default function EditWordModal({
             prefix: data.prefix,
             suffix: data.suffix
         }
+        console.log(preparedData.meanings)
         editWordMutation.mutate(preparedData)
     }
 

@@ -435,11 +435,23 @@ export const adminRouter = createTRPCRouter({
         }
 
         if (meaning.exampleSentence) {
-          await db.update(examples).set({
-            authorId: meaning.authorId,
-            meaningId: meaning.id as number,
-            sentence: meaning.exampleSentence
-          }).where(eq(examples.meaningId, meaning.id! as number))
+          const hasAlreadyExample = await db.query.examples.findFirst({
+            where: eq(examples.meaningId, meaning.id as number)
+          })
+          if (hasAlreadyExample) {
+            await db.update(examples).set({
+              authorId: meaning.authorId,
+              meaningId: meaning.id as number,
+              sentence: meaning.exampleSentence
+            }).where(eq(examples.meaningId, meaning.id! as number))
+          }
+          else {
+            await db.insert(examples).values({
+              meaningId: meaning.id as number,
+              sentence: meaning.exampleSentence,
+              authorId: meaning.authorId
+            })
+          }
         }
       }
     }
