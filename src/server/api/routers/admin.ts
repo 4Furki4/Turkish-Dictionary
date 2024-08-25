@@ -358,7 +358,6 @@ export const adminRouter = createTRPCRouter({
     }
   ),
   editWord: adminProcedure.input(EditWordSchema).mutation(async ({ input: word, ctx: { db } }) => {
-
     const updatedWord = await db.update(words).set({
       name: word.name,
       prefix: word.prefix,
@@ -366,12 +365,41 @@ export const adminRouter = createTRPCRouter({
       phonetic: word.phonetic,
       updated_at: new Date(Date.now()).toISOString()
     }).where(eq(words.id, word.id)).returning().execute()
+
     const existingMeaningIdsResponse = await db.query.meanings.findMany({
       where: eq(meanings.wordId, word.id),
       columns: {
         id: true
       }
     })
+
+    if (word.language && word.root) {
+      const [result] = await db.select({
+        id: languages.id
+      }).from(languages).where(eq(languages.language_code, word.language))
+      await db.update(roots).set({
+        languageId: result.id,
+        root: word.root
+      })
+    }
+
+    if (word.attributes && word.attributes.length === 0) {
+      await db.delete(wordsAttributes).where(eq(wordsAttributes.wordId, word.id))
+    }
+
+    if (word.attributes && word.attributes.length > 0) {
+      const existingWordAttributes = await db.select({ attributeId: wordsAttributes.attributeId }).from(wordsAttributes).where(eq(wordsAttributes.wordId, word.id))
+      const wordAttributesToBeDeleted = existingWordAttributes.filter(val => !word.attributes?.includes(val.attributeId)).map(val => val.attributeId)
+      for (const attributeId of wordAttributesToBeDeleted) {
+        await db.delete(wordsAttributes).where(eq(wordsAttributes.attributeId, attributeId))
+      }
+      for (const attributeId of word.attributes) {
+        await db.insert(wordsAttributes).values({
+          attributeId,
+          wordId: word.id
+        }).onConflictDoNothing()
+      }
+    }
 
     const brandNewMeanings = word.meanings.filter((value) => value.id === '')
     const existingMeaningIds = existingMeaningIdsResponse.map((val) => val.id)
@@ -386,16 +414,23 @@ export const adminRouter = createTRPCRouter({
           partOfSpeechId: meaning.partOfSpeechId,
         }).where(eq(meanings.id, meaning.id! as number))
 
-        if (meaning.attributes) {
-          if (meaning.attributes.length === 0) {
-            await db.delete(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id! as number))
-          } else {
-            for (const attributeId of meaning.attributes) {
-              await db.insert(meaningsAttributes).values({
-                attributeId: attributeId,
-                meaningId: meaning.id as number,
-              }).onConflictDoNothing()
-            }
+        if (meaning.attributes && meaning.attributes.length === 0) {
+          await db.delete(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id! as number))
+        }
+
+        if (meaning.attributes && meaning.attributes.length > 0) {
+          const existingMeaningAttributes = await db.select({ attributeId: meaningsAttributes.attributeId }).from(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id as number))
+          const meaningAttributeIdsToBeDeleted = existingMeaningAttributes.filter(att => !meaning.attributes?.includes(att.attributeId)).map(val => val.attributeId)
+
+          for (const attributeId of meaningAttributeIdsToBeDeleted) {
+            await db.delete(meaningsAttributes).where(eq(meaningsAttributes.attributeId, attributeId))
+          }
+
+          for (const attributeId of meaning.attributes) {
+            await db.insert(meaningsAttributes).values({
+              attributeId: attributeId,
+              meaningId: meaning.id as number,
+            }).onConflictDoNothing()
           }
         }
 

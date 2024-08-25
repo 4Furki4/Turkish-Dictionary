@@ -127,7 +127,7 @@ export default function EditWordModal({
         exampleSentence: m.sentence ?? '',
         partOfSpeechId: m.part_of_speech_id.toString(),
         attributes: m.attributes?.map((att) => att.attribute_id.toString()),
-        authorId: m.author_id?.toString()
+        authorId: m.author_id?.toString(),
     })) ?? []
     const emptyMeaningValues: EditMeaningForm = {
         id: '',
@@ -165,7 +165,7 @@ export default function EditWordModal({
                 attributes: m.attributes?.map((at) => parseInt(at)),
                 partOfSpeechId: parseInt(m.partOfSpeechId),
                 authorId: m.authorId ? parseInt(m.authorId) : undefined,
-                sentence: m.exampleSentence,
+                exampleSentence: m.exampleSentence,
             })),
             attributes: data.attributes?.map((att) => (parseInt(att))),
             language: data.language,
