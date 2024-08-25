@@ -43,7 +43,10 @@ export default function AddMeaningAttributeModal({
                             Add new meaning attribute
                         </ModalHeader>
                         <ModalBody>
-                            <form key={'add-word-attribute-form'} onSubmit={handleSubmit(onNewAttributeSubmit)} className='grid gap-2'>
+                            <form key={'add-word-attribute-form'} onSubmit={(e) => {
+                                e.stopPropagation()
+                                handleSubmit(onNewAttributeSubmit)(e)
+                            }} className='grid gap-2'>
                                 <Controller control={newAttributeControl} name='attribute' rules={{
                                     required: {
                                         value: true,

@@ -43,7 +43,10 @@ export default function AddAuthorModal({
                             Add new author
                         </ModalHeader>
                         <ModalBody>
-                            <form key={'add-author-form'} onSubmit={handleSubmit(onNewAttributeSubmit)} className='grid gap-2'>
+                            <form key={'add-author-form'} onSubmit={e => {
+                                e.stopPropagation()
+                                handleSubmit(onNewAttributeSubmit)(e)
+                            }} className='grid gap-2'>
                                 <Controller control={newAttributeControl} name='attribute' rules={{
                                     required: {
                                         value: true,
