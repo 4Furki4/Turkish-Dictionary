@@ -17,7 +17,7 @@ import AttributesInput from './Inputs/Meaning/AttributesInput';
 import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
 import AuthorInput from './Inputs/Meaning/AuthorInput';
 import WordAttributesInput from './Inputs/Word/WordAttributesInput';
-import { BetweenVerticalEnd, BetweenVerticalStart, X } from 'lucide-react';
+import { BetweenVerticalEnd, BetweenVerticalStart, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -81,8 +81,6 @@ export default function EditWordModal({
     const { control, setValue, reset, handleSubmit, setError, watch, formState: { errors } } = useForm<EditWordForm>({
         resolver: zodResolver(editWordFormSchema),
     })
-    console.log('errors', errors)
-    console.log("meanings", watch("meanings"))
     const { fields, append, prepend, remove } = useFieldArray({
         name: "meanings",
         control,
@@ -192,7 +190,6 @@ export default function EditWordModal({
                         </ModalHeader>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <ModalBody>
-
                                 <WordNameInput control={control} />
                                 <div className='grid sm:grid-cols-2 gap-2 '>
                                     <WordPhoneticInput control={control} />
@@ -215,7 +212,7 @@ export default function EditWordModal({
                                             <div className='sr-only'>
                                                 Remove the meaning
                                             </div>
-                                            <X />
+                                            <Trash2 />
                                         </Button>
                                         <CardBody className="flex flex-col gap-2 mt-4">
                                             <MeaningInput index={index} control={control} />
@@ -264,7 +261,7 @@ export default function EditWordModal({
                                     <Button type='button' onPress={discardChanges} color='danger'>
                                         Discard Changes
                                     </Button>
-                                    <Button type='submit' color='primary'>
+                                    <Button type='submit' color='primary' isLoading={editWordMutation.isPending}>
                                         Submit
                                     </Button>
                                 </ButtonGroup>
