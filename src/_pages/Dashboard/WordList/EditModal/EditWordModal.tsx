@@ -61,16 +61,20 @@ export default function EditWordModal({
     wordName,
     languages,
     partOfSpeeches,
+    wordsPerPage,
+    skip
 }: {
     isOpen: boolean;
     onOpen: () => void;
     onOpenChange: () => void;
     wordName: string;
-    languages: Language[],
+    languages: Language[];
     partOfSpeeches: {
         id: string;
         partOfSpeech: PartOfSpeech;
-    }[],
+    }[];
+    wordsPerPage: number;
+    skip: number;
 }) {
     const { data, isError, status, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
         enabled: isOpen,
@@ -95,9 +99,14 @@ export default function EditWordModal({
             }
         },
     })
+    const utils = api.useUtils()
     const editWordMutation = api.admin.editWord.useMutation({
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             toast.success("Successfully updated.")
+            await utils.word.getWords.refetch({
+                skip,
+                take: wordsPerPage
+            })
         },
         onError: (data) => {
             console.log('error data', data)
