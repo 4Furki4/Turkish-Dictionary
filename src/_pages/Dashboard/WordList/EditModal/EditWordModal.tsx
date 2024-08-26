@@ -97,8 +97,11 @@ export default function EditWordModal({
     })
     const editWordMutation = api.admin.editWord.useMutation({
         onSuccess: (data) => {
-            console.log("onsuccess data", data)
             toast.success("Successfully updated.")
+        },
+        onError: (data) => {
+            console.log('error data', data)
+            toast.error(data.message)
         }
     })
 

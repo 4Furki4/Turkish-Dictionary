@@ -358,98 +358,166 @@ export const adminRouter = createTRPCRouter({
     }
   ),
   editWord: adminProcedure.input(EditWordSchema).mutation(async ({ input: word, ctx: { db } }) => {
-    const updatedWord = await db.update(words).set({
-      name: word.name,
-      prefix: word.prefix,
-      suffix: word.suffix,
-      phonetic: word.phonetic,
-      updated_at: new Date(Date.now()).toISOString()
-    }).where(eq(words.id, word.id)).returning().execute()
-
-    const existingMeaningIdsResponse = await db.query.meanings.findMany({
-      where: eq(meanings.wordId, word.id),
-      columns: {
-        id: true
-      }
-    })
-
-    if (word.language && word.root) {
-      const [result] = await db.select({
-        id: languages.id
-      }).from(languages).where(eq(languages.language_code, word.language))
-      await db.update(roots).set({
-        languageId: result.id,
-        root: word.root
+    try {
+      const updatedWord = await db.update(words).set({
+        name: word.name,
+        prefix: word.prefix,
+        suffix: word.suffix,
+        phonetic: word.phonetic,
+        updated_at: new Date(Date.now()).toISOString()
+      }).where(eq(words.id, word.id)).returning().execute()
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An error occurred while updating the word's details. Please try again!",
+        cause: error
       })
     }
 
+
+    if (word.language && word.root) {
+      try {
+        const [result] = await db.select({
+          id: languages.id
+        }).from(languages).where(eq(languages.language_code, word.language))
+        await db.update(roots).set({
+          languageId: result.id,
+          root: word.root
+        })
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred while updating the word's language details! Please try again. If the error persists, please contact the admin."
+        })
+      }
+    }
+
     if (word.attributes && word.attributes.length === 0) {
-      await db.delete(wordsAttributes).where(eq(wordsAttributes.wordId, word.id))
+      try {
+        await db.delete(wordsAttributes).where(eq(wordsAttributes.wordId, word.id))
+
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred while removing the unselected word attributes! Please try again. If the error persists, please contact the admin."
+        })
+      }
     }
 
     if (word.attributes && word.attributes.length > 0) {
-      const existingWordAttributes = await db.select({ attributeId: wordsAttributes.attributeId }).from(wordsAttributes).where(eq(wordsAttributes.wordId, word.id))
-      const wordAttributesToBeDeleted = existingWordAttributes.filter(val => !word.attributes?.includes(val.attributeId)).map(val => val.attributeId)
-      for (const attributeId of wordAttributesToBeDeleted) {
-        await db.delete(wordsAttributes).where(eq(wordsAttributes.attributeId, attributeId))
-      }
-      for (const attributeId of word.attributes) {
-        await db.insert(wordsAttributes).values({
-          attributeId,
-          wordId: word.id
-        }).onConflictDoNothing()
+      try {
+        const existingWordAttributes = await db.select({ attributeId: wordsAttributes.attributeId }).from(wordsAttributes).where(eq(wordsAttributes.wordId, word.id))
+        const wordAttributesToBeDeleted = existingWordAttributes.filter(val => !word.attributes?.includes(val.attributeId)).map(val => val.attributeId)
+        for (const attributeId of wordAttributesToBeDeleted) {
+          await db.delete(wordsAttributes).where(eq(wordsAttributes.attributeId, attributeId))
+        }
+        for (const attributeId of word.attributes) {
+          await db.insert(wordsAttributes).values({
+            attributeId,
+            wordId: word.id
+          }).onConflictDoNothing()
+        }
+
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred while updating the word's attributes. Please try again. If the error persists, please contact the admin."
+        })
       }
     }
+    let brandNewMeanings, meaningIdsToBeDeleted, meaningsToUpdate;
+    try {
+      const existingMeaningIdsResponse = await db.query.meanings.findMany({
+        where: eq(meanings.wordId, word.id),
+        columns: {
+          id: true
+        }
+      })
+      const existingMeaningIds = existingMeaningIdsResponse.map((val) => val.id)
+      const meaningIdsRecieved = word.meanings.map(meaning => meaning.id)
+      brandNewMeanings = word.meanings.filter((value) => value.id === '')
+      meaningIdsToBeDeleted = existingMeaningIds.filter((receivedId) => !meaningIdsRecieved.includes(receivedId as number))
+      meaningsToUpdate = word.meanings.filter(meaning => meaning.id !== '')
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unknown error occurred in meaning update logic. If it keeps happening, please contact with the developer!",
+      })
+    }
 
-    const brandNewMeanings = word.meanings.filter((value) => value.id === '')
-    const existingMeaningIds = existingMeaningIdsResponse.map((val) => val.id)
-    const meaningIdsRecieved = word.meanings.map(meaning => meaning.id)
-    const meaningIdsToBeDeleted = existingMeaningIds.filter((receivedId) => !meaningIdsRecieved.includes(receivedId as number))
-    const meaningsToUpdate = word.meanings.filter(meaning => meaning.id !== '')
 
     if (meaningsToUpdate.length > 0) {
       for (const meaning of meaningsToUpdate) {
-        await db.update(meanings).set({
-          meaning: meaning.meaning,
-          partOfSpeechId: meaning.partOfSpeechId,
-        }).where(eq(meanings.id, meaning.id! as number))
+        try {
+          await db.update(meanings).set({
+            meaning: meaning.meaning,
+            partOfSpeechId: meaning.partOfSpeechId,
+          }).where(eq(meanings.id, meaning.id! as number))
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "An error occurred while updating the meaning and its part of speech. Please try again. If the error persists, please contact the admin."
+          })
+        }
+
 
         if (meaning.attributes && meaning.attributes.length === 0) {
-          await db.delete(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id! as number))
+          try {
+            await db.delete(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id! as number))
+          } catch (error) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "An error occurred while removing the unselected meaning attributes. Please try again. If the error persists, please contact the admin."
+            })
+          }
         }
 
         if (meaning.attributes && meaning.attributes.length > 0) {
-          const existingMeaningAttributes = await db.select({ attributeId: meaningsAttributes.attributeId }).from(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id as number))
-          const meaningAttributeIdsToBeDeleted = existingMeaningAttributes.filter(att => !meaning.attributes?.includes(att.attributeId)).map(val => val.attributeId)
+          try {
+            const existingMeaningAttributes = await db.select({ attributeId: meaningsAttributes.attributeId }).from(meaningsAttributes).where(eq(meaningsAttributes.meaningId, meaning.id as number))
+            const meaningAttributeIdsToBeDeleted = existingMeaningAttributes.filter(att => !meaning.attributes?.includes(att.attributeId)).map(val => val.attributeId)
 
-          for (const attributeId of meaningAttributeIdsToBeDeleted) {
-            await db.delete(meaningsAttributes).where(eq(meaningsAttributes.attributeId, attributeId))
-          }
+            for (const attributeId of meaningAttributeIdsToBeDeleted) {
+              await db.delete(meaningsAttributes).where(eq(meaningsAttributes.attributeId, attributeId))
+            }
 
-          for (const attributeId of meaning.attributes) {
-            await db.insert(meaningsAttributes).values({
-              attributeId: attributeId,
-              meaningId: meaning.id as number,
-            }).onConflictDoNothing()
+            for (const attributeId of meaning.attributes) {
+              await db.insert(meaningsAttributes).values({
+                attributeId: attributeId,
+                meaningId: meaning.id as number,
+              }).onConflictDoNothing()
+            }
+          } catch (error) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "An error occurred while updating the meaning attributes. Please try again. If the error persists, please contact the admin."
+            })
           }
         }
 
         if (meaning.exampleSentence) {
-          const hasAlreadyExample = await db.query.examples.findFirst({
-            where: eq(examples.meaningId, meaning.id as number)
-          })
-          if (hasAlreadyExample) {
-            await db.update(examples).set({
-              authorId: meaning.authorId,
-              meaningId: meaning.id as number,
-              sentence: meaning.exampleSentence
-            }).where(eq(examples.meaningId, meaning.id! as number))
-          }
-          else {
-            await db.insert(examples).values({
-              meaningId: meaning.id as number,
-              sentence: meaning.exampleSentence,
-              authorId: meaning.authorId
+          try {
+            const hasAlreadyExample = await db.query.examples.findFirst({
+              where: eq(examples.meaningId, meaning.id as number)
+            })
+            if (hasAlreadyExample) {
+              await db.update(examples).set({
+                authorId: meaning.authorId,
+                meaningId: meaning.id as number,
+                sentence: meaning.exampleSentence
+              }).where(eq(examples.meaningId, meaning.id! as number))
+            }
+            else {
+              await db.insert(examples).values({
+                meaningId: meaning.id as number,
+                sentence: meaning.exampleSentence,
+                authorId: meaning.authorId
+              })
+            }
+          } catch (error) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "An error occurred while updating the example sentence and/or author. Please try again. If the error persists, please contact the admin."
             })
           }
         }
@@ -459,35 +527,52 @@ export const adminRouter = createTRPCRouter({
 
     if (brandNewMeanings.length > 0) {
       for (const newMeaning of brandNewMeanings) {
-        const insertedMeaning = await db.insert(meanings).values({
-          meaning: newMeaning.meaning,
-          partOfSpeechId: newMeaning.partOfSpeechId,
-          wordId: word.id,
-        }).returning()
+        try {
+          const insertedMeaning = await db.insert(meanings).values({
+            meaning: newMeaning.meaning,
+            partOfSpeechId: newMeaning.partOfSpeechId,
+            wordId: word.id,
+          }).returning()
 
-        if (newMeaning.exampleSentence)
-          await db.insert(examples).values({
-            sentence: newMeaning.exampleSentence,
-            authorId: newMeaning.authorId,
-            meaningId: insertedMeaning[0].id
-          })
-
-        if (newMeaning.attributes && newMeaning.attributes.length > 0) {
-          for (const attribute of newMeaning.attributes) {
-            await db.insert(meaningsAttributes).values({
-              attributeId: attribute,
-              meaningId: insertedMeaning[0].id,
+          if (newMeaning.exampleSentence)
+            await db.insert(examples).values({
+              sentence: newMeaning.exampleSentence,
+              authorId: newMeaning.authorId,
+              meaningId: insertedMeaning[0].id
             })
+
+          if (newMeaning.attributes && newMeaning.attributes.length > 0) {
+            for (const attribute of newMeaning.attributes) {
+              await db.insert(meaningsAttributes).values({
+                attributeId: attribute,
+                meaningId: insertedMeaning[0].id,
+              })
+            }
           }
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "An error occurred while creating new meanings. Please try again. If the error persists, please contact the admin."
+          })
         }
+
       }
     }
 
     if (meaningIdsToBeDeleted.length > 0)
-      for (const meaningId of meaningIdsToBeDeleted) {
-        await db.delete(meanings).where(eq(meanings.id, meaningId))
+      try {
+        for (const meaningId of meaningIdsToBeDeleted) {
+          await db.delete(meanings).where(eq(meanings.id, meaningId))
+        }
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred while removing the unselected meanings. Please try again. If the error persists, please contact the admin."
+        })
       }
-
-    return updatedWord
+    const message = "All updating operations gone successfull!"
+    return {
+      message
+    }
   })
 });
