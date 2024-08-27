@@ -365,7 +365,7 @@ export const adminRouter = createTRPCRouter({
         suffix: word.suffix,
         phonetic: word.phonetic,
         updated_at: new Date(Date.now()).toISOString()
-      }).where(eq(words.id, 33322121213)).returning().execute()
+      }).where(eq(words.id, word.id)).returning().execute()
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
