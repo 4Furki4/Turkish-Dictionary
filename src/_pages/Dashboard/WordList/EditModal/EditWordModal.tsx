@@ -43,7 +43,6 @@ const editWordFormSchema = z.object({
     prefix: z.string().optional(),
     meanings: z.array(editMeaningFormSchema.partial()).min(1)
 }).refine(schema => {
-    console.log("lang validation")
     const hasLang = Boolean(schema.language)
     const hasRoot = Boolean(schema.root)
     if (!hasLang && hasRoot) {
@@ -102,14 +101,12 @@ export default function EditWordModal({
     const utils = api.useUtils()
     const editWordMutation = api.admin.editWord.useMutation({
         onSuccess: async (data) => {
-            toast.success("Successfully updated.")
             await utils.word.getWords.refetch({
                 skip,
                 take: wordsPerPage
             })
         },
         onError: (data) => {
-            console.log('error data', data)
             toast.error(data.message)
         }
     })
@@ -182,7 +179,6 @@ export default function EditWordModal({
             prefix: data.prefix,
             suffix: data.suffix
         }
-        console.log(preparedData.meanings)
         editWordMutation.mutate(preparedData)
     }
     if (isOpen && isLoading) {

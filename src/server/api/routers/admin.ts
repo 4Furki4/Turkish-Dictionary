@@ -365,12 +365,14 @@ export const adminRouter = createTRPCRouter({
         suffix: word.suffix,
         phonetic: word.phonetic,
         updated_at: new Date(Date.now()).toISOString()
-      }).where(eq(words.id, word.id)).returning().execute()
+      }).where(eq(words.id, 33322121213)).returning().execute()
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "An error occurred while updating the word's details. Please try again!",
-        cause: error
+        message: "An error occurred while updating the word's details. Please try again. If the error persists, please contact the admins or developers.",
+        cause: {
+
+        }
       })
     }
 
@@ -387,7 +389,7 @@ export const adminRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An error occurred while updating the word's language details! Please try again. If the error persists, please contact the admin."
+          message: "An error occurred while updating the word's language details! Please try again. If the error persists, please contact the admins or developers."
         })
       }
     }
@@ -399,7 +401,7 @@ export const adminRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An error occurred while removing the unselected word attributes! Please try again. If the error persists, please contact the admin."
+          message: "An error occurred while removing the unselected word attributes! Please try again. If the error persists, please contact the admins or developers."
         })
       }
     }
@@ -421,7 +423,7 @@ export const adminRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An error occurred while updating the word's attributes. Please try again. If the error persists, please contact the admin."
+          message: "An error occurred while updating the word's attributes. Please try again. If the error persists, please contact the admins or developers."
         })
       }
     }
@@ -456,7 +458,7 @@ export const adminRouter = createTRPCRouter({
         } catch (error) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "An error occurred while updating the meaning and its part of speech. Please try again. If the error persists, please contact the admin."
+            message: "An error occurred while updating the meaning and its part of speech. Please try again. If the error persists, please contact the admins or developers."
           })
         }
 
@@ -467,7 +469,7 @@ export const adminRouter = createTRPCRouter({
           } catch (error) {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
-              message: "An error occurred while removing the unselected meaning attributes. Please try again. If the error persists, please contact the admin."
+              message: "An error occurred while removing the unselected meaning attributes. Please try again. If the error persists, please contact the admins or developers."
             })
           }
         }
@@ -490,7 +492,7 @@ export const adminRouter = createTRPCRouter({
           } catch (error) {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
-              message: "An error occurred while updating the meaning attributes. Please try again. If the error persists, please contact the admin."
+              message: "An error occurred while updating the meaning attributes. Please try again. If the error persists, please contact the admins or developers."
             })
           }
         }
@@ -517,7 +519,7 @@ export const adminRouter = createTRPCRouter({
           } catch (error) {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
-              message: "An error occurred while updating the example sentence and/or author. Please try again. If the error persists, please contact the admin."
+              message: "An error occurred while updating the example sentence and/or author. Please try again. If the error persists, please contact the admins or developers."
             })
           }
         }
@@ -552,7 +554,7 @@ export const adminRouter = createTRPCRouter({
         } catch (error) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "An error occurred while creating new meanings. Please try again. If the error persists, please contact the admin."
+            message: "An error occurred while creating new meanings. Please try again. If the error persists, please contact the admins or developers."
           })
         }
 
@@ -567,7 +569,7 @@ export const adminRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An error occurred while removing the unselected meanings. Please try again. If the error persists, please contact the admin."
+          message: "An error occurred while removing the unselected meanings. Please try again. If the error persists, please contact the admins or developers."
         })
       }
     const message = "All updating operations gone successfull!"
