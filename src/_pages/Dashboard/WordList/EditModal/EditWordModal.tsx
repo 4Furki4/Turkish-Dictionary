@@ -101,6 +101,7 @@ export default function EditWordModal({
     const utils = api.useUtils()
     const editWordMutation = api.admin.editWord.useMutation({
         onSuccess: async (data) => {
+            toast.success("Successfully updated.")
             await utils.word.getWords.refetch({
                 skip,
                 take: wordsPerPage
