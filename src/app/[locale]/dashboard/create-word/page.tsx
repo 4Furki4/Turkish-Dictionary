@@ -10,6 +10,5 @@ export default async function Page({
   const meaningAttributes = await api.admin.getMeaningAttributes()
   const authors = await api.admin.getExampleSentenceAuthors()
   const partOfSpeeches = await api.admin.getPartOfSpeeches();
-  const wordAttributes = await api.admin.getWordAttributes();
-  return <CreateWord locale={locale} meaningAttributes={meaningAttributes} authors={authors} partOfSpeeches={partOfSpeeches} wordAttributes={wordAttributes} />;
+  return <CreateWord locale={locale} meaningAttributes={meaningAttributes} authors={authors} partOfSpeeches={partOfSpeeches} />;
 }

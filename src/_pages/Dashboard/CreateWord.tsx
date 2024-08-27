@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardBody,
+  useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -25,6 +26,9 @@ import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
+import AddWordAttributeModal from "@/src/components/customs/Modals/AddWordAttribute";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: undefined,
@@ -36,7 +40,7 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches, wordAttributes }: {
+export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches }: {
   locale: string;
   meaningAttributes: {
     id: number;
@@ -50,10 +54,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     id: number;
     partOfSpeech: PartOfSpeech;
   }[]
-  wordAttributes: {
-    id: number;
-    attribute: string;
-  }[]
 }) {
   const {
     handleSubmit,
@@ -61,10 +61,9 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     formState,
     clearErrors,
     watch,
-    reset,
     setError,
     getFieldState,
-
+    setValue
   } = useForm<WordForm>({
     defaultValues: {
       name: '',
@@ -73,11 +72,15 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       root: '',
       prefix: '',
       suffix: '',
-      attributes: undefined,
+      attributes: [],
       meanings: [meaningDefaultValues],
     },
     mode: "all",
   });
+  console.log('errors', formState.errors)
+  console.log('lang', watch("language"))
+  console.log('root', watch("root"))
+  const { isOpen: isWordAttModalOpen, onOpenChange: onWordAttModalOpenChange, onOpen: onWordAttModalOpen, onClose: onWordAttributeClose } = useDisclosure()
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
     control,
@@ -143,14 +146,15 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         image: uploadedPicturesUrls[index],
       };
     });
+    console.log('attributes', data.attributes)
     const word = {
       ...data,
+      attributes: data.attributes?.map((val) => parseInt(val)),
       meanings: meaningsWithImages,
     }
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
   };
-
   // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
   return (
     <section className="max-w-7xl w-full mx-auto max-sm:px-4 py-4">
@@ -163,13 +167,16 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
           <WordPrefixInput control={control} />
           <WordSuffixInput control={control} />
-          <WordAttributesInput wordAttributues={wordAttributes} control={control} />
+          <WordAttributesInput setValue={setValue} control={control} onOpen={onWordAttModalOpen} />
+
         </div>
 
-        <div className="w-full mt-2">
-          <h2 className="text-center text-fs-1">Meanings</h2>
 
-          {fields.map((field, index) => (
+
+
+        {fields.length > 0 ? fields.map((field, index) => (
+          <div className="w-full mt-2">
+            <h2 className="text-center text-fs-1">Meanings</h2>
             <Card key={field.id} className="mb-4 rounded-sm">
               <CardBody className="flex flex-col gap-2">
                 <WordMeaningInput index={index} control={control} />
@@ -185,25 +192,30 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
                 <Button className="rounded-sm" onClick={() => remove(index)}>Remove Meaning</Button>
               </CardBody>
             </Card>
-          ))}
 
-          <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
 
-          {formState.errors.meanings && (
-            <p className="text-red-500">
-              {formState.errors.meanings.root?.message}
-            </p>
-          )}
-        </div>
+          </div>
+        )) : (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              You must add a meaning!
+            </AlertDescription>
+          </Alert>
+        )}
+        <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
         <Button
           // isLoading={wordMutation.isLoading || isUploading}
           type="submit"
           variant="ghost"
-          className="w-full rounded-sm"
+          className="w-full"
+          radius="sm"
         >
           Submit
         </Button>
       </form>
+      <AddWordAttributeModal isOpen={isWordAttModalOpen} onClose={onWordAttributeClose} onOpenChange={onWordAttModalOpenChange} />
     </section>
   );
 }

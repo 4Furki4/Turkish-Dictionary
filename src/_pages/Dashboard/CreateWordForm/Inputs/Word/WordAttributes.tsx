@@ -1,61 +1,82 @@
+"use client"
+import { api } from '@/src/trpc/react'
 import { WordForm } from '@/types'
-import { Autocomplete, AutocompleteItem, Chip } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem } from '@nextui-org/react'
+import { Plus, X } from 'lucide-react'
 import React from 'react'
-import { Control, Controller } from 'react-hook-form'
+import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 
 export default function WordAttributesInput({
     control,
-    wordAttributues
+    onOpen,
+    setValue: setFieldValue
 }: {
     control: Control<WordForm>,
-    wordAttributues: {
-        id: number;
-        attribute: string;
-    }[]
+    onOpen: () => void
+    setValue: UseFormSetValue<WordForm>
 }) {
-    {/* TODO: LET THEM SELECT THE ADDED ATTRIBUTES OR ADD NEW ONE */ }
+    const { data: wordAttributes, isLoading, isFetching, isRefetching } = api.admin.getWordAttributes.useQuery()
+    const [values, setValues] = React.useState<Selection>(new Set([]));
+
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedAttributes = e.target.value.split(",")
+        setValues(() => new Set(selectedAttributes))
+        setFieldValue("attributes", selectedAttributes)
+    };
     return (
         <Controller
             name={`attributes`}
             control={control}
-            rules={{
-                min: {
-                    value: 1,
-                    message: "Please select at least one attribute"
-                }
-            }}
             render={({ field, fieldState: { error } }) => (
-                <Autocomplete {...field}
-                    label={'Attribute'}
-                    radius='sm'
+                <Select
                     classNames={{
-                        listboxWrapper: 'rounded-sm',
-                        popoverContent: 'rounded-sm',
-                        base: 'rounded-sm',
+                        trigger: "pl-1 h-12 min-h-12",
                     }}
-                    defaultItems={wordAttributues ?? []}
-                    allowsCustomValue
-                    onSelectionChange={(key) => {
-                        if (key) {
-                            field.onChange(key)
-                        }
-                    }}
-                    onInputChange={(value) => {
-                        const item = wordAttributues.find((attribute) => attribute.attribute === value)
-                        if (item) {
-                            field.onChange(item.id)
-                            return
-                        }
-                        field.onChange(value)
-                    }}
-                >
-                    {(item) => (
-                        <AutocompleteItem key={item.id} className="capitalize">
-                            {item && item.attribute}
-                        </AutocompleteItem>
+                    placeholder='Select an attribute...'
+                    as={"div"}
+                    selectedKeys={values}
+                    isLoading={isLoading || isFetching || isRefetching}
+                    isInvalid={error !== undefined} errorMessage={error?.message}
+                    {...field}
+                    onChange={handleSelectionChange}
+                    startContent={(
+                        <Button
+                            variant='light'
+                            isIconOnly
+                            color='danger'
+                            onPress={() => {
+                                setValues(new Set([]));
+                                setFieldValue("attributes", [])
+                            }}
+                        >
+                            <X aria-description='Reset all selected values button' />
+                            <div className='sr-only'>
+                                Reset selected values
+                            </div>
+                        </Button>
+
                     )}
-                </Autocomplete>
-            )}
+                    endContent={(
+                        <Button
+                            isIconOnly
+                            onPress={onOpen}
+                            color='primary'
+                        >
+                            <Plus></Plus>
+                            <div className='sr-only'>
+                                Add new word attribute
+                            </div>
+                        </Button>
+                    )}
+                    selectionMode='multiple'>
+                    {wordAttributes?.map((wordAttribute => (
+                        <SelectItem key={wordAttribute.id}>
+                            {wordAttribute.attribute}
+                        </SelectItem>
+                    ))) ?? []}
+                </Select>
+            )
+            }
         />
     )
 }

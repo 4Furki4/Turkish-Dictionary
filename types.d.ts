@@ -35,7 +35,7 @@ type WordInput = ToUndefinedProps<
       {
         language: string
         root: string;
-        attributes: string;
+        attributes: string[];
       }
     >
   >
@@ -59,6 +59,7 @@ type WordForm = Prettify<
     meanings: MeaningInputs[];
   }
 >;
+
 type WordFormSubmit = Prettify<{
   name: string;
   language?: string;
@@ -66,6 +67,7 @@ type WordFormSubmit = Prettify<{
   root?: string;
   prefix?: string;
   suffix?: string;
+  attributes: number[]
   meanings: {
     meaning: string;
     partOfSpeechId: number;
@@ -76,7 +78,12 @@ type WordFormSubmit = Prettify<{
     }
   }[]
 }>;
-
+type Language = {
+  id: number;
+  language_en: string;
+  language_tr: string;
+  language_code: string;
+}
 type WordSearchResult = {
   word_data: {
     word_id: number;
@@ -90,16 +97,15 @@ type WordSearchResult = {
     }[];
     root: {
       root: string;
-      language_en: string;
-      language_tr: string;
-      language_code: string;
-    };
+    } & Omit<Language, "id">
     meanings: {
       meaning_id: number;
       meaning: string;
       part_of_speech: string;
-      sentence: string | null;
-      author: string | null;
+      part_of_speech_id: number
+      sentence: string | undefined;
+      author: string | undefined;
+      author_id: number | undefined
       attributes?: [
         {
           attribute_id: number;
@@ -110,3 +116,33 @@ type WordSearchResult = {
   }
 }
 
+type DashboardWordList = {
+  word_id: number;
+  name: string;
+  meaning: string;
+}
+
+type EditMeaningForm = {
+  id: string | number
+  meaning: string
+  attributes?: string[]
+  partOfSpeechId: string
+  exampleSentence: string | undefined
+  authorId: string | undefined
+}
+
+type EditWordForm = {
+  name: string
+  attributes?: string[]
+  language?: string
+  root?: string
+  phonetic?: string
+  suffix?: string
+  prefix?: string
+  meanings: EditMeaningForm[]
+}
+
+
+type NewAttributeForm = {
+  attribute: string
+}

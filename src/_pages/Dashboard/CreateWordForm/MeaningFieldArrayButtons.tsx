@@ -15,20 +15,22 @@ export default function MeaningFieldArrayButtons({
     return (
         <ButtonGroup radius='sm' className="w-full">
             <Button
-                className="w-full rounded-sm"
+                radius='sm'
+                className="w-full"
                 type="button"
                 variant="ghost"
-                onClick={() => {
+                onPress={() => {
                     append(meaningDefaultValues);
                 }}
             >
                 Append <span className="max-sm:hidden">Meaning</span>
             </Button>
             <Button
-                className="w-full rounded-sm"
+                radius='sm'
+                className="w-full"
                 type="button"
                 variant="ghost"
-                onClick={() => {
+                onPress={() => {
                     prepend(meaningDefaultValues);
                 }}
             >
