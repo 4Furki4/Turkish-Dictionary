@@ -49,7 +49,7 @@ type Meaning = {
     author: string | undefined;
   };
   partOfSpeechId: number | undefined;
-  attributes: string;
+  attributes: string[];
 };
 
 type MeaningInputs = Partial<Meaning>;
@@ -71,7 +71,7 @@ type WordFormSubmit = Prettify<{
   meanings: {
     meaning: string;
     partOfSpeechId: number;
-    attributes?: string;
+    attributes: number[];
     example?: {
       sentence: string;
       author: 'string | number';

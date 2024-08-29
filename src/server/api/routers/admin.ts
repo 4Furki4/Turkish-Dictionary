@@ -43,7 +43,7 @@ export const adminRouter = createTRPCRouter({
     meanings: z.array(z.object({
       meaning: z.string(),
       partOfSpeechId: z.number(),
-      attributes: z.union([z.string(), z.number()]).optional(),
+      attributes: z.array(z.number()),
       example: z.object({
         sentence: z.string(),
         author: z.union([z.string(), z.number()])
@@ -139,35 +139,19 @@ export const adminRouter = createTRPCRouter({
           })
         }
       }
-      if (typeof meaning.attributes === 'number' && meaning.attributes !== undefined) {
-        try {
-          await db.insert(meaningsAttributes).values({
-            attributeId: meaning.attributes,
-            meaningId: addedMeaning.id
-          })
-        } catch (error) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong while setting meaning attributes.",
-          })
-        }
-      }
-
-      else if (typeof meaning.attributes === 'string') {
-        try {
-          const [attribute] = await db.insert(meaningAttributes).values({
-            attribute: meaning.attributes
-          }).returning()
-          await db.insert(meaningsAttributes).values({
-            attributeId: attribute.id,
-            meaningId: addedMeaning.id
-          })
-        } catch (error) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong while adding new meaning attributes to the database.",
-          })
-        }
+      try {
+        if (meaning.attributes.length > 0)
+          for (const attributeId of meaning.attributes) {
+            await db.insert(meaningsAttributes).values({
+              attributeId,
+              meaningId: addedMeaning.id
+            })
+          }
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong while setting meaning attributes."
+        })
       }
       return addedMeaning
     })

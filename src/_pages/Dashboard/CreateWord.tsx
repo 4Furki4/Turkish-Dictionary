@@ -31,7 +31,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 const meaningDefaultValues: MeaningInputs = {
-  attributes: undefined,
+  attributes: [],
   partOfSpeechId: undefined,
   meaning: undefined,
   image: undefined,
@@ -78,8 +78,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     mode: "all",
   });
   console.log('errors', formState.errors)
-  console.log('lang', watch("language"))
-  console.log('root', watch("root"))
+  console.log("watch", watch())
   const { isOpen: isWordAttModalOpen, onOpenChange: onWordAttModalOpenChange, onOpen: onWordAttModalOpen, onClose: onWordAttributeClose } = useDisclosure()
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
@@ -101,7 +100,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
   const [isUploading, setIsUploading] = React.useState(false);
   const onSubmit = async (data: WordForm) => {
     let { meanings } = data;
-    meanings = meanings.map((meaning) => {
+    const meaningsFormatted = meanings.map((meaning) => {
       return {
         ...meaning,
         partOfSpeechId: meaning.partOfSpeechId,
@@ -109,9 +108,10 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           sentence: meaning.example.sentence,
           author: meaning.example.author,
         } : undefined,
+        attributes: meaning.attributes?.map(attribute => parseInt(attribute))
       }
     })
-    const uploadedPictures = meanings.map(async (meaning) => {
+    const uploadedPictures = meaningsFormatted.map(async (meaning) => {
       if (meaning.image?.[0]) {
         const files = [meaning.image[0]];
         const response = await uploadFiles(
@@ -132,7 +132,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       return undefined;
     });
     let uploadedPicturesUrls: (string | undefined)[] = [];
-    if (meanings.every((meaning) => typeof meaning.image === typeof FileList)) {
+    if (meaningsFormatted.every((meaning) => typeof meaning.image === typeof FileList)) {
       const loadingToaster = toast.loading("Uploading images...");
 
       uploadedPicturesUrls = await Promise.all(uploadedPictures);
@@ -140,7 +140,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       toast.dismiss(loadingToaster);
       toast.success("Images uploaded!");
     }
-    const meaningsWithImages = meanings.map((meaning, index) => {
+    const meaningsWithImages = meaningsFormatted.map((meaning, index) => {
       return {
         ...meaning,
         image: uploadedPicturesUrls[index],
@@ -168,12 +168,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordPrefixInput control={control} />
           <WordSuffixInput control={control} />
           <WordAttributesInput setValue={setValue} control={control} onOpen={onWordAttModalOpen} />
-
         </div>
-
-
-
-
         {fields.length > 0 ? fields.map((field, index) => (
           <div className="w-full mt-2">
             <h2 className="text-center text-fs-1">Meanings</h2>
@@ -182,7 +177,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
                 <WordMeaningInput index={index} control={control} />
                 <div className="grid sm:grid-cols-2 gap-2">
                   <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />
-                  <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} />
+                  <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} setFieldValue={setValue} />
                   <MeaningExampleSentenceInput index={index} control={control} errors={formState.errors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} />
                   <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} errors={formState.errors} />
                 </div>
