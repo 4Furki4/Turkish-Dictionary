@@ -1,63 +1,101 @@
+"use client"
+import AddMeaningAttributeModal from '@/src/components/customs/Modals/AddMeaningAttribute';
+import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
-import { Autocomplete, AutocompleteItem, Chip } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Plus, X } from 'lucide-react';
 import React from 'react'
-import { Control, Controller } from 'react-hook-form'
+import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 
 export default function MeaningAttributesInput({
     index,
     control,
-    meaningAttributes
+    meaningAttributes,
+    setFieldValue
 }: {
     index: number,
     control: Control<WordForm>,
     meaningAttributes: {
         id: number;
         attribute: string;
-    }[]
+    }[],
+    setFieldValue: UseFormSetValue<WordForm>
 }) {
     {/* TODO: LET THEM SELECT THE ADDED ATTRIBUTES OR ADD NEW ONE */ }
+    const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
+    const [values, setValues] = React.useState<Selection>(new Set([]));
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedAttributes = e.target.value.split(",").filter((val) => val)
+        setValues(() => new Set(selectedAttributes))
+        setFieldValue(`meanings.${index}.attributes`, selectedAttributes)
+    };
+    const { data, isLoading } = api.admin.getMeaningAttributes.useQuery(undefined, {
+        initialData: meaningAttributes
+    })
     return (
-        <Controller
-            name={`meanings.${index}.attributes`}
-            control={control}
-            rules={{
-                min: {
-                    value: 1,
-                    message: "Please select at least one attribute"
-                }
-            }}
-            render={({ field, fieldState: { error } }) => (
-                <Autocomplete {...field}
-                    label={'Attribute'}
-                    defaultItems={meaningAttributes ?? []}
-                    allowsCustomValue
-                    onSelectionChange={(key) => {
-                        if (key) {
-                            field.onChange(key)
-                        }
-                    }}
-                    radius='sm'
-                    classNames={{
-                        listboxWrapper: 'rounded-sm',
-                        popoverContent: 'rounded-sm',
-                        base: 'rounded-sm',
-                    }}
-                    onInputChange={(value) => {
-                        const item = meaningAttributes.find((attribute) => attribute.attribute === value)
-                        if (item) {
-                            field.onChange(item.id)
-                            return
-                        }
-                        field.onChange(value)
-                    }}
-                >
-                    {(item) => (
-                        <AutocompleteItem key={item.id} className="capitalize">
-                            {item && item.attribute}
-                        </AutocompleteItem>
-                    )}
-                </Autocomplete>
-            )}
-        />
+        <>
+            <AddMeaningAttributeModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+            <Controller
+                name={`meanings.${index}.attributes`}
+                control={control}
+                rules={{
+                    min: {
+                        value: 1,
+                        message: "Please select at least one attribute"
+                    }
+                }}
+                render={({ field, fieldState: { error } }) => (
+                    <Select {...field}
+                        as={'div'}
+                        radius='sm'
+                        label="Attributes"
+                        classNames={{
+                            trigger: "pl-1 h-12 min-h-12",
+                        }}
+                        labelPlacement='outside'
+                        selectionMode='multiple'
+                        onChange={handleSelectionChange}
+                        isLoading={isLoading}
+                        selectedKeys={values}
+                        startContent={(
+                            <Button
+                                variant='light'
+                                isIconOnly
+                                color='danger'
+                                onPress={() => {
+                                    setValues(new Set([]));
+                                    setFieldValue(`meanings.${index}.attributes`, [])
+                                }}
+                            >
+                                <X aria-description='Reset all selected values button' />
+                                <div className='sr-only'>
+                                    Reset selected values
+                                </div>
+                            </Button>
+
+                        )}
+                        endContent={(
+                            <Button
+                                isIconOnly
+                                onPress={onOpen}
+                                variant='light'
+                            // color='primary'
+                            >
+                                <div className='sr-only'>
+                                    Add new word attribute
+                                </div>
+                                <Plus></Plus>
+                            </Button>
+                        )}
+                    >
+                        {data.map((attribute) => (
+                            <SelectItem key={attribute.id}>
+                                {attribute.attribute}
+                            </SelectItem>
+                        ))}
+                    </Select>
+                )}
+            />
+        </>
     )
 }
