@@ -30,9 +30,10 @@ export default function WordNameInput({
             render={({ field, fieldState: { error } }) => (
                 <Input
                     {...field}
+                    radius='sm'
                     label="Name"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
+                    description="Name is required"
                     errorMessage={error?.message}
                     isInvalid={error !== undefined}
                     isRequired={true}

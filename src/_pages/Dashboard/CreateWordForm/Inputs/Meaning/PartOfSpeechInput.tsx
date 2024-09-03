@@ -29,8 +29,9 @@ export default function MeaningPartOfSpeechInput({
             render={({ field, fieldState: { error, isDirty } }) => (
                 <Select
                     label="Part of Speech"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
+                    placeholder='Please select a part of speech for this meaning'
+                    description="Part of speech is required"
                     isRequired
                     isInvalid={error !== undefined && isDirty}
                     errorMessage={isDirty && error?.message}

@@ -77,8 +77,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     },
     mode: "all",
   });
-  console.log('errors', formState.errors)
-  console.log("watch", watch())
   const { isOpen: isWordAttModalOpen, onOpenChange: onWordAttModalOpenChange, onOpen: onWordAttModalOpen, onClose: onWordAttributeClose } = useDisclosure()
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
@@ -170,10 +168,10 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordAttributesInput setValue={setValue} control={control} onOpen={onWordAttModalOpen} />
         </div>
         {fields.length > 0 ? fields.map((field, index) => (
-          <div className="w-full mt-2">
+          <div key={field.id} className="w-full mt-2">
             <h2 className="text-center text-fs-1">Meanings</h2>
-            <Card key={field.id} className="mb-4 rounded-sm">
-              <CardBody className="flex flex-col gap-2">
+            <Card className="mb-4 rounded-sm">
+              <CardBody>
                 <WordMeaningInput index={index} control={control} />
                 <div className="grid sm:grid-cols-2 gap-2">
                   <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />

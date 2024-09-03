@@ -47,12 +47,15 @@ export default function MeaningAttributesInput({
                 render={({ field, fieldState: { error } }) => (
                     <Select {...field}
                         as={'div'}
+                        tabIndex={0}
                         radius='sm'
                         label="Attributes"
                         classNames={{
-                            trigger: "pl-1 h-12 min-h-12",
+                            trigger: "pl-1",
                         }}
                         labelPlacement='outside'
+                        description="Attribute is optional"
+                        placeholder='Select a meaning attribute'
                         selectionMode='multiple'
                         onChange={handleSelectionChange}
                         isLoading={isLoading}

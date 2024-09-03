@@ -51,9 +51,9 @@ export default function MeaningExampleSentenceInput({
                 <>
                     <Input
                         {...field}
+                        radius='sm'
                         label="Example Sentence"
-                        color="primary"
-                        variant="underlined"
+                        labelPlacement='outside'
                         isInvalid={!!errors?.meanings?.[index]?.example?.sentence}
                         classNames={{
                             description: clsx({

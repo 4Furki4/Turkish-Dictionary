@@ -15,9 +15,9 @@ export default function WordSuffixInput({
             render={({ field }) => (
                 <Input
                     {...field}
+                    radius='sm'
                     label="Suffix"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
                     description="Suffix is optional"
                 />
             )}

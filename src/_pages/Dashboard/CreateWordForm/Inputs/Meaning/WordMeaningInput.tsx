@@ -24,9 +24,9 @@ export default function WordMeaningInput({
             render={({ field, fieldState: { error } }) => (
                 <Input
                     {...field}
+                    radius='sm'
                     label="Meaning"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
                     description="Meaning is required."
                     isRequired
                     errorMessage={error?.message}

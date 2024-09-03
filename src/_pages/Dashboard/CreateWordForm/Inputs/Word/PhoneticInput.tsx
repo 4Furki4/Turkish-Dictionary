@@ -15,9 +15,9 @@ export default function WordPhoneticInput({
             render={({ field, fieldState: { error } }) => (
                 <Input
                     {...field}
+                    radius='sm'
                     label="Phonetic"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
                     description="Phonetics is optional"
                 />
             )}

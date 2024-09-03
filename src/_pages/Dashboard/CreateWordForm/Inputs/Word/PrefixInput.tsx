@@ -15,9 +15,9 @@ export default function WordPrefixInput({
             render={({ field }) => (
                 <Input
                     {...field}
+                    radius='sm'
                     label="Prefix"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
                     description="Prefix is optional"
                 />
             )}

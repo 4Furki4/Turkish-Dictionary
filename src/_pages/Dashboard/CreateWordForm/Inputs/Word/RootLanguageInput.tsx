@@ -50,6 +50,8 @@ export default function WordRootLanguageInput({
                 <Autocomplete
                     radius='sm'
                     placeholder="You can search for a language"
+                    description="The root language is required when root is specified!"
+                    labelPlacement='outside'
                     isLoading={isLoading}
                     defaultItems={isSuccess ? langs : []}
                     label="Select an language"

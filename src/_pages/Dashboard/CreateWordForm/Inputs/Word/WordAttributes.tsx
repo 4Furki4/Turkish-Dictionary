@@ -30,10 +30,14 @@ export default function WordAttributesInput({
             render={({ field, fieldState: { error } }) => (
                 <Select
                     classNames={{
-                        trigger: "pl-1 h-12 min-h-12",
+                        trigger: "pl-1",
                     }}
+                    radius='sm'
+                    as={'div'}
+                    tabIndex={0}
                     placeholder='Select an attribute...'
-                    as={"div"}
+                    label='Attribute'
+                    labelPlacement='outside'
                     selectedKeys={values}
                     isLoading={isLoading || isFetching || isRefetching}
                     isInvalid={error !== undefined} errorMessage={error?.message}
@@ -54,13 +58,12 @@ export default function WordAttributesInput({
                                 Reset selected values
                             </div>
                         </Button>
-
                     )}
                     endContent={(
                         <Button
                             isIconOnly
                             onPress={onOpen}
-                            color='primary'
+                            variant='light'
                         >
                             <Plus></Plus>
                             <div className='sr-only'>
