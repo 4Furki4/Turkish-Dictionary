@@ -46,7 +46,7 @@ export const adminRouter = createTRPCRouter({
       attributes: z.array(z.number()),
       example: z.object({
         sentence: z.string(),
-        author: z.union([z.string(), z.number()])
+        author: z.number().optional().nullable()
       }).optional(),
       imageUrl: z.string().optional()
     }
@@ -91,9 +91,7 @@ export const adminRouter = createTRPCRouter({
           message: "Something went wrong while adding meaning.",
         })
       }
-      // when the author is an id, it means the author is already in the database
-      const isAuthorAlreadyInDB = Boolean(meaning.example?.author && typeof meaning.example.author === "number")
-      if (meaning.example?.author && typeof meaning.example.author === "number" && addedMeaning.id) {
+      if (meaning.example?.author && meaning.example.author && addedMeaning.id) {
         try {
           await db.insert(examples).values({
             meaningId: addedMeaning.id,
@@ -108,25 +106,7 @@ export const adminRouter = createTRPCRouter({
         }
 
       }
-      // when the author is a string, it means the author is not in the database
-      else if (meaning.example && typeof meaning.example.author === "string" && addedMeaning.id) {
-        try {
-          const [author] = await db.insert(authors).values({
-            name: meaning.example.author
-          }).returning()
-          await db.insert(examples).values({
-            meaningId: addedMeaning.id,
-            sentence: meaning.example.sentence,
-            authorId: author.id,
-          })
-        } catch (error) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong while adding example sentence and setting new author.",
-          })
-        }
-      }
-      else if (meaning.example && typeof meaning.example.author === "undefined" && addedMeaning.id) {
+      else if (meaning.example && !meaning.example.author && addedMeaning.id) {
         try {
           await db.insert(examples).values({
             meaningId: addedMeaning.id,

@@ -46,7 +46,7 @@ type Meaning = {
   image: FileList | null;
   example?: {
     sentence: string | undefined;
-    author: string | undefined;
+    author?: string | undefined;
   };
   partOfSpeechId: number | undefined;
   attributes: string[];
@@ -74,7 +74,7 @@ type WordFormSubmit = Prettify<{
     attributes: number[];
     example?: {
       sentence: string;
-      author: 'string | number';
+      author?: number | undefined;
     }
   }[]
 }>;

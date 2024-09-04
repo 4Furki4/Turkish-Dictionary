@@ -1,98 +1,88 @@
-import { cn } from '@/src/lib/utils';
+import AddAuthorModal from '@/src/components/customs/Modals/AddAuthor';
 import { WordForm } from '@/types'
-import { Autocomplete, AutocompleteItem, Input } from '@nextui-org/react'
-import clsx from 'clsx';
+import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Plus } from 'lucide-react';
 import React from 'react'
-import { Control, Controller, FieldErrors, UseFormClearErrors, UseFormGetFieldState, UseFormSetError, UseFormWatch } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge';
+import { Control, Controller, UseFormClearErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 
 export default function MeaningxampleSentenceAuthorInput({
     index,
     control,
     defaultExampleSentenceAuthors,
-    getFieldState,
-    setError,
     clearErrors,
     watch,
-    errors
+    setFieldValue
 }: {
     index: number,
     control: Control<WordForm>,
     defaultExampleSentenceAuthors: {
-        id: number;
+        id: string;
         name: string;
     }[],
-    getFieldState: UseFormGetFieldState<WordForm>,
-
-    setError: UseFormSetError<WordForm>,
     clearErrors: UseFormClearErrors<WordForm>,
     watch: UseFormWatch<WordForm>,
-    errors: FieldErrors<WordForm>
+    setFieldValue: UseFormSetValue<WordForm>
 }) {
+    const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
+    const [value, setValue] = React.useState<Selection>(new Set());
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedAuthor = e.target.value
+        setValue(() => new Set(selectedAuthor))
+        setFieldValue(`meanings.${index}.example.author`, selectedAuthor)
+    };
     return (
         <Controller
-            name={`meanings.${index}.example.author`}
-            control={control}
+            control={control} name={`meanings.${index}.example.author`}
             rules={{
-                validate: (value) => {
-                    const exampleSentence = `meanings.${index}.example.sentence` as const
-                    const quoteAuthor = `meanings.${index}.example.author` as const
-                    if (
-                        !value &&
-                        !!watch(exampleSentence) &&
-                        getFieldState(quoteAuthor).isTouched
-                    ) {
-                        return "Language is required when root specified";
-                    } else if (!watch(exampleSentence) && value) {
-                        setError(exampleSentence, {
-                            message: "Example sentence is required when author is selected",
-                        });
-                        return true;
-                    } else {
-                        clearErrors(exampleSentence);
-                        return true;
+                validate: (author) => {
+                    const exampleSentenceFormName = `meanings.${index}.example.sentence` as const
+                    const exampleSentence = watch(exampleSentenceFormName)
+                    if (!author) {
+                        clearErrors(exampleSentenceFormName)
+                        return true
                     }
+                    if (!exampleSentence && author) return "Example sentence is required when author is selected!"
+                    return true
                 },
             }}
+
             render={({ field }) => (
-                <div className='flex flex-col gap-1 text-fs--2'>
-                    <Autocomplete {...field} label={'Quote Sentence Author'}
-                        allowsCustomValue
-                        defaultItems={defaultExampleSentenceAuthors}
-                        onSelectionChange={(key) => {
-                            if (key) {
-                                field.onChange(key)
-                            }
-                        }}
+                <>
+                    <AddAuthorModal isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} isDismissable={false} />
+                    <Select
+                        as={"div"}
+                        tabIndex={0}
+                        {...field}
+                        onChange={handleSelectionChange}
+                        selectedKeys={value}
+                        selectionMode='single'
                         radius='sm'
-                        classNames={{
-                            listboxWrapper: 'rounded-sm',
-                            popoverContent: 'rounded-sm',
-                            base: 'rounded-sm',
-                        }}
-                        onInputChange={(value) => {
-                            const author = defaultExampleSentenceAuthors.find((attribute) => attribute.name === value)
-                            if (author) {
-                                field.onChange(author.id)
-                                return
-                            }
-                            field.onChange(value)
-                        }}
-                    >
-                        {(item) => (
-                            <AutocompleteItem key={item.id} className="capitalize">
-                                {item && item.name}
-                            </AutocompleteItem>
+                        label="Author"
+                        labelPlacement='outside'
+                        placeholder='You can select an author for the example sentence'
+                        description="Author is optional."
+                        endContent={(
+                            <Button
+                                isIconOnly
+                                onPress={onOpen}
+                                variant='light'
+                            >
+                                <div className='sr-only'>
+                                    Add new word attribute
+                                </div>
+                                <Plus></Plus>
+                            </Button>
                         )}
-                    </Autocomplete>
-                    <span className={cn('text-danger transition-opacity ease-out duration-200 opacity-0', {
-                        'opacity-100': errors?.meanings?.[index]?.example?.author?.message
-                    })}>
+                    >
                         {
-                            errors?.meanings?.[index]?.example?.author?.message || ''
-                        }&nbsp;
-                    </span>
-                </div>
+                            defaultExampleSentenceAuthors.map((att) => (
+                                <SelectItem key={att.id}>
+                                    {att.name}
+                                </SelectItem>
+                            ))
+                        }
+                    </Select>
+                </>
             )}
         />
     )

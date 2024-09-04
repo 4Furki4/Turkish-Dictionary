@@ -47,7 +47,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     attribute: string;
   }[]
   authors: {
-    id: number;
+    id: string;
     name: string;
   }[]
   partOfSpeeches: {
@@ -104,7 +104,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         partOfSpeechId: meaning.partOfSpeechId,
         example: meaning.example?.sentence && meaning.example?.sentence ? {
           sentence: meaning.example.sentence,
-          author: meaning.example.author,
+          author: meaning.example.author ? parseInt(meaning.example.author) : null,
         } : undefined,
         attributes: meaning.attributes?.map(attribute => parseInt(attribute))
       }
@@ -153,7 +153,8 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
   };
-  // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
+  console.log('meanings', watch('meanings'))
+  console.log('errors', formState.errors)
   return (
     <section className="max-w-7xl w-full mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -176,8 +177,8 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
                 <div className="grid sm:grid-cols-2 gap-2">
                   <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />
                   <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} setFieldValue={setValue} />
-                  <MeaningExampleSentenceInput index={index} control={control} errors={formState.errors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} />
-                  <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} errors={formState.errors} />
+                  <MeaningExampleSentenceInput index={index} control={control} watch={watch} />
+                  <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} watch={watch} setFieldValue={setValue} />
                 </div>
                 <div className="grid gap-2">
                   <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
