@@ -1,3 +1,4 @@
+"use client"
 import { EditWordForm, Language } from '@/types'
 import { Autocomplete, AutocompleteItem, Select, SelectItem } from '@nextui-org/react'
 import React from 'react'

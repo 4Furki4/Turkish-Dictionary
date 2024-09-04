@@ -1,3 +1,4 @@
+"use client"
 import { WordForm } from '@/types'
 import { Input } from '@nextui-org/react'
 import React from 'react'
@@ -15,9 +16,9 @@ export default function WordSuffixInput({
             render={({ field }) => (
                 <Input
                     {...field}
+                    radius='sm'
                     label="Suffix"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
                     description="Suffix is optional"
                 />
             )}

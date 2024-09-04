@@ -1,3 +1,4 @@
+"use client"
 import { EditWordForm } from '@/types'
 import { Input } from '@nextui-org/react'
 import React from 'react'

@@ -1,5 +1,5 @@
+"use client"
 import AddAuthorModal from '@/src/components/customs/Modals/AddAuthor'
-import AddAuthor from '@/src/components/customs/Modals/AddAuthor'
 import { EditWordForm } from '@/types'
 import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
 import { Plus } from 'lucide-react'
@@ -25,9 +25,9 @@ export default function AuthorInput({
     const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
     const [value, setValue] = React.useState<Selection>(new Set(selectedAuthor));
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedAttributes = e.target.value
-        setValue(() => new Set(selectedAttributes))
-        setFieldValue(`meanings.${index}.authorId`, selectedAttributes)
+        const selectedAuthor = e.target.value
+        setValue(() => new Set(selectedAuthor))
+        setFieldValue(`meanings.${index}.authorId`, selectedAuthor)
     };
 
     return (

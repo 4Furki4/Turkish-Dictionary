@@ -1,3 +1,4 @@
+"use client"
 import { WordForm } from '@/types';
 import { Input } from '@nextui-org/react';
 import { useTranslations } from 'next-intl';
@@ -43,13 +44,13 @@ export default function WordRootOriginInput({
             }}
             render={({ field, fieldState: { error } }) => (
                 <Input
-                    placeholder="Type the root word"
+                    {...field}
+                    radius='sm'
                     label="Root"
-                    color="primary"
-                    variant="underlined"
+                    labelPlacement='outside'
+                    description={"The root is required when root language selected!"}
                     errorMessage={error?.message}
                     isInvalid={error !== undefined}
-                    {...field}
                 />
             )}
         />

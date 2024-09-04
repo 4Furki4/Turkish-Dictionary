@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardBody,
-  useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -26,7 +25,6 @@ import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
-import AddWordAttributeModal from "@/src/components/customs/Modals/AddWordAttribute";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
@@ -47,7 +45,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     attribute: string;
   }[]
   authors: {
-    id: number;
+    id: string;
     name: string;
   }[]
   partOfSpeeches: {
@@ -77,9 +75,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     },
     mode: "all",
   });
-  console.log('errors', formState.errors)
-  console.log("watch", watch())
-  const { isOpen: isWordAttModalOpen, onOpenChange: onWordAttModalOpenChange, onOpen: onWordAttModalOpen, onClose: onWordAttributeClose } = useDisclosure()
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
     control,
@@ -106,7 +101,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         partOfSpeechId: meaning.partOfSpeechId,
         example: meaning.example?.sentence && meaning.example?.sentence ? {
           sentence: meaning.example.sentence,
-          author: meaning.example.author,
+          author: meaning.example.author ? parseInt(meaning.example.author) : null,
         } : undefined,
         attributes: meaning.attributes?.map(attribute => parseInt(attribute))
       }
@@ -155,7 +150,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
   };
-  // const meaningAttributesQuery = api.admin.getMeaningAttributes.useQuery()
   return (
     <section className="max-w-7xl w-full mx-auto max-sm:px-4 py-4">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -167,19 +161,19 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
           <WordPrefixInput control={control} />
           <WordSuffixInput control={control} />
-          <WordAttributesInput setValue={setValue} control={control} onOpen={onWordAttModalOpen} />
+          <WordAttributesInput setValue={setValue} control={control} />
         </div>
         {fields.length > 0 ? fields.map((field, index) => (
-          <div className="w-full mt-2">
+          <div key={field.id} className="w-full mt-2">
             <h2 className="text-center text-fs-1">Meanings</h2>
-            <Card key={field.id} className="mb-4 rounded-sm">
-              <CardBody className="flex flex-col gap-2">
+            <Card className="mb-4 rounded-sm">
+              <CardBody>
                 <WordMeaningInput index={index} control={control} />
                 <div className="grid sm:grid-cols-2 gap-2">
                   <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />
                   <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} setFieldValue={setValue} />
-                  <MeaningExampleSentenceInput index={index} control={control} errors={formState.errors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} />
-                  <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} getFieldState={getFieldState} setError={setError} watch={watch} errors={formState.errors} />
+                  <MeaningExampleSentenceInput index={index} control={control} watch={watch} />
+                  <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} watch={watch} setFieldValue={setValue} />
                 </div>
                 <div className="grid gap-2">
                   <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
@@ -210,7 +204,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           Submit
         </Button>
       </form>
-      <AddWordAttributeModal isOpen={isWordAttModalOpen} onClose={onWordAttributeClose} onOpenChange={onWordAttModalOpenChange} />
     </section>
   );
 }
