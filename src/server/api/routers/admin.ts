@@ -161,7 +161,11 @@ export const adminRouter = createTRPCRouter({
       id: authors.id,
       name: authors.name
     }).from(authors)
-    return authorsData
+    const filteredAuthors = authorsData.map((author) => ({
+      ...author,
+      id: author.id.toString()
+    }))
+    return filteredAuthors
   }),
   getPartOfSpeeches: adminProcedure.query(async ({ ctx: { db } }) => {
     const partOfSpeechData = await db.select({ id: partOfSpeechs.id, partOfSpeech: partOfSpeechs.partOfSpeech }).from(partOfSpeechs)

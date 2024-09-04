@@ -1,3 +1,4 @@
+"use client"
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types';
 import { Autocomplete, AutocompleteItem } from '@nextui-org/react';

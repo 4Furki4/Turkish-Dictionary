@@ -1,18 +1,17 @@
 "use client"
+import AddWordAttributeModal from '@/src/components/customs/Modals/AddWordAttribute'
 import { api } from '@/src/trpc/react'
 import { WordForm } from '@/types'
-import { Button, Select, Selection, SelectItem } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
 import { Plus, X } from 'lucide-react'
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 
 export default function WordAttributesInput({
     control,
-    onOpen,
     setValue: setFieldValue
 }: {
     control: Control<WordForm>,
-    onOpen: () => void
     setValue: UseFormSetValue<WordForm>
 }) {
     const { data: wordAttributes, isLoading, isFetching, isRefetching } = api.admin.getWordAttributes.useQuery()
@@ -23,63 +22,67 @@ export default function WordAttributesInput({
         setValues(() => new Set(selectedAttributes))
         setFieldValue("attributes", selectedAttributes)
     };
+    const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
     return (
-        <Controller
-            name={`attributes`}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-                <Select
-                    classNames={{
-                        trigger: "pl-1",
-                    }}
-                    radius='sm'
-                    as={'div'}
-                    tabIndex={0}
-                    placeholder='Select an attribute...'
-                    label='Attribute'
-                    labelPlacement='outside'
-                    selectedKeys={values}
-                    isLoading={isLoading || isFetching || isRefetching}
-                    isInvalid={error !== undefined} errorMessage={error?.message}
-                    {...field}
-                    onChange={handleSelectionChange}
-                    startContent={(
-                        <Button
-                            variant='light'
-                            isIconOnly
-                            color='danger'
-                            onPress={() => {
-                                setValues(new Set([]));
-                                setFieldValue("attributes", [])
-                            }}
-                        >
-                            <X aria-description='Reset all selected values button' />
-                            <div className='sr-only'>
-                                Reset selected values
-                            </div>
-                        </Button>
-                    )}
-                    endContent={(
-                        <Button
-                            isIconOnly
-                            onPress={onOpen}
-                            variant='light'
-                        >
-                            <Plus></Plus>
-                            <div className='sr-only'>
-                                Add new word attribute
-                            </div>
-                        </Button>
-                    )}
-                    selectionMode='multiple'>
-                    {wordAttributes?.map((wordAttribute => (
-                        <SelectItem key={wordAttribute.id}>
-                            {wordAttribute.attribute}
-                        </SelectItem>
-                    ))) ?? []}
-                </Select>
-            )
-            }
-        />
+        <>
+            <AddWordAttributeModal isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} />
+            <Controller
+                name={`attributes`}
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                    <Select
+                        classNames={{
+                            trigger: "pl-1",
+                        }}
+                        radius='sm'
+                        as={'div'}
+                        tabIndex={0}
+                        placeholder='Select an attribute...'
+                        label='Attribute'
+                        labelPlacement='outside'
+                        selectedKeys={values}
+                        isLoading={isLoading || isFetching || isRefetching}
+                        isInvalid={error !== undefined} errorMessage={error?.message}
+                        {...field}
+                        onChange={handleSelectionChange}
+                        startContent={(
+                            <Button
+                                variant='light'
+                                isIconOnly
+                                color='danger'
+                                onPress={() => {
+                                    setValues(new Set([]));
+                                    setFieldValue("attributes", [])
+                                }}
+                            >
+                                <X aria-description='Reset all selected values button' />
+                                <div className='sr-only'>
+                                    Reset selected values
+                                </div>
+                            </Button>
+                        )}
+                        endContent={(
+                            <Button
+                                isIconOnly
+                                onPress={onOpen}
+                                variant='light'
+                            >
+                                <Plus></Plus>
+                                <div className='sr-only'>
+                                    Add new word attribute
+                                </div>
+                            </Button>
+                        )}
+                        selectionMode='multiple'>
+                        {wordAttributes?.map((wordAttribute => (
+                            <SelectItem key={wordAttribute.id}>
+                                {wordAttribute.attribute}
+                            </SelectItem>
+                        ))) ?? []}
+                    </Select>
+                )
+                }
+            />
+        </>
     )
 }

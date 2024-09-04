@@ -1,3 +1,4 @@
+"use client"
 import AddAuthorModal from '@/src/components/customs/Modals/AddAuthor'
 import { EditWordForm } from '@/types'
 import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'

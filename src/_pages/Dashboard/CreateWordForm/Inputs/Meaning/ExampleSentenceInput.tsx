@@ -1,6 +1,6 @@
+"use client"
 import { WordForm } from '@/types'
 import { Input } from '@nextui-org/react'
-import clsx from 'clsx'
 import React from 'react'
 import { Control, Controller, UseFormWatch } from 'react-hook-form'
 
@@ -34,7 +34,7 @@ export default function MeaningExampleSentenceInput({
                         labelPlacement='outside'
                         isInvalid={!!errors?.meanings?.[index]?.example?.sentence}
                         errorMessage={errors.meanings?.[index]?.example?.sentence?.message}
-                        description="Example sentence is optional but required when example author is specified."
+                        description="Sentence is required when author is specified."
                     />
                 </>
             )}

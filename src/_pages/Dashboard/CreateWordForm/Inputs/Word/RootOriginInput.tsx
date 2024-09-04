@@ -1,3 +1,4 @@
+"use client"
 import { WordForm } from '@/types';
 import { Input } from '@nextui-org/react';
 import { useTranslations } from 'next-intl';

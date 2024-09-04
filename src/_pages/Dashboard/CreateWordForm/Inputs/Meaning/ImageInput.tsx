@@ -1,3 +1,4 @@
+"use client"
 import { WordForm } from '@/types';
 import { Button } from '@nextui-org/react';
 import React, { ChangeEvent } from 'react'

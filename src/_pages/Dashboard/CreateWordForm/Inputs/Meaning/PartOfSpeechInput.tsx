@@ -1,3 +1,4 @@
+"use client"
 import { Select, SelectItem } from '@nextui-org/react'
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'

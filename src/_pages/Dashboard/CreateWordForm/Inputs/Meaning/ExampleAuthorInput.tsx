@@ -1,4 +1,6 @@
+"use client"
 import AddAuthorModal from '@/src/components/customs/Modals/AddAuthor';
+import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
 import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
 import { Plus } from 'lucide-react';
@@ -30,6 +32,9 @@ export default function MeaningxampleSentenceAuthorInput({
         setValue(() => new Set(selectedAuthor))
         setFieldValue(`meanings.${index}.example.author`, selectedAuthor)
     };
+    const { data } = api.admin.getExampleSentenceAuthors.useQuery(undefined, {
+        initialData: defaultExampleSentenceAuthors
+    });
     return (
         <Controller
             control={control} name={`meanings.${index}.example.author`}
@@ -75,7 +80,7 @@ export default function MeaningxampleSentenceAuthorInput({
                         )}
                     >
                         {
-                            defaultExampleSentenceAuthors.map((att) => (
+                            data.map((att) => (
                                 <SelectItem key={att.id}>
                                     {att.name}
                                 </SelectItem>
