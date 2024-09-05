@@ -4,7 +4,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <NextUIProvider>
+    <NextUIProvider className="min-h-[100dvh] overflow-x-hidden relative flex flex-col place-items-stretch">
       <NextThemesProvider
         attribute="class"
         defaultTheme="dark"

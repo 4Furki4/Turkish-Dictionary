@@ -1,11 +1,8 @@
-"use client";
+
 import {
   Navbar as NextuiNavbar,
   NavbarContent,
   NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
   Button,
   Avatar,
   Link,
@@ -13,33 +10,51 @@ import {
   DropdownItem,
   DropdownTrigger,
   DropdownMenu,
+  NavbarBrand,
 } from "@nextui-org/react";
-import { HomeIcon, Palette } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import NextLink from "next/link";
+import { Book, Languages, Menu, Palette } from "lucide-react";
+import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
-import { useRouter, usePathname } from "next-intl/client";
-import { onEnterAndSpace } from "@/src/lib/keyEvents";
-import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
+import { useParams, useSearchParams } from "next/navigation";
+import { usePathname, Link as NextIntlLink } from "@/src/navigation";
+import { Session } from "next-auth";
+import { useCallback } from "react";
 
-export default function Navbar() {
-  const { status, data } = useSession();
+type NavbarProps = {
+  session: Session | null;
+  setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+} & Record<"WordListIntl" | "SignInIntl" | "HomeIntl", string>;
+
+export default function Navbar({
+  session,
+  WordListIntl,
+  SignInIntl,
+  HomeIntl,
+  setIsSidebarOpen
+}: NavbarProps) {
   const { theme, setTheme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
-  const params = useSearchParams();
-  const route = useRouter();
+  const searchParams = useSearchParams();
   const locale = useLocale();
-  const t = useTranslations("Navbar");
+  const params = useParams();
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
     pathName
   );
+  const getDynamicPathnames = useCallback((path: typeof pathName) => {
+    if (path === "/search/[word]") {
+      return `/search/${params.word}`;
+    }
+    if (path === "/reset-password/[token]") {
+      return `/reset-password/${params.token}`;
+    }
+    return path;
+  }, [pathName, params.token, params.word])
   return (
     <NextuiNavbar
-      className="bg-content1"
+      className="bg-background-foreground/100 border-b border-border"
       shouldHideOnScroll
+      maxWidth="xl"
       classNames={{
         item: [
           "relative",
@@ -56,139 +71,86 @@ export default function Navbar() {
           "data-[active=true]:after:rounded-[2px]",
           "data-[active=true]:after:bg-primary",
         ],
-        // wrapper: ["max-w-7xl"],
+        // wrapper: ["sm:px-0"]
       }}
     >
-      <NavbarMenuToggle
-        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        className="sm:hidden"
-      />
-      <NavbarContent className="hidden sm:flex" justify="start">
-        <NavbarItem>
-          <Link as={NextLink} href="/">
-            <HomeIcon size={32} />
-          </Link>
-        </NavbarItem>
+      <NavbarContent justify="center">
+        <NavbarBrand>
+          <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
+            <Book className="h-6 w-6" />
+            <span className="text-fs-1 font-bold">Turkish Dictionary</span>
+          </NextIntlLink>
+          <button className="sm:hidden">
+            <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
+          </button>
+        </NavbarBrand>
       </NavbarContent>
-      <NavbarContent className="hidden sm:flex" justify="center">
-        <NavbarItem isActive={pathName.includes("/word-list")}>
-          <Link as={NextLink} href={"/word-list"}>
-            {t("Word List")}
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive={pathName.includes("/protected")}>
-          <Link as={NextLink} href={"/protected"}>
-            Protected Page
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent justify="end">
+      <NavbarContent justify="end" className="gap-4 sm:gap-8">
+        {session?.user.role === "admin" ? (
+          <NavbarItem className="hidden sm:flex">
+            <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+              <span className={`text-nowrap`}>Dashboard</span>
+            </NextIntlLink>
+          </NavbarItem>
+        ) : null}
         <NavbarItem>
-          <Dropdown>
+          <Dropdown classNames={{
+            content: ["rounded-sm"],
+          }}>
             <DropdownTrigger>
-              <Button variant="light" color="primary">
-                {locale === "en" ? "English" : "Turkish"}
-              </Button>
+              <button className="bg-transparent flex items-center gap-2 rounded-sm">
+                <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
+              </button>
             </DropdownTrigger>
-            <DropdownMenu
-              onAction={(key) => {
-                const queryParams = decodeURIComponent(params.toString());
-                switch (key) {
-                  case "tr":
-                    route.replace(`${pathName}?${queryParams}`, {
-                      locale: "tr",
-                    });
-                    break;
-                  case "en":
-                    route.replace(`${pathName}?${queryParams}`, {
-                      locale: "en",
-                    });
-                    break;
-                }
-              }}
-            >
+            <DropdownMenu>
               {locale === "en" ? (
-                <DropdownItem color="primary" key={"tr"}>
-                  Turkish
+                <DropdownItem color="primary" key={"tr"} className="rounded-sm">
+                  <NextIntlLink
+                    className="w-full block"
+                    // @ts-ignore
+                    href={{
+                      pathname: pathName,
+                      query: searchParams.toString(),
+                      params: {
+                        token: params.token as any,
+                        word: params.word as any,
+                      },
+                    }}
+                    locale="tr"
+                  >
+                    Türkçe
+                  </NextIntlLink>
                 </DropdownItem>
               ) : (
-                <DropdownItem color="primary" key={"en"}>
-                  English
+                <DropdownItem color="primary" key={"en"} className="rounded-sm">
+                  <NextIntlLink
+                    className="w-full block"
+                    // @ts-ignore
+                    href={{
+                      pathname: pathName,
+                      query: searchParams.toString(),
+                      params: {
+                        token: params.token as any,
+                        word: params.word as any,
+                      },
+                    }}
+                    locale="en"
+                  >
+                    English
+                  </NextIntlLink>
                 </DropdownItem>
               )}
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        <NavbarContent justify="center">
-          {status !== "authenticated" ? (
-            <NavbarItem>
-              <Button
-                isDisabled={isAuthPage}
-                onKeyDown={(e) =>
-                  onEnterAndSpace(e, () => {
-                    if (!isAuthPage) signIn();
-                  })
-                }
-                onClick={() => {
-                  if (!isAuthPage) signIn();
-                }}
-                variant="ghost"
-                color="primary"
-                isLoading={status === "loading"}
-              >
-                {t("Sign In")}
-              </Button>
-            </NavbarItem>
-          ) : (
-            <NavbarItem className="cursor-pointer">
-              <Dropdown>
-                <DropdownTrigger>
-                  <button>
-                    <Avatar
-                      showFallback
-                      src="https://images.unsplash.com/broken"
-                      size="sm"
-                    />
-                  </button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  onAction={(key) => {
-                    switch (key) {
-                      case "sign-out":
-                        signOut();
-                        break;
-                    }
-                  }}
-                >
-                  <DropdownItem key={"saved-words"} className="text-center">
-                    <Link as={NextLink} className="w-full" href="/saved-words">
-                      Saved Words
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key={"profile"}>
-                    <Link as={NextLink} className="w-full" href="/profile">
-                      Profile
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem
-                    className="text-danger"
-                    key={"sign-out"}
-                    color="danger"
-                    onClick={() => signOut()}
-                  >
-                    Sign Out
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </NavbarItem>
-          )}
-        </NavbarContent>
         <NavbarItem>
-          <Dropdown>
+          <Dropdown classNames={{
+            content: ["rounded-sm"],
+          }}>
             <DropdownTrigger className="cursor-pointer">
-              <Button className="bg-transparent" variant="flat">
-                <Palette size={32} />
-              </Button>
+              <button className="bg-transparent flex items-center gap-2 rounded-sm">
+                <Palette aria-label="palette icon" className="h-7 w-7" />
+              </button>
             </DropdownTrigger>
             <DropdownMenu
               color="primary"
@@ -210,43 +172,87 @@ export default function Navbar() {
                 }
               }}
             >
-              <DropdownItem key={"dark-purple"}>Dark Purple</DropdownItem>
-              <DropdownItem key={"light-purple"}>Light Purple</DropdownItem>
-              <DropdownItem key={"dark"}>Dark</DropdownItem>
-              <DropdownItem key={"light"}>Light</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"dark-purple"}>Dark Purple</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"light-purple"}>Light Purple</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"dark"}>Dark</DropdownItem>
+              <DropdownItem className="rounded-sm" key={"light"}>Light</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
+        {!session?.user ? (
+          <NavbarItem>
+            <NextIntlLink
+              className="w-full block"
+              // @ts-ignore
+              href={{
+                pathname: '/signin',
+                query: { callbackUrl: decodeURI(`${getDynamicPathnames(pathName)}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`) },
+                search: pathName === "/signin" ? searchParams.toString() : undefined,
+              }}
+            ><Button
+              aria-disabled={isAuthPage}
+              isDisabled={isAuthPage}
+              variant="ghost"
+              color="primary"
+              className="rounded-sm"
+            >
+                {SignInIntl}
+              </Button>
+            </NextIntlLink>
+          </NavbarItem>
+        ) : (
+          <>
+            <NavbarItem className="cursor-pointer">
+              <Dropdown classNames={{
+                content: ["rounded-sm"],
+              }}>
+                <DropdownTrigger>
+                  <button className="rounded-sm">
+                    <Avatar
+                      showFallback
+                      src={session.user.image ?? "https://images.unsplash.com/broken"}
+                      size="sm"
+                    />
+                  </button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  onAction={(key) => {
+                    switch (key) {
+                      case "sign-out":
+                        signOut();
+                        break;
+                    }
+                  }}
+                >
+                  <DropdownItem color="primary" key={"saved-words"} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
+                      Saved Words
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem color="primary" key={"saved-words"} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
+                      Search History
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem color="primary" key={"profile"} className="rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/profile">
+                      Profile
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="text-danger rounded-sm"
+                    key={"sign-out"}
+                    color="danger"
+                    onClick={() => signOut()}
+                  >
+                    Sign Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
-      <NavbarMenu className="bg-content1 sm:hidden">
-        <NavbarMenuItem>
-          <Link
-            as={NextLink}
-            href={"/"}
-            className={pathName === "/" ? "underline" : ""}
-          >
-            {t("Home")}
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            as={NextLink}
-            href={"/word-list"}
-            className={pathName.includes("word-list") ? "underline" : ""}
-          >
-            {t("Word List")}
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            as={NextLink}
-            href={"/protected"}
-            className={pathName.includes("protected") ? "underline" : ""}
-          >
-            Protected Page
-          </Link>
-        </NavbarMenuItem>
-      </NavbarMenu>
     </NextuiNavbar>
   );
 }

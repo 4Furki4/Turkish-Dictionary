@@ -36,8 +36,6 @@ export function PasswordResetEmail({
           </Text>
           <Section className="text-center mt-[32px] mb-[32px]">
             <Button
-              pX={20}
-              pY={10}
               className="text-center text-white text-lg bg-[#7C3AED] rounded no-underline"
               href={link}
             >

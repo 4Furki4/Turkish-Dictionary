@@ -13,7 +13,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getServerAuthSession } from "@/src/server/auth";
-import { db } from "../db";
+import { db } from "@/db/index";
 
 /**
  * 1. CONTEXT
@@ -37,15 +37,14 @@ interface CreateContextOptions {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
-  const session = await getServerAuthSession();
-
-  return {
-    session,
-    headers: opts.headers,
-    db,
-  };
-};
+// export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
+//   const session = await getServerAuthSession();
+//   return {
+//     session,
+//     headers: opts.headers,
+//     db,
+//   };
+// };
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -53,12 +52,13 @@ export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: { req: NextRequest }) => {
-  // Fetch stuff that depends on the request
-
-  return await createInnerTRPCContext({
-    headers: opts.req.headers,
-  });
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = await getServerAuthSession();
+  return {
+    db,
+    session,
+    ...opts
+  };
 };
 
 /**
@@ -82,7 +82,12 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
     };
   },
 });
-
+/**
+ * Create a server-side caller.
+ *
+ * @see https://trpc.io/docs/server/server-side-calls
+ */
+export const createCallerFactory = t.createCallerFactory;
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
  *
@@ -119,6 +124,18 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
+const enforceUserIsAdmin = t.middleware(({ ctx: { session }, next }) => {
+  if (!session || !session.user || session.user.role !== "admin") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...session, user: session.user },
+    },
+  });
+});
+
 /**
  * Protected (authenticated) procedure
  *
@@ -128,3 +145,4 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin);

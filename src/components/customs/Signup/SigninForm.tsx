@@ -1,27 +1,62 @@
 "use client";
-import "react-toastify/dist/ReactToastify.css";
 import { LoginInputs } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
-import { useTranslations } from "next-intl";
-import Link from "next-intl/link";
 import React, { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { useRouter } from "next-intl/client";
 import PasswordEye from "./PasswordEye";
 import { z } from "zod";
-export default function SigninForm() {
+import { GithubIcon } from "lucide-react";
+import { Link, useRouter } from "@/src/navigation";
+
+type IntlProps = Record<
+  | "CorruptedLoginDataIntl"
+  | "WithCredentialsIntl"
+  | "SigninWithGoogleIntl"
+  | "SigninWithDiscordIntl"
+  | "SigninWithGithubIntl"
+  | "UsernameOrEmailIntl"
+  | "UsernameOrEmailRequiredIntl"
+  | "PasswordRequiredErrorMessageIntl"
+  | "PasswordMinLengthErrorMessageIntl"
+  | "SigninIntl"
+  | "DontHaveAnAccountIntl"
+  | "SignupIntl"
+  | "ForgotPasswordIntl"
+  | "PasswordIntl"
+  | "InvalidUsernameEmailOrPasswordIntl"
+  | "OAuthAccountNotLinked",
+  string
+>;
+
+export default function SigninForm({
+  CorruptedLoginDataIntl,
+  WithCredentialsIntl,
+  SigninWithGoogleIntl,
+  SigninWithDiscordIntl,
+  SigninWithGithubIntl,
+  UsernameOrEmailIntl,
+  UsernameOrEmailRequiredIntl,
+  PasswordRequiredErrorMessageIntl,
+  PasswordMinLengthErrorMessageIntl,
+  SigninIntl,
+  DontHaveAnAccountIntl,
+  SignupIntl,
+  ForgotPasswordIntl,
+  InvalidUsernameEmailOrPasswordIntl,
+  PasswordIntl,
+  OAuthAccountNotLinked,
+}: IntlProps) {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<LoginInputs>({ mode: "all" });
-  const t = useTranslations("SigninForm");
   const params = useSearchParams();
   const router = useRouter();
   const { theme } = useTheme();
@@ -32,9 +67,7 @@ export default function SigninForm() {
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
     const result = credentialSchema.safeParse(data);
     if (!result.success) {
-      toast.error(t("CorruptedLoginData"), {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+      toast.error(CorruptedLoginDataIntl, {
         position: "bottom-center",
       });
       return;
@@ -52,16 +85,14 @@ export default function SigninForm() {
       ),
     });
   };
-  const onProviderSignin = (provider: "google" | "github") => {
+  const onProviderSignin = (provider: "google" | "discord" | "github") => {
     signIn(provider, {
-      callbackUrl: decodeURIComponent(
+      callbackUrl: encodeURI(
         (params.get("callbackUrl") as string) ?? "/"
       ),
     }).then((res) => {
       if (res?.error) {
         toast.error(res.error, {
-          theme:
-            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
           position: "bottom-center",
         });
       }
@@ -69,27 +100,40 @@ export default function SigninForm() {
   };
   useEffect(() => {
     if (params.get("error") === "CredentialsSignin") {
-      toast.error(t("Invalid username, email or password"), {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
-        position: "bottom-center",
+      setTimeout(() => {
+        toast.error(InvalidUsernameEmailOrPasswordIntl, {
+          position: "bottom-center",
+        });
+      })
+      router.replace({
+        pathname: "/signin",
+        query: {
+          callbackUrl: params.get("callbackUrl"),
+        },
       });
-      router.replace(
-        `/signin?${
-          params.get("callbackUrl")
-            ? `callbackUrl=${params.get("callbackUrl")}`
-            : ""
-        }`
-      );
+    }
+    if (params.get("error") === "OAuthAccountNotLinked") {
+      setTimeout(() => {
+        toast.error(OAuthAccountNotLinked, {
+          position: "bottom-center",
+        });
+      })
+      router.replace({
+        pathname: "/signin",
+        query: {
+          callbackUrl: params.get("callbackUrl"),
+        },
+      });
     }
   }, [params.get("error")]);
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
   return (
     <form
       onSubmit={handleSubmit(onLoginSubmit)}
-      className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+      className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
     >
       <Button
+        className="rounded-sm"
         variant="bordered"
         color="primary"
         onClick={() => onProviderSignin("google")}
@@ -103,9 +147,29 @@ export default function SigninForm() {
           />
         }
       >
-        {t("Sign in with Google")}
+        {SigninWithGoogleIntl}
+      </Button>
+      <Button
+        className="rounded-sm"
+        variant="bordered"
+        color="primary"
+        onClick={() => onProviderSignin("discord")}
+        onKeyDown={(e) => onEnterAndSpace(e, () => onProviderSignin("discord"))}
+      >
+        {SigninWithDiscordIntl}
+      </Button>
+      <Button
+        className="rounded-sm"
+        variant="bordered"
+        color="primary"
+        onClick={() => onProviderSignin("github")}
+        onKeyDown={(e) => onEnterAndSpace(e, () => onProviderSignin("github"))}
+        startContent={<GithubIcon size={24} />}
+      >
+        {SigninWithGithubIntl}
       </Button>
       <Divider></Divider>
+      <h1 className="text-fs-2 font-bold text-center">{WithCredentialsIntl}</h1>
       <Controller
         key={"usernameOrEmail"}
         name="usernameOrEmail"
@@ -113,13 +177,16 @@ export default function SigninForm() {
         rules={{
           required: {
             value: true,
-            message: t("UsernameOrEmailRequired"),
+            message: UsernameOrEmailRequiredIntl,
           },
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
-            label={t("Username or Email")}
+            dir="auto"
+            autoComplete="on"
+            label={UsernameOrEmailIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.usernameOrEmail?.message}
@@ -134,22 +201,24 @@ export default function SigninForm() {
         rules={{
           required: {
             value: true,
-            message: t("PasswordRequiredErrorMessage"),
+            message: PasswordRequiredErrorMessageIntl,
           },
           minLength: {
             value: 8,
-            message: t("PasswordMinLengthErrorMessage"),
+            message: PasswordMinLengthErrorMessageIntl,
           },
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
-            label={t("Password")}
+            label={PasswordIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.password?.message}
             isInvalid={error !== undefined}
             type={isPasswordVisible ? "text" : "password"}
+            autoComplete="current-password"
             endContent={
               <PasswordEye
                 handleVisibility={() => setIsPasswordVisible((val) => !val)}
@@ -159,24 +228,30 @@ export default function SigninForm() {
           />
         )}
       />
-      <Button color="primary" variant="ghost" type="submit">
-        {t("Sign In")}
+      <Button className="rounded-sm" color="primary" variant="ghost" type="submit">
+        {SigninIntl}
       </Button>
       <p>
-        {t("Don't have an account?")}{" "}
+        {DontHaveAnAccountIntl}{" "}
         <Link
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-          href={`/signup?${decodeURIComponent(params.toString())}`}
+          href={{
+            pathname: "/signup",
+            query: decodeURIComponent(params.toString()),
+          }}
         >
-          {t("Sign Up")}
+          {SignupIntl}
         </Link>
       </p>
       <p>
         <Link
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-          href={`/forgot-password?${decodeURIComponent(params.toString())}`}
+          href={{
+            pathname: "/forgot-password",
+            query: decodeURIComponent(params.toString()),
+          }}
         >
-          {t("Forgot Password")}
+          {ForgotPasswordIntl}
         </Link>
       </p>
     </form>

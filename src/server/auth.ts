@@ -2,37 +2,76 @@ import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
+  DefaultUser,
+  User,
+  Session,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db } from "./db";
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
+import DiscordProvider from "next-auth/providers/discord";
 import * as bycrypt from "bcrypt";
-
+import { db } from "@/db";
+import { eq } from "drizzle-orm";
+import { users } from "@/db/schema/users";
+import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { accounts } from "@/db/schema/accounts";
+import { sessions } from "@/db/schema/session";
+import { verificationTokens } from "@/db/schema/verification_tokens";
+import { randomUUID } from "crypto";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+type Role = "user" | "admin" | "moderator";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      role: Role;
+      username: string;
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    id: string;
+    role: Role;
+    username: string;
+  }
 }
+declare module "next-auth/adapters" {
+  export interface AdapterUser {
+    role: Role;
+  }
+}
+
+export const adapter = CustomDrizzleAdapter(db);
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      profile(profile: GoogleProfile) {
+        return {
+          id: profile.sub,
+          role: profile.role ?? "user",
+          image: profile.picture,
+          email: profile.email,
+          name: profile.name,
+          username: profile.email!.split("@")[0],
+        };
+      },
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -42,33 +81,30 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
+
         if (
           (credentials?.email === undefined &&
             credentials?.username === undefined) || // no email or username
           credentials?.password === undefined || // no password
           (credentials?.password && credentials?.password.length < 8) // password too short
-        )
-          return Promise.resolve(null);
+        ) return Promise.resolve(null);
 
+        const userLoggedInWithEmail = credentials?.email !== undefined;
         let user = null;
-        if (credentials?.email !== undefined) {
-          user = await db.user.findFirst({
-            where: {
-              email: credentials?.email,
-            },
+
+        if (userLoggedInWithEmail) {
+          user = await db.query.users.findFirst({
+            where: eq(users.email, credentials?.email),
           });
         }
-
         user =
-          user !== null
+          user!!
             ? user
-            : await db.user.findFirst({
-                where: {
-                  username: credentials?.username,
-                },
-              });
+            : await db.query.users.findFirst({
+              where: eq(users.username, credentials?.username),
+            });
 
-        if (user === null) return Promise.resolve(null); // user not found
+        if (user === undefined) return Promise.resolve(null); // user not found
 
         if (user.password === undefined) return Promise.resolve(null); // users created with google auth
 
@@ -76,37 +112,55 @@ export const authOptions: NextAuthOptions = {
           credentials?.password!,
           user.password!
         );
-
         if (!isPasswordValid) return Promise.resolve(null);
-        return Promise.resolve(user);
+
+        return Promise.resolve(user as User);
       },
     }),
   ],
   callbacks: {
-    signIn: async ({ user, account, profile, email, credentials }) => {
-      const userExist = await db.user.findUnique({
-        where: {
-          email: user.email!,
-        },
+    async session({ session: defaultSession, user }) {
+      // Make our own custom session object.
+      const session: Session = {
+        user,
+        expires: defaultSession.expires,
+      };
+
+      return session;
+    },
+    async jwt({ user }) {
+      const session = await DrizzleAdapter(db).createSession?.({
+        expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
+        sessionToken: randomUUID(),
+        userId: user.id,
       });
-      if (userExist) {
-        return true;
-      }
-      try {
-        await db.user.create({
-          data: {
-            email: user.email!,
-            name: user.name!,
-            username: user.email!.split("@")[0],
-          },
-        });
-        return true;
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
+
+      return { id: session?.sessionToken };
     },
   },
+  jwt: {
+    async encode({ token }) {
+      // This is the string returned from the `jwt` callback above.
+      // It represents the session token that will be set in the browser.
+      return token?.id as unknown as string;
+    },
+    async decode() {
+      // Disable default JWT decoding.
+      // This method is really only used when using the email provider.
+      return null;
+    },
+  },
+  session: {
+    strategy: "database",
+    maxAge: 60 * 60 * 24 * 30, // 3 days
+  },
+  //@ts-ignore
+  adapter: DrizzleAdapter(db, {
+    accountsTable: accounts,
+    usersTable: users,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens
+  }),
   pages: {
     signIn: "/signin",
   },

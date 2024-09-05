@@ -1,38 +1,69 @@
 "use client";
-import "react-toastify/dist/ReactToastify.css";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
-import { SignUpInputs, SignUpRequest } from "@/types";
+import { SignupForm as SignupFormType, SignupRequest } from "@/types";
 import { Button, Divider, Input } from "@nextui-org/react";
-import { useTranslations } from "next-intl";
-import Link from "next-intl/link";
 import Image from "next/image";
 import React, { useState } from "react";
-import { useRouter } from "next-intl/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { api } from "@/src/trpc/react";
 import PasswordEye from "./PasswordEye";
-import { z } from "zod";
-import { TRPCClientError } from "@trpc/client";
-export default function SignupForm() {
+import { Link, useRouter } from "@/src/navigation";
+import { useTranslations } from "next-intl";
+
+type SignUpFormProps = Record<
+  | "SuccessMessageIntl"
+  | "GoogleSignupIntl"
+  | "CreateNewAccIntl"
+  | "NameIntl"
+  | "UsernameRequiredErrorIntl"
+  | "NameRequiredErrorIntl"
+  | "UsernameIntl"
+  | "EmailRequiredErrorIntl"
+  | "EmailIntl"
+  | "PasswordPatternErrorIntl"
+  | "PasswordRequiredErrorIntl"
+  | "PasswordIntl"
+  | "ConfirmPasswordRequiredErrorIntl"
+  | "ConfirmPasswordIntl"
+  | "SignupButtonIntl"
+  | "AlreadyHaveAccountIntl"
+  | "LoginIntl",
+  string
+>;
+
+export default function SignupForm({
+  SuccessMessageIntl,
+  GoogleSignupIntl,
+  CreateNewAccIntl,
+  NameIntl,
+  UsernameRequiredErrorIntl,
+  NameRequiredErrorIntl,
+  UsernameIntl,
+  EmailRequiredErrorIntl,
+  EmailIntl,
+  PasswordPatternErrorIntl,
+  PasswordRequiredErrorIntl,
+  PasswordIntl,
+  ConfirmPasswordRequiredErrorIntl,
+  ConfirmPasswordIntl,
+  SignupButtonIntl,
+  AlreadyHaveAccountIntl,
+  LoginIntl,
+}: SignUpFormProps) {
   const router = useRouter();
   const params = useSearchParams();
   const { theme } = useTheme();
+  const t = useTranslations("SignupForm");
   const createUserMutation = api.auth.createUser.useMutation({
     onError: (error) => {
       if (error.data?.zodError?.fieldErrors) {
         // Validation error messages from zod
         for (const field in error.data?.zodError?.fieldErrors) {
           toast.error(t(error.data?.zodError?.fieldErrors[field]?.at(0)), {
-            theme:
-              theme === "dark"
-                ? "dark"
-                : theme === "light"
-                ? "light"
-                : "colored",
             position: "bottom-center",
           });
         }
@@ -40,27 +71,29 @@ export default function SignupForm() {
       }
 
       toast.error(error.message, {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
         position: "bottom-center",
       });
     },
     onSuccess: async (data) => {
-      toast.success(t("Account created successfully, please sign in"), {
-        theme:
-          theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
+      toast.success(SuccessMessageIntl, {
         position: "bottom-center",
       });
-      console.log(params.get("callbackUrl"));
-      router.push("/signin", { scroll: false });
+      router.push({
+        pathname: "/signin",
+        query: {
+          callbackUrl: decodeURIComponent(
+            (params.get("callbackUrl") as string) ?? "/"
+          )
+        },
+      }, { scroll: false });
     },
   });
-  const onSignupSubmit: SubmitHandler<SignUpInputs> = (data: SignUpRequest) => {
+  const onSignupSubmit: SubmitHandler<SignupFormType> = (data: SignupRequest) => {
     const user = {
       name: data.name,
       username: data.username,
       email: data.email,
-      password: data.signupPassword,
+      password: data.password,
     };
     createUserMutation.mutate(user);
   };
@@ -72,8 +105,6 @@ export default function SignupForm() {
     }).then((res) => {
       if (res?.error) {
         toast.error(res.error, {
-          theme:
-            theme === "dark" ? "dark" : theme === "light" ? "light" : "colored",
           position: "bottom-center",
         });
       }
@@ -85,17 +116,17 @@ export default function SignupForm() {
     watch,
     clearErrors,
     formState: { errors },
-  } = useForm<SignUpInputs>({ mode: "all" });
-  const t = useTranslations("SignupForm");
+  } = useForm<SignupFormType>({ mode: "all" });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
   return (
     <form
       onSubmit={handleSubmit(onSignupSubmit)}
-      className="flex flex-col gap-2 w-11/12 sm:w-full shadow-md max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-xl"
+      className="flex flex-col gap-2 w-11/12 sm:w-full shadow-md max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
     >
       <Button
+        className="rounded-sm"
         variant="bordered"
         color="primary"
         onClick={() => onProviderSignin("google")}
@@ -109,18 +140,14 @@ export default function SignupForm() {
           />
         }
       >
-        {t("Sign up with Google")}
+        {GoogleSignupIntl}
       </Button>
       <Divider></Divider>
-      <div>
-        <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">
-          {t("Create a new account")}
-        </h1>
-      </div>
+      <h1 className="text-fs-2 font-bold text-center">{CreateNewAccIntl}</h1>
       <Controller
         name="name"
         rules={{
-          required: { value: true, message: t("NameRequiredErrorMessage") },
+          required: { value: true, message: NameRequiredErrorIntl },
           onChange: (e) => {
             if (e.target.value.length > 0) {
               clearErrors("name");
@@ -130,8 +157,11 @@ export default function SignupForm() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
-            label={t("Name")}
+            autoComplete="name"
+            dir="auto"
+            label={NameIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.name?.message}
@@ -144,13 +174,16 @@ export default function SignupForm() {
         rules={{
           required: {
             value: true,
-            message: t("UsernameRequiredErrorMessage"),
+            message: UsernameRequiredErrorIntl,
           },
         }}
         control={control}
         render={({ field, fieldState: { error } }) => (
           <Input
-            label={t("Username")}
+            autoComplete="username"
+            dir="auto"
+            aria-required
+            label={UsernameIntl}
             {...field}
             color="primary"
             variant="underlined"
@@ -165,7 +198,7 @@ export default function SignupForm() {
         rules={{
           required: {
             value: true,
-            message: t("EmailRequiredErrorMessage"),
+            message: EmailRequiredErrorIntl,
           },
           pattern: {
             value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
@@ -174,9 +207,13 @@ export default function SignupForm() {
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            autoComplete="email"
+            inputMode="email"
+            dir="auto"
+            aria-required
             type="email"
             {...field}
-            label={t("Email")}
+            label={EmailIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.email?.message}
@@ -186,25 +223,27 @@ export default function SignupForm() {
       />
       <Controller
         control={control}
-        name="signupPassword"
+        name="password"
         rules={{
           pattern: {
             value:
               /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=\S+$).{8,}$/,
-            message: t("PasswordPatternErrorMessage"),
+            message: PasswordPatternErrorIntl,
           },
           required: {
             value: true,
-            message: t("PasswordRequiredErrorMessage"),
+            message: PasswordRequiredErrorIntl,
           },
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
+            aria-required
             {...field}
-            label={t("Password")}
+            autoComplete="new-password"
+            label={PasswordIntl}
             color="primary"
             variant="underlined"
-            errorMessage={errors.signupPassword?.message}
+            errorMessage={errors.password?.message}
             isInvalid={error !== undefined}
             type={isPasswordVisible ? "text" : "password"}
             endContent={
@@ -222,15 +261,16 @@ export default function SignupForm() {
         rules={{
           required: {
             value: true,
-            message: t("ConfirmPasswordRequiredErrorMessage"),
+            message: ConfirmPasswordRequiredErrorIntl,
           },
           validate: (value) =>
-            value === watch("signupPassword") || "Passwords do not match",
+            value === watch("password") || "Passwords do not match",
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
-            label={t("Confirm Password")}
+            autoComplete="new-password"
+            label={ConfirmPasswordIntl}
             color="primary"
             variant="underlined"
             errorMessage={errors.confirmPassword?.message}
@@ -248,16 +288,20 @@ export default function SignupForm() {
         )}
       />
 
-      <Button color="primary" variant="ghost" type="submit">
-        {t("Sign Up Button")}
+      <Button className="rounded-sm"
+        color="primary" variant="ghost" type="submit">
+        {SignupButtonIntl}
       </Button>
       <p>
-        {t("Already have an account?")}{" "}
+        {AlreadyHaveAccountIntl}{" "}
         <Link
-          href={`/signin?${decodeURIComponent(params.toString())}`}
+          href={{
+            pathname: "/signin",
+            query: decodeURIComponent(params.toString()),
+          }}
           className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
         >
-          {t("Login")}
+          {LoginIntl}
         </Link>
       </p>
     </form>

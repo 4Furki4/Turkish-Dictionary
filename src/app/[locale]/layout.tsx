@@ -1,65 +1,72 @@
 import { Metadata } from "next";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
-import { NextIntlClientProvider } from "next-intl";
-import { notFound } from "next/navigation";
-import "../globals.css";
-import { Inter } from "next/font/google";
-import { Suspense } from "react";
-import { Loader2 } from "lucide-react";
+import { ourFileRouter } from "@/src/app/api/uploadthing/core";
+import "@/app/globals.css";
 import { TRPCReactProvider } from "@/src/trpc/react";
-import { headers } from "next/headers";
+import { GeistSans } from "geist/font/sans";
+import Providers from "@/src/components/customs/Provider";
+import { getServerAuthSession } from "@/src/server/auth";
+import { getMessages, getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { Toaster } from "@/src/components/customs/Sonner";
+import { Wrapper } from "@/src/components/customs/Wrapper";
+import Footer from "@/src/components/customs/Footer";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
-const inter = Inter({ subsets: ["latin"] });
-export const metadata: Metadata = {
-  title: "Turkish Dictionary",
-  description:
-    "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later.",
+export function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  const metadata: Metadata = {
+    title: {
+      absolute: locale === "en" ? "%s | Turkish Dictionary" : "%s | Türkçe Sözlük",
+      default: locale === "en" ? "Turkish Dictionary - Words, Definitions and Examples" : "Türkçe Sözlük - Kelimeler, Anlamları ve Örnek Cümleler"
+    },
+    description:
+      locale === "en" ? "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later." : "Türkçe kelimeleri arayabileceğiniz ve daha sonra hesabınıza kaydedebileceğiniz çevrimiçi Türkçe Sözlük.",
+  }
+  return metadata;
 };
-export default async function LocaleLayout({
+export default async function RootLayout({
   children,
   params: { locale },
 }: {
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  let messages;
-  try {
-    messages = (await import(`../../messages/${locale}.json`)).default;
-  } catch (error) {
-    notFound();
-  }
+  unstable_setRequestLocale(locale);
+  const session = await getServerAuthSession();
+  const t = await getTranslations("Navbar");
+  const messages = await getMessages();
 
   return (
     <html lang={locale} className="dark">
-      <body className={`${inter.className} min-h-[100dvh]`}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <TRPCReactProvider headers={headers()}>
-            <Suspense
-              fallback={
-                <Loader2
-                  size={"32px"}
-                  color="hsl(var(--background) / 0.7)"
-                  className="fixed inset-0 m-auto animate-spin duration-500"
-                />
-              }
-            >
-              <NextSSRPlugin
-                /**
-                 * The `extractRouterConfig` will extract **only** the route configs
-                 * from the router to prevent additional information from being
-                 * leaked to the client. The data passed to the client is the same
-                 * as if you were to fetch `/api/uploadthing` directly.
-                 */
-                routerConfig={extractRouterConfig(ourFileRouter)}
-              />
+      <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden relative`}>
+        <TRPCReactProvider>
+          <NextSSRPlugin
+
+            //   The `extractRouterConfig` will extract **only** the route configs
+            // from the router to prevent additional information from being
+            // leaked to the client. The data passed to the client is the same
+            // as if you were to fetch `/api/uploadthing` directly.
+
+            routerConfig={extractRouterConfig(ourFileRouter)}
+          />
+          <Providers>
+            <NextIntlClientProvider messages={messages}>
+              <Wrapper HomeIntl={t("Home")}
+                session={session}
+                SignInIntl={t("Sign In")}
+                WordListIntl={t("Word List")} />
               {children}
-            </Suspense>
-          </TRPCReactProvider>
-        </NextIntlClientProvider>
+              <Footer />
+            </NextIntlClientProvider>
+          </Providers>
+        </TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   );

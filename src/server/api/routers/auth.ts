@@ -4,8 +4,12 @@ import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
-import { PasswordResetEmail } from "@/components/customs/PasswordResetEmail";
+import { PasswordResetEmail } from "@/src/components/customs/PasswordResetEmail";
 import { z } from "zod";
+import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
+import { eq } from "drizzle-orm";
+import { users } from "@/db/schema/users";
+import { purifyObject } from "@/src/lib/utils";
 export const authRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(
@@ -24,21 +28,18 @@ export const authRouter = createTRPCRouter({
           ),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const userQueriedWUsername = await ctx.db.user.findUnique({
-        where: {
-          username: input.username,
-        },
+    .mutation(async ({ input, ctx: { db, session } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
+      const userQueriedWUsername = await db.query.users.findFirst({
+        where: eq(users.username, purifiedInput.username),
       });
       if (userQueriedWUsername)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User with this username already exists",
         });
-      const userQueriedWEmail = await ctx.db.user.findUnique({
-        where: {
-          email: input.email,
-        },
+      const userQueriedWEmail = await db.query.users.findFirst({
+        where: eq(users.email, purifiedInput.email),
       });
       if (userQueriedWEmail)
         throw new TRPCError({
@@ -46,20 +47,26 @@ export const authRouter = createTRPCRouter({
           message: "User with this email already exists",
         });
       try {
-        const hashedPassword = await bycrypt.hash(input.password, 10);
-        const user = await ctx.db.user.create({
-          data: {
-            name: input.name,
-            email: input.email,
-            username: input.username,
+        const hashedPassword = await bycrypt.hash(purifiedInput.password, 10);
+        const user = await db
+          .insert(users)
+          .values({
+            name: purifiedInput.name,
+            email: purifiedInput.email,
+            username: purifiedInput.username,
             password: hashedPassword,
-          },
+            role: "user",
+            id: crypto.randomUUID(),
+          })
+          .returning()
+          .then((res) => res[0] ?? null);
+        await CustomDrizzleAdapter(db).linkAccount?.({
+          provider: "credentials",
+          providerAccountId: user.id,
+          userId: user.id,
+          type: "email",
         });
-        return {
-          email: user.email,
-          name: user.name,
-          username: user.username,
-        };
+        return user;
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -74,21 +81,21 @@ export const authRouter = createTRPCRouter({
         locale: z.string().optional().default("en"),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
-        where: {
-          email: input.email,
-        },
+    .mutation(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
+      const user = await db.query.users.findFirst({
+        where: eq(users.email, purifiedInput.email),
       });
       if (!user)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User with this email does not exist",
+          message: "UnknownEmailError",
         });
       if (user && !user.password)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User created with google auth",
+          cause: "GoogleAuthError",
         });
       const payload = {
         email: user.email,
@@ -98,7 +105,7 @@ export const authRouter = createTRPCRouter({
       const token = jwt.sign(payload, secret, {
         expiresIn: "30m",
       });
-      const link = `${process.env.NEXT_PUBLIC_URL}/${input.locale}/reset-password/${user.id}?token=${token}`;
+      const link = `${process.env.NEXT_PUBLIC_URL}/${purifiedInput.locale}/reset-password/${user.id}?token=${token}`;
       const transporter = nodemailler.createTransport({
         service: "gmail",
         host: "smtp.gmail.com",
@@ -140,13 +147,12 @@ export const authRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
       let user;
       try {
-        user = await ctx.db.user.findUnique({
-          where: {
-            id: input.id,
-          },
+        user = await db.query.users.findFirst({
+          where: eq(users.id, purifiedInput.id),
         });
       } catch (error) {
         throw new TRPCError({
@@ -167,7 +173,7 @@ export const authRouter = createTRPCRouter({
       }
       try {
         const payload = jwt.verify(
-          input.token,
+          purifiedInput.token,
           process.env.NEXTAUTH_SECRET! + user.password
         );
         return payload;
@@ -186,11 +192,10 @@ export const authRouter = createTRPCRouter({
         token: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
-        where: {
-          id: input.id,
-        },
+    .mutation(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input); // Guard against XSS
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, purifiedInput.id),
       });
       if (!user)
         throw new TRPCError({
@@ -205,7 +210,7 @@ export const authRouter = createTRPCRouter({
       }
       try {
         const payload = jwt.verify(
-          input.token,
+          purifiedInput.token,
           process.env.NEXTAUTH_SECRET! + user.password
         );
       } catch (error) {
@@ -215,7 +220,7 @@ export const authRouter = createTRPCRouter({
         });
       }
       const isPasswordSame = await bycrypt.compare(
-        input.newPassword,
+        purifiedInput.newPassword,
         user.password!
       );
       if (isPasswordSame) {
@@ -224,15 +229,11 @@ export const authRouter = createTRPCRouter({
           message: "New password cannot be the same as the old password",
         });
       }
-      const newHashedPassword = await bycrypt.hash(input.newPassword, 10);
-      await ctx.db.user.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          password: newHashedPassword,
-        },
-      });
+      const newHashedPassword = await bycrypt.hash(purifiedInput.newPassword, 10);
+      await db
+        .update(users)
+        .set({ password: newHashedPassword })
+        .where(eq(users.id, purifiedInput.id));
       return {
         message: "Password changed successfully",
       };

@@ -1,33 +1,84 @@
+import { sql } from "drizzle-orm";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
+import { WordSearchResult } from "@/types";
+import { savedWords } from "@/db/schema/saved_words";
 export const userRouter = createTRPCRouter({
-  /**
-   * Get a word by id quering the database
-   * @param input string mongo id
-   */
-  getSavedWords: protectedProcedure
-    .input(z.string())
-    .query(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
-        where: {
-          email: input,
-        },
-      });
-      if (!user)
-        return {
-          error: "User not found",
-        };
-      const savedWords = await ctx.db.word.findMany({
-        where: {
-          id: {
-            in: user.savedWordIds,
-          },
-        },
-        include: {
-          meanings: true,
-        },
-      });
-      return savedWords;
+  getSavedWords: protectedProcedure.query(async ({ ctx: { session, db } }) => {
+    const userWithSavedWords = await db.execute(sql`
+    SELECT
+    JSON_BUILD_OBJECT(
+      'word_id',
+      w.id,
+      'word_name',
+      w.name,
+      'attributes',
+      (
+        SELECT
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'attribute_id',
+              w_a.id,
+              'attribute',
+              w_a.attribute
+            )
+          )
+        FROM
+          words_attributes ws_a
+          JOIN word_attributes w_a ON ws_a.attribute_id = w_a.id
+        WHERE
+          ws_a.word_id = w.id
+      ),
+      'root',
+      JSON_BUILD_OBJECT('root', r.root, 'language', l.language_en),
+      'meanings',
+      JSON_AGG(
+        JSON_BUILD_OBJECT(
+          'meaning_id',
+          m.id,
+          'meaning',
+          m.meaning,
+          'part_of_speech',
+          pos.part_of_speech
+        )
+      )
+    ) AS word_data
+  FROM
+    users u
+    LEFT JOIN saved_words sw ON u.id = sw.user_id
+    LEFT JOIN words w ON sw.word_id = w.id
+    LEFT JOIN meanings m ON w.id = m.word_id
+    LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
+    LEFT JOIN roots r ON r.word_id = w.id
+    LEFT JOIN languages l ON r.language_id::integer = l.id
+  WHERE
+    u.id = ${session.user.id}
+  GROUP BY
+    w.id,
+    w.name,
+    r.root,
+    l.language_en;
+    `) as WordSearchResult[]
+    return userWithSavedWords
+  }),
+  getWordSaveStatus: protectedProcedure
+    .input(z.number())
+    .query(async ({ input, ctx: { session, db } }) => {
+      const result = await db.execute(
+        sql`
+        SELECT
+          *
+        FROM
+          saved_words
+          WHERE
+          user_id = ${session.user.id}
+          AND word_id = ${input}
+        `
+      )
+      if (result.length > 0) {
+        return true
+      }
+      return false
     }),
   /**
    * Save a word to user's saved word list
@@ -35,30 +86,19 @@ export const userRouter = createTRPCRouter({
   saveWord: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
-        wordId: z.string(),
+        wordId: z.number(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
-        where: {
-          id: input.userId,
-        },
-      });
-      if (!user)
-        return {
-          error: "User not found",
-        };
-      const savedWords = await ctx.db.user.update({
-        where: {
-          id: input.userId,
-        },
-        data: {
-          savedWordIds: {
-            push: input.wordId,
-          },
-        },
-      });
-      return savedWords;
+    .mutation(async ({ input, ctx: { session, db } }) => {
+      try {
+        const savedWord = await db.insert(savedWords).values({
+          userId: session.user.id,
+          wordId: input.wordId,
+        }).returning().execute()
+      } catch (error) {
+        await db.delete(savedWords).where(sql`user_id = ${session.user.id} AND word_id = ${input.wordId}`).execute()
+        return false
+      }
+      return true
     }),
 });
