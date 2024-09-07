@@ -1,4 +1,3 @@
-import Dashboard from "@/src/_pages/Dashboard/Dashboard";
 import WordList from "@/src/_pages/Dashboard/WordList/WordList";
 import { api } from "@/src/trpc/server";
 import { Metadata } from "next";
