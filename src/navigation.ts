@@ -43,6 +43,10 @@ export const pathnames = {
     en: "/dashboard/create-word",
     tr: "/panel/kelime-ekle",
   },
+  "/dashboard/user-list": {
+    en: "/dashboard/user-list",
+    tr: "/panel/kullanicilar",
+  },
   "/search": {
     en: "/search",
     tr: "/arama",
