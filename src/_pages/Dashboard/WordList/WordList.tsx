@@ -9,6 +9,7 @@ import {
   TableCell,
   useDisclosure,
   Spinner,
+  Button,
 } from "@nextui-org/react";
 import {
   Dropdown,
@@ -17,7 +18,7 @@ import {
   DropdownSection,
   DropdownItem,
 } from "@nextui-org/react";
-import { Edit3, MoreVertical, Trash2 } from "lucide-react";
+import { Edit3, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { Link as NextUILink } from "@nextui-org/react";
 import { Link } from "@/src/navigation";
@@ -165,19 +166,27 @@ export default function WordList(
   return (
     <section>
       <Table topContent={
-        <Select label={"Words per page"} defaultSelectedKeys={["10"]}
-          size="sm"
-          classNames={{
-            base: "flex ml-auto md:w-1/6",
-          }} onChange={(e) => {
-            setWordsPerPage(parseInt(e.target.value));
-          }}>
-          {wordPerPageOptions.map((pageCount) => (
-            <SelectItem key={pageCount.key}>
-              {pageCount.label}
-            </SelectItem>
-          ))}
-        </Select>
+        <div className="flex gap-4">
+          <NextUILink as={Link} href={'/dashboard/create-word'}>
+            <Button variant="solid" color="primary" startContent={<Plus />} isIconOnly className="sm:hidden" />
+            <Button variant="solid" color="primary" startContent={<Plus />} className="max-sm:hidden">
+              Create Word
+            </Button>
+          </NextUILink>
+          <Select label={"Words per page"} defaultSelectedKeys={["10"]}
+            size="sm"
+            classNames={{
+              base: "ml-auto max-w-64",
+            }} onChange={(e) => {
+              setWordsPerPage(parseInt(e.target.value));
+            }}>
+            {wordPerPageOptions.map((pageCount) => (
+              <SelectItem key={pageCount.key}>
+                {pageCount.label}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
       } bottomContent={
         <Pagination isDisabled={totalPageNumber === undefined} classNames={{
           wrapper: ["mx-auto"]
@@ -189,7 +198,7 @@ export default function WordList(
       }} isStriped aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
+            <TableColumn align={column.key === "actions" ? "end" : "start"} key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
         <TableBody items={rows}
