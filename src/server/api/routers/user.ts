@@ -1,8 +1,9 @@
-import { sql } from "drizzle-orm";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { count, sql } from "drizzle-orm";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { WordSearchResult } from "@/types";
 import { savedWords } from "@/db/schema/saved_words";
+import { users } from "@/db/schema/users";
 export const userRouter = createTRPCRouter({
   getSavedWords: protectedProcedure.query(async ({ ctx: { session, db } }) => {
     const userWithSavedWords = await db.execute(sql`
@@ -100,5 +101,22 @@ export const userRouter = createTRPCRouter({
         return false
       }
       return true
+    }),
+  getUsers: adminProcedure.input(
+    z.object({
+      take: z.number().optional().default(5),
+      skip: z.number().optional().default(0),
+    })
+  ).query(async ({ ctx: { db }, input }) => {
+    const users = await db.query.users.findMany({
+      limit: input.take,
+      offset: input.skip
+    })
+    return users
+  }),
+  getUserCount: adminProcedure
+    .query(async ({ ctx: { db } }) => {
+      const result = await db.select({ count: count() }).from(users);
+      return result[0].count
     }),
 });
