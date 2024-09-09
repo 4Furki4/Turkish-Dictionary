@@ -1,4 +1,4 @@
-import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React from "react";
 import DashboardLinks from "./DashboardLinks";
 

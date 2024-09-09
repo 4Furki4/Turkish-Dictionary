@@ -151,10 +151,10 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     // reset();
   };
   return (
-    <section className="max-w-7xl w-full mx-auto max-sm:px-4 py-4">
+    <section className="max-w-7xl w-full mx-auto">
       <h1 className="text-center text-fs-2">Create Word</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
-        <div className="grid sm:grid-cols-2 gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="">
+        <div className="flex flex-col max-w-full sm:grid sm:grid-cols-2 gap-2">
           <WordNameInput control={control} watch={watch} setError={setError} />
           <WordPhoneticInput control={control} />
           <WordRootLanguageInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} locale={locale} />
@@ -169,7 +169,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
             <Card className="mb-4 rounded-sm">
               <CardBody>
                 <WordMeaningInput index={index} control={control} />
-                <div className="grid sm:grid-cols-2 gap-2">
+                <div className="sm:grid sm:grid-cols-2 gap-2">
                   <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />
                   <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} setFieldValue={setValue} />
                   <MeaningExampleSentenceInput index={index} control={control} watch={watch} />
