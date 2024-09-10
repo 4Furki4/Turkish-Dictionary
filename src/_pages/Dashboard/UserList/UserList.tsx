@@ -23,9 +23,10 @@ import { Edit3, MoreVertical, Trash2 } from 'lucide-react';
 import { api } from '@/src/trpc/react';
 import { Pagination } from "@nextui-org/pagination";
 import { Select, SelectItem } from "@nextui-org/select";
-import { SelectUser } from '@/db/schema/users';
+import { rolesEnum, SelectUser } from '@/db/schema/users';
 import { Link } from '@/src/navigation';
 import { Link as NextUILink } from '@nextui-org/react';
+import RoleEditModal from './RoleEditModal';
 const userPerPageOptions = [
     {
         label: "5",
@@ -44,6 +45,7 @@ const userPerPageOptions = [
         key: "50"
     }
 ]
+const roles = rolesEnum.enumValues
 export default function UserList(
     {
         users,
@@ -56,10 +58,12 @@ export default function UserList(
 ) {
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
     const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalChange } = useDisclosure();
-    const [selectedusers, setSelectedusers] = React.useState<{
-        userId: string;
-        name: string | null;
-    }>({ userId: "", name: "" });
+    const [selectedUser, setSelectedUser] = React.useState<{
+        userId?: string | null;
+        name?: string | null;
+        role?: typeof roles[number];
+    }>({ userId: "", name: "", role: undefined });
+    console.log('selected user', selectedUser)
     const [pageNumber, setPageNumber] = React.useState<number>(1);
     const [usersPerPage, setUsersPerPage] = React.useState<number>(10);
     const usersCountQuery = api.user.getUserCount.useQuery(undefined, {
@@ -110,16 +114,18 @@ export default function UserList(
                         <DropdownMenu
                             onAction={(key) => {
                                 if (key === "Delete") {
-                                    setSelectedusers({
+                                    setSelectedUser({
                                         userId: item.key,
                                         name: item.name,
+                                        role: item.role
                                     });
                                     onDeleteModalOpen();
                                 }
                                 if (key === "Edit") {
-                                    setSelectedusers({
+                                    setSelectedUser({
                                         userId: item.key,
                                         name: item.name,
+                                        role: item.role
                                     });
                                     onEditModalOpen();
                                 }
@@ -134,7 +140,7 @@ export default function UserList(
                                     Delete
                                 </DropdownItem>
                                 <DropdownItem key={'Edit'} startContent={<Edit3 />} color={"warning"}>
-                                    Edit
+                                    Edit Role
                                 </DropdownItem>
                             </DropdownSection>
                         </DropdownMenu>
@@ -157,50 +163,55 @@ export default function UserList(
         }
     }, []);
     return (
-        <Table topContent={
-            <div className="flex gap-4">
-                <Select label={"Words per page"} defaultSelectedKeys={["10"]}
-                    size="sm"
-                    classNames={{
-                        base: "ml-auto max-w-64",
-                    }} onChange={(e) => {
-                        setUsersPerPage(parseInt(e.target.value));
-                    }}>
-                    {userPerPageOptions.map((pageCount) => (
-                        <SelectItem key={pageCount.key}>
-                            {pageCount.label}
-                        </SelectItem>
-                    ))}
-                </Select>
-            </div>
-        } bottomContent={
-            <Pagination isDisabled={totalPageNumber === undefined} classNames={{
-                wrapper: ["mx-auto"]
-            }} isCompact showControls total={totalPageNumber ?? 1} initialPage={1} onChange={async (page) => {
-                setPageNumber(page);
-            }} />
-        } classNames={{
-            base: ["min-h-[300px]"],
-        }} isStriped aria-label="Example table with dynamic content">
-            <TableHeader columns={columns}>
-                {(column) => (
-                    <TableColumn align={column.key === "actions" ? "end" : "start"} key={column.key}>{column.label}</TableColumn>
-                )}
-            </TableHeader>
-            <TableBody items={rows}
-                loadingContent={<Spinner />}
-                loadingState={
-                    usersQuery.isFetching ? "loading" : "idle"
-                }
-            >
-                {(item) => (
-                    <TableRow key={item.key + item.name}>
-                        {(columnKey) => (
-                            <TableCell>{renderCell(item, columnKey)}</TableCell>
-                        )}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+        <>
+            <Table topContent={
+                <div className="flex gap-4">
+                    <Select label={"Words per page"} defaultSelectedKeys={["10"]}
+                        size="sm"
+                        classNames={{
+                            base: "ml-auto max-w-64",
+                        }} onChange={(e) => {
+                            setUsersPerPage(parseInt(e.target.value));
+                        }}>
+                        {userPerPageOptions.map((pageCount) => (
+                            <SelectItem key={pageCount.key}>
+                                {pageCount.label}
+                            </SelectItem>
+                        ))}
+                    </Select>
+                </div>
+            } bottomContent={
+                <Pagination isDisabled={totalPageNumber === undefined} classNames={{
+                    wrapper: ["mx-auto"]
+                }} isCompact showControls total={totalPageNumber ?? 1} initialPage={1} onChange={async (page) => {
+                    setPageNumber(page);
+                }} />
+            } classNames={{
+                base: ["min-h-[300px]"],
+            }} isStriped aria-label="Example table with dynamic content">
+                <TableHeader columns={columns}>
+                    {(column) => (
+                        <TableColumn align={column.key === "actions" ? "end" : "start"} key={column.key}>{column.label}</TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody items={rows}
+                    loadingContent={<Spinner />}
+                    loadingState={
+                        usersQuery.isFetching ? "loading" : "idle"
+                    }
+                >
+                    {(item) => (
+                        <TableRow key={item.key + item.name}>
+                            {(columnKey) => (
+                                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                            )}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+            {isEditModalOpen ?
+                <RoleEditModal key={selectedUser.userId} isOpen={isEditModalOpen} onOpenChange={onEditModalChange} userId={selectedUser.userId} selectedUserRole={selectedUser.role} /> : null
+            }
+        </>
     )
 }
