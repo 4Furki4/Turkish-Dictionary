@@ -27,6 +27,7 @@ import { rolesEnum, SelectUser } from '@/db/schema/users';
 import { Link } from '@/src/navigation';
 import { Link as NextUILink } from '@nextui-org/react';
 import RoleEditModal from './RoleEditModal';
+import UserDeleteModal from './UserDeleteModal';
 const userPerPageOptions = [
     {
         label: "5",
@@ -69,9 +70,10 @@ export default function UserList(
         initialData: userCount,
     });
     const totalPageNumber = usersCountQuery.data ? Math.ceil(usersCountQuery.data / usersPerPage) : undefined;
+    const skip = (pageNumber - 1) * usersPerPage
     const usersQuery = api.user.getUsers.useQuery({
         take: usersPerPage,
-        skip: (pageNumber - 1) * usersPerPage
+        skip
     }, {
         initialData: users,
     })
@@ -209,7 +211,10 @@ export default function UserList(
                 </TableBody>
             </Table>
             {isEditModalOpen ?
-                <RoleEditModal key={selectedUser.userId} isOpen={isEditModalOpen} onOpenChange={onEditModalChange} userId={selectedUser.userId} selectedUserRole={selectedUser.role} skip={(pageNumber - 1) * usersPerPage} take={usersPerPage} /> : null
+                <RoleEditModal key={selectedUser.userId} isOpen={isEditModalOpen} onOpenChange={onEditModalChange} userId={selectedUser.userId} selectedUserRole={selectedUser.role} skip={skip} take={usersPerPage} /> : null
+            }
+            {
+                isDeleteModalOpen ? <UserDeleteModal isOpen={isDeleteModalOpen} name={selectedUser.name!} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} skip={skip} take={usersPerPage} userId={selectedUser.userId!} /> : null
             }
         </>
     )

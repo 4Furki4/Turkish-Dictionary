@@ -159,5 +159,22 @@ export const userRouter = createTRPCRouter({
         message: "An error occurred while updating the user's role! Please try again. If the error persists, please contact the admins or developers."
       })
     }
+  }),
+  deleteUser: adminProcedure.input(z.object({
+    userId: z.string()
+  })).mutation(async ({ ctx: { db }, input: { userId } }) => {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    })
+    if (!user) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No user found to delete! Please make sure a user is provided and try again. If the error persists, please contact the admins or developers."
+      })
+    }
+    await db.delete(users).where(eq(users.id, userId))
+    return {
+      message: "The user is deleted successfully!"
+    }
   })
 });
