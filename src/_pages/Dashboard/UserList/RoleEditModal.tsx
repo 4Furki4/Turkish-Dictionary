@@ -13,17 +13,21 @@ export default function RoleEditModal({
     onOpenChange,
     isOpen,
     userId,
-    selectedUserRole
+    selectedUserRole,
+    skip,
+    take
 }: {
     onOpenChange: () => void,
     isOpen: boolean,
     userId?: string | null,
-    selectedUserRole?: typeof roles[number]
+    selectedUserRole?: typeof roles[number],
+    skip: number,
+    take: number
 }) {
+    const utils = api.useUtils()
     const { control, handleSubmit, watch, setValue } = useForm<{
         role: typeof roles[number]
     }>()
-    console.log(' watch', watch())
     const [role, setRole] = React.useState<Selection>(new Set([selectedUserRole as string ?? '']));
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedRole = e.target.value
@@ -31,16 +35,21 @@ export default function RoleEditModal({
         setRole(() => new Set([selectedRole]))
     };
     const editRoleMutation = api.user.setRole.useMutation({
-        onSuccess(data) {
+        async onSuccess(data) {
             toast.success(data.message)
+            await utils.user.getUsers.refetch({
+                skip,
+                take
+            })
         },
     })
     function onSubmit(data: { role: typeof roles[number] }) {
-        if (userId)
+        if (userId) {
             editRoleMutation.mutate({
                 selectedRole: data.role,
                 userId: userId
             })
+        }
     }
     return (
         <Modal radius="sm" size="4xl" isOpen={isOpen} onOpenChange={onOpenChange} isDismissable>
@@ -75,7 +84,7 @@ export default function RoleEditModal({
                                 <Button color="primary" variant="light" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button type="submit" color="success">
+                                <Button type="submit" color="success" isDisabled={watch("role") === undefined}>
                                     Save
                                 </Button>
                             </ModalFooter>

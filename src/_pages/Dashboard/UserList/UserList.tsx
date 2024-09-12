@@ -63,7 +63,6 @@ export default function UserList(
         name?: string | null;
         role?: typeof roles[number];
     }>({ userId: "", name: "", role: undefined });
-    console.log('selected user', selectedUser)
     const [pageNumber, setPageNumber] = React.useState<number>(1);
     const [usersPerPage, setUsersPerPage] = React.useState<number>(10);
     const usersCountQuery = api.user.getUserCount.useQuery(undefined, {
@@ -210,7 +209,7 @@ export default function UserList(
                 </TableBody>
             </Table>
             {isEditModalOpen ?
-                <RoleEditModal key={selectedUser.userId} isOpen={isEditModalOpen} onOpenChange={onEditModalChange} userId={selectedUser.userId} selectedUserRole={selectedUser.role} /> : null
+                <RoleEditModal key={selectedUser.userId} isOpen={isEditModalOpen} onOpenChange={onEditModalChange} userId={selectedUser.userId} selectedUserRole={selectedUser.role} skip={(pageNumber - 1) * usersPerPage} take={usersPerPage} /> : null
             }
         </>
     )
