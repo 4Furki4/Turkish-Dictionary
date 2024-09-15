@@ -1,8 +1,10 @@
-import { sql } from "drizzle-orm";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { count, eq, sql } from "drizzle-orm";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { WordSearchResult } from "@/types";
 import { savedWords } from "@/db/schema/saved_words";
+import { rolesEnum, users } from "@/db/schema/users";
+import { TRPCError } from "@trpc/server";
 export const userRouter = createTRPCRouter({
   getSavedWords: protectedProcedure.query(async ({ ctx: { session, db } }) => {
     const userWithSavedWords = await db.execute(sql`
@@ -101,4 +103,78 @@ export const userRouter = createTRPCRouter({
       }
       return true
     }),
+  getUsers: adminProcedure.input(
+    z.object({
+      take: z.number().optional().default(5),
+      skip: z.number().optional().default(0),
+    })
+  ).query(async ({ ctx: { db }, input }) => {
+    const users = await db.query.users.findMany({
+      limit: input.take,
+      offset: input.skip
+    })
+    return users
+  }),
+  getUserCount: adminProcedure
+    .query(async ({ ctx: { db } }) => {
+      const result = await db.select({ count: count() }).from(users);
+      return result[0].count
+    }),
+  getUserRole: adminProcedure
+    .input(z.object({
+      userId: z.string()
+    }))
+    .query(async ({ ctx: { db }, input: { userId } }) => {
+      const result = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: {
+          role: true
+        }
+      })
+      return result?.role
+    }),
+  setRole: adminProcedure.input(z.object({
+    selectedRole: z.enum(rolesEnum.enumValues),
+    userId: z.string()
+  })).mutation(async ({ ctx: { db }, input: { userId, selectedRole } }) => {
+    const userExist = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    })
+    if (!userExist) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No user found to change their role! Please make sure a user is provided and try again. If the error persists, please contact the admins or developers."
+      })
+    }
+    try {
+      await db.update(users).set({
+        role: selectedRole,
+      }).where(eq(users.id, userId))
+      return {
+        message: "The users role is updated!"
+      }
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An error occurred while updating the user's role! Please try again. If the error persists, please contact the admins or developers."
+      })
+    }
+  }),
+  deleteUser: adminProcedure.input(z.object({
+    userId: z.string()
+  })).mutation(async ({ ctx: { db }, input: { userId } }) => {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    })
+    if (!user) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No user found to delete! Please make sure a user is provided and try again. If the error persists, please contact the admins or developers."
+      })
+    }
+    await db.delete(users).where(eq(users.id, userId))
+    return {
+      message: "The user is deleted successfully!"
+    }
+  })
 });
