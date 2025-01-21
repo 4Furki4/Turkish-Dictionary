@@ -1,7 +1,7 @@
 "use client"
 import AddAuthorModal from '@/src/components/customs/Modals/AddAuthor'
 import { EditWordForm } from '@/types'
-import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/react"
 import { Plus } from 'lucide-react'
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'

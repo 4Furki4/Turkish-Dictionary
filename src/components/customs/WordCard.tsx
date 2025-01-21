@@ -4,10 +4,10 @@ import React, {
 // import {
 //   Accordion,
 //   AccordionItem,
-// } from "@nextui-org/react";
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
-import { Divider } from "@nextui-org/divider";
-import { Chip } from "@nextui-org/chip";
+// } from "@heroui/react";
+import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
+import { Divider } from "@heroui/divider";
+import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./SaveWord";
 const itemClasses = {

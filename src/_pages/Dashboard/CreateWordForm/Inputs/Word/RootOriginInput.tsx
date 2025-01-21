@@ -1,6 +1,6 @@
 "use client"
 import { WordForm } from '@/types';
-import { Input } from '@nextui-org/react';
+import { Input } from "@heroui/react";
 import { useTranslations } from 'next-intl';
 import React from 'react'
 import { Control, Controller, UseFormClearErrors, UseFormGetFieldState, UseFormSetError, UseFormWatch } from 'react-hook-form';

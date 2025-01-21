@@ -1,6 +1,6 @@
 "use client";
 import { ForgotPassword } from "@/types";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -80,63 +80,61 @@ export default function ForgotPasswordForm({
       locale,
     });
   };
-  return (
-    <>
-      <form
-        onSubmit={handleSubmit(onForgotPasswordSubmit)}
-        className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
-      >
-        <h1 className="text-fs-2 font-bold text-center">
-          {ForgotPasswordIntl}
-        </h1>
-        <Controller
-          name="forgotPasswordEmail"
-          rules={{
-            required: {
-              value: true,
-              message: EmailRequiredIntl,
-            },
-            pattern: {
-              value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-              message: InvalidEmailIntl,
-            },
+  return (<>
+    <form
+      onSubmit={handleSubmit(onForgotPasswordSubmit)}
+      className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
+    >
+      <h1 className="text-fs-2 font-bold text-center">
+        {ForgotPasswordIntl}
+      </h1>
+      <Controller
+        name="forgotPasswordEmail"
+        rules={{
+          required: {
+            value: true,
+            message: EmailRequiredIntl,
+          },
+          pattern: {
+            value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+            message: InvalidEmailIntl,
+          },
+        }}
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <Input
+            aria-required
+            key={"forgotPasswordEmail"}
+            type="email"
+            autoCapitalize="email"
+            inputMode="email"
+            dir="auto"
+            {...field}
+            label={EmailIntl}
+            color="primary"
+            variant="underlined"
+            errorMessage={errors.forgotPasswordEmail?.message}
+            isInvalid={error !== undefined}
+          />
+        )}
+      />
+      <Button className="rounded-sm"
+        color="primary" variant="ghost" type="submit">
+        {EmailSentIntl}
+      </Button>
+      <p>
+        {RememberedPasswordIntl}
+        {` `}
+        <Link
+          className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+          href={{
+            pathname: "/signin",
+            query: decodeURIComponent(params.toString()),
           }}
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              aria-required
-              key={"forgotPasswordEmail"}
-              type="email"
-              autoCapitalize="email"
-              inputMode="email"
-              dir="auto"
-              {...field}
-              label={EmailIntl}
-              color="primary"
-              variant="underlined"
-              errorMessage={errors.forgotPasswordEmail?.message}
-              isInvalid={error !== undefined}
-            />
-          )}
-        />
-        <Button className="rounded-sm"
-          color="primary" variant="ghost" type="submit">
-          {EmailSentIntl}
-        </Button>
-        <p>
-          {RememberedPasswordIntl}
-          {` `}
-          <Link
-            className="underline hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-            href={{
-              pathname: "/signin",
-              query: decodeURIComponent(params.toString()),
-            }}
-          >
-            {LoginIntl}
-          </Link>
-        </p>
-      </form>
-    </>
-  );
+        >
+          {LoginIntl}
+        </Link>
+      </p>
+    </form>
+  </>);
 }

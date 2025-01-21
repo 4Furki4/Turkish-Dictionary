@@ -4,7 +4,7 @@ import {
   Button,
   Card,
   CardBody,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import WordNameInput from "./CreateWordForm/Inputs/Word/NameInput";

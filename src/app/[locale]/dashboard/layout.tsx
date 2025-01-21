@@ -1,6 +1,6 @@
 import Dashboard from "@/src/_pages/Dashboard/Dashboard";
 import DashboardUnauthorizedMessage from "@/src/_pages/Dashboard/DashboardUnauthorizedLogin";
-import { getServerAuthSession } from "@/src/server/auth";
+import { getServerAuthSession } from "@/src/server/auth/auth";
 import { Metadata } from "next";
 import React, { ReactNode } from "react";
 

@@ -1,7 +1,7 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import { EditMeaningForm, EditWordForm, Language } from '@/types';
-import { Button, ButtonGroup, Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
+import { Button, ButtonGroup, Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@heroui/react";
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form';
 import WordNameInput from './Inputs/Word/WordNameInput';

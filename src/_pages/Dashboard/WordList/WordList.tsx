@@ -10,22 +10,22 @@ import {
   useDisclosure,
   Spinner,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownSection,
   DropdownItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Edit3, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
-import { Link as NextUILink } from "@nextui-org/react";
+import { Link as NextUILink } from "@heroui/react";
 import { Link } from "@/src/navigation";
 import { DashboardWordList, Language } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
-import { Pagination } from "@nextui-org/pagination";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Pagination } from "@heroui/pagination";
+import { Select, SelectItem } from "@heroui/select";
 import EditWordModal from "./EditModal/EditWordModal";
 import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 

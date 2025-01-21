@@ -2,7 +2,7 @@ import ForgotPasswordForm from "@/src/components/customs/Signup/ForgotPasswordFo
 import React from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "@/src/server/auth";
+import { getServerAuthSession } from "@/src/server/auth/auth";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 export async function generateMetadata({

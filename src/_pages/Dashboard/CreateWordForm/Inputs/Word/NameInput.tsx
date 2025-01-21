@@ -1,7 +1,7 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types';
-import { Input } from '@nextui-org/react';
+import { Input } from "@heroui/react";
 import React from 'react'
 import { Control, Controller, UseFormSetError, UseFormWatch } from 'react-hook-form';
 

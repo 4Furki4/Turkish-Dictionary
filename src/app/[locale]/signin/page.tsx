@@ -2,14 +2,16 @@ import SigninForm from "@/src/components/customs/Signup/SigninForm";
 import React from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "@/src/server/auth";
-import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import { auth } from "@/src/server/auth/auth";
+import { getTranslations, setRequestLocale, unstable_setRequestLocale } from "next-intl/server";
+import { Params } from "next/dist/server/request/params";
 
 export async function generateMetadata({
-  params: { locale },
+  params
 }: {
-  params: { locale: string };
+  params: Params
 }): Promise<Metadata> {
+  const { locale } = await params
   switch (locale) {
     case "tr":
       return {
@@ -25,12 +27,13 @@ export async function generateMetadata({
 }
 
 export default async function page({
-  params: { locale },
+  params
 }: {
-  params: { locale: string };
+  params: Params
 }) {
-  unstable_setRequestLocale(locale)
-  const session = await getServerAuthSession();
+  const { locale } = await params
+  setRequestLocale(locale as string)
+  const session = await auth();
   const t = await getTranslations("SigninForm");
   if (session) redirect("/?warning=alreadySignedIn");
   return (

@@ -1,7 +1,7 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import React from 'react'
-import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalVariantProps } from '@nextui-org/react'
+import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalVariantProps } from "@heroui/react"
 import { NewAttributeForm } from '@/types';
 import { toast } from 'sonner';
 import { Controller, useForm } from 'react-hook-form';

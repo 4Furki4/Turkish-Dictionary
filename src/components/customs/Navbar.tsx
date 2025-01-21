@@ -11,13 +11,13 @@ import {
   DropdownTrigger,
   DropdownMenu,
   NavbarBrand,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Book, Languages, Menu, Palette } from "lucide-react";
 import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
-import { usePathname, Link as NextIntlLink } from "@/src/navigation";
+import { usePathname, Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from "next-auth";
 import { useCallback } from "react";
 

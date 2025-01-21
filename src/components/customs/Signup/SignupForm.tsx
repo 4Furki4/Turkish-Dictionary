@@ -1,7 +1,7 @@
 "use client";
 import { onEnterAndSpace } from "@/src/lib/keyEvents";
 import { SignupForm as SignupFormType, SignupRequest } from "@/types";
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Button, Divider, Input } from "@heroui/react";
 import Image from "next/image";
 import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -121,7 +121,7 @@ export default function SignupForm({
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
   return (
-    <form
+    (<form
       onSubmit={handleSubmit(onSignupSubmit)}
       className="flex flex-col gap-2 w-11/12 sm:w-full shadow-md max-w-xl bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
     >
@@ -287,7 +287,6 @@ export default function SignupForm({
           />
         )}
       />
-
       <Button className="rounded-sm"
         color="primary" variant="ghost" type="submit">
         {SignupButtonIntl}
@@ -304,6 +303,6 @@ export default function SignupForm({
           {LoginIntl}
         </Link>
       </p>
-    </form>
+    </form>)
   );
 }

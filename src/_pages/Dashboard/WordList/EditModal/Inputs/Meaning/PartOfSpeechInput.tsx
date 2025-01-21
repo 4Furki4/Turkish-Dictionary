@@ -1,6 +1,6 @@
 import { PartOfSpeech } from '@/db/schema/part_of_speechs'
 import { EditWordForm } from '@/types'
-import { Select, Selection, SelectItem } from '@nextui-org/react'
+import { Select, Selection, SelectItem } from "@heroui/react"
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 

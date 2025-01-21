@@ -6,7 +6,6 @@ import nodemailler from "nodemailer";
 import { render } from "@react-email/render";
 import { PasswordResetEmail } from "@/src/components/customs/PasswordResetEmail";
 import { z } from "zod";
-import { CustomDrizzleAdapter } from "@/db/CustomDrizzleAdapter";
 import { eq } from "drizzle-orm";
 import { users } from "@/db/schema/users";
 import { purifyObject } from "@/src/lib/utils";
@@ -60,12 +59,12 @@ export const authRouter = createTRPCRouter({
           })
           .returning()
           .then((res) => res[0] ?? null);
-        await CustomDrizzleAdapter(db).linkAccount?.({
-          provider: "credentials",
-          providerAccountId: user.id,
-          userId: user.id,
-          type: "email",
-        });
+        // await CustomDrizzleAdapter(db).linkAccount?.({
+        //   provider: "credentials",
+        //   providerAccountId: user.id,
+        //   userId: user.id,
+        //   type: "email",
+        // });
         return user;
       } catch (error) {
         throw new TRPCError({
