@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Spinner } from "@heroui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Input } from "@heroui/react";
 import { useTranslations } from "next-intl";
@@ -17,16 +17,17 @@ type ForgotPasswordForm = {
   resetPasswordConfirm: string;
 };
 
-export default function Page({
-  searchParams,
-  params,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-  params: {
-    id: string;
-    locale: string;
-  };
-}) {
+export default function Page(
+  props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    params: Promise<{
+      id: string;
+      locale: string;
+    }>;
+  }
+) {
+  const params = use(props.params);
+  const searchParams = use(props.searchParams);
   unstable_setRequestLocale(params.locale)
   const { handleSubmit, control, watch, clearErrors } =
     useForm<ForgotPasswordForm>({

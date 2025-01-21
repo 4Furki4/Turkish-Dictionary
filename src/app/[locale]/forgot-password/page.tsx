@@ -5,13 +5,19 @@ import { redirect } from "next/navigation";
 import { getServerAuthSession } from "@/src/server/auth/auth";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-export async function generateMetadata({
-  params: { locale },
-}: {
-  params: {
-    locale: string;
-  };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   switch (locale) {
     case "tr":
       return {
@@ -26,13 +32,19 @@ export async function generateMetadata({
   }
 }
 
-export default async function page({
-  params: { locale },
-}: {
-  params: {
-    locale: string;
-  };
-}) {
+export default async function page(
+  props: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   unstable_setRequestLocale(locale)
   const session = await getServerAuthSession();
   if (session) redirect("/?warning=alreadySignedIn");

@@ -10,15 +10,20 @@ export const metadata: Metadata = {
 }
 
 
-export default async function DashboardLayout({
-  children,
-  params,
-}: {
-  children?: ReactNode;
-  params: {
-    locale: string
+export default async function DashboardLayout(
+  props: {
+    children?: ReactNode;
+    params: Promise<{
+      locale: string
+    }>
   }
-}) {
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const session = await getServerAuthSession();
   if (!["admin", "moderator"].includes(session?.user.role!)) {
     return <DashboardUnauthorizedMessage />;

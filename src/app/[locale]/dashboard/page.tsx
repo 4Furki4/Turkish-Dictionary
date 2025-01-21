@@ -16,11 +16,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Page({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function Page(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const wordListPromise = api.word.getWords({
     take: 10,
     skip: 0
