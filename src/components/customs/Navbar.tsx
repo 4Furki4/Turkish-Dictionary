@@ -13,7 +13,7 @@ import {
   NavbarBrand,
 } from "@heroui/react";
 import { Book, Languages, Menu, Palette } from "lucide-react";
-import { signOut, } from "next-auth/react";
+import { signIn, signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
@@ -181,7 +181,12 @@ export default function Navbar({
         </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
-            <NextIntlLink
+            <Button onPress={() => {
+              signIn()
+            }}>
+              {SignInIntl}
+            </Button>
+            {/* <NextIntlLink
               className="w-full block"
               // @ts-ignore
               href={{
@@ -198,7 +203,7 @@ export default function Navbar({
             >
                 {SignInIntl}
               </Button>
-            </NextIntlLink>
+            </NextIntlLink> */}
           </NavbarItem>
         ) : (
           <>

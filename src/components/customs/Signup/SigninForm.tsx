@@ -136,8 +136,7 @@ export default function SigninForm({
         className="rounded-sm"
         variant="bordered"
         color="primary"
-        onClick={() => onProviderSignin("google")}
-        onKeyDown={(e) => onEnterAndSpace(e, () => onProviderSignin("google"))}
+        onPress={() => signIn("google")}
         startContent={
           <Image
             src={"/svg/providers/google.svg"}
