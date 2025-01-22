@@ -131,3 +131,15 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+const forceAdminMiddleware = t.middleware(async ({ ctx: { session }, next }) => {
+  if (session?.user.role !== "admin") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      session: { ...session, user: { ...session.user, role: "admin" } },
+    },
+  });
+})
+export const adminProcedure = t.procedure.use(forceAdminMiddleware)

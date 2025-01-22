@@ -47,7 +47,7 @@ export const userRouter = createTRPCRouter({
     ) AS word_data
   FROM
     users u
-    LEFT JOIN saved_words sw ON u.id = sw.user_id
+    INNER JOIN saved_words sw ON u.id = sw.user_id
     LEFT JOIN words w ON sw.word_id = w.id
     LEFT JOIN meanings m ON w.id = m.word_id
     LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
@@ -61,7 +61,8 @@ export const userRouter = createTRPCRouter({
     r.root,
     l.language_en;
     `) as WordSearchResult[]
-    return userWithSavedWords
+
+    return userWithSavedWords.length > 0 ? userWithSavedWords : [];
   }),
   getWordSaveStatus: protectedProcedure
     .input(z.number())

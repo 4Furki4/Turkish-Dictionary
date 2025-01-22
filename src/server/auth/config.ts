@@ -41,13 +41,14 @@ export const authConfig = {
         DiscordProvider,
     ],
     callbacks: {
-        session: ({ session, user }) => {
+        session: ({ session, token }) => {
             console.log("session", session)
-            console.log("user", user)
             return {
                 ...session,
                 user: {
                     ...session.user,
+                    id: token.sub,
+                    //todo: add role to the session
                 },
             }
         },

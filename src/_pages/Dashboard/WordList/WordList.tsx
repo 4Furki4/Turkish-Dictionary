@@ -21,7 +21,7 @@ import {
 import { Edit3, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { Link as NextUILink } from "@heroui/react";
-import { Link } from "@/src/navigation";
+import { Link } from "@/src/i18n/routing";
 import { DashboardWordList, Language } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
 import { Pagination } from "@heroui/pagination";

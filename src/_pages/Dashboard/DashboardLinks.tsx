@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { Link, usePathname, useRouter } from "@/src/navigation";
+import { Link, usePathname, useRouter } from "@/src/i18n/routing";
 import { Link as NextUILink } from "@heroui/react"
 export default function DashboardLinks() {
     const pathname = usePathname()

@@ -234,8 +234,8 @@ export default function Navbar({
                       Saved Words
                     </Link>
                   </DropdownItem>
-                  <DropdownItem color="primary" key={"saved-words"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
+                  <DropdownItem color="primary" key={"search-history"} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
                       Search History
                     </Link>
                   </DropdownItem>
@@ -248,7 +248,7 @@ export default function Navbar({
                     className="text-danger rounded-sm"
                     key={"sign-out"}
                     color="danger"
-                    onClick={() => signOut()}
+                    onPress={() => signOut()}
                   >
                     Sign Out
                   </DropdownItem>
