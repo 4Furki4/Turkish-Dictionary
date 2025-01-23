@@ -16,7 +16,6 @@ export default function NavbarAndSidebar({
     SignInIntl: string
     WordListIntl: string
 }) {
-
     // Render children if on client side, otherwise return null
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     return (

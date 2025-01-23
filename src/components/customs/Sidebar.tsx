@@ -1,7 +1,7 @@
 "use client"
 import { HistoryIcon, HomeIcon, Languages, LayoutDashboard, ListTree, Palette, StarIcon } from 'lucide-react'
 import React from 'react'
-import { Link as NextIntlLink, usePathname } from "@/src/navigation";
+import { Link as NextIntlLink, usePathname } from "@/src/i18n/routing";
 import { Session } from 'next-auth';
 import {
     Sheet,

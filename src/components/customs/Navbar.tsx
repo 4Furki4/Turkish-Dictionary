@@ -11,13 +11,13 @@ import {
   DropdownTrigger,
   DropdownMenu,
   NavbarBrand,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Book, Languages, Menu, Palette } from "lucide-react";
-import { signOut, } from "next-auth/react";
+import { signIn, signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
-import { usePathname, Link as NextIntlLink } from "@/src/navigation";
+import { usePathname, Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from "next-auth";
 import { useCallback } from "react";
 
@@ -181,7 +181,12 @@ export default function Navbar({
         </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
-            <NextIntlLink
+            <Button onPress={() => {
+              signIn()
+            }}>
+              {SignInIntl}
+            </Button>
+            {/* <NextIntlLink
               className="w-full block"
               // @ts-ignore
               href={{
@@ -198,7 +203,7 @@ export default function Navbar({
             >
                 {SignInIntl}
               </Button>
-            </NextIntlLink>
+            </NextIntlLink> */}
           </NavbarItem>
         ) : (
           <>
@@ -229,8 +234,8 @@ export default function Navbar({
                       Saved Words
                     </Link>
                   </DropdownItem>
-                  <DropdownItem color="primary" key={"saved-words"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
+                  <DropdownItem color="primary" key={"search-history"} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
                       Search History
                     </Link>
                   </DropdownItem>
@@ -243,7 +248,7 @@ export default function Navbar({
                     className="text-danger rounded-sm"
                     key={"sign-out"}
                     color="danger"
-                    onClick={() => signOut()}
+                    onPress={() => signOut()}
                   >
                     Sign Out
                   </DropdownItem>

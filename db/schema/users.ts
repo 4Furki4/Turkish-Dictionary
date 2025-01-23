@@ -1,9 +1,7 @@
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import {
-  integer,
   pgEnum,
   pgTable,
-  primaryKey,
   text,
   timestamp,
   varchar,

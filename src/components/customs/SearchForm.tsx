@@ -1,9 +1,9 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
-import { useRouter } from "@/src/navigation";
+import { useRouter } from "@/src/i18n/routing";
 import { SearchIcon } from "lucide-react";
 
 export default function SearchForm({

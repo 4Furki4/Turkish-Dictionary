@@ -1,7 +1,7 @@
 import React from "react";
 import { api } from "../../trpc/server";
 import WordCard from "../../components/customs/WordCard";
-import { Link as NextIntlLink } from "@/src/navigation";
+import { Link as NextIntlLink } from "@/src/i18n/routing";
 import { getTranslations } from "next-intl/server";
 
 export default async function SearchResult({ word, locale }: { word: string, locale: "en" | "tr" }) {

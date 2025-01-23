@@ -2,7 +2,7 @@
 import AddMeaningAttributeModal from '@/src/components/customs/Modals/AddMeaningAttribute';
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
-import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/react"
 import { Plus, X } from 'lucide-react';
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'

@@ -1,7 +1,7 @@
 "use client"
 import { rolesEnum } from "@/db/schema/users";
 import { api } from "@/src/trpc/react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem, Selection, Button } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem, Selection, Button } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from 'react'
 import { Controller, Form, useForm } from "react-hook-form";

@@ -2,11 +2,17 @@ import CreateWord from "@/src/_pages/Dashboard/CreateWord";
 import { api } from "@/src/trpc/server";
 import React from "react";
 
-export default async function Page({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function Page(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const meaningAttributesPromise = api.admin.getMeaningAttributes()
   const authorsPromise = api.admin.getExampleSentenceAuthors()
   const partOfSpeechesPromise = api.admin.getPartOfSpeeches();

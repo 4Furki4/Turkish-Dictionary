@@ -1,13 +1,11 @@
 import Search from "@/src/components/customs/Search";
 import { Metadata } from "next";
-import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Params } from "next/dist/server/request/params";
 import React from "react";
 
-export function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: string };
-}): Metadata {
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const { locale } = await params
   return {
     title: {
       template: `${locale === "en" ? "%s | Turkish Meaning - Turkish Dictionary" : "%s | Anlamı - Türkçe Sözlük"}`,
@@ -18,12 +16,13 @@ export function generateMetadata({
 
 export default async function SearchLayout({
   children,
-  params: { locale },
+  params
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<Params>
 }) {
-  unstable_setRequestLocale(locale)
+  const { locale } = await params
+  setRequestLocale(locale as string)
   const t = await getTranslations("Home");
   return <Search warningParamIntl={t("alreadySignedIn")}>{children}</Search>;
 }

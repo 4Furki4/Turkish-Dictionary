@@ -6,20 +6,20 @@ import "@/app/globals.css";
 import { TRPCReactProvider } from "@/src/trpc/react";
 import { GeistSans } from "geist/font/sans";
 import Providers from "@/src/components/customs/Provider";
-import { getServerAuthSession } from "@/src/server/auth";
-import { getMessages, getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/src/components/customs/Sonner";
 import { Wrapper } from "@/src/components/customs/Wrapper";
 import Footer from "@/src/components/customs/Footer";
+import { routing } from "@/src/i18n/routing";
+import { notFound } from "next/navigation";
+import { auth } from "@/src/server/auth/auth";
+import { Params } from "next/dist/server/request/params";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
-export function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export async function generateMetadata({ params }: { params: Params }) {
+  const { locale } = await params
   const metadata: Metadata = {
     title: {
       absolute: locale === "en" ? "%s | Turkish Dictionary" : "%s | Türkçe Sözlük",
@@ -32,21 +32,24 @@ export function generateMetadata({
 };
 export default async function RootLayout({
   children,
-  params: { locale },
+  params
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Params
 }) {
-  unstable_setRequestLocale(locale);
-  const session = await getServerAuthSession();
+  const { locale } = await params
+  setRequestLocale(locale as string)
+  const session = await auth();
   const t = await getTranslations("Navbar");
   const messages = await getMessages();
-
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
   return (
-    <html lang={locale} className="dark">
+    <html lang={locale as string} className="dark">
       <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden relative`}>
         <TRPCReactProvider>
-          <NextSSRPlugin
+          {/* <NextSSRPlugin
 
             //   The `extractRouterConfig` will extract **only** the route configs
             // from the router to prevent additional information from being
@@ -54,7 +57,7 @@ export default async function RootLayout({
             // as if you were to fetch `/api/uploadthing` directly.
 
             routerConfig={extractRouterConfig(ourFileRouter)}
-          />
+          /> */}
           <Providers>
             <NextIntlClientProvider messages={messages}>
               <Wrapper HomeIntl={t("Home")}

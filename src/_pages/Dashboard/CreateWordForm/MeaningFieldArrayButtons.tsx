@@ -1,6 +1,6 @@
 "use client"
 import { Meaning, WordForm } from '@/types';
-import { Button, ButtonGroup } from '@nextui-org/react';
+import { Button, ButtonGroup } from "@heroui/react";
 import React from 'react'
 import { UseFieldArrayAppend, UseFieldArrayPrepend } from 'react-hook-form';
 

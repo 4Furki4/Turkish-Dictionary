@@ -11,21 +11,21 @@ import {
     Spinner,
     Button,
     User,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
     Dropdown,
     DropdownTrigger,
     DropdownMenu,
     DropdownSection,
     DropdownItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Edit3, MoreVertical, Trash2 } from 'lucide-react';
 import { api } from '@/src/trpc/react';
-import { Pagination } from "@nextui-org/pagination";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Pagination } from "@heroui/pagination";
+import { Select, SelectItem } from "@heroui/select";
 import { rolesEnum, SelectUser } from '@/db/schema/users';
-import { Link } from '@/src/navigation';
-import { Link as NextUILink } from '@nextui-org/react';
+import { Link } from '@/src/i18n/routing';
+import { Link as NextUILink } from "@heroui/react";
 import RoleEditModal from './RoleEditModal';
 import UserDeleteModal from './UserDeleteModal';
 const userPerPageOptions = [

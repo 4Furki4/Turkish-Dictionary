@@ -1,6 +1,6 @@
 "use client";
 import { LoginInputs } from "@/types";
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Button, Divider, Input } from "@heroui/react";
 import React, { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import PasswordEye from "./PasswordEye";
 import { z } from "zod";
 import { GithubIcon } from "lucide-react";
-import { Link, useRouter } from "@/src/navigation";
+import { Link, useRouter } from "@/src/i18n/routing";
 
 type IntlProps = Record<
   | "CorruptedLoginDataIntl"
@@ -136,8 +136,7 @@ export default function SigninForm({
         className="rounded-sm"
         variant="bordered"
         color="primary"
-        onClick={() => onProviderSignin("google")}
-        onKeyDown={(e) => onEnterAndSpace(e, () => onProviderSignin("google"))}
+        onPress={() => signIn("google")}
         startContent={
           <Image
             src={"/svg/providers/google.svg"}
