@@ -24,7 +24,7 @@ import { api } from '@/src/trpc/react';
 import { Pagination } from "@heroui/pagination";
 import { Select, SelectItem } from "@heroui/select";
 import { rolesEnum, SelectUser } from '@/db/schema/users';
-import { Link } from '@/src/navigation';
+import { Link } from '@/src/i18n/routing';
 import { Link as NextUILink } from "@heroui/react";
 import RoleEditModal from './RoleEditModal';
 import UserDeleteModal from './UserDeleteModal';

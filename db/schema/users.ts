@@ -10,7 +10,7 @@ import { words } from "./words";
 import { pronounciations } from "./pronounciations";
 import { savedWords } from "./saved_words";
 import { requests } from "./requests";
-import crypto from "node:crypto";
+
 export const rolesEnum = pgEnum("role", ["user", "moderator", "admin"]);
 
 export type Role = (typeof rolesEnum.enumValues)[number];

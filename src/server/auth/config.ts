@@ -41,19 +41,18 @@ export const authConfig = {
         DiscordProvider,
     ],
     callbacks: {
-        session: ({ session, token }) => {
-            console.log("session", session)
+        session: ({ session, user }) => {
             return {
                 ...session,
                 user: {
                     ...session.user,
-                    id: token.sub,
+                    id: user.id,
+                    role: user.role,
                     //todo: add role to the session
                 },
             }
         },
         authorized: async ({ auth }) => {
-            console.log("auth", auth)
             // Logged in users are authenticated, otherwise redirect to login page
             return !!auth
         },

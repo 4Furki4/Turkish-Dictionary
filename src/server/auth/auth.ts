@@ -16,9 +16,6 @@ const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth({
         sessionsTable: sessions,
         verificationTokensTable: verificationTokens,
     }),
-    session: {
-        strategy: "jwt",
-    },
     ...authConfig,
 });
 

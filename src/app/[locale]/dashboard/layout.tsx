@@ -1,6 +1,6 @@
 import Dashboard from "@/src/_pages/Dashboard/Dashboard";
 import DashboardUnauthorizedMessage from "@/src/_pages/Dashboard/DashboardUnauthorizedLogin";
-import { getServerAuthSession } from "@/src/server/auth/auth";
+import { auth } from "@/src/server/auth/auth";
 import { Metadata } from "next";
 import React, { ReactNode } from "react";
 
@@ -24,7 +24,7 @@ export default async function DashboardLayout(
     children
   } = props;
 
-  const session = await getServerAuthSession();
+  const session = await auth();
   if (!["admin", "moderator"].includes(session?.user.role!)) {
     return <DashboardUnauthorizedMessage />;
   }
