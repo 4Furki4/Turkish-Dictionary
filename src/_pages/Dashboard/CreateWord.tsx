@@ -5,7 +5,7 @@ import {
   Card,
   CardBody,
 } from "@heroui/react";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import WordNameInput from "./CreateWordForm/Inputs/Word/NameInput";
 import WordPhoneticInput from "./CreateWordForm/Inputs/Word/PhoneticInput";
@@ -27,6 +27,8 @@ import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import MeaningFieldArray from "./MeaningFieldArray";
+
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: [],
@@ -93,7 +95,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     }
   });
   const [isUploading, setIsUploading] = React.useState(false);
-  const onSubmit = async (data: WordForm) => {
+  const onSubmit = useCallback(async (data: WordForm) => {
     let { meanings } = data;
     const meaningsFormatted = meanings.map((meaning) => {
       return {
@@ -149,7 +151,8 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     }
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
-  };
+  }, [wordMutation, setIsUploading, setImagePreviewUrls]);
+
   return (
     <section className="max-w-7xl w-full mx-auto">
       <h1 className="text-center text-fs-2">Create Word</h1>
@@ -163,28 +166,22 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordSuffixInput control={control} />
           <WordAttributesInput setValue={setValue} control={control} />
         </div>
-        {fields.length > 0 ? fields.map((field, index) => (
-          <div key={field.id} className="w-full mt-2">
-            <h2 className="text-center text-fs-1">Meanings</h2>
-            <Card className="mb-4 rounded-sm">
-              <CardBody>
-                <WordMeaningInput index={index} control={control} />
-                <div className="sm:grid sm:grid-cols-2 gap-2">
-                  <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />
-                  <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} setFieldValue={setValue} />
-                  <MeaningExampleSentenceInput index={index} control={control} watch={watch} />
-                  <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} watch={watch} setFieldValue={setValue} />
-                </div>
-                <div className="grid gap-2">
-                  <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
-                </div>
-                <Button className="rounded-sm" onClick={() => remove(index)}>Remove Meaning</Button>
-              </CardBody>
-            </Card>
-
-
-          </div>
-        )) : (
+        {fields.length > 0 ? (
+          <MeaningFieldArray
+            fields={fields}
+            control={control}
+            partOfSpeeches={partOfSpeeches}
+            meaningAttributes={meaningAttributes}
+            authors={authors}
+            clearErrors={clearErrors}
+            watch={watch}
+            setValue={setValue}
+            remove={remove}
+            formState={formState}
+            setImagePreviewUrls={setImagePreviewUrls}
+            imagePreviewUrls={imagePreviewUrls}
+          />
+        ) : (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>

@@ -15,7 +15,7 @@ const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth({
         accountsTable: accounts,
         sessionsTable: sessions,
         verificationTokensTable: verificationTokens,
-    }),
+    }) as any,
     ...authConfig,
 });
 

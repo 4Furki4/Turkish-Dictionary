@@ -9,7 +9,7 @@ import { Params } from "next/dist/server/request/params";
 export async function generateMetadata({
   params
 }: {
-  params: Params
+  params: Promise<Params>
 }): Promise<Metadata> {
   const { locale } = await params
   switch (locale) {
@@ -29,7 +29,7 @@ export async function generateMetadata({
 export default async function page({
   params
 }: {
-  params: Params
+  params: Promise<Params>
 }) {
   const { locale } = await params
   setRequestLocale(locale as string)

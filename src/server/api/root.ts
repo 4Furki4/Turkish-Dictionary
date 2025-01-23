@@ -37,7 +37,6 @@
 //  */
 // export const createCaller = createCallerFactory(appRouter);
 import { wordRouter } from "./routers/word";
-import { authRouter } from "./routers/auth";
 import { userRouter } from "./routers/user";
 import { adminRouter } from "./routers/admin";
 import { createCallerFactory, createTRPCRouter } from "./trpc";
@@ -49,7 +48,6 @@ import { createCallerFactory, createTRPCRouter } from "./trpc";
  */
 export const appRouter = createTRPCRouter({
   word: wordRouter,
-  auth: authRouter,
   user: userRouter,
   admin: adminRouter,
 });

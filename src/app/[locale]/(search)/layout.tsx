@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Params } from "next/dist/server/request/params";
 import React from "react";
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale } = await params
   return {
     title: {
@@ -19,7 +19,7 @@ export default async function SearchLayout({
   params
 }: {
   children: React.ReactNode;
-  params: Params
+  params: Promise<Params>
 }) {
   const { locale } = await params
   setRequestLocale(locale as string)
