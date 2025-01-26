@@ -13,7 +13,7 @@ import {
   NavbarBrand,
 } from "@heroui/react";
 import { Book, Languages, Menu, Palette } from "lucide-react";
-import { signIn, signOut, } from "next-auth/react";
+import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
@@ -181,18 +181,13 @@ export default function Navbar({
         </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
-            <Button onPress={() => {
-              signIn()
-            }}>
-              {SignInIntl}
-            </Button>
-            {/* <NextIntlLink
+            <NextIntlLink
               className="w-full block"
               // @ts-ignore
               href={{
                 pathname: '/signin',
-                query: { callbackUrl: decodeURI(`${getDynamicPathnames(pathName)}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`) },
-                search: pathName === "/signin" ? searchParams.toString() : undefined,
+                // query: { callbackUrl: decodeURI(`${getDynamicPathnames(pathName)}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`) },
+                // search: pathName === "/signin" ? searchParams.toString() : undefined,
               }}
             ><Button
               aria-disabled={isAuthPage}
@@ -203,7 +198,7 @@ export default function Navbar({
             >
                 {SignInIntl}
               </Button>
-            </NextIntlLink> */}
+            </NextIntlLink>
           </NavbarItem>
         ) : (
           <>

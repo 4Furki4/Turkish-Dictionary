@@ -19,7 +19,6 @@ const publicPages = [
 const handleI18nRouting = createMiddleware(routing);
 export default handleI18nRouting
 
-// Middleware Configuration
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)',]
 }

@@ -1,7 +1,13 @@
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import Google from "next-auth/providers/google"
-import type { Provider } from "next-auth/providers"
+import { db } from "@/db";
+import { accounts } from "@/db/schema/accounts";
+import { sessions } from "@/db/schema/session";
+import { users } from "@/db/schema/users";
+import { verificationTokens } from "@/db/schema/verification_tokens";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import Nodemailer from "next-auth/providers/nodemailer"
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -39,6 +45,18 @@ export const authConfig = {
     providers: [
         Google,
         DiscordProvider,
+        Nodemailer({
+            server: {
+                host: process.env.EMAIL_SERVER_HOST,
+                port: Number(process.env.EMAIL_SERVER_PORT),
+                auth: {
+                    user: process.env.EMAIL_SERVER_USER,
+                    pass: process.env.EMAIL_SERVER_PASSWORD,
+                },
+            },
+            from: process.env.EMAIL_FROM,
+            name: "Email",
+        }),
     ],
     callbacks: {
         session: ({ session, user }) => {
@@ -57,7 +75,14 @@ export const authConfig = {
             return !!auth
         },
     },
+    adapter: DrizzleAdapter(db, {
+        usersTable: users,
+        accountsTable: accounts,
+        sessionsTable: sessions,
+        verificationTokensTable: verificationTokens,
+    }) as any,
     pages: {
+        newUser: "/complete-profile",
         signIn: "/signin",
     }
 } satisfies NextAuthConfig;
