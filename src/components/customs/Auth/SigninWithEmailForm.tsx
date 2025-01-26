@@ -11,9 +11,7 @@ import { z } from 'zod'
 export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmailIntl, EmailSigninLabelIntl, MagicLinkIntl, InvalidEmailIntl }: { SigninWithEmailIntl: string, EnterYourEmailIntl: string, EmailSigninLabelIntl: string, MagicLinkIntl: string, InvalidEmailIntl: string }) {
     const { control, handleSubmit } = useForm({
         resolver: zodResolver(z.object({
-            email: z.string({
-                required_error: InvalidEmailIntl
-            }).email()
+            email: z.string().min(1, { message: InvalidEmailIntl }).email({ message: InvalidEmailIntl })
         }))
     })
     const mutation = useMutation({
@@ -24,10 +22,7 @@ export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmai
     return (
         <form
             className="w-full flex flex-col gap-2"
-            onSubmit={handleSubmit(async (data) => {
-                console.log(data)
-                await mutation.mutateAsync(data)
-            })}
+            onSubmit={handleSubmit(async (data) => await mutation.mutateAsync(data))}
         >
             <Controller
                 control={control}
@@ -41,7 +36,6 @@ export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmai
                         labelPlacement='outside'
                         color="primary"
                         type="email"
-                        required
                         name="email"
                         errorMessage={error?.message}
                         placeholder={EnterYourEmailIntl}

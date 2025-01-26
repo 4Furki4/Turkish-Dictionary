@@ -5,14 +5,14 @@
     "Sign In": "Giriş Yap"
   },
   "SigninForm": {
-    "Sign in with Google": "Google ile giriş yap",
-    "Sign in with GitHub": "GitHub ile giriş yap",
-    "Sign in with Discord": "Discord ile giriş yap",
-    "OAuthAccountNotLinked": "This email is already registered with another sigin method. Please sign in with that method.",
-    "SigninWithEmail": "E-posta ile giriş yap",
+    "Sign in with Google": "Google ile Giriş Yap",
+    "Sign in with GitHub": "GitHub ile Giriş Yap",
+    "Sign in with Discord": "Discord ile Giriş Yap",
+    "OAuthAccountNotLinked": "Bu e-posta zaten başka bir giriş yöntemiyle kayıtlı. Lütfen o yöntemle giriş yapın.",
+    "SigninWithEmail": "E-posta ile Giriş Yap",
     "EnterYourEmail": "E-posta giriniz",
     "MagicLink": "Özel giriş bağlantısı e-postanıza gönderilecektir",
-    "EmailSigninLabel": "E-posta ile giriş",
+    "EmailSigninLabel": "E-posta ile Giriş",
     "InvalidEmail": "Geçersiz e-posta formatı, lütfen doğru bir e-posta adresi giriniz."
   },
   "Home": {

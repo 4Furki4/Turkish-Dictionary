@@ -9,10 +9,10 @@
     "Sign in with GitHub": "Sign in with GitHub",
     "Sign in with Discord": "Sign in with Discord",
     "OAuthAccountNotLinked": "This email is already registered with another sigin method. Please sign in with that method.",
-    "SigninWithEmail": "Sign in with email",
+    "SigninWithEmail": "Sign in with Email",
     "EnterYourEmail": "Enter your email",
     "MagicLink": "Magic link will be sent to your email",
-    "EmailSigninLabel": "Email sign in",
+    "EmailSigninLabel": "Email Sign In",
     "InvalidEmail": "Please enter a valid email address"
   },
   "Home": {
