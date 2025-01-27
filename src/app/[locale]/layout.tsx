@@ -1,7 +1,4 @@
 import { Metadata } from "next";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
-import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "@/src/app/api/uploadthing/core";
 import "@/app/globals.css";
 import { TRPCReactProvider } from "@/src/trpc/react";
 import { GeistSans } from "geist/font/sans";
@@ -46,7 +43,10 @@ export default async function RootLayout({
     notFound();
   }
   return (
-    <html lang={locale as string} className="dark">
+    <html suppressHydrationWarning lang={locale as string} className="dark">
+      <head>
+        <script src="https://unpkg.com/react-scan/dist/auto.global.js" async />
+      </head>
       <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden relative`}>
         <TRPCReactProvider>
           {/* <NextSSRPlugin

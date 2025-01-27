@@ -8,8 +8,6 @@ import { notFound } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { words } from '@/db/schema/words';
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata(
     props: {
         params: Promise<{ word: string, locale: string }>
