@@ -39,11 +39,11 @@ export default withUt({
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        // foreground: "hsl(var(--foreground))",
-        // primary: {
-        //   DEFAULT: "hsl(var(--primary))",
-        //   foreground: "hsl(var(--primary-foreground))",
-        // },
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
@@ -69,7 +69,6 @@ export default withUt({
           foreground: "hsl(var(--card-foreground))",
         },
       },
-
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -94,87 +93,156 @@ export default withUt({
   plugins: [
     require("tailwindcss-animate"),
     heroui({
-      prefix: "nextui-",
-      themes: {
-        dark: {
-          colors: {
-            content1: {
-              DEFAULT: "#0F0E0E",
-              foreground: "#ffffff",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-        light: {
-          colors: {
-            primary: {
-              foreground: "#000000",
-            },
-            content1: {
-              DEFAULT: "#F9F5F6",
-              foreground: "#0F0E0E",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-        "dark-purple": {
-          extend: "dark",
-          colors: {
-            default: {
-              DEFAULT: "#27005D",
-              foreground: "#ffffff",
-            },
-            background: {
-              DEFAULT: "#27005D",
-              foreground: "#E4F1FF",
-            },
-            foreground: "#ffffff",
-            primary: { DEFAULT: "#5800FF", foreground: "#FFCEFE" },
-            content1: {
-              DEFAULT: "#100637",
-              foreground: "#ffffff",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-        "light-purple": {
-          extend: "light",
-          colors: {
-            primary: {
-              DEFAULT: "#5800FF",
-              foreground: "#ffffff",
-            },
-            background: {
-              DEFAULT: "#B2A4FF",
-            },
-            foreground: "#27005D",
-            focus: "#F182F6",
-            content1: {
-              DEFAULT: "#d4ccff",
-              foreground: "#27005D",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-      },
+      addCommonColors: true,
+      prefix: "heroui-",
       layout: {
         radius: {
           small: "calc(var(--radius) - 6px)",
           medium: "calc(var(--radius) - 4px)",
-          large: "calc(var(--radius) - 2px)"
+          large: "var(--radius)",
         },
+      },
+      themes: {
+        light: {
+          colors: {
+            focus: {
+              100: "#F9D9CC",
+              200: "#F3AD9C",
+              300: "#DC7266",
+              400: "#BA3E3D",
+              500: "#8C0F19",
+              600: "#780A1D",
+              700: "#64071F",
+              800: "#51041F",
+              900: "#43021F"
+            },
+            primary: {
+              100: "#F9D9CC",
+              200: "#F3AD9C",
+              300: "#DC7266",
+              400: "#BA3E3D",
+              500: "#8C0F19",
+              600: "#780A1D",
+              700: "#64071F",
+              800: "#51041F",
+              900: "#43021F"
+            },
+            success: {
+              100: "#E8FAD0",
+              200: "#CDF5A4",
+              300: "#A4E172",
+              400: "#79C44B",
+              500: "#459E1C",
+              600: "#318714",
+              700: "#20710E",
+              800: "#125B08",
+              900: "#094B05"
+            },
+            secondary: {
+              100: "#CCE5FA",
+              200: "#9BC8F5",
+              300: "#66A0E3",
+              400: "#3E78C7",
+              500: "#0E47A3",
+              600: "#0A368C",
+              700: "#072875",
+              800: "#041C5E",
+              900: "#02134E"
+            },
+            warning: {
+              100: "#F9FACA",
+              200: "#F4F696",
+              300: "#E2E660",
+              400: "#C9CD37",
+              500: "#A7AD05",
+              600: "#8F9403",
+              700: "#777C02",
+              800: "#5F6401",
+              900: "#4E5300"
+            },
+            danger: {
+              100: "#FBD7CE",
+              200: "#F7A79E",
+              300: "#E86C6B",
+              400: "#D24552",
+              500: "#B51331",
+              600: "#9B0D35",
+              700: "#820936",
+              800: "#680634",
+              900: "#560332"
+            }
+          }
+        },
+        dark: {
+          colors: {
+            focus: {
+              100: "#43021F",
+              200: "#51041F",
+              300: "#64071F",
+              400: "#780A1D",
+              500: "#8C0F19",
+              600: "#BA3E3D",
+              700: "#DC7266",
+              800: "#F3AD9C",
+              900: "#F9D9CC"
+            },
+            primary: {
+              100: "#43021F",
+              200: "#51041F",
+              300: "#64071F",
+              400: "#780A1D",
+              500: "#8C0F19",
+              600: "#BA3E3D",
+              700: "#DC7266",
+              800: "#F3AD9C",
+              900: "#F9D9CC"
+            },
+            success: {
+              100: "#094B05",
+              200: "#125B08",
+              300: "#20710E",
+              400: "#318714",
+              500: "#459E1C",
+              600: "#79C44B",
+              700: "#A4E172",
+              800: "#CDF5A4",
+              900: "#E8FAD0"
+            },
+            secondary: {
+              100: "#02134E",
+              200: "#041C5E",
+              300: "#072875",
+              400: "#0A368C",
+              500: "#0E47A3",
+              600: "#3E78C7",
+              700: "#66A0E3",
+              800: "#9BC8F5",
+              900: "#CCE5FA"
+            },
+            warning: {
+              100: "#4E5300",
+              200: "#5F6401",
+              300: "#777C02",
+              400: "#8F9403",
+              500: "#A7AD05",
+              600: "#C9CD37",
+              700: "#E2E660",
+              800: "#F4F696",
+              900: "#F9FACA"
+            },
+            danger: {
+              100: "#560332",
+              200: "#680634",
+              300: "#820936",
+              400: "#9B0D35",
+              500: "#B51331",
+              600: "#D24552",
+              700: "#E86C6B",
+              800: "#F7A79E",
+              900: "#FBD7CE"
+            }
+          }
+        }
       }
     }),
   ],

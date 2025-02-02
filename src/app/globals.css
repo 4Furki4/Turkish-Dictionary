@@ -1,90 +1,86 @@
-
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
-  
-  
   :root {
     /* @link https://utopia.fyi/type/calculator?c=320,18,1.2,1024,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
-  --navbar-height: 4rem;
-  --sidebar-width: 16rem;
-  --sidebar-width-collapsed: 4rem;
-  --step--2: clamp(0.7813rem, 0.7727rem + 0.0426vw, 0.8rem);
-  --step--1: clamp(0.9375rem, 0.9091rem + 0.142vw, 1rem);
-  --step-0: clamp(1.125rem, 1.0682rem + 0.2841vw, 1.25rem);
-  --step-1: clamp(1.35rem, 1.2534rem + 0.483vw, 1.5625rem);
-  --step-2: clamp(1.62rem, 1.4686rem + 0.7571vw, 1.9531rem);
-  --step-3: clamp(1.9438rem, 1.7176rem + 1.1307vw, 2.4413rem);
-  --step-4: clamp(2.3325rem, 2.0055rem + 1.6349vw, 3.0519rem);
-  --step-5: clamp(2.7994rem, 2.3377rem + 2.3082vw, 3.815rem);
-  --step-6: clamp(3.3594rem, 2.719rem + 3.2017vw, 4.7681rem);
-  --step-7: clamp(4.0313rem, 3.1543rem + 4.3849vw, 5.9606rem);
-  --step-8: clamp(4.8375rem, 3.6497rem + 5.9389vw, 7.4506rem);
+    --navbar-height: 4rem;
+    --sidebar-width: 16rem;
+    --sidebar-width-collapsed: 4rem;
+    --step--2: clamp(0.7813rem, 0.7727rem + 0.0426vw, 0.8rem);
+    --step--1: clamp(0.9375rem, 0.9091rem + 0.142vw, 1rem);
+    --step-0: clamp(1.125rem, 1.0682rem + 0.2841vw, 1.25rem);
+    --step-1: clamp(1.35rem, 1.2534rem + 0.483vw, 1.5625rem);
+    --step-2: clamp(1.62rem, 1.4686rem + 0.7571vw, 1.9531rem);
+    --step-3: clamp(1.9438rem, 1.7176rem + 1.1307vw, 2.4413rem);
+    --step-4: clamp(2.3325rem, 2.0055rem + 1.6349vw, 3.0519rem);
+    --step-5: clamp(2.7994rem, 2.3377rem + 2.3082vw, 3.815rem);
+    --step-6: clamp(3.3594rem, 2.719rem + 3.2017vw, 4.7681rem);
+    --step-7: clamp(4.0313rem, 3.1543rem + 4.3849vw, 5.9606rem);
+    --step-8: clamp(4.8375rem, 3.6497rem + 5.9389vw, 7.4506rem);
 
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    --foreground: 354 85% 27%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
+    --card-foreground: 354 85% 27%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
+    --popover-foreground: 354 85% 27%;
+    
+    --primary: 354 80% 30%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 213 76% 51%;
+    --secondary-foreground: 0 0% 100%;
+    
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
+    --muted-foreground: 354 10% 65%;
+    
     --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
+    --accent-foreground: 354 85% 27%;
+    
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
- 
+    --ring: 354 80% 30%;
+    
     --radius: 0.5rem;
   }
  
   .dark {
-    
     --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --foreground: 354 40% 98%;
  
     --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card-foreground: 354 40% 98%;
  
     --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover-foreground: 354 40% 98%;
  
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 354 70% 95%;
+    --primary-foreground: 354 85% 27%;
  
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 213 76% 51%;
+    --secondary-foreground: 0 0% 100%;
  
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 354 20% 65%;
  
     --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: 354 40% 98%;
  
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
  
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 354 70% 95%;
   }
+
   html {
     @apply scroll-smooth bg-background text-foreground;
   }

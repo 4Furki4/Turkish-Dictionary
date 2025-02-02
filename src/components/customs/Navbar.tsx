@@ -12,7 +12,7 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@heroui/react";
-import { Book, Languages, Menu, Palette } from "lucide-react";
+import { Book, Languages, Menu, Moon, Palette, Sun } from "lucide-react";
 import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
@@ -104,7 +104,7 @@ export default function Navbar({
             </DropdownTrigger>
             <DropdownMenu>
               {locale === "en" ? (
-                <DropdownItem color="primary" key={"tr"} className="rounded-sm">
+                <DropdownItem key={"tr"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     // @ts-ignore
@@ -122,7 +122,7 @@ export default function Navbar({
                   </NextIntlLink>
                 </DropdownItem>
               ) : (
-                <DropdownItem color="primary" key={"en"} className="rounded-sm">
+                <DropdownItem key={"en"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     // @ts-ignore
@@ -144,40 +144,22 @@ export default function Navbar({
           </Dropdown>
         </NavbarItem>
         <NavbarItem>
-          <Dropdown classNames={{
-            content: ["rounded-sm"],
-          }}>
-            <DropdownTrigger className="cursor-pointer">
-              <button className="bg-transparent flex items-center gap-2 rounded-sm">
-                <Palette aria-label="palette icon" className="h-7 w-7" />
-              </button>
-            </DropdownTrigger>
-            <DropdownMenu
-              color="primary"
-              disabledKeys={[theme!]}
-              onAction={(key) => {
-                switch (key) {
-                  case "dark-purple":
-                    setTheme("dark-purple");
-                    break;
-                  case "light-purple":
-                    setTheme("light-purple");
-                    break;
-                  case "dark":
-                    setTheme("dark");
-                    break;
-                  case "light":
-                    setTheme("light");
-                    break;
-                }
-              }}
-            >
-              <DropdownItem className="rounded-sm" key={"dark-purple"}>Dark Purple</DropdownItem>
-              <DropdownItem className="rounded-sm" key={"light-purple"}>Light Purple</DropdownItem>
-              <DropdownItem className="rounded-sm" key={"dark"}>Dark</DropdownItem>
-              <DropdownItem className="rounded-sm" key={"light"}>Light</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          {/* theme button */}
+          <Button
+            aria-disabled={isAuthPage}
+            isDisabled={isAuthPage}
+            variant="light"
+            isIconOnly
+            onPress={() => {
+              setTheme(theme === "dark" ? "light" : "dark");
+            }}
+          >
+            {theme === "dark" ? (
+              <Moon aria-label="moon icon" className="w-6 h-6" />
+            ) : (
+              <Sun aria-label="sun icon" className="w-6 h-6" />
+            )}
+          </Button>
         </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
@@ -224,18 +206,18 @@ export default function Navbar({
                     }
                   }}
                 >
-                  <DropdownItem color="primary" key={"saved-words"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
+                  <DropdownItem key={"saved-words"} className="text-center rounded-sm">
+                    <Link as={NextIntlLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
                   </DropdownItem>
-                  <DropdownItem color="primary" key={"search-history"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
+                  <DropdownItem key={"search-history"} className="text-center rounded-sm">
+                    <Link as={NextIntlLink} className="w-full" href="/search-history">
                       Search History
                     </Link>
                   </DropdownItem>
-                  <DropdownItem color="primary" key={"profile"} className="rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/profile">
+                  <DropdownItem key={"profile"} className="rounded-sm">
+                    <Link as={NextIntlLink} className="w-full" href="/profile">
                       Profile
                     </Link>
                   </DropdownItem>

@@ -16,7 +16,14 @@
     "InvalidEmail": "Geçersiz e-posta formatı, lütfen doğru bir e-posta adresi giriniz."
   },
   "Home": {
-    "alreadySignedIn": "Zaten giriş yaptınız"
+    "alreadySignedIn": "Zaten giriş yaptınız",
+    "hero": {
+      "title": "Türkçe Dilini Keşfedin",
+      "description": "Anlamlar, örnekler ve çevirilerle kapsamlı Türkçe sözlüğünüz. Öğrenenler ve anadili Türkçe olanlar için mükemmel.",
+      "searchPlaceholder": "Kelime ara...",
+      "popularSearches": "Popüler Aramalar",
+      "searchError": "Lütfen aramak için bir kelime girin"
+    }
   },
   "WordCard": {
     "UnauthSave": "Kaydetmek için giriş yapın",

@@ -1,8 +1,8 @@
-import Search from "@/src/components/customs/Search";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Params } from "next/dist/server/request/params";
 import React from "react";
+import Hero from "@/src/components/Hero";
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale } = await params
@@ -24,5 +24,12 @@ export default async function SearchLayout({
   const { locale } = await params
   setRequestLocale(locale as string)
   const t = await getTranslations("Home");
-  return <Search warningParamIntl={t("alreadySignedIn")}>{children}</Search>;
+  return (
+    <>
+      <Hero />
+      <div className="mt-8">
+        {children}
+      </div>
+    </>
+  );
 }

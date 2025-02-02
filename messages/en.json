@@ -16,7 +16,14 @@
     "InvalidEmail": "Please enter a valid email address"
   },
   "Home": {
-    "alreadySignedIn": "You are already signed in"
+    "alreadySignedIn": "You are already signed in",
+    "hero": {
+      "title": "Discover the Turkish Language",
+      "description": "Your comprehensive Turkish dictionary with meanings, examples, and translations. Perfect for learners and native speakers alike.",
+      "searchPlaceholder": "Search for a word...",
+      "popularSearches": "Popular Searches",
+      "searchError": "Please enter a word to search"
+    }
   },
   "WordCard": {
     "UnauthSave": "You need to be signed in to save words",
