@@ -25,11 +25,8 @@ export default async function SearchLayout({
   setRequestLocale(locale as string)
   const t = await getTranslations("Home");
   return (
-    <>
-      <Hero />
-      <div className="mt-8">
-        {children}
-      </div>
-    </>
+    <Hero>
+      {children}
+    </Hero>
   );
 }

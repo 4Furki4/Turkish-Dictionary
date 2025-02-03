@@ -18,11 +18,23 @@
   "Home": {
     "alreadySignedIn": "Zaten giriş yaptınız",
     "hero": {
-      "title": "Türkçe Dilini Keşfedin",
-      "description": "Anlamlar, örnekler ve çevirilerle kapsamlı Türkçe sözlüğünüz. Öğrenenler ve anadili Türkçe olanlar için mükemmel.",
+      "title": "Türkçeyi Keşfedin",
+      "description": "Topluluk ile gelişen, açık kaynak ve modern Türkçe sözlüğü.",
       "searchPlaceholder": "Kelime ara...",
       "popularSearches": "Popüler Aramalar",
-      "searchError": "Lütfen aramak için bir kelime girin"
+      "searchError": "Lütfen aramak için bir kelime girin",
+      "feature1": {
+        "title": "Katkıda Bulunun",
+        "description": "Yeni kelimeler ve anlamlar ekleyerek sözlüğe katkıda bulunabilirsiniz."
+      },
+      "feature2": {
+        "title": "Düzenleme Yapın",
+        "description": "Kelimelerin anlamlarını ve özelliklerini düzenleyebilirsiniz."
+      },
+      "feature3": {
+        "title": "Kelimeleri Kaydedin",
+        "description": "Yeni öğrendiğiniz, önceden duymadığınız veya sevdiğiniz kelimeleri kaydedebilirsiniz."
+      }
     }
   },
   "WordCard": {

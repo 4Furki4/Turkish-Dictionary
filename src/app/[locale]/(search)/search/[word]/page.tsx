@@ -66,10 +66,8 @@ export default async function SearchResultPage(
         notFound()
     }
     return (
-        <section className='p-6 mx-auto max-w-7xl w-full'>
-            <Suspense fallback={<Loading />}>
-                <SearchResult word={formattedWord} locale={locale as "en" | "tr"} />
-            </Suspense>
-        </section>
+        <Suspense fallback={<Loading />}>
+            <SearchResult word={formattedWord} locale={locale as "en" | "tr"} />
+        </Suspense>
     )
 }
