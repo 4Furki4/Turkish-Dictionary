@@ -9,13 +9,11 @@ import MeaningAttributesInput from './CreateWordForm/Inputs/Meaning/AttributesIn
 import MeaningExampleSentenceInput from './CreateWordForm/Inputs/Meaning/ExampleSentenceInput';
 import MeaningExampleAuthorInput from './CreateWordForm/Inputs/Meaning/ExampleAuthorInput';
 import MeaningImageInput from './CreateWordForm/Inputs/Meaning/ImageInput';
+import { api } from '@/src/trpc/react';
 
 export default function MeaningFieldArray({
     fields,
     control,
-    partOfSpeeches,
-    meaningAttributes,
-    authors,
     clearErrors,
     watch,
     setValue,
@@ -29,18 +27,6 @@ export default function MeaningFieldArray({
         [key: string]: any;
     }[];
     control: Control<WordForm>;
-    partOfSpeeches: {
-        id: number;
-        partOfSpeech: PartOfSpeech;
-    }[];
-    meaningAttributes: {
-        id: number;
-        attribute: string;
-    }[];
-    authors: {
-        id: string;
-        name: string;
-    }[];
     clearErrors: UseFormClearErrors<WordForm>;
     watch: UseFormWatch<WordForm>;
     setValue: UseFormSetValue<WordForm>;
@@ -49,6 +35,10 @@ export default function MeaningFieldArray({
     setImagePreviewUrls: React.Dispatch<React.SetStateAction<string[]>>;
     imagePreviewUrls: string[];
 }) {
+    const [meaningAttributes] = api.admin.getMeaningAttributes.useSuspenseQuery()
+    const [authors] = api.admin.getExampleSentenceAuthors.useSuspenseQuery()
+    const [partOfSpeeches] = api.admin.getPartOfSpeeches.useSuspenseQuery()
+
     const renderMeaningFields = useMemo(() => {
         return fields.map((field, index) => (
             <div key={field.id} className="w-full mt-2">

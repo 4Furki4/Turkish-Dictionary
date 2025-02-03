@@ -7,17 +7,9 @@ import { Control, Controller, UseFormSetError, UseFormWatch } from 'react-hook-f
 
 export default function WordNameInput({
     control,
-    watch,
-    setError,
 }: {
     control: Control<WordForm>,
-    watch: UseFormWatch<WordForm>,
-    setError: UseFormSetError<WordForm>,
-
 }) {
-    const wordCheckQuery = api.admin.checkWord.useQuery(watch("name")!, {
-        enabled: false,
-    });
     return (
         <Controller
             control={control}
@@ -38,18 +30,6 @@ export default function WordNameInput({
                     errorMessage={error?.message}
                     isInvalid={error !== undefined}
                     isRequired={true}
-                    onFocusChange={async (isFocused) => {
-                        // Check if the word exists, if it does, show a error message
-                        const wordInput = watch("name");
-                        if (!isFocused && wordInput) {
-                            const data = (await wordCheckQuery.refetch()).data;
-                            if (data?.wordAlreadyExists) {
-                                setError("name", {
-                                    message: "Word already exists",
-                                });
-                            }
-                        }
-                    }}
                 />
             )}
         />

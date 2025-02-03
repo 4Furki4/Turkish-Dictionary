@@ -2,8 +2,6 @@
 import { MeaningInputs, WordForm, WordFormSubmit } from "@/types";
 import {
   Button,
-  Card,
-  CardBody,
 } from "@heroui/react";
 import React, { useCallback, useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -13,12 +11,6 @@ import WordRootLanguageInput from "./CreateWordForm/Inputs/Word/RootLanguageInpu
 import WordRootOriginInput from "./CreateWordForm/Inputs/Word/RootOriginInput";
 import WordPrefixInput from "./CreateWordForm/Inputs/Word/PrefixInput";
 import WordSuffixInput from "./CreateWordForm/Inputs/Word/SuffixInput";
-import WordMeaningInput from "./CreateWordForm/Inputs/Meaning/WordMeaningInput";
-import MeaningPartOfSpeechInput from "./CreateWordForm/Inputs/Meaning/PartOfSpeechInput";
-import MeaningAttributesInput from "./CreateWordForm/Inputs/Meaning/AttributesInput";
-import MeaningExampleSentenceInput from "./CreateWordForm/Inputs/Meaning/ExampleSentenceInput";
-import MeaningExampleAuthorInput from "./CreateWordForm/Inputs/Meaning/ExampleAuthorInput";
-import MeaningImageInput from "./CreateWordForm/Inputs/Meaning/ImageInput";
 import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons";
 import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "sonner";
@@ -40,20 +32,8 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches }: {
+export default function CreateWord({ locale }: {
   locale: string;
-  meaningAttributes: {
-    id: number;
-    attribute: string;
-  }[]
-  authors: {
-    id: string;
-    name: string;
-  }[]
-  partOfSpeeches: {
-    id: number;
-    partOfSpeech: PartOfSpeech;
-  }[]
 }) {
   const {
     handleSubmit,
@@ -63,7 +43,8 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     watch,
     setError,
     getFieldState,
-    setValue
+    setValue,
+    getValues,
   } = useForm<WordForm>({
     defaultValues: {
       name: '',
@@ -75,7 +56,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       attributes: [],
       meanings: [meaningDefaultValues],
     },
-    mode: "all",
   });
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
@@ -143,7 +123,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         image: uploadedPicturesUrls[index],
       };
     });
-    console.log('attributes', data.attributes)
     const word = {
       ...data,
       attributes: data.attributes?.map((val) => parseInt(val)),
@@ -158,7 +137,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       <h1 className="text-center text-fs-2">Create Word</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="">
         <div className="flex flex-col max-w-full sm:grid sm:grid-cols-2 gap-2">
-          <WordNameInput control={control} watch={watch} setError={setError} />
+          <WordNameInput control={control} />
           <WordPhoneticInput control={control} />
           <WordRootLanguageInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} locale={locale} />
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
@@ -170,9 +149,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <MeaningFieldArray
             fields={fields}
             control={control}
-            partOfSpeeches={partOfSpeeches}
-            meaningAttributes={meaningAttributes}
-            authors={authors}
             clearErrors={clearErrors}
             watch={watch}
             setValue={setValue}
@@ -202,5 +178,5 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         </Button>
       </form>
     </section>
-  );
+  )
 }

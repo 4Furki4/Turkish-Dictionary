@@ -14,7 +14,7 @@ export default function WordAttributesInput({
     control: Control<WordForm>,
     setValue: UseFormSetValue<WordForm>
 }) {
-    const { data: wordAttributes, isLoading, isFetching, isRefetching } = api.admin.getWordAttributes.useQuery()
+    const [wordAttributes] = api.admin.getWordAttributes.useSuspenseQuery()
     const [values, setValues] = React.useState<Selection>(new Set([]));
 
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -41,7 +41,6 @@ export default function WordAttributesInput({
                         label='Attribute'
                         labelPlacement='outside'
                         selectedKeys={values}
-                        isLoading={isLoading || isFetching || isRefetching}
                         isInvalid={error !== undefined} errorMessage={error?.message}
                         {...field}
                         onChange={handleSelectionChange}
