@@ -135,7 +135,7 @@ export default function CreateWord({ locale }: {
   return (
     <section className="max-w-7xl w-full mx-auto">
       <h1 className="text-center text-fs-2">Create Word</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         <div className="flex flex-col max-w-full sm:grid sm:grid-cols-2 gap-2">
           <WordNameInput control={control} />
           <WordPhoneticInput control={control} />
@@ -166,16 +166,19 @@ export default function CreateWord({ locale }: {
             </AlertDescription>
           </Alert>
         )}
-        <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
-        <Button
-          // isLoading={wordMutation.isLoading || isUploading}
-          type="submit"
-          variant="ghost"
-          className="w-full"
-          radius="sm"
-        >
-          Submit
-        </Button>
+        <div className="flex flex-col gap-2">
+          <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
+          <Button
+            // isLoading={wordMutation.isLoading || isUploading}
+            type="submit"
+            variant="faded"
+            color="primary"
+            className="w-full"
+            radius="sm"
+          >
+            Submit
+          </Button>
+        </div>
       </form>
     </section>
   )

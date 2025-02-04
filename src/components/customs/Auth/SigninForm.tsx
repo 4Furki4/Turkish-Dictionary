@@ -32,7 +32,7 @@ export default function SigninForm({
     >
       <SigninButton provider="google" IntlMessage={SignInWithGoogleIntl} startContent={<Image src={"/svg/providers/google.svg"} width={24} height={24} alt="google-icon" />} />
       <SigninButton provider="discord" IntlMessage={SignInWithDiscordIntl} startContent={<Image src={"/svg/providers/discord-blue.svg"} width={24} height={24} alt="discord-icon" />} />
-      <SigninButton provider="github" IntlMessage={SignInWithGitHubIntl} startContent={<GithubIcon size={24} />} />
+      <SigninButton provider="github" IntlMessage={SignInWithGitHubIntl} startContent={<GithubIcon className="text-foreground" size={24} />} />
       <Divider></Divider>
       <SigninWithEmailForm SigninWithEmailIntl={SigninWithEmailIntl} EnterYourEmailIntl={EnterYourEmailIntl} EmailSigninLabelIntl={EmailSigninLabelIntl} MagicLinkIntl={MagicLinkIntl} InvalidEmailIntl={InvalidEmailIntl} />
     </div>

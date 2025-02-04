@@ -41,7 +41,7 @@ export default function MeaningFieldArray({
 
     const renderMeaningFields = useMemo(() => {
         return fields.map((field, index) => (
-            <div key={field.id} className="w-full mt-2">
+            <div key={field.id} className="w-full">
                 <h2 className="text-center text-fs-1">Meanings</h2>
                 <Card className="mb-4 rounded-sm">
                     <CardBody>

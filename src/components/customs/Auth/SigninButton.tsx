@@ -11,7 +11,7 @@ export default async function SigninButton({ provider, IntlMessage, startContent
         >
             <Button
                 className="rounded-sm w-full"
-                variant="flat"
+                variant="faded"
                 color="primary"
                 type="submit"
                 startContent={startContent}

@@ -165,8 +165,9 @@ export default function Navbar({
             ><Button
               aria-disabled={isAuthPage}
               isDisabled={isAuthPage}
-              variant="solid"
+              variant="shadow"
               color="primary"
+              className="font-bold"
             >
                 {SignInIntl}
               </Button>

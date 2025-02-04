@@ -34,7 +34,7 @@ export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmai
                         label={EmailSigninLabelIntl}
                         variant="bordered"
                         labelPlacement='outside'
-                        color="primary"
+
                         type="email"
                         name="email"
                         errorMessage={error?.message}
@@ -46,7 +46,7 @@ export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmai
             />
             <Button
                 className="rounded-sm w-full"
-                variant="bordered"
+                variant="faded"
                 color="primary"
                 type="submit"
                 isLoading={mutation.isPending}
