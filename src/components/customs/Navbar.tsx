@@ -75,15 +75,17 @@ export default function Navbar({
       }}
     >
       <NavbarContent justify="center">
-        <NavbarBrand>
-          <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
-            <Book className="h-6 w-6" />
-            <span className="text-fs-1 font-bold">Turkish Dictionary</span>
-          </NextIntlLink>
-          <button className="sm:hidden">
-            <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
-          </button>
-        </NavbarBrand>
+        <NavbarItem>
+          <NavbarBrand>
+            <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
+              <Book className="h-6 w-6" />
+              <span className="text-fs-1 font-bold">Turkish Dictionary</span>
+            </NextIntlLink>
+            <button className="sm:hidden">
+              <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
+            </button>
+          </NavbarBrand>
+        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end" className="gap-4 sm:gap-8">
         {session?.user.role === "admin" ? (
@@ -145,7 +147,7 @@ export default function Navbar({
         </NavbarItem>
         <NavbarItem>
           {/* theme button */}
-          <Button variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
+          <Button aria-label="Switch theme" variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           </Button>
@@ -163,7 +165,7 @@ export default function Navbar({
             ><Button
               aria-disabled={isAuthPage}
               isDisabled={isAuthPage}
-              variant="shadow"
+              variant="solid"
               color="primary"
             >
                 {SignInIntl}

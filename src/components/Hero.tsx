@@ -82,13 +82,14 @@ export default function Hero({ children }: {
                   <button
                     type="submit"
                     className="p-2 hover:bg-muted/50 rounded-full transition-colors"
+                    aria-label="search button"
                   >
                     <SearchIcon className="w-5 h-5 text-muted-foreground" />
                   </button>
                 }
                 aria-required
                 autoFocus
-                role="search"
+
                 aria-label="search words"
                 value={wordInput}
                 onValueChange={(val) => {
@@ -101,6 +102,7 @@ export default function Hero({ children }: {
                 placeholder={t("hero.searchPlaceholder")}
                 isInvalid={!!inputError}
                 errorMessage={inputError}
+                type="search"
               />
             </div>
           </form>
@@ -167,9 +169,9 @@ function FeatureCard({ title, description, icon }: { title: string, description:
     <Card className="feature-card-shine bg-background/50 backdrop-blur-sm p-6 rounded-lg border border-border/50">
       <CardHeader className="flex flex-col gap-2">
         {icon}
-        <h3 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-foreground">
           {title}
-        </h3>
+        </h2>
       </CardHeader>
       <CardBody>
         <p className="mt-4 text-base text-muted-foreground">
