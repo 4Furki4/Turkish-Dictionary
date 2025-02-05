@@ -47,7 +47,7 @@ export default async function RootLayout({
       <head>
         <script src="https://unpkg.com/react-scan/dist/auto.global.js" async />
       </head>
-      <body className={`${GeistSans.className} min-h-[100dvh] overflow-x-hidden relative`}>
+      <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
           {/* <NextSSRPlugin
 

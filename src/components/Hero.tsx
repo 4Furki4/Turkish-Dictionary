@@ -46,7 +46,7 @@ export default function Hero({ children }: {
     <div className="relative isolate">
       {/* Background */}
       <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-        <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#F3AD9C] via-[#DC7266] to-[#8C0F19] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem] dark:from-[#DC7266] dark:via-[#BA3E3D] dark:to-[#64071F]" />
+        <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary via-primary/75 to-primary/25 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
       </div>
 
       <div className="mx-auto max-w-7xl px-6 pb-12 pt-10 sm:pb-16 lg:px-8">
@@ -156,7 +156,7 @@ export default function Hero({ children }: {
 
       {/* Background continued */}
       <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
-        <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#F3AD9C] via-[#DC7266] to-[#8C0F19] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem] dark:from-[#DC7266] dark:via-[#BA3E3D] dark:to-[#64071F]" />
+        <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-primary via-primary/75 to-primary/25 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
       </div>
     </div >
   );
