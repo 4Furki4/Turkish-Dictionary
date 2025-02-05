@@ -27,6 +27,7 @@ export default async function Page(
   void api.admin.getExampleSentenceAuthors.prefetch()
   void api.admin.getPartOfSpeeches.prefetch()
   void api.admin.getWordAttributes.prefetch()
+  void api.admin.getLanguages.prefetch()
   return (
     <HydrateClient>
       <CreateWord locale={locale} />
