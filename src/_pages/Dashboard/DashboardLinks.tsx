@@ -2,20 +2,35 @@
 import React from 'react'
 import { Link, usePathname, useRouter } from "@/src/i18n/routing";
 import { Link as NextUILink } from "@heroui/react"
+import { Settings } from "lucide-react";
+
+const links = [
+  {
+    href: "/dashboard",
+    label: "Word List",
+  },
+  {
+    href: "/dashboard/user-list",
+    label: "User List",
+  },
+  {
+    href: "/dashboard/dynamic-parameters",
+    label: "Dynamic Parameters",
+    icon: <Settings className="w-5 h-5" />,
+  },
+]
+
 export default function DashboardLinks() {
     const pathname = usePathname()
     return (
         <div className='flex gap-2'>
-            <NextUILink as="div" underline={pathname === "/dashboard" ? "always" : "hover"}>
-                <Link href={'/dashboard'}>
-                    Word List
-                </Link>
-            </NextUILink>
-            <NextUILink as="div" underline={pathname === "/dashboard/user-list" ? "always" : "hover"}>
-                <Link href={'/dashboard/user-list'}>
-                    User List
-                </Link>
-            </NextUILink>
+            {links.map((link, index) => (
+                <NextUILink as="div" key={index} underline={pathname === link.href ? "always" : "hover"}>
+                    <Link href={link.href}>
+                        {link.label}
+                    </Link>
+                </NextUILink>
+            ))}
         </div>
     )
 }

@@ -27,7 +27,7 @@ import WordListDeleteModal from "./WordListDeleteModal";
 import { Pagination } from "@heroui/pagination";
 import { Select, SelectItem } from "@heroui/select";
 import EditWordModal from "./EditModal/EditWordModal";
-import { PartOfSpeech } from "@/db/schema/part_of_speechs";
+import { keepPreviousData } from "@tanstack/react-query";
 
 const wordPerPageOptions = [
   {
@@ -47,23 +47,7 @@ const wordPerPageOptions = [
     key: "50"
   }
 ]
-export default function WordList(
-  {
-    words,
-    wordCount,
-    languages,
-    partOfSpeeches,
-  }:
-    {
-      words: DashboardWordList[],
-      wordCount: number | undefined
-      languages: Language[],
-      partOfSpeeches: {
-        id: string
-        partOfSpeech: PartOfSpeech
-      }[],
-    }
-) {
+export default function WordList() {
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalChange } = useDisclosure();
   const [selectedWord, setSelectedWord] = React.useState<{
@@ -72,24 +56,29 @@ export default function WordList(
   }>({ wordId: 0, name: "" });
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
-  const wordCountQuery = api.word.getWordCount.useQuery(undefined, {
-    initialData: wordCount,
-  });
-  const totalPageNumber = wordCountQuery.data ? Math.ceil(wordCountQuery.data / wordsPerPage) : undefined;
+
+  const { data: wordCount } = api.word.getWordCount.useQuery()
+  const { data: languages } = api.admin.getLanguages.useQuery()
+  const { data: partOfSpeechRaw } = api.admin.getPartOfSpeeches.useQuery()
+  const partOfSpeeches = partOfSpeechRaw?.map(pos => ({
+    ...pos,
+    id: pos.id.toString()
+  })) ?? []
+  const totalPageNumber = wordCount ? Math.ceil(wordCount / wordsPerPage) : undefined;
   const wordsQuery = api.word.getWords.useQuery({
     take: wordsPerPage,
     skip: (pageNumber - 1) * wordsPerPage
   }, {
-    initialData: words,
+    placeholderData: keepPreviousData
   })
   type Row = (typeof rows)[0];
-  const rows = wordsQuery.data.map((word, idx) => {
+  const rows = wordsQuery.data?.map((word, idx) => {
     return {
       name: word.name,
       key: word.word_id,
       meaning: word.meaning,
     };
-  });
+  }) || []
   const columns = [
     {
       key: "name",
@@ -218,7 +207,7 @@ export default function WordList(
       </Table>
 
       <WordListDeleteModal key={`word-delete-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
-      <EditWordModal partOfSpeeches={partOfSpeeches} languages={languages} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} wordsPerPage={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
+      <EditWordModal partOfSpeeches={partOfSpeeches ?? []} languages={languages ?? []} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} wordsPerPage={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
     </section>
   );
 }

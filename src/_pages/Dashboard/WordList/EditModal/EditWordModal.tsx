@@ -12,7 +12,6 @@ import WordSuffixInput from './Inputs/Word/WordSuffixInput';
 import WordPrefixInput from './Inputs/Word/WordPrefixInput';
 import MeaningInput from './Inputs/Meaning/MeaningInput';
 import PartOfSpeechInput from './Inputs/Meaning/PartOfSpeechInput';
-import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 import AttributesInput from './Inputs/Meaning/AttributesInput';
 import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
 import AuthorInput from './Inputs/Meaning/AuthorInput';
@@ -70,7 +69,7 @@ export default function EditWordModal({
     languages: Language[];
     partOfSpeeches: {
         id: string;
-        partOfSpeech: PartOfSpeech;
+        partOfSpeech: string;
     }[];
     wordsPerPage: number;
     skip: number;

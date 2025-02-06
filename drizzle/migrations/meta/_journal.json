@@ -36,6 +36,13 @@
       "when": 1737822823981,
       "tag": "0004_military_young_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1738851064705,
+      "tag": "0005_solid_hulk",
+      "breakpoints": true
     }
   ]
 }
