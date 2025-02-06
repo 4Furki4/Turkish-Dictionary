@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import { Control, FormState, UseFormClearErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { WordForm } from '@/types';
-import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 import { Button, Card, CardBody } from '@heroui/react';
 import WordMeaningInput from './CreateWordForm/Inputs/Meaning/WordMeaningInput';
 import MeaningPartOfSpeechInput from './CreateWordForm/Inputs/Meaning/PartOfSpeechInput';

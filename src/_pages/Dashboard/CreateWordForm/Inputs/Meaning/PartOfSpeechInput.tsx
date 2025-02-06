@@ -2,7 +2,6 @@
 import { Select, SelectItem } from "@heroui/react"
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
-import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import { WordForm } from '@/types';
 export default function MeaningPartOfSpeechInput({
     index,
@@ -13,7 +12,7 @@ export default function MeaningPartOfSpeechInput({
     control: Control<WordForm>,
     partOfSpeeches: {
         id: number;
-        partOfSpeech: PartOfSpeech;
+        partOfSpeech: string;
     }[]
 }) {
     return (

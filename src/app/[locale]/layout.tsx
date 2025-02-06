@@ -32,7 +32,7 @@ export default async function RootLayout({
   params
 }: {
   children: React.ReactNode;
-  params: Params
+  params: Promise<Params>
 }) {
   const { locale } = await params
   setRequestLocale(locale as string)

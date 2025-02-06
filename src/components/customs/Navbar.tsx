@@ -45,9 +45,6 @@ export default function Navbar({
     if (path === "/search/[word]") {
       return `/search/${params.word}`;
     }
-    if (path === "/reset-password/[token]") {
-      return `/reset-password/${params.token}`;
-    }
     return path;
   }, [pathName, params.token, params.word])
   return (
@@ -114,7 +111,6 @@ export default function Navbar({
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
-                        token: params.token as any,
                         word: params.word as any,
                       },
                     }}
@@ -132,7 +128,6 @@ export default function Navbar({
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
-                        token: params.token as any,
                         word: params.word as any,
                       },
                     }}

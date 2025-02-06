@@ -15,7 +15,6 @@ import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons"
 import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
-import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";

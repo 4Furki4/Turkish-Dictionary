@@ -55,6 +55,30 @@ export const routing = defineRouting({
       "en": "/dashboard/user-list",
       "tr": "/panel/kullanicilar",
     },
+    "/dashboard/dynamic-parameters": {
+      "en": "/dashboard/dynamic-parameters",
+      "tr": "/panel/dinamik-parametreler",
+    },
+    "/dashboard/dynamic-parameters/word-attributes": {
+      "en": "/dashboard/dynamic-parameters/word-attributes",
+      "tr": "/panel/dinamik-parametreler/kelime-ozellikleri",
+    },
+    "/dashboard/dynamic-parameters/meaning-attributes": {
+      "en": "/dashboard/dynamic-parameters/meaning-attributes",
+      "tr": "/panel/dinamik-parametreler/anlam-ozellikleri",
+    },
+    "/dashboard/dynamic-parameters/authors": {
+      "en": "/dashboard/dynamic-parameters/authors",
+      "tr": "/panel/dinamik-parametreler/yazarlar",
+    },
+    "/dashboard/dynamic-parameters/part-of-speech": {
+      "en": "/dashboard/dynamic-parameters/part-of-speech",
+      "tr": "/panel/dinamik-parametreler/kelime-turu",
+    },
+    "/dashboard/dynamic-parameters/languages": {
+      "en": "/dashboard/dynamic-parameters/languages",
+      "tr": "/panel/dinamik-parametreler/diller",
+    },
     "/search": {
       "en": "/search",
       "tr": "/arama",
@@ -64,10 +88,6 @@ export const routing = defineRouting({
       "tr": "/arama/[word]",
     },
     // Dynamic params are supported via square brackets
-    "/reset-password/[token]": {
-      "en": "/reset-password/[token]",
-      "tr": "/sifreyi-yenile/[token]",
-    },
   }
 
 })

@@ -1,4 +1,4 @@
-import { PartOfSpeech } from '@/db/schema/part_of_speechs'
+"use client"
 import { EditWordForm } from '@/types'
 import { Select, Selection, SelectItem } from "@heroui/react"
 import React from 'react'
@@ -15,7 +15,7 @@ export default function PartOfSpeechInput({
     index: number,
     partOfSpeeches: {
         id: string;
-        partOfSpeech: PartOfSpeech;
+        partOfSpeech: string;
     }[],
     selectedPartOfSpeechId: string | undefined
     setFieldValue: UseFormSetValue<EditWordForm>
