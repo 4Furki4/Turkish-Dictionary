@@ -154,6 +154,45 @@ export const wordRouter = createTRPCRouter({
         ) as WordSearchResult[]
       return wordsWithMeanings
     }),
+  getRecommendations: publicProcedure
+    .input(
+      z.object({
+        query: z.string(),
+        limit: z.number().optional().default(5),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input);
+      const recommendations = await db.execute(
+        sql`
+        WITH RankedWords AS (
+          SELECT
+            w.id AS word_id,
+            w.name AS name,
+            CASE 
+              WHEN w.name ILIKE ${purifiedInput.query} THEN 1
+              WHEN w.name ILIKE ${`${purifiedInput.query}%`} THEN 2
+              ELSE 3
+            END AS match_rank,
+            LENGTH(w.name) AS name_length
+          FROM words w
+          WHERE w.name ILIKE ${`%${purifiedInput.query}%`}
+        )
+        SELECT DISTINCT
+          word_id,
+          name,
+          match_rank,
+          name_length
+        FROM RankedWords
+        ORDER BY
+          match_rank,
+          name_length
+        LIMIT ${purifiedInput.limit};
+        `
+      ) as { word_id: number; name: string; match_rank: number; name_length: number }[];
+      
+      return recommendations.map(({ word_id, name }) => ({ word_id, name }));
+    }),
   getWordCount: publicProcedure
     .query(async ({ ctx: { db } }) => {
       const countOfWords = await db.select({ count: count() }).from(words);

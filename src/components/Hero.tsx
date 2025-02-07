@@ -7,6 +7,8 @@ import { Input } from "@heroui/input";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
+import { api } from "@/src/trpc/react";
+import { useDebounce } from "@uidotdev/usehooks";
 
 export default function Hero({ children }: {
   children: React.ReactNode;
@@ -16,14 +18,52 @@ export default function Hero({ children }: {
   const router = useRouter();
   const [wordInput, setWordInput] = useState<string>("");
   const [inputError, setInputError] = useState<string>("");
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  useEffect(() => {
-    const warningParam = params.get("warning");
-    if (warningParam === "alreadySignedIn") {
-      toast.warning(t("alreadySignedIn"));
-      router.replace("/");
+  const debouncedInput = useDebounce(wordInput, 300);
+
+  const { data: recommendations, isLoading } = api.word.getRecommendations.useQuery(
+    { query: debouncedInput, limit: 5 },
+    {
+      enabled: debouncedInput.length > 0,
+      refetchOnWindowFocus: false
     }
-  }, []);
+  );
+
+  // Reset selected index when recommendations change
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [recommendations]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!recommendations?.length) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedIndex(prev =>
+          prev < recommendations.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedIndex(prev => prev > -1 ? prev - 1 : prev);
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (selectedIndex >= 0) {
+          handleRecommendationClick(recommendations[selectedIndex].name);
+        } else {
+          handleSearch(e as unknown as React.FormEvent);
+        }
+        break;
+      case "Escape":
+        setShowRecommendations(false);
+        setSelectedIndex(-1);
+        break;
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,10 +75,18 @@ export default function Hero({ children }: {
     }
     setWordInput("");
     setInputError("");
-    const decodedInput = decodeURI(input);
     router.push({
       pathname: "/search/[word]",
-      params: { word: decodedInput },
+      params: { word: input },
+    });
+  };
+
+  const handleRecommendationClick = (word: string) => {
+    setWordInput(word);
+    setShowRecommendations(false);
+    router.push({
+      pathname: "/search/[word]",
+      params: { word: word },
     });
   };
 
@@ -89,12 +137,24 @@ export default function Hero({ children }: {
                 }
                 aria-required
                 autoFocus
-
                 aria-label="search words"
                 value={wordInput}
+                onKeyDown={handleKeyDown}
                 onValueChange={(val) => {
                   setWordInput(val);
-                  if (val.trim()) setInputError("");
+                  if (val.trim()) {
+                    setInputError("");
+                    setShowRecommendations(true);
+                  } else {
+                    setShowRecommendations(false);
+                  }
+                }}
+                onBlur={() => {
+                  // Delay hiding recommendations to allow click events
+                  setTimeout(() => {
+                    setShowRecommendations(false);
+                    setSelectedIndex(-1);
+                  }, 200);
                 }}
                 color="primary"
                 variant="bordered"
@@ -104,12 +164,35 @@ export default function Hero({ children }: {
                 errorMessage={inputError}
                 type="search"
               />
+              {showRecommendations && recommendations && recommendations.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-background/90 backdrop-blur-sm border border-primary/20 rounded-md shadow-lg text-left border-b-0">
+                  <ul role="listbox">
+                    {recommendations.map((rec, index) => (
+                      <li
+                        key={rec.word_id}
+                        role="option"
+                        aria-selected={index === selectedIndex}
+                        className={`px-4 py-2 cursor-pointer transition-colors border-b border-primary/20 ${index === selectedIndex
+                          ? "bg-primary/10"
+                          : "hover:bg-primary/10"
+                          }`}
+                        onClick={() => handleRecommendationClick(rec.name)}
+                        onMouseEnter={() => setSelectedIndex(index)}
+                      >
+                        {rec.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </form>
+
           {/* Search Results */}
           <>
             {children}
           </>
+
           {/* Features Section */}
           <div className="grid md:grid-cols-3 gap-6 mt-16">
             <FeatureCard title={t("hero.feature1.title")} description={t("hero.feature1.description")} icon={<HeartHandshake className="w-6 h-6" />} />
@@ -161,8 +244,6 @@ export default function Hero({ children }: {
     </div >
   );
 }
-
-
 
 function FeatureCard({ title, description, icon }: { title: string, description: string, icon: React.ReactNode }) {
   return (
