@@ -43,6 +43,13 @@
       "when": 1738851064705,
       "tag": "0005_solid_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1739026392164,
+      "tag": "0006_thankful_shiver_man",
+      "breakpoints": true
     }
   ]
 }
