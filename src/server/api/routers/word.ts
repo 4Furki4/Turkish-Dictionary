@@ -104,9 +104,11 @@ export const wordRouter = createTRPCRouter({
                   'meaning_id', m.id,
                   'meaning', m.meaning,
                   'part_of_speech', pos.part_of_speech,
+                  'part_of_speech_id', pos.id,
                   'attributes', ma.attributes,
                   'sentence', ex.sentence,
-                  'author', a.name
+                  'author', a.name,
+                  'author_id', a.id
                 ) ORDER BY m.id
               ) AS meanings
             FROM
@@ -190,7 +192,7 @@ export const wordRouter = createTRPCRouter({
         LIMIT ${purifiedInput.limit};
         `
       ) as { word_id: number; name: string; match_rank: number; name_length: number }[];
-      
+
       return recommendations.map(({ word_id, name }) => ({ word_id, name }));
     }),
   getWordCount: publicProcedure

@@ -29,7 +29,7 @@ export default function MeaningAttributesInput({
         setValues(() => new Set(selectedAttributes))
         setFieldValue(`meanings.${index}.attributes`, selectedAttributes)
     };
-    const { data, isLoading } = api.admin.getMeaningAttributes.useQuery(undefined, {
+    const { data, isLoading } = api.params.getMeaningAttributes.useQuery(undefined, {
         initialData: meaningAttributes
     })
     return (

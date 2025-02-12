@@ -32,8 +32,8 @@ export default async function Page(
     skip: 0
   })
   void api.word.getWordCount.prefetch()
-  void api.admin.getLanguages.prefetch()
-  void api.admin.getPartOfSpeeches.prefetch()
+  void api.params.getLanguages.prefetch()
+  void api.params.getPartOfSpeeches.prefetch()
   return (
     <HydrateClient>
       <WordList />

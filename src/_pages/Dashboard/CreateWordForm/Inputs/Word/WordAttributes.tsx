@@ -14,7 +14,7 @@ export default function WordAttributesInput({
     control: Control<WordForm>,
     setValue: UseFormSetValue<WordForm>
 }) {
-    const [wordAttributes] = api.admin.getWordAttributes.useSuspenseQuery()
+    const [wordAttributes] = api.params.getWordAttributes.useSuspenseQuery()
     const [values, setValues] = React.useState<Selection>(new Set([]));
 
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

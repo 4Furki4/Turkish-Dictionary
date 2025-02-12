@@ -58,8 +58,8 @@ export default function WordList() {
   const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
 
   const { data: wordCount } = api.word.getWordCount.useQuery()
-  const { data: languages } = api.admin.getLanguages.useQuery()
-  const { data: partOfSpeechRaw } = api.admin.getPartOfSpeeches.useQuery()
+  const { data: languages } = api.params.getLanguages.useQuery()
+  const { data: partOfSpeechRaw } = api.params.getPartOfSpeeches.useQuery()
   const partOfSpeeches = partOfSpeechRaw?.map(pos => ({
     ...pos,
     id: pos.id.toString()

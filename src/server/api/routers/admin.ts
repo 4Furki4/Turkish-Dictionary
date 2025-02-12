@@ -56,36 +56,6 @@ export const adminRouter = createTRPCRouter({
         wordAlreadyExists: word.length > 0,
       };
     }),
-  getMeaningAttributes: adminProcedure.query(async ({ ctx: { db } }) => {
-    const attributes = await db.select().from(meaningAttributes)
-    return attributes
-  }),
-  getExampleSentenceAuthors: adminProcedure.query(async ({ ctx: { db } }) => {
-    const authorsData = await db.select({
-      id: authors.id,
-      name: authors.name
-    }).from(authors)
-    const filteredAuthors = authorsData.map((author) => ({
-      ...author,
-      id: author.id.toString()
-    }))
-    return filteredAuthors
-  }),
-  getPartOfSpeeches: adminProcedure.query(async ({ ctx: { db } }) => {
-    const partOfSpeechData = await db.select({ id: partOfSpeechs.id, partOfSpeech: partOfSpeechs.partOfSpeech }).from(partOfSpeechs)
-    return partOfSpeechData
-  }),
-  getLanguages: adminProcedure.query(async ({ ctx: { db } }) => {
-    const languageData = await db.select().from(languages)
-    return languageData
-  }),
-  getWordAttributes: adminProcedure.query(async ({ ctx: { db } }) => {
-    const attributesData = await db.select({
-      id: wordAttributes.id,
-      attribute: wordAttributes.attribute
-    }).from(wordAttributes)
-    return attributesData
-  }),
   getWordToEdit: adminProcedure.input(z.string()).query(async ({ ctx: { db }, input: queriedWord }) => {
     const result = await db.execute(sql
       `
@@ -254,10 +224,19 @@ export const adminRouter = createTRPCRouter({
         const [result] = await db.select({
           id: languages.id
         }).from(languages).where(eq(languages.language_code, word.language))
-        await db.update(roots).set({
-          languageId: result.id,
-          root: word.root
-        })
+        const [rootOfWord] = await db.select().from(roots).where(eq(roots.wordId, word.id))
+        if (!rootOfWord) {
+          await db.insert(roots).values({
+            wordId: word.id,
+            languageId: result.id,
+            root: word.root
+          })
+        } else {
+          await db.update(roots).set({
+            languageId: result.id,
+            root: word.root
+          }).where(eq(roots.id, rootOfWord.id))
+        }
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

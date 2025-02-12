@@ -1,29 +1,29 @@
-import React, {
-  Fragment
-} from "react";
-// import {
-//   Accordion,
-//   AccordionItem,
-// } from "@heroui/react";
+"use client"
 import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./SaveWord";
-const itemClasses = {
-  title: "font-normal text-fs-1 text-primary",
-  trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
-  indicator: "text-fs-0",
-  content: "px-2 text-fs--1",
-};
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import WordEditRequest from "./EditRequestModal/WordEditRequest";
+import MeaningsEditRequest from "./EditRequestModal/MeaningsEditRequest";
+
 export default function WordCard({ word: { word_data }, isSavedWord, locale }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr" }) {
+  const { isOpen, onOpenChange } = useDisclosure()
   return (
     <Card
       as={"article"}
       aria-label="word card"
       role="article"
       isBlurred
-      className="border border-border rounded-sm p-4"
+      className="border border-border rounded-sm p-4 w-full"
       classNames={{
         base: ["p-6"]
       }}
@@ -90,48 +90,39 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
         </>
       </CardBody>
       <CardFooter>
-        {/* <Accordion selectionMode="multiple" itemClasses={itemClasses}>
-          <AccordionItem
-            key={1}
-            aria-label="Related Words"
-            title="Related Words"
-          >
-            <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {word_data.related_words ? (
-                word_data.related_words.map((word, index) => (
-                  <Fragment key={index}>
-                    <Link
-                      className="text-center underline"
-                      href={`?word=${word}`}
-                    >
-                      {word}
-                    </Link>
-                  </Fragment>
-                ))
-              ) : (
-                <p className="">No related words</p>
-              )}
-            </div>
-          </AccordionItem>
-          <AccordionItem title="Related Phareses">
-            <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {word.related_phrases ? (
-                word.related_phrases.map((word, index) => (
-                  <Fragment key={index}>
-                    <Link
-                      className="text-center underline"
-                      href={`?word=${word}`}
-                    >
-                      {word}
-                    </Link>
-                  </Fragment>
-                ))
-              ) : (
-                <p className="text-center">No related phrases</p>
-              )}
-            </div>
-          </AccordionItem>
-        </Accordion> */}
+        <Button onPress={onOpenChange}>
+          Request Edit
+        </Button>
+        <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader>
+                  Edit Word
+                </ModalHeader>
+                <ModalBody>
+                  <Tabs defaultValue="words">
+                    <TabsList>
+                      <TabsTrigger value="words">Words</TabsTrigger>
+                      <TabsTrigger value="meanings">Meanings</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="words">
+                      <WordEditRequest data={{ word_data }} />
+                    </TabsContent>
+                    <TabsContent value="meanings">
+                      <MeaningsEditRequest meanings={word_data.meanings} />
+                    </TabsContent>
+                  </Tabs>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onPress={onClose}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </CardFooter>
     </Card>
   );

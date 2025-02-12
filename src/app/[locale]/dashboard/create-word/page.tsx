@@ -23,11 +23,11 @@ export default async function Page(
   //   id: author.id.toString(),
   // })) : []
   // const partOfSpeeches = results[2].status === "fulfilled" ? results[2].value : []
-  void api.admin.getMeaningAttributes.prefetch()
-  void api.admin.getExampleSentenceAuthors.prefetch()
-  void api.admin.getPartOfSpeeches.prefetch()
-  void api.admin.getWordAttributes.prefetch()
-  void api.admin.getLanguages.prefetch()
+  void api.params.getMeaningAttributes.prefetch()
+  void api.params.getExampleSentenceAuthors.prefetch()
+  void api.params.getPartOfSpeeches.prefetch()
+  void api.params.getWordAttributes.prefetch()
+  void api.params.getLanguages.prefetch()
   return (
     <HydrateClient>
       <CreateWord locale={locale} />

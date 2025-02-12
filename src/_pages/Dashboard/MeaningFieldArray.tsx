@@ -34,9 +34,9 @@ export default function MeaningFieldArray({
     setImagePreviewUrls: React.Dispatch<React.SetStateAction<string[]>>;
     imagePreviewUrls: string[];
 }) {
-    const [meaningAttributes] = api.admin.getMeaningAttributes.useSuspenseQuery()
-    const [authors] = api.admin.getExampleSentenceAuthors.useSuspenseQuery()
-    const [partOfSpeeches] = api.admin.getPartOfSpeeches.useSuspenseQuery()
+    const [meaningAttributes] = api.params.getMeaningAttributes.useSuspenseQuery()
+    const [authors] = api.params.getExampleSentenceAuthors.useSuspenseQuery()
+    const [partOfSpeeches] = api.params.getPartOfSpeeches.useSuspenseQuery()
 
     const renderMeaningFields = useMemo(() => {
         return fields.map((field, index) => (
