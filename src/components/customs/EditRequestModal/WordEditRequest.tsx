@@ -58,7 +58,6 @@ export default function WordEditRequest({
   })
 
   const onSubmit = async (data: WordEditRequestForm) => {
-    console.log("dirtyFields", dirtyFields)
     const preparedData = {
       word_id: word_data.word_id,
       ...Object.keys(dirtyFields).reduce<Record<string, unknown>>((acc, key) => {

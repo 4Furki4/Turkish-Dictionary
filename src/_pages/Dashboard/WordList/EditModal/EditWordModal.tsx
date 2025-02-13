@@ -179,6 +179,7 @@ export default function EditWordModal({
             prefix: data.prefix,
             suffix: data.suffix
         }
+        console.log("preparedData", preparedData)
         editWordMutation.mutate(preparedData)
     }
     if (isOpen && isLoading) {

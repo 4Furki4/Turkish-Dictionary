@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/tabs"
 import WordEditRequest from "./EditRequestModal/WordEditRequest";
 import MeaningsEditRequest from "./EditRequestModal/MeaningsEditRequest";
+import { Session } from "next-auth";
 
-export default function WordCard({ word: { word_data }, isSavedWord, locale }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr" }) {
+export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
   return (
     <Card
@@ -90,7 +91,8 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
         </>
       </CardBody>
       <CardFooter>
-        <Button onPress={onOpenChange}>
+        {/* TODO: Show a message to the user when they are not signed in */}
+        <Button onPress={onOpenChange} isDisabled={session === null}>
           Request Edit
         </Button>
         <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>

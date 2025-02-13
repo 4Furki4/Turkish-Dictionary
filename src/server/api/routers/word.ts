@@ -124,6 +124,9 @@ export const wordRouter = createTRPCRouter({
             SELECT
               w.id AS word_id,
               w.name AS word_name,
+              w.phonetic AS phonetic,
+              w.prefix AS prefix,
+              w.suffix AS suffix,
               COALESCE(wa.attributes, '[]'::json) AS word_attributes,
               JSON_BUILD_OBJECT(
                 'root', r.root,
@@ -146,6 +149,9 @@ export const wordRouter = createTRPCRouter({
             JSON_BUILD_OBJECT(
               'word_id', word_id,
               'word_name', word_name,
+              'phonetic', phonetic,
+              'prefix', prefix,
+              'suffix', suffix,
               'attributes', word_attributes,
               'root', root,
               'meanings', meanings

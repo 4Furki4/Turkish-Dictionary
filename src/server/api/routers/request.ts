@@ -20,8 +20,9 @@ export const requestRouter = createTRPCRouter({
         attributes: z.array(z.string()).optional(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
         const wordAttributes = input.attributes?.map((attribute) => ({ attribute: Number(attribute) }))
+        const { word_id, ...restInput } = input;
         const wordData = {
-            ...input,
+            ...restInput,
             attribute_ids: wordAttributes
         }
         const preparedData = Object.keys(wordData).reduce<Record<string, unknown>>((acc, key) => {
