@@ -4,7 +4,7 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./SaveWord";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure } from "@heroui/react";
 
 import {
   Tabs,
@@ -15,6 +15,7 @@ import {
 import WordEditRequest from "./EditRequestModal/WordEditRequest";
 import MeaningsEditRequest from "./EditRequestModal/MeaningsEditRequest";
 import { Session } from "next-auth";
+import { Link } from "@/src/i18n/routing";
 
 export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
@@ -92,9 +93,24 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
       </CardBody>
       <CardFooter>
         {/* TODO: Show a message to the user when they are not signed in */}
-        <Button onPress={onOpenChange} isDisabled={session === null}>
-          Request Edit
-        </Button>
+        {
+          session ? <Button onPress={onOpenChange} color="primary" variant="flat">
+            Request Edit
+          </Button> : <Tooltip showArrow placement="bottom" content={
+            <div className="flex flex-col items-center">
+              <p >You can request an edit if you are signed in</p>
+              <Link href={"/signin"}>
+                <Button size="sm">
+                  Sign in
+                </Button>
+              </Link>
+            </div>
+          }>
+            <Button color="primary" variant="bordered">
+              Request Edit
+            </Button>
+          </Tooltip>
+        }
         <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>
           <ModalContent>
             {(onClose) => (

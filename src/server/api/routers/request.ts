@@ -2,6 +2,7 @@ import { requests } from "@/db/schema/requests";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import { purifyObject } from "@/src/lib/utils";
 
 export const requestRouter = createTRPCRouter({
     getWordAttributesMergedRequests: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
@@ -31,14 +32,40 @@ export const requestRouter = createTRPCRouter({
             }
             return acc
         }, {})
+        const purifiedData = purifyObject(preparedData)
         await db.transaction(async (tx) => {
             await tx.insert(requests).values({
                 entityType: "words",
-                action: "create",
+                action: "update",
                 userId: user.id,
                 requestableId: input.word_id,
-                newData: JSON.stringify(preparedData),
+                newData: JSON.stringify(purifiedData),
             })
         })
-    })
+    }),
+    requestEditMeaning: protectedProcedure.input(z.object({
+        meaning_id: z.number(),
+        meaning: z.string().optional(),
+        part_of_speech_id: z.number().optional(),
+        sentence: z.string().optional(),
+        attribute_id: z.number().optional(),
+    })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+        const { meaning_id, ...restInput } = input;
+        const preparedData = Object.keys(restInput).reduce<Record<string, unknown>>((acc, key) => {
+            if (restInput[key as keyof typeof restInput]) {
+                acc[key] = restInput[key as keyof typeof restInput]
+            }
+            return acc
+        }, {})
+        const purifiedData = purifyObject(preparedData)
+        await db.transaction(async (tx) => {
+            await tx.insert(requests).values({
+                entityType: "meanings",
+                action: "update",
+                userId: user.id,
+                requestableId: meaning_id,
+                newData: JSON.stringify(purifiedData),
+            })
+        })
+    }),
 })

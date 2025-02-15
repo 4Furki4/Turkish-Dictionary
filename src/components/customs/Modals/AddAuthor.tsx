@@ -18,7 +18,7 @@ export default function AddAuthorModal({
     ...modalProps
 }: AddAuthorModalProps) {
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
-    const adminUtils = api.useUtils().admin
+    const paramsUtils = api.useUtils().params
     const addAuthorMutation = api.admin.addAuthor.useMutation({
         onError(error, variables, context) {
             console.log(error)
@@ -28,7 +28,7 @@ export default function AddAuthorModal({
             reset()
             toast.success("Attribute has been added successfully!")
             onClose()
-            adminUtils.getExampleSentenceAuthors.invalidate()
+            paramsUtils.getExampleSentenceAuthors.invalidate()
         }
     })
     function onNewAttributeSubmit(newAttribute: NewAttributeForm) {

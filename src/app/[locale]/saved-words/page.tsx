@@ -31,6 +31,7 @@ export default async function SavedWords(
     <section className="max-w-5xl mx-auto grid gap-5 mt-5">
       {savedWords.length > 0 ? savedWords?.map((word) => (
         <WordCard
+          session={session}
           locale={locale as "en" | "tr"}
           key={word.word_data.word_id}
           word={word}

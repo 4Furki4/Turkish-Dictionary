@@ -18,7 +18,7 @@ export default function AddMeaningAttributeModal({
     ...modalProps
 }: AddMeaningAttributeModalProps) {
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
-    const adminUtils = api.useUtils().admin
+    const paramsUtils = api.useUtils().params
     const addMeaningAttributeMutation = api.admin.addNewMeaningAttribute.useMutation({
         onError(error, variables, context) {
             console.log(error)
@@ -28,7 +28,7 @@ export default function AddMeaningAttributeModal({
             reset()
             toast.success("Attribute has been added successfully!")
             onClose()
-            adminUtils.getMeaningAttributes.invalidate()
+            paramsUtils.getExampleSentenceAuthors.invalidate()
         }
     })
     function onNewAttributeSubmit(newAttribute: NewAttributeForm) {
