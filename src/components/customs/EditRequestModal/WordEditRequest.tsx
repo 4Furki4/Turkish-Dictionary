@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { Input } from "@heroui/input"
 import { Select, SelectItem } from "@heroui/select"
 import { Autocomplete, AutocompleteItem } from "@heroui/react"
+import { Textarea } from "@heroui/input"
 import { WordSearchResult } from "@/types"
 
 const wordEditRequestSchema = z.object({
@@ -18,6 +19,7 @@ const wordEditRequestSchema = z.object({
   root: z.string().optional(),
   suffix: z.string().optional(),
   attributes: z.array(z.string()).optional(),
+  reason: z.string().min(1, "Reason is required"),
 })
 
 type WordEditRequestForm = z.infer<typeof wordEditRequestSchema>
@@ -54,14 +56,17 @@ export default function WordEditRequest({
       root: word_data.root.root ?? "",
       attributes: word_data.attributes?.map((at) => at.attribute_id.toString()) ?? [],
       language: word_data.root.language_code ?? "",
+      reason: "",
     },
   })
 
   const onSubmit = async (data: WordEditRequestForm) => {
+    console.log("data", data)
     const preparedData = {
       word_id: word_data.word_id,
+      reason: data.reason,
       ...Object.keys(dirtyFields).reduce<Record<string, unknown>>((acc, key) => {
-        if (dirtyFields[key as keyof typeof dirtyFields]) {
+        if (dirtyFields[key as keyof typeof dirtyFields] && key !== 'reason') {
           acc[key] = data[key as keyof typeof data];
         }
         return acc;
@@ -180,25 +185,40 @@ export default function WordEditRequest({
       <Controller
         name="attributes"
         control={control}
-        render={({ field, fieldState: { error } }) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <Select
             items={wordAttributes || []}
             label="Attributes"
-            isLoading={wordAttributesIsLoading}
             placeholder="Select attributes"
             selectionMode="multiple"
-            selectedKeys={field.value}
-            onChange={(e) => field.onChange(Array.from(e.target.value))}
+            selectedKeys={new Set(value)}
+            onSelectionChange={(keys) => onChange(Array.from(keys))}
+            isLoading={wordAttributesIsLoading}
             isInvalid={!!error}
             errorMessage={error?.message}
             className="w-full"
           >
-            {(attribute) => (
-              <SelectItem key={attribute.id} textValue={attribute.attribute}>
-                {attribute.attribute}
+            {(attr) => (
+              <SelectItem key={attr.id.toString()} value={attr.id.toString()}>
+                {attr.attribute}
               </SelectItem>
             )}
           </Select>
+        )}
+      />
+
+      <Controller
+        name="reason"
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <Textarea
+            {...field}
+            label="Reason for Change"
+            placeholder="Please explain why you want to make these changes"
+            isInvalid={!!error}
+            errorMessage={error?.message}
+            className="w-full"
+          />
         )}
       />
 

@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "@heroui/button"
-import { useForm, useFieldArray, Controller } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { api } from "@/src/trpc/react"
@@ -8,12 +8,10 @@ import { toast } from "sonner"
 import { Card, CardBody, CardHeader } from "@heroui/card"
 import { PencilIcon, TrashIcon } from "lucide-react"
 import { Select, SelectItem } from "@heroui/select"
-import { Chip } from "@heroui/chip"
 import { Textarea } from "@heroui/input"
 import React from "react"
-import { WordSearchResult } from "@/types"
 import MeaningAttributesInput from "./Meanings/meaning-attributes-input"
-
+import MeaningAuthorInput from "./Meanings/meaning-author-input"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
@@ -21,13 +19,22 @@ const meaningSchema = z.object({
   attributes: z.array(z.string()).optional(),
   sentence: z.string().optional(),
   author_id: z.string().optional(),
+  reason: z.string().min(1, "Reason is required"),
 })
 
-const meaningEditRequestSchema = z.object({
-  meanings: z.array(meaningSchema)
-})
+export type MeaningEditRequestForm = z.infer<typeof meaningSchema>
 
-export type MeaningEditRequestForm = z.infer<typeof meaningEditRequestSchema>
+// Type for the submitted data which makes all fields optional except meaning_id and reason
+type MeaningEditSubmitData = {
+  meaning_id: number;
+  reason: string;
+  meaning?: string;
+  part_of_speech_id?: number;
+  attributes?: number[];
+  sentence?: string;
+  author_id?: number;
+}
+
 type Meaning = {
   meaning_id: number;
   meaning: string;
@@ -41,7 +48,6 @@ type Meaning = {
     attribute: string;
   }];
 }
-
 export default function MeaningsEditRequest({
   meanings,
 }: {
@@ -51,30 +57,6 @@ export default function MeaningsEditRequest({
   const { data: partOfSpeeches, isLoading: partOfSpeechesIsLoading } = api.params.getPartOfSpeeches.useQuery()
   const { data: authors, isLoading: authorsIsLoading } = api.params.getExampleSentenceAuthors.useQuery()
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
-
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors, dirtyFields },
-  } = useForm<MeaningEditRequestForm>({
-    resolver: zodResolver(meaningEditRequestSchema),
-    defaultValues: {
-      meanings: meanings.map(meaning => ({
-        meaning_id: meaning.meaning_id,
-        meaning: meaning.meaning,
-        part_of_speech_id: meaning.part_of_speech_id.toString(),
-        attributes: meaning.attributes?.map(at => at.attribute_id.toString()) ?? [],
-        sentence: meaning.sentence ?? "",
-        author_id: meaning.author_id?.toString() ?? "",
-      }))
-    }
-  })
-
-  const { fields } = useFieldArray({
-    control,
-    name: "meanings"
-  })
 
   const requestEditMeaning = api.request.requestEditMeaning.useMutation({
     onSuccess: () => {
@@ -99,192 +81,275 @@ export default function MeaningsEditRequest({
     }
   }
 
-  const onSubmit = async (data: MeaningEditRequestForm) => {
-    if (editingIndex === null) return
+  return (
+    <div className="space-y-4">
+      {meanings.map((meaning, index) => (
+        <MeaningEditRequestForm
+          key={meaning.meaning_id}
+          meaning={meaning}
+          index={index}
+          isEditing={editingIndex === index}
+          onEdit={() => handleEdit(index)}
+          onDelete={() => handleDelete(meaning.meaning_id)}
+          onCancel={() => setEditingIndex(null)}
+          meaningAttributes={meaningAttributes}
+          meaningAttributesIsLoading={meaningAttributesIsLoading}
+          partOfSpeeches={partOfSpeeches}
+          partOfSpeechesIsLoading={partOfSpeechesIsLoading}
+          authors={authors}
+          authorsIsLoading={authorsIsLoading}
+          onSubmit={async (data) => {
+            const { meaning_id, reason, ...rest } = data;
+            const preparedData: MeaningEditSubmitData = {
+              meaning_id,
+              reason,
+              ...Object.entries(rest).reduce<Record<string, unknown>>((acc, [key, value]) => {
+                if (value !== undefined && value !== "") {
+                  switch (key) {
+                    case 'part_of_speech_id':
+                      acc[key] = parseInt(value as string);
+                      break;
+                    case 'attributes':
+                      if (Array.isArray(value)) {
+                        acc[key] = value.map(attr => parseInt(attr as unknown as string));
+                      }
+                      break;
+                    case 'author_id':
+                      acc[key] = value ? parseInt(value as string) : undefined;
+                      break;
+                    default:
+                      acc[key] = value;
+                  }
+                }
+                return acc;
+              }, {})
+            };
+            await requestEditMeaning.mutateAsync(preparedData);
+          }}
+        />
+      ))}
+    </div>
+  )
+}
 
-    const meaningData = data.meanings[editingIndex]
-    const dirtyFieldsForMeaning = (dirtyFields.meanings?.[editingIndex] ?? {}) as Record<string, boolean>
-
+function MeaningEditRequestForm({
+  meaning,
+  index,
+  isEditing,
+  onEdit,
+  onDelete,
+  onCancel,
+  meaningAttributes,
+  meaningAttributesIsLoading,
+  partOfSpeeches,
+  partOfSpeechesIsLoading,
+  authors,
+  authorsIsLoading,
+  onSubmit,
+}: {
+  meaning: Meaning;
+  index: number;
+  isEditing: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+  onCancel: () => void;
+  meaningAttributes: {
+    id: number;
+    attribute: string;
+  }[] | undefined;
+  meaningAttributesIsLoading: boolean;
+  partOfSpeeches: {
+    id: number;
+    partOfSpeech: string;
+  }[] | undefined;
+  partOfSpeechesIsLoading: boolean;
+  authors: {
+    id: string;
+    name: string;
+  }[] | undefined;
+  authorsIsLoading: boolean;
+  onSubmit: (data: MeaningEditSubmitData) => Promise<void>;
+}) {
+  const {
+    control,
+    handleSubmit,
+    formState: { dirtyFields },
+    watch
+  } = useForm<MeaningEditRequestForm>({
+    resolver: zodResolver(meaningSchema),
+    defaultValues: {
+      meaning_id: meaning.meaning_id,
+      meaning: meaning.meaning,
+      part_of_speech_id: meaning.part_of_speech_id.toString(),
+      attributes: meaning.attributes?.map(at => at.attribute_id.toString()) ?? [],
+      sentence: meaning.sentence ?? "",
+      author_id: meaning.author_id?.toString() ?? "",
+      reason: "",
+    },
+  })
+  const onFormSubmit = handleSubmit((data) => {
     const fieldMapping: Record<string, string> = {
       meaning: 'meaning',
       part_of_speech_id: 'part_of_speech_id',
       sentence: 'sentence',
       attributes: 'attributes',
-      author_id: 'author_id'
+      author_id: 'author_id',
     }
 
-    const preparedData = {
-      meaning_id: meaningData.meaning_id,
-      ...Object.keys(dirtyFieldsForMeaning).reduce<Record<string, unknown>>((acc, key) => {
-        if (dirtyFieldsForMeaning[key]) {
-          const mappedKey = fieldMapping[key] || key
-          const value = key === 'part_of_speech_id' ? parseInt(meaningData[key])
-            : key === 'attributes' ? (meaningData.attributes?.map(attr => parseInt(attr)) ?? [])
-              : meaningData[key as keyof typeof meaningData]
-          acc[mappedKey] = value
-        }
-        return acc
-      }, {})
-    }
-
-    if (Object.keys(dirtyFieldsForMeaning).length === 0) {
+    if (Object.keys(dirtyFields).length === 1 && dirtyFields.reason) {
       toast.error("No changes found")
       return
     }
 
-    try {
-      await requestEditMeaning.mutateAsync(preparedData)
-    } catch (error) {
-      // Error is handled by the mutation error callback
+    const preparedData: MeaningEditSubmitData = {
+      meaning_id: data.meaning_id,
+      reason: data.reason,
+      ...Object.keys(dirtyFields).reduce<Record<string, unknown>>((acc, key) => {
+        if (dirtyFields[key as keyof typeof dirtyFields] && key !== 'reason' && key !== 'meaning_id') {
+          let value;
+          switch (key) {
+            case 'part_of_speech_id':
+              value = parseInt(data[key]);
+              break;
+            case 'attributes':
+              if (Array.isArray(data[key])) {
+                value = data[key].map(attr => parseInt(attr));
+              }
+              break;
+            case 'author_id':
+              value = data.author_id ? parseInt(data.author_id) : undefined;
+              break;
+            default:
+              value = data[key as keyof typeof data];
+          }
+          acc[fieldMapping[key] || key] = value;
+        }
+        return acc;
+      }, {})
     }
-  }
+
+    onSubmit(preparedData);
+  })
 
   return (
-    <div className="space-y-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {fields.map((field, index) => (
-          <Card key={field.id} className="w-full">
-            <CardHeader className="flex flex-row justify-between items-center">
-              <span className="font-semibold">Meaning {index + 1}</span>
-              <div className="flex space-x-2">
-                <Button
-                  isIconOnly
-                  color="primary"
-                  variant="light"
-                  onPress={() => handleEdit(index)}
-                >
-                  <PencilIcon size={18} />
-                </Button>
-                <Button
-                  isIconOnly
-                  color="danger"
-                  variant="light"
-                  onPress={() => handleDelete(field.meaning_id)}
-                >
-                  <TrashIcon size={18} />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardBody>
-              {editingIndex === index ? (
-                <div className="space-y-4">
-                  <Controller
-                    name={`meanings.${index}.meaning`}
-                    control={control}
-                    render={({ field: meaningField, fieldState: { error } }) => (
-                      <Textarea
-                        {...meaningField}
-                        label="Meaning"
-                        placeholder="Enter meaning"
-                        isInvalid={!!error}
-                        errorMessage={error?.message}
-                      />
-                    )}
-                  />
-
-                  <Controller
-                    name={`meanings.${index}.part_of_speech_id`}
-                    control={control}
-                    render={({ field: posField, fieldState: { error } }) => (
-                      <Select
-                        items={partOfSpeeches || []}
-                        isLoading={partOfSpeechesIsLoading}
-                        label="Part of Speech"
-                        placeholder="Select part of speech"
-                        selectedKeys={posField.value ? [posField.value] : []}
-                        onChange={(e) => posField.onChange(e.target.value)}
-                        isInvalid={!!error}
-                        errorMessage={error?.message}
-                        className="w-full"
-                      >
-                        {(pos) => (
-                          <SelectItem key={pos.id.toString()} value={pos.id.toString()}>
-                            {pos.partOfSpeech}
-                          </SelectItem>
-                        )}
-                      </Select>
-                    )}
-                  />
-
-                  {/* <Controller
-                    name={`meanings.${index}.attributes`}
-                    control={control}
-                    render={({ field: attrField }) => (
-                      <Select
-                        items={meaningAttributes || []}
-                        isLoading={meaningAttributesIsLoading}
-                        label="Attributes"
-                        placeholder="Select attributes"
-                        selectionMode="multiple"
-                        selectedKeys={attrField.value || []}
-                        onChange={(e) => attrField.onChange(Array.from(e.target.selectedKeys))}
-                        className="w-full"
-                      >
-                        {(attr) => (
-                          <SelectItem key={attr.id.toString()} value={attr.id.toString()}>
-                            {attr.attribute}
-                          </SelectItem>
-                        )}
-                      </Select>
-                    )}
-                  /> */}
-                  <MeaningAttributesInput
-                    control={control}
-                    meaningAttributes={meaningAttributes || []}
-                    meaningAttributesIsLoading={meaningAttributesIsLoading}
-                    setFieldValue={setValue}
-                    selectedAttributes={field.attributes || []}
-                    index={index}
-
-                  />
-
-                  <Controller
-                    name={`meanings.${index}.sentence`}
-                    control={control}
-                    render={({ field: sentenceField, fieldState: { error } }) => (
-                      <Textarea
-                        {...sentenceField}
-                        label="Example Sentence"
-                        placeholder="Enter example sentence"
-                        isInvalid={!!error}
-                        errorMessage={error?.message}
-                      />
-                    )}
-                  />
-
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      color="danger"
-                      variant="light"
-                      onPress={() => setEditingIndex(null)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      color="primary"
-                      type="submit"
-                    >
-                      Save Changes
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <p>{field.meaning}</p>
-                  <p className="text-sm text-gray-500">
-                    Part of Speech: {meanings[index].part_of_speech}
-                  </p>
-                  {field.sentence && (
-                    <p className="text-sm italic">
-                      Example: {field.sentence}
-                    </p>
-                  )}
-                </>
+    <Card className="w-full">
+      <CardHeader className="flex flex-row justify-between items-center">
+        <span className="font-semibold">Meaning {index + 1}</span>
+        <div className="flex space-x-2">
+          {!isEditing && (
+            <>
+              <Button
+                isIconOnly
+                variant="light"
+                onPress={onEdit}
+              >
+                <PencilIcon className="h-4 w-4" />
+              </Button>
+              <Button
+                isIconOnly
+                color="danger"
+                variant="light"
+                onPress={onDelete}
+              >
+                <TrashIcon className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+        </div>
+      </CardHeader>
+      <CardBody>
+        {isEditing ? (
+          <form onSubmit={onFormSubmit} className="space-y-4">
+            <Controller
+              name="meaning"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <Textarea
+                  {...field}
+                  label="Meaning"
+                  placeholder="Enter meaning"
+                  isInvalid={!!error}
+                  errorMessage={error?.message}
+                />
               )}
-            </CardBody>
-          </Card>
-        ))}
-      </form>
-    </div>
+            />
+
+            <MeaningAuthorInput
+              control={control}
+              meaningAuthors={authors?.map(author => ({ id: author.id.toString(), name: author.name })) || []}
+              meaningAuthorsIsLoading={authorsIsLoading}
+            />
+
+            <MeaningAttributesInput
+              control={control}
+              meaningAttributes={meaningAttributes?.map(attr => ({ id: attr.id.toString(), attribute: attr.attribute })) || []}
+              meaningAttributesIsLoading={meaningAttributesIsLoading}
+            />
+
+            <Controller
+              name="sentence"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <Textarea
+                  {...field}
+                  label="Example Sentence"
+                  placeholder="Enter example sentence"
+                  isInvalid={!!error}
+                  errorMessage={error?.message}
+                />
+              )}
+            />
+
+            <MeaningAuthorInput
+              control={control}
+              meaningAuthors={authors?.map(author => ({ id: author.id.toString(), name: author.name })) || []}
+              meaningAuthorsIsLoading={authorsIsLoading}
+            />
+
+            <Controller
+              name="reason"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <Textarea
+                  {...field}
+                  label="Reason for Change"
+                  placeholder="Please explain why you want to make these changes"
+                  isInvalid={!!error}
+                  errorMessage={error?.message}
+                />
+              )}
+            />
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                color="danger"
+                variant="light"
+                onPress={onCancel}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                type="submit"
+              >
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <>
+            <p>{meaning.meaning}</p>
+            <p className="text-sm text-gray-500">
+              Part of Speech: {meaning.part_of_speech}
+            </p>
+            {meaning.sentence && (
+              <p className="text-sm italic">
+                Example: {meaning.sentence}
+              </p>
+            )}
+          </>
+        )}
+      </CardBody>
+    </Card>
   )
 }

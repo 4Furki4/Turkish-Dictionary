@@ -19,6 +19,7 @@ export const requestRouter = createTRPCRouter({
         prefix: z.string().optional(),
         suffix: z.string().optional(),
         attributes: z.array(z.string()).optional(),
+        reason: z.string().min(1, "Reason is required"),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
         const wordAttributes = input.attributes?.map((attribute) => ({ attribute: Number(attribute) }))
         const { word_id, ...restInput } = input;
@@ -40,6 +41,7 @@ export const requestRouter = createTRPCRouter({
                 userId: user.id,
                 requestableId: input.word_id,
                 newData: JSON.stringify(purifiedData),
+                reason: input.reason
             })
         })
     }),
@@ -48,9 +50,11 @@ export const requestRouter = createTRPCRouter({
         meaning: z.string().optional(),
         part_of_speech_id: z.number().optional(),
         sentence: z.string().optional(),
-        attribute_id: z.number().optional(),
+        attributes: z.array(z.number()).optional(),
+        author_id: z.number().optional(),
+        reason: z.string().min(1, "Reason is required"),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
-        const { meaning_id, ...restInput } = input;
+        const { meaning_id, reason, ...restInput } = input;
         const preparedData = Object.keys(restInput).reduce<Record<string, unknown>>((acc, key) => {
             if (restInput[key as keyof typeof restInput]) {
                 acc[key] = restInput[key as keyof typeof restInput]
@@ -65,6 +69,7 @@ export const requestRouter = createTRPCRouter({
                 userId: user.id,
                 requestableId: meaning_id,
                 newData: JSON.stringify(purifiedData),
+                reason
             })
         })
     }),
