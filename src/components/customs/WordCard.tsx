@@ -4,7 +4,7 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./SaveWord";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure } from "@heroui/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Link as HeroUILink, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 
 import {
   Tabs,
@@ -48,11 +48,11 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
           )}
         </h2>
         {word_data.root.root && word_data.root[`language_${locale}`] ? (
-          <Chip size="sm" className="rounded-sm">
+          <Chip color="secondary" size="sm" className="rounded-sm text-secondary-900 dark:bg-secondary-600 ">
             <div className="flex h-6 items-center space-x-1">
               <span className="sr-only">Root:</span>
               <h3 aria-label="the root of the word">{word_data.root.root}</h3>
-              {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider orientation="vertical"></Divider> : null}
+              {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider className="" orientation="vertical"></Divider> : null}
               <span className="sr-only">Root Language:</span>
               <h3 aria-label="the root language">{word_data.root[`language_${locale}`]}</h3>
             </div>
@@ -65,7 +65,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
             {word_data.meanings.map((meaning, index) => (
               <li key={meaning.meaning_id} className="grid gap-1">
                 <div className="flex gap-2" >
-                  <Divider orientation="vertical" className="w-[2px]" />
+                  <Divider orientation="vertical" className="w-[2px] bg-secondary" />
                   <p>
                     {meaning.part_of_speech}
                     {meaning.attributes && meaning.attributes.length > 0
@@ -94,22 +94,30 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
       <CardFooter>
         {/* TODO: Show a message to the user when they are not signed in */}
         {
-          session ? <Button onPress={onOpenChange} color="primary" variant="flat">
+          session ? <Button onPress={onOpenChange} color="secondary" variant="flat">
             Request Edit
-          </Button> : <Tooltip showArrow placement="bottom" content={
-            <div className="flex flex-col items-center">
-              <p >You can request an edit if you are signed in</p>
-              <Link href={"/signin"}>
-                <Button size="sm">
-                  Sign in
+          </Button> :
+
+            <Popover showArrow placement="bottom">
+              <PopoverTrigger>
+                <Button color="secondary" variant="ghost">
+                  Request Edit
                 </Button>
-              </Link>
-            </div>
-          }>
-            <Button color="primary" variant="bordered">
-              Request Edit
-            </Button>
-          </Tooltip>
+              </PopoverTrigger>
+              <PopoverContent>
+                <div className="flex flex-col items-center">
+                  <div>
+                    <p>
+                      You can request an edit if you are
+                    </p>
+                    <HeroUILink as={Link} href={"/signin"}>
+                      signed in
+                    </HeroUILink>
+                  </div>
+                </div>
+              </PopoverContent>
+
+            </Popover>
         }
         <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>
           <ModalContent>

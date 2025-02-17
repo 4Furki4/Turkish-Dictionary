@@ -223,7 +223,7 @@ export default function WordEditRequest({
       />
 
       <div className="flex justify-end space-x-2">
-        <Button color="primary" type="submit">
+        <Button color="secondary" variant="flat" type="submit">
           Submit Request
         </Button>
       </div>

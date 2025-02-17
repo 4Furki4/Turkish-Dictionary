@@ -75,8 +75,8 @@ export default function Navbar({
         <NavbarItem>
           <NavbarBrand>
             <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
-              <Book className="h-6 w-6" />
-              <span className="text-fs-1 font-bold">Turkish Dictionary</span>
+              <Book className="h-6 w-6 text-primary" />
+              <span className="text-fs-1 font-bold text-primary">Turkish Dictionary</span>
             </NextIntlLink>
             <button className="sm:hidden">
               <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
@@ -97,7 +97,7 @@ export default function Navbar({
             content: ["rounded-sm"],
           }}>
             <DropdownTrigger>
-              <button className="bg-transparent flex items-center gap-2 rounded-sm">
+              <button className="flex items-center gap-2 rounded-sm">
                 <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
               </button>
             </DropdownTrigger>

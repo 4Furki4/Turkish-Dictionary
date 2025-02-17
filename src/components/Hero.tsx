@@ -102,7 +102,7 @@ export default function Hero({ children }: {
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl sm:leading-[5rem] bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60 glow-text">
             {t("hero.title")}
           </h1>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">
+          <p className="mt-6 text-lg leading-8 text-secondary">
             {t("hero.description")}
           </p>
 
@@ -116,7 +116,6 @@ export default function Hero({ children }: {
                     "backdrop-blur-sm",
                     "border-2 border-primary/20",
                     "shadow-xl",
-                    "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-offset-0",
                     "group-data-[hover=true]:border-primary/40",
                   ],
                   input: [
@@ -195,18 +194,18 @@ export default function Hero({ children }: {
 
           {/* Features Section */}
           <div className="grid md:grid-cols-3 gap-6 mt-16">
-            <FeatureCard title={t("hero.feature1.title")} description={t("hero.feature1.description")} icon={<HeartHandshake className="w-6 h-6" />} />
-            <FeatureCard title={t("hero.feature2.title")} description={t("hero.feature2.description")} icon={<Edit3 className="w-6 h-6" />} />
-            <FeatureCard title={t("hero.feature3.title")} description={t("hero.feature3.description")} icon={<Stars className="w-6 h-6" />} />
+            <FeatureCard title={t("hero.feature1.title")} description={t("hero.feature1.description")} icon={<HeartHandshake className="w-6 h-6 text-primary" />} />
+            <FeatureCard title={t("hero.feature2.title")} description={t("hero.feature2.description")} icon={<Edit3 className="w-6 h-6 text-warning" />} />
+            <FeatureCard title={t("hero.feature3.title")} description={t("hero.feature3.description")} icon={<Stars className="w-6 h-6 text-yellow-400" />} />
           </div>
 
           {/* Popular Searches */}
           <div className="mt-6">
-            <div className="text-sm text-muted-foreground">
+            <h3 className="text-sm">
               {t("hero.popularSearches")}
-            </div>
+            </h3>
             <div className="mt-3 flex flex-wrap justify-center gap-2">
-              {["merhaba", "kitap", "sevgi", "zaman"].map((term) => (
+              {["There", "Will", "Be", "Popular", "Searches", "Here"].map((term) => (
                 <button
                   key={term}
                   onClick={() => {

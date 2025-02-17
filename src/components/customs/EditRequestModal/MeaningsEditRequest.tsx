@@ -12,6 +12,7 @@ import { Textarea } from "@heroui/input"
 import React from "react"
 import MeaningAttributesInput from "./Meanings/meaning-attributes-input"
 import MeaningAuthorInput from "./Meanings/meaning-author-input"
+import PartOfSpeechInput from "./Meanings/part-of-speech-input"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
@@ -212,8 +213,9 @@ function MeaningEditRequestForm({
               value = parseInt(data[key]);
               break;
             case 'attributes':
-              if (Array.isArray(data[key])) {
-                value = data[key].map(attr => parseInt(attr));
+              const attrValue = data[key];
+              if (Array.isArray(attrValue)) {
+                value = attrValue.map(attr => parseInt(attr));
               }
               break;
             case 'author_id':
@@ -274,6 +276,12 @@ function MeaningEditRequestForm({
               )}
             />
 
+            <PartOfSpeechInput
+              control={control}
+              partOfSpeeches={partOfSpeeches?.map(pos => ({ id: pos.id.toString(), partOfSpeech: pos.partOfSpeech })) || []}
+              meaningPartOfSpeechIsLoading={partOfSpeechesIsLoading}
+            />
+
             <MeaningAuthorInput
               control={control}
               meaningAuthors={authors?.map(author => ({ id: author.id.toString(), name: author.name })) || []}
@@ -329,10 +337,11 @@ function MeaningEditRequestForm({
                 Cancel
               </Button>
               <Button
-                color="primary"
+                color="secondary"
+                variant="flat"
                 type="submit"
               >
-                Save Changes
+                Submit Changes
               </Button>
             </div>
           </form>
