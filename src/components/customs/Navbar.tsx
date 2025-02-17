@@ -193,22 +193,22 @@ export default function Navbar({
                   }}
                 >
                   <DropdownItem key={"saved-words"} className="text-center rounded-sm">
-                    <Link as={NextIntlLink} className="w-full" href="/saved-words">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"search-history"} className="text-center rounded-sm">
-                    <Link as={NextIntlLink} className="w-full" href="/search-history">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
                       Search History
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"profile"} className="rounded-sm">
-                    <Link as={NextIntlLink} className="w-full" href="/profile">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/profile">
                       Profile
                     </Link>
                   </DropdownItem>
                   <DropdownItem
-                    className="text-danger rounded-sm"
+                    className="rounded-sm text-destructive"
                     key={"sign-out"}
                     color="danger"
                     onPress={() => signOut()}

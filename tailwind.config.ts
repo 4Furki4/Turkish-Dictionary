@@ -93,7 +93,6 @@ export default withUt({
   plugins: [
     require("tailwindcss-animate"),
     heroui({
-      addCommonColors: true,
       prefix: "heroui-",
       layout: {
         radius: {
