@@ -73,4 +73,18 @@ export const requestRouter = createTRPCRouter({
             })
         })
     }),
+    requestDeleteMeaning: protectedProcedure.input(z.object({
+        meaning_id: z.number(),
+        reason: z.string().min(1, "Reason is required"),
+    })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+        await db.transaction(async (tx) => {
+            await tx.insert(requests).values({
+                entityType: "meanings",
+                action: "delete",
+                userId: user.id,
+                requestableId: input.meaning_id,
+                reason: input.reason
+            })
+        })
+    }),
 })

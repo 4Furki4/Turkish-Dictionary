@@ -13,6 +13,7 @@ import React from "react"
 import MeaningAttributesInput from "./Meanings/meaning-attributes-input"
 import MeaningAuthorInput from "./Meanings/meaning-author-input"
 import PartOfSpeechInput from "./Meanings/part-of-speech-input"
+import DeleteMeaningModal from "./delete-meaning-modal"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
@@ -58,6 +59,7 @@ export default function MeaningsEditRequest({
   const { data: partOfSpeeches, isLoading: partOfSpeechesIsLoading } = api.params.getPartOfSpeeches.useQuery()
   const { data: authors, isLoading: authorsIsLoading } = api.params.getExampleSentenceAuthors.useQuery()
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
+  const [deletingMeaning, setDeletingMeaning] = React.useState<Meaning | null>(null)
 
   const requestEditMeaning = api.request.requestEditMeaning.useMutation({
     onSuccess: () => {
@@ -69,17 +71,33 @@ export default function MeaningsEditRequest({
     },
   })
 
-  const handleEdit = (index: number) => {
-    setEditingIndex(index)
+  const requestDeleteMeaning = api.request.requestDeleteMeaning.useMutation({
+    onSuccess: () => {
+      toast.success("Delete request submitted successfully")
+      setDeletingMeaning(null)
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to submit delete request")
+    },
+  })
+
+  const handleDelete = async (meaning: Meaning) => {
+    setDeletingMeaning(meaning)
   }
 
-  const handleDelete = async (meaningId: number) => {
+  const handleDeleteConfirm = async (reason: string) => {
     try {
-      // TODO: Implement request creation for deletion
-      toast.success("Delete request submitted successfully")
+      await requestDeleteMeaning.mutateAsync({
+        meaning_id: deletingMeaning!.meaning_id,
+        reason
+      })
     } catch (error) {
-      toast.error("Failed to submit delete request")
+      // Error handling is done in the mutation configuration
     }
+  }
+
+  const handleEdit = (index: number) => {
+    setEditingIndex(index)
   }
 
   return (
@@ -91,7 +109,7 @@ export default function MeaningsEditRequest({
           index={index}
           isEditing={editingIndex === index}
           onEdit={() => handleEdit(index)}
-          onDelete={() => handleDelete(meaning.meaning_id)}
+          onDelete={() => handleDelete(meaning)}
           onCancel={() => setEditingIndex(null)}
           meaningAttributes={meaningAttributes}
           meaningAttributesIsLoading={meaningAttributesIsLoading}
@@ -129,6 +147,13 @@ export default function MeaningsEditRequest({
           }}
         />
       ))}
+      <DeleteMeaningModal
+        key={deletingMeaning?.meaning_id}
+        isOpen={deletingMeaning !== null}
+        onClose={() => setDeletingMeaning(null)}
+        onConfirm={handleDeleteConfirm}
+        meaning={deletingMeaning?.meaning || ""}
+      />
     </div>
   )
 }
