@@ -104,9 +104,11 @@ export const wordRouter = createTRPCRouter({
                   'meaning_id', m.id,
                   'meaning', m.meaning,
                   'part_of_speech', pos.part_of_speech,
+                  'part_of_speech_id', pos.id,
                   'attributes', ma.attributes,
                   'sentence', ex.sentence,
-                  'author', a.name
+                  'author', a.name,
+                  'author_id', a.id
                 ) ORDER BY m.id
               ) AS meanings
             FROM
@@ -122,6 +124,9 @@ export const wordRouter = createTRPCRouter({
             SELECT
               w.id AS word_id,
               w.name AS word_name,
+              w.phonetic AS phonetic,
+              w.prefix AS prefix,
+              w.suffix AS suffix,
               COALESCE(wa.attributes, '[]'::json) AS word_attributes,
               JSON_BUILD_OBJECT(
                 'root', r.root,
@@ -144,6 +149,9 @@ export const wordRouter = createTRPCRouter({
             JSON_BUILD_OBJECT(
               'word_id', word_id,
               'word_name', word_name,
+              'phonetic', phonetic,
+              'prefix', prefix,
+              'suffix', suffix,
               'attributes', word_attributes,
               'root', root,
               'meanings', meanings
@@ -190,7 +198,7 @@ export const wordRouter = createTRPCRouter({
         LIMIT ${purifiedInput.limit};
         `
       ) as { word_id: number; name: string; match_rank: number; name_length: number }[];
-      
+
       return recommendations.map(({ word_id, name }) => ({ word_id, name }));
     }),
   getWordCount: publicProcedure

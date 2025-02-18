@@ -32,7 +32,7 @@ export default function MeaningxampleSentenceAuthorInput({
         setValue(() => new Set(selectedAuthor))
         setFieldValue(`meanings.${index}.example.author`, selectedAuthor)
     };
-    const { data } = api.admin.getExampleSentenceAuthors.useQuery(undefined, {
+    const { data } = api.params.getExampleSentenceAuthors.useQuery(undefined, {
         initialData: defaultExampleSentenceAuthors
     });
     return (

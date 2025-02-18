@@ -12,6 +12,10 @@ export const purifyObject = <T extends Record<string, any>>(obj: T): T => {
   Object.keys(obj).forEach(key => {
     if (typeof obj[key] === 'string') {
       purifiedObject[key] = DOMPurify.sanitize(obj[key]);
+    } else if (Array.isArray(obj[key])) {
+      purifiedObject[key] = obj[key].map((item: any) => 
+        typeof item === 'object' && item !== null ? purifyObject(item) : item
+      );
     } else if (typeof obj[key] === 'object' && obj[key] !== null) {
       purifiedObject[key] = purifyObject(obj[key]); // Recursively purify nested objects
     } else {

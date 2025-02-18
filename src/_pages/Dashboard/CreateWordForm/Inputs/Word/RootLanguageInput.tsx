@@ -21,7 +21,7 @@ export default function WordRootLanguageInput({
     getFieldState: UseFormGetFieldState<WordForm>,
     locale: string,
 }) {
-    const { data: langs, isLoading, isError, isSuccess, error: fetchError } = api.admin.getLanguages.useQuery();
+    const { data: langs, isLoading, isError, isSuccess, error: fetchError } = api.params.getLanguages.useQuery();
     const t = useTranslations('LanguageAndRootInput')
 
     return (

@@ -1,29 +1,31 @@
-import React, {
-  Fragment
-} from "react";
-// import {
-//   Accordion,
-//   AccordionItem,
-// } from "@heroui/react";
+"use client"
 import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./SaveWord";
-const itemClasses = {
-  title: "font-normal text-fs-1 text-primary",
-  trigger: "px-2 py-0 rounded-lg h-14 flex items-center",
-  indicator: "text-fs-0",
-  content: "px-2 text-fs--1",
-};
-export default function WordCard({ word: { word_data }, isSavedWord, locale }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr" }) {
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Link as HeroUILink, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import WordEditRequest from "./EditRequestModal/WordEditRequest";
+import MeaningsEditRequest from "./EditRequestModal/MeaningsEditRequest";
+import { Session } from "next-auth";
+import { Link } from "@/src/i18n/routing";
+
+export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
+  const { isOpen, onOpenChange } = useDisclosure()
   return (
     <Card
       as={"article"}
       aria-label="word card"
       role="article"
       isBlurred
-      className="border border-border rounded-sm p-4"
+      className="border border-border rounded-sm p-4 w-full"
       classNames={{
         base: ["p-6"]
       }}
@@ -46,11 +48,11 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
           )}
         </h2>
         {word_data.root.root && word_data.root[`language_${locale}`] ? (
-          <Chip size="sm" className="rounded-sm">
+          <Chip color="primary" size="sm" className="rounded-sm text-primary-50 dark:bg-primary-600 ">
             <div className="flex h-6 items-center space-x-1">
               <span className="sr-only">Root:</span>
               <h3 aria-label="the root of the word">{word_data.root.root}</h3>
-              {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider orientation="vertical"></Divider> : null}
+              {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider className="" orientation="vertical"></Divider> : null}
               <span className="sr-only">Root Language:</span>
               <h3 aria-label="the root language">{word_data.root[`language_${locale}`]}</h3>
             </div>
@@ -63,7 +65,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
             {word_data.meanings.map((meaning, index) => (
               <li key={meaning.meaning_id} className="grid gap-1">
                 <div className="flex gap-2" >
-                  <Divider orientation="vertical" className="w-[2px]" />
+                  <Divider orientation="vertical" className="w-[2px] bg-primary" />
                   <p>
                     {meaning.part_of_speech}
                     {meaning.attributes && meaning.attributes.length > 0
@@ -90,48 +92,62 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale }: {
         </>
       </CardBody>
       <CardFooter>
-        {/* <Accordion selectionMode="multiple" itemClasses={itemClasses}>
-          <AccordionItem
-            key={1}
-            aria-label="Related Words"
-            title="Related Words"
-          >
-            <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {word_data.related_words ? (
-                word_data.related_words.map((word, index) => (
-                  <Fragment key={index}>
-                    <Link
-                      className="text-center underline"
-                      href={`?word=${word}`}
-                    >
-                      {word}
-                    </Link>
-                  </Fragment>
-                ))
-              ) : (
-                <p className="">No related words</p>
-              )}
-            </div>
-          </AccordionItem>
-          <AccordionItem title="Related Phareses">
-            <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {word.related_phrases ? (
-                word.related_phrases.map((word, index) => (
-                  <Fragment key={index}>
-                    <Link
-                      className="text-center underline"
-                      href={`?word=${word}`}
-                    >
-                      {word}
-                    </Link>
-                  </Fragment>
-                ))
-              ) : (
-                <p className="text-center">No related phrases</p>
-              )}
-            </div>
-          </AccordionItem>
-        </Accordion> */}
+        {
+          session ? <Button onPress={onOpenChange} color="primary" variant="solid">
+            Request Edit
+          </Button> :
+
+            <Popover showArrow placement="bottom">
+              <PopoverTrigger>
+                <Button color="primary" variant="faded">
+                  Request Edit
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <div className="flex flex-col items-center">
+                  <div>
+                    <p>
+                      You can request an edit if you are
+                    </p>
+                    <HeroUILink as={Link} href={"/signin"} underline="always">
+                      signed in
+                    </HeroUILink>
+                  </div>
+                </div>
+              </PopoverContent>
+
+            </Popover>
+        }
+        <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader>
+                  Edit Word
+                </ModalHeader>
+                <ModalBody>
+                  <Tabs defaultValue="words">
+                    <TabsList>
+                      <TabsTrigger value="words">Words</TabsTrigger>
+                      <TabsTrigger value="meanings">Meanings</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="words">
+                      <WordEditRequest data={{ word_data }} />
+                    </TabsContent>
+                    <TabsContent value="meanings">
+                      <MeaningsEditRequest meanings={word_data.meanings} />
+                    </TabsContent>
+                  </Tabs>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onPress={onClose}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </CardFooter>
     </Card>
   );

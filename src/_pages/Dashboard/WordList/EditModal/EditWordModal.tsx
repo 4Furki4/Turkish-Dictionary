@@ -77,9 +77,9 @@ export default function EditWordModal({
     const { data, isError, status, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
         enabled: isOpen,
     })
-    const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
-    const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
-    const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
+    const { data: wordAttributes, } = api.params.getWordAttributes.useQuery()
+    const { data: meaningAttributesData } = api.params.getMeaningAttributes.useQuery()
+    const { data: authorsData } = api.params.getExampleSentenceAuthors.useQuery()
     const { control, setValue, reset, handleSubmit, setError, watch, formState: { errors } } = useForm<EditWordForm>({
         resolver: zodResolver(editWordFormSchema),
     })
@@ -179,6 +179,7 @@ export default function EditWordModal({
             prefix: data.prefix,
             suffix: data.suffix
         }
+        console.log("preparedData", preparedData)
         editWordMutation.mutate(preparedData)
     }
     if (isOpen && isLoading) {

@@ -40,6 +40,8 @@ import { wordRouter } from "./routers/word";
 import { userRouter } from "./routers/user";
 import { adminRouter } from "./routers/admin";
 import { createCallerFactory, createTRPCRouter } from "./trpc";
+import { paramsRouter } from "./routers/params";
+import { requestRouter } from "./routers/request";
 
 /**
  * This is the primary router for your server.
@@ -50,6 +52,8 @@ export const appRouter = createTRPCRouter({
   word: wordRouter,
   user: userRouter,
   admin: adminRouter,
+  params: paramsRouter,
+  request: requestRouter
 });
 
 // export type definition of API

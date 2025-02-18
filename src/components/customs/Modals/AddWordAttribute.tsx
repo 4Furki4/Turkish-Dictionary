@@ -18,7 +18,7 @@ export default function AddWordAttributeModal({
     ...modalProps
 }: AddWordAttributeModalProps) {
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
-    const adminUtils = api.useUtils().admin
+    const paramsUtils = api.useUtils().params
     const addWordAttributeMutation = api.admin.addNewWordAttribute.useMutation({
         onError(error, variables, context) {
             console.log(error)
@@ -28,7 +28,7 @@ export default function AddWordAttributeModal({
             reset()
             toast.success("Attribute has been added successfully!")
             onClose()
-            adminUtils.getWordAttributes.invalidate()
+            paramsUtils.getWordAttributes.invalidate()
         }
     })
     function onNewAttributeSubmit(newAttribute: NewAttributeForm) {
