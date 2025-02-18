@@ -145,7 +145,6 @@ export default withUt({
         },
         dark: {
           colors: {
-            background: "#00171d",
             primary: {
               DEFAULT: "#a91101",
               50: '#ffe5e2',
