@@ -1,15 +1,17 @@
-import SigninForm from "@/src/components/customs/Signup/SigninForm";
+import SigninForm from "@/src/components/customs/Auth/SigninForm";
 import React from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "@/src/server/auth";
-import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import { auth } from "@/src/server/auth/auth";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Params } from "next/dist/server/request/params";
 
 export async function generateMetadata({
-  params: { locale },
+  params
 }: {
-  params: { locale: string };
+  params: Promise<Params>
 }): Promise<Metadata> {
+  const { locale } = await params
   switch (locale) {
     case "tr":
       return {
@@ -25,35 +27,26 @@ export async function generateMetadata({
 }
 
 export default async function page({
-  params: { locale },
+  params
 }: {
-  params: { locale: string };
+  params: Promise<Params>
 }) {
-  unstable_setRequestLocale(locale)
-  const session = await getServerAuthSession();
+  const { locale } = await params
+  setRequestLocale(locale as string)
+  const session = await auth();
   const t = await getTranslations("SigninForm");
   if (session) redirect("/?warning=alreadySignedIn");
   return (
     <main className="grid place-items-center w-full h-full mt-auto p-2">
       <SigninForm
-        CorruptedLoginDataIntl={t("CorruptedLoginData")}
-        WithCredentialsIntl={t("WithCredentials")}
-        DontHaveAnAccountIntl={t("Don't have an account?")}
-        ForgotPasswordIntl={t("Forgot Password")}
-        PasswordMinLengthErrorMessageIntl={t("PasswordMinLengthErrorMessage")}
-        PasswordRequiredErrorMessageIntl={t("PasswordRequiredErrorMessage")}
-        PasswordIntl={t("Password")}
-        InvalidUsernameEmailOrPasswordIntl={t(
-          "Invalid username, email or password"
-        )}
-        OAuthAccountNotLinked={t("OAuthAccountNotLinked")}
-        SigninWithGoogleIntl={t("Sign in with Google")}
-        SigninWithDiscordIntl={t("Sign in with Discord")}
-        SigninWithGithubIntl={t("Sign in with GitHub")}
-        SigninIntl={t("Sign In")}
-        UsernameOrEmailRequiredIntl={t("UsernameOrEmailRequired")}
-        UsernameOrEmailIntl={t("Username or Email")}
-        SignupIntl={t("Sign Up")}
+        SignInWithGoogleIntl={t("Sign in with Google")}
+        SignInWithDiscordIntl={t("Sign in with Discord")}
+        SignInWithGitHubIntl={t("Sign in with GitHub")}
+        SigninWithEmailIntl={t("SigninWithEmail")}
+        EnterYourEmailIntl={t("EnterYourEmail")}
+        MagicLinkIntl={t("MagicLink")}
+        EmailSigninLabelIntl={t("EmailSigninLabel")}
+        InvalidEmailIntl={t("InvalidEmail")}
       />
     </main>
   );

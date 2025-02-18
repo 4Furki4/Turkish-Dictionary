@@ -1,7 +1,7 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import React from 'react'
-import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalVariantProps } from '@nextui-org/react'
+import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalVariantProps } from "@heroui/react"
 import { NewAttributeForm } from '@/types';
 import { toast } from 'sonner';
 import { Controller, useForm } from 'react-hook-form';
@@ -18,7 +18,7 @@ export default function AddWordAttributeModal({
     ...modalProps
 }: AddWordAttributeModalProps) {
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
-    const adminUtils = api.useUtils().admin
+    const paramsUtils = api.useUtils().params
     const addWordAttributeMutation = api.admin.addNewWordAttribute.useMutation({
         onError(error, variables, context) {
             console.log(error)
@@ -28,7 +28,7 @@ export default function AddWordAttributeModal({
             reset()
             toast.success("Attribute has been added successfully!")
             onClose()
-            adminUtils.getWordAttributes.invalidate()
+            paramsUtils.getWordAttributes.invalidate()
         }
     })
     function onNewAttributeSubmit(newAttribute: NewAttributeForm) {

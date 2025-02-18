@@ -1,4 +1,4 @@
-import { nextui } from "@nextui-org/react";
+import { heroui } from "@heroui/react";
 /** @type {import('tailwindcss').Config} */
 import { withUt } from "uploadthing/tw";
 
@@ -9,7 +9,7 @@ export default withUt({
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   safelist: ["hidden"],
   theme: {
@@ -39,11 +39,11 @@ export default withUt({
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        // foreground: "hsl(var(--foreground))",
-        // primary: {
-        //   DEFAULT: "hsl(var(--primary))",
-        //   foreground: "hsl(var(--primary-foreground))",
-        // },
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
@@ -69,7 +69,6 @@ export default withUt({
           foreground: "hsl(var(--card-foreground))",
         },
       },
-
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -93,87 +92,96 @@ export default withUt({
   },
   plugins: [
     require("tailwindcss-animate"),
-    nextui({
-      prefix: "nextui-",
-      themes: {
-        dark: {
-          colors: {
-            content1: {
-              DEFAULT: "#0F0E0E",
-              foreground: "#ffffff",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-        light: {
-          colors: {
-            primary: {
-              foreground: "#000000",
-            },
-            content1: {
-              DEFAULT: "#F9F5F6",
-              foreground: "#0F0E0E",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-        "dark-purple": {
-          extend: "dark",
-          colors: {
-            default: {
-              DEFAULT: "#27005D",
-              foreground: "#ffffff",
-            },
-            background: {
-              DEFAULT: "#27005D",
-              foreground: "#E4F1FF",
-            },
-            foreground: "#ffffff",
-            primary: { DEFAULT: "#5800FF", foreground: "#FFCEFE" },
-            content1: {
-              DEFAULT: "#100637",
-              foreground: "#ffffff",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-        "light-purple": {
-          extend: "light",
-          colors: {
-            primary: {
-              DEFAULT: "#5800FF",
-              foreground: "#ffffff",
-            },
-            background: {
-              DEFAULT: "#B2A4FF",
-            },
-            foreground: "#27005D",
-            focus: "#F182F6",
-            content1: {
-              DEFAULT: "#d4ccff",
-              foreground: "#27005D",
-            },
-            danger: {
-              DEFAULT: "#FF0000",
-              foreground: "#ffffff",
-            },
-          },
-        },
-      },
+    heroui({
+      prefix: "heroui-",
       layout: {
         radius: {
           small: "calc(var(--radius) - 6px)",
           medium: "calc(var(--radius) - 4px)",
-          large: "calc(var(--radius) - 2px)"
+          large: "var(--radius)",
+        },
+      },
+      themes: {
+        light: {
+          colors: {
+
+            primary: {
+              DEFAULT: "#a91101",
+              50: '#ffe5e2',
+              100: '#ffb9b1',
+              200: '#ff8b7f',
+              300: '#fe5e4e',
+              400: '#fd321c',
+              500: '#e31a02',
+              600: '#b11201',
+              700: '#800b00',
+              800: '#4e0500',
+              900: '#1f0000',
+              foreground: "hsl(355.7 100% 97.3%)",
+            },
+            secondary: {
+              DEFAULT: "#dbfcff",
+              50: '#dbfcff',
+              100: '#b1f2ff',
+              200: '#83e8fb',
+              300: '#57dff9',
+              400: '#33d5f7',
+              500: '#24bcdd',
+              600: '#1493ac',
+              700: '#04697c',
+              800: '#003f4b',
+              900: '#00171d',
+              foreground: "hsl(240 5.9% 10%)",
+            },
+            danger: {
+              DEFAULT: "hsl(5.71 98.82% 33.33%)",
+              foreground: "hsl(0 0% 98%)",
+            },
+            focus: {
+              DEFAULT: "hsl(5.71 98.82% 33.33%)",
+              foreground: "hsl(355.7 100% 97.3%)",
+            },
+          },
+        },
+        dark: {
+          colors: {
+            primary: {
+              DEFAULT: "#a91101",
+              50: '#ffe5e2',
+              100: '#ffb9b1',
+              200: '#ff8b7f',
+              300: '#fe5e4e',
+              400: '#fd321c',
+              500: '#e31a02',
+              600: '#b11201',
+              700: '#800b00',
+              800: '#4e0500',
+              900: '#1f0000',
+              foreground: "hsl(355.7 100% 97.3%)",
+            },
+            secondary: {
+              DEFAULT: "#83e8fb",
+              50: '#dbfcff',
+              100: '#b1f2ff',
+              200: '#83e8fb',
+              300: '#57dff9',
+              400: '#33d5f7',
+              500: '#24bcdd',
+              600: '#1493ac',
+              700: '#04697c',
+              800: '#003f4b',
+              900: '#00171d',
+              foreground: "hsl(0 0% 98%)",
+            },
+            danger: {
+              DEFAULT: "hsl(5.71 98.82% 33.33%)",
+              foreground: "hsl(0 0% 98%)",
+            },
+            focus: {
+              DEFAULT: "hsl(5.71 98.82% 33.33%)",
+              foreground: "hsl(355.7 100% 97.3%)",
+            }
+          },
         },
       }
     }),

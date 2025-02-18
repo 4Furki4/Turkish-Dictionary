@@ -11,13 +11,13 @@ import {
   DropdownTrigger,
   DropdownMenu,
   NavbarBrand,
-} from "@nextui-org/react";
-import { Book, Languages, Menu, Palette } from "lucide-react";
+} from "@heroui/react";
+import { Book, Languages, Menu, Moon, Palette, Sun } from "lucide-react";
 import { signOut, } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
-import { usePathname, Link as NextIntlLink } from "@/src/navigation";
+import { usePathname, Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from "next-auth";
 import { useCallback } from "react";
 
@@ -44,9 +44,6 @@ export default function Navbar({
   const getDynamicPathnames = useCallback((path: typeof pathName) => {
     if (path === "/search/[word]") {
       return `/search/${params.word}`;
-    }
-    if (path === "/reset-password/[token]") {
-      return `/reset-password/${params.token}`;
     }
     return path;
   }, [pathName, params.token, params.word])
@@ -75,15 +72,17 @@ export default function Navbar({
       }}
     >
       <NavbarContent justify="center">
-        <NavbarBrand>
-          <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
-            <Book className="h-6 w-6" />
-            <span className="text-fs-1 font-bold">Turkish Dictionary</span>
-          </NextIntlLink>
-          <button className="sm:hidden">
-            <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
-          </button>
-        </NavbarBrand>
+        <NavbarItem>
+          <NavbarBrand>
+            <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
+              <Book className="h-6 w-6 text-primary" />
+              <span className="text-fs-1 font-bold text-primary">Turkish Dictionary</span>
+            </NextIntlLink>
+            <button className="sm:hidden">
+              <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
+            </button>
+          </NavbarBrand>
+        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end" className="gap-4 sm:gap-8">
         {session?.user.role === "admin" ? (
@@ -98,13 +97,13 @@ export default function Navbar({
             content: ["rounded-sm"],
           }}>
             <DropdownTrigger>
-              <button className="bg-transparent flex items-center gap-2 rounded-sm">
+              <button className="flex items-center gap-2 rounded-sm">
                 <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
               </button>
             </DropdownTrigger>
             <DropdownMenu>
               {locale === "en" ? (
-                <DropdownItem color="primary" key={"tr"} className="rounded-sm">
+                <DropdownItem key={"tr"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     // @ts-ignore
@@ -112,7 +111,6 @@ export default function Navbar({
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
-                        token: params.token as any,
                         word: params.word as any,
                       },
                     }}
@@ -122,7 +120,7 @@ export default function Navbar({
                   </NextIntlLink>
                 </DropdownItem>
               ) : (
-                <DropdownItem color="primary" key={"en"} className="rounded-sm">
+                <DropdownItem key={"en"} className="rounded-sm">
                   <NextIntlLink
                     className="w-full block"
                     // @ts-ignore
@@ -130,7 +128,6 @@ export default function Navbar({
                       pathname: pathName,
                       query: searchParams.toString(),
                       params: {
-                        token: params.token as any,
                         word: params.word as any,
                       },
                     }}
@@ -144,40 +141,11 @@ export default function Navbar({
           </Dropdown>
         </NavbarItem>
         <NavbarItem>
-          <Dropdown classNames={{
-            content: ["rounded-sm"],
-          }}>
-            <DropdownTrigger className="cursor-pointer">
-              <button className="bg-transparent flex items-center gap-2 rounded-sm">
-                <Palette aria-label="palette icon" className="h-7 w-7" />
-              </button>
-            </DropdownTrigger>
-            <DropdownMenu
-              color="primary"
-              disabledKeys={[theme!]}
-              onAction={(key) => {
-                switch (key) {
-                  case "dark-purple":
-                    setTheme("dark-purple");
-                    break;
-                  case "light-purple":
-                    setTheme("light-purple");
-                    break;
-                  case "dark":
-                    setTheme("dark");
-                    break;
-                  case "light":
-                    setTheme("light");
-                    break;
-                }
-              }}
-            >
-              <DropdownItem className="rounded-sm" key={"dark-purple"}>Dark Purple</DropdownItem>
-              <DropdownItem className="rounded-sm" key={"light-purple"}>Light Purple</DropdownItem>
-              <DropdownItem className="rounded-sm" key={"dark"}>Dark</DropdownItem>
-              <DropdownItem className="rounded-sm" key={"light"}>Light</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          {/* theme button */}
+          <Button aria-label="Switch theme" variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
         </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
@@ -186,15 +154,15 @@ export default function Navbar({
               // @ts-ignore
               href={{
                 pathname: '/signin',
-                query: { callbackUrl: decodeURI(`${getDynamicPathnames(pathName)}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`) },
-                search: pathName === "/signin" ? searchParams.toString() : undefined,
+                // query: { callbackUrl: decodeURI(`${getDynamicPathnames(pathName)}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`) },
+                // search: pathName === "/signin" ? searchParams.toString() : undefined,
               }}
             ><Button
               aria-disabled={isAuthPage}
               isDisabled={isAuthPage}
-              variant="ghost"
+              variant="shadow"
               color="primary"
-              className="rounded-sm"
+              className="font-bold"
             >
                 {SignInIntl}
               </Button>
@@ -224,26 +192,26 @@ export default function Navbar({
                     }
                   }}
                 >
-                  <DropdownItem color="primary" key={"saved-words"} className="text-center rounded-sm">
+                  <DropdownItem key={"saved-words"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
                   </DropdownItem>
-                  <DropdownItem color="primary" key={"saved-words"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
+                  <DropdownItem key={"search-history"} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
                       Search History
                     </Link>
                   </DropdownItem>
-                  <DropdownItem color="primary" key={"profile"} className="rounded-sm">
+                  <DropdownItem key={"profile"} className="rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/profile">
                       Profile
                     </Link>
                   </DropdownItem>
                   <DropdownItem
-                    className="text-danger rounded-sm"
+                    className="rounded-sm text-destructive"
                     key={"sign-out"}
                     color="danger"
-                    onClick={() => signOut()}
+                    onPress={() => signOut()}
                   >
                     Sign Out
                   </DropdownItem>

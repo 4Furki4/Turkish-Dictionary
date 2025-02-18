@@ -2,10 +2,8 @@
 import { MeaningInputs, WordForm, WordFormSubmit } from "@/types";
 import {
   Button,
-  Card,
-  CardBody,
-} from "@nextui-org/react";
-import React from "react";
+} from "@heroui/react";
+import React, { useCallback, useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import WordNameInput from "./CreateWordForm/Inputs/Word/NameInput";
 import WordPhoneticInput from "./CreateWordForm/Inputs/Word/PhoneticInput";
@@ -13,20 +11,15 @@ import WordRootLanguageInput from "./CreateWordForm/Inputs/Word/RootLanguageInpu
 import WordRootOriginInput from "./CreateWordForm/Inputs/Word/RootOriginInput";
 import WordPrefixInput from "./CreateWordForm/Inputs/Word/PrefixInput";
 import WordSuffixInput from "./CreateWordForm/Inputs/Word/SuffixInput";
-import WordMeaningInput from "./CreateWordForm/Inputs/Meaning/WordMeaningInput";
-import MeaningPartOfSpeechInput from "./CreateWordForm/Inputs/Meaning/PartOfSpeechInput";
-import MeaningAttributesInput from "./CreateWordForm/Inputs/Meaning/AttributesInput";
-import MeaningExampleSentenceInput from "./CreateWordForm/Inputs/Meaning/ExampleSentenceInput";
-import MeaningExampleAuthorInput from "./CreateWordForm/Inputs/Meaning/ExampleAuthorInput";
-import MeaningImageInput from "./CreateWordForm/Inputs/Meaning/ImageInput";
 import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons";
 import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
-import { PartOfSpeech } from "@/db/schema/part_of_speechs";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import MeaningFieldArray from "./MeaningFieldArray";
+
 
 const meaningDefaultValues: MeaningInputs = {
   attributes: [],
@@ -38,20 +31,8 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-export default function CreateWord({ locale, meaningAttributes, authors, partOfSpeeches }: {
+export default function CreateWord({ locale }: {
   locale: string;
-  meaningAttributes: {
-    id: number;
-    attribute: string;
-  }[]
-  authors: {
-    id: string;
-    name: string;
-  }[]
-  partOfSpeeches: {
-    id: number;
-    partOfSpeech: PartOfSpeech;
-  }[]
 }) {
   const {
     handleSubmit,
@@ -61,7 +42,8 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     watch,
     setError,
     getFieldState,
-    setValue
+    setValue,
+    getValues,
   } = useForm<WordForm>({
     defaultValues: {
       name: '',
@@ -73,7 +55,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
       attributes: [],
       meanings: [meaningDefaultValues],
     },
-    mode: "all",
   });
   const { fields, append, prepend, remove } = useFieldArray({
     name: "meanings",
@@ -93,7 +74,7 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     }
   });
   const [isUploading, setIsUploading] = React.useState(false);
-  const onSubmit = async (data: WordForm) => {
+  const onSubmit = useCallback(async (data: WordForm) => {
     let { meanings } = data;
     const meaningsFormatted = meanings.map((meaning) => {
       return {
@@ -141,7 +122,6 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
         image: uploadedPicturesUrls[index],
       };
     });
-    console.log('attributes', data.attributes)
     const word = {
       ...data,
       attributes: data.attributes?.map((val) => parseInt(val)),
@@ -149,13 +129,14 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
     }
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
-  };
+  }, [wordMutation, setIsUploading, setImagePreviewUrls]);
+
   return (
-    <section className="max-w-7xl w-full mx-auto max-sm:px-4 py-4">
+    <section className="max-w-7xl w-full mx-auto">
       <h1 className="text-center text-fs-2">Create Word</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-2">
-        <div className="grid sm:grid-cols-2 gap-2">
-          <WordNameInput control={control} watch={watch} setError={setError} />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+        <div className="flex flex-col max-w-full sm:grid sm:grid-cols-2 gap-2">
+          <WordNameInput control={control} />
           <WordPhoneticInput control={control} />
           <WordRootLanguageInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} locale={locale} />
           <WordRootOriginInput control={control} watch={watch} setError={setError} clearErrors={clearErrors} getFieldState={getFieldState} />
@@ -163,28 +144,19 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
           <WordSuffixInput control={control} />
           <WordAttributesInput setValue={setValue} control={control} />
         </div>
-        {fields.length > 0 ? fields.map((field, index) => (
-          <div key={field.id} className="w-full mt-2">
-            <h2 className="text-center text-fs-1">Meanings</h2>
-            <Card className="mb-4 rounded-sm">
-              <CardBody>
-                <WordMeaningInput index={index} control={control} />
-                <div className="grid sm:grid-cols-2 gap-2">
-                  <MeaningPartOfSpeechInput index={index} control={control} partOfSpeeches={partOfSpeeches} />
-                  <MeaningAttributesInput index={index} control={control} meaningAttributes={meaningAttributes} setFieldValue={setValue} />
-                  <MeaningExampleSentenceInput index={index} control={control} watch={watch} />
-                  <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} clearErrors={clearErrors} watch={watch} setFieldValue={setValue} />
-                </div>
-                <div className="grid gap-2">
-                  <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
-                </div>
-                <Button className="rounded-sm" onClick={() => remove(index)}>Remove Meaning</Button>
-              </CardBody>
-            </Card>
-
-
-          </div>
-        )) : (
+        {fields.length > 0 ? (
+          <MeaningFieldArray
+            fields={fields}
+            control={control}
+            clearErrors={clearErrors}
+            watch={watch}
+            setValue={setValue}
+            remove={remove}
+            formState={formState}
+            setImagePreviewUrls={setImagePreviewUrls}
+            imagePreviewUrls={imagePreviewUrls}
+          />
+        ) : (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
@@ -193,17 +165,20 @@ export default function CreateWord({ locale, meaningAttributes, authors, partOfS
             </AlertDescription>
           </Alert>
         )}
-        <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
-        <Button
-          // isLoading={wordMutation.isLoading || isUploading}
-          type="submit"
-          variant="ghost"
-          className="w-full"
-          radius="sm"
-        >
-          Submit
-        </Button>
+        <div className="flex flex-col gap-2">
+          <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
+          <Button
+            // isLoading={wordMutation.isLoading || isUploading}
+            type="submit"
+            variant="faded"
+            color="primary"
+            className="w-full"
+            radius="sm"
+          >
+            Submit
+          </Button>
+        </div>
       </form>
     </section>
-  );
+  )
 }

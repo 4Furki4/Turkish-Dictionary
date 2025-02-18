@@ -9,24 +9,25 @@ import {
   TableCell,
   useDisclosure,
   Spinner,
-} from "@nextui-org/react";
+  Button,
+} from "@heroui/react";
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownSection,
   DropdownItem,
-} from "@nextui-org/react";
-import { Edit3, MoreVertical, Trash2 } from "lucide-react";
+} from "@heroui/react";
+import { Edit3, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
-import { Link as NextUILink } from "@nextui-org/react";
-import { Link } from "@/src/navigation";
+import { Link as NextUILink } from "@heroui/react";
+import { Link } from "@/src/i18n/routing";
 import { DashboardWordList, Language } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
-import { Pagination } from "@nextui-org/pagination";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Pagination } from "@heroui/pagination";
+import { Select, SelectItem } from "@heroui/select";
 import EditWordModal from "./EditModal/EditWordModal";
-import { PartOfSpeech } from "@/db/schema/part_of_speechs";
+import { keepPreviousData } from "@tanstack/react-query";
 
 const wordPerPageOptions = [
   {
@@ -46,23 +47,7 @@ const wordPerPageOptions = [
     key: "50"
   }
 ]
-export default function WordList(
-  {
-    words,
-    wordCount,
-    languages,
-    partOfSpeeches,
-  }:
-    {
-      words: DashboardWordList[],
-      wordCount: number | undefined
-      languages: Language[],
-      partOfSpeeches: {
-        id: string
-        partOfSpeech: PartOfSpeech
-      }[],
-    }
-) {
+export default function WordList() {
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalChange } = useDisclosure();
   const [selectedWord, setSelectedWord] = React.useState<{
@@ -71,24 +56,29 @@ export default function WordList(
   }>({ wordId: 0, name: "" });
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
-  const wordCountQuery = api.word.getWordCount.useQuery(undefined, {
-    initialData: wordCount,
-  });
-  const totalPageNumber = wordCountQuery.data ? Math.ceil(wordCountQuery.data / wordsPerPage) : undefined;
+
+  const { data: wordCount } = api.word.getWordCount.useQuery()
+  const { data: languages } = api.params.getLanguages.useQuery()
+  const { data: partOfSpeechRaw } = api.params.getPartOfSpeeches.useQuery()
+  const partOfSpeeches = partOfSpeechRaw?.map(pos => ({
+    ...pos,
+    id: pos.id.toString()
+  })) ?? []
+  const totalPageNumber = wordCount ? Math.ceil(wordCount / wordsPerPage) : undefined;
   const wordsQuery = api.word.getWords.useQuery({
     take: wordsPerPage,
     skip: (pageNumber - 1) * wordsPerPage
   }, {
-    initialData: words,
+    placeholderData: keepPreviousData
   })
   type Row = (typeof rows)[0];
-  const rows = wordsQuery.data.map((word, idx) => {
+  const rows = wordsQuery.data?.map((word, idx) => {
     return {
       name: word.name,
       key: word.word_id,
       meaning: word.meaning,
     };
-  });
+  }) || []
   const columns = [
     {
       key: "name",
@@ -165,19 +155,27 @@ export default function WordList(
   return (
     <section>
       <Table topContent={
-        <Select label={"Words per page"} defaultSelectedKeys={["10"]}
-          size="sm"
-          classNames={{
-            base: "flex ml-auto md:w-1/6",
-          }} onChange={(e) => {
-            setWordsPerPage(parseInt(e.target.value));
-          }}>
-          {wordPerPageOptions.map((pageCount) => (
-            <SelectItem key={pageCount.key}>
-              {pageCount.label}
-            </SelectItem>
-          ))}
-        </Select>
+        <div className="flex gap-4">
+          <NextUILink as={Link} href={'/dashboard/create-word'}>
+            <Button variant="solid" color="primary" startContent={<Plus />} isIconOnly className="sm:hidden" />
+            <Button variant="solid" color="primary" startContent={<Plus />} className="max-sm:hidden">
+              Create Word
+            </Button>
+          </NextUILink>
+          <Select label={"Words per page"} defaultSelectedKeys={["10"]}
+            size="sm"
+            classNames={{
+              base: "ml-auto max-w-64",
+            }} onChange={(e) => {
+              setWordsPerPage(parseInt(e.target.value));
+            }}>
+            {wordPerPageOptions.map((pageCount) => (
+              <SelectItem key={pageCount.key}>
+                {pageCount.label}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
       } bottomContent={
         <Pagination isDisabled={totalPageNumber === undefined} classNames={{
           wrapper: ["mx-auto"]
@@ -189,7 +187,7 @@ export default function WordList(
       }} isStriped aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
+            <TableColumn align={column.key === "actions" ? "end" : "start"} key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
         <TableBody items={rows}
@@ -209,7 +207,7 @@ export default function WordList(
       </Table>
 
       <WordListDeleteModal key={`word-delete-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
-      <EditWordModal partOfSpeeches={partOfSpeeches} languages={languages} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} wordsPerPage={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
+      <EditWordModal partOfSpeeches={partOfSpeeches ?? []} languages={languages ?? []} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} wordsPerPage={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
     </section>
   );
 }

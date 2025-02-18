@@ -2,7 +2,7 @@
 import AddWordAttributeModal from '@/src/components/customs/Modals/AddWordAttribute'
 import { api } from '@/src/trpc/react'
 import { WordForm } from '@/types'
-import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/react"
 import { Plus, X } from 'lucide-react'
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
@@ -14,7 +14,7 @@ export default function WordAttributesInput({
     control: Control<WordForm>,
     setValue: UseFormSetValue<WordForm>
 }) {
-    const { data: wordAttributes, isLoading, isFetching, isRefetching } = api.admin.getWordAttributes.useQuery()
+    const [wordAttributes] = api.params.getWordAttributes.useSuspenseQuery()
     const [values, setValues] = React.useState<Selection>(new Set([]));
 
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -41,7 +41,6 @@ export default function WordAttributesInput({
                         label='Attribute'
                         labelPlacement='outside'
                         selectedKeys={values}
-                        isLoading={isLoading || isFetching || isRefetching}
                         isInvalid={error !== undefined} errorMessage={error?.message}
                         {...field}
                         onChange={handleSelectionChange}

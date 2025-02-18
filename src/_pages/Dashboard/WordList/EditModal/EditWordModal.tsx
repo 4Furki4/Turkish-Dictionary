@@ -1,7 +1,7 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import { EditMeaningForm, EditWordForm, Language } from '@/types';
-import { Button, ButtonGroup, Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from '@nextui-org/react';
+import { Button, ButtonGroup, Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@heroui/react";
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form';
 import WordNameInput from './Inputs/Word/WordNameInput';
@@ -12,7 +12,6 @@ import WordSuffixInput from './Inputs/Word/WordSuffixInput';
 import WordPrefixInput from './Inputs/Word/WordPrefixInput';
 import MeaningInput from './Inputs/Meaning/MeaningInput';
 import PartOfSpeechInput from './Inputs/Meaning/PartOfSpeechInput';
-import { PartOfSpeech } from '@/db/schema/part_of_speechs';
 import AttributesInput from './Inputs/Meaning/AttributesInput';
 import ExampleSentenceInput from './Inputs/Meaning/ExampleSentenceInput';
 import AuthorInput from './Inputs/Meaning/AuthorInput';
@@ -70,7 +69,7 @@ export default function EditWordModal({
     languages: Language[];
     partOfSpeeches: {
         id: string;
-        partOfSpeech: PartOfSpeech;
+        partOfSpeech: string;
     }[];
     wordsPerPage: number;
     skip: number;
@@ -78,9 +77,9 @@ export default function EditWordModal({
     const { data, isError, status, isLoading } = api.admin.getWordToEdit.useQuery(wordName, {
         enabled: isOpen,
     })
-    const { data: wordAttributes, } = api.admin.getWordAttributes.useQuery()
-    const { data: meaningAttributesData } = api.admin.getMeaningAttributes.useQuery()
-    const { data: authorsData } = api.admin.getExampleSentenceAuthors.useQuery()
+    const { data: wordAttributes, } = api.params.getWordAttributes.useQuery()
+    const { data: meaningAttributesData } = api.params.getMeaningAttributes.useQuery()
+    const { data: authorsData } = api.params.getExampleSentenceAuthors.useQuery()
     const { control, setValue, reset, handleSubmit, setError, watch, formState: { errors } } = useForm<EditWordForm>({
         resolver: zodResolver(editWordFormSchema),
     })
@@ -180,6 +179,7 @@ export default function EditWordModal({
             prefix: data.prefix,
             suffix: data.suffix
         }
+        console.log("preparedData", preparedData)
         editWordMutation.mutate(preparedData)
     }
     if (isOpen && isLoading) {

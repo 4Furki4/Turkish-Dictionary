@@ -2,7 +2,7 @@
 import AddMeaningAttributeModal from '@/src/components/customs/Modals/AddMeaningAttribute';
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
-import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/react"
 import { Plus, X } from 'lucide-react';
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
@@ -29,7 +29,7 @@ export default function MeaningAttributesInput({
         setValues(() => new Set(selectedAttributes))
         setFieldValue(`meanings.${index}.attributes`, selectedAttributes)
     };
-    const { data, isLoading } = api.admin.getMeaningAttributes.useQuery(undefined, {
+    const { data, isLoading } = api.params.getMeaningAttributes.useQuery(undefined, {
         initialData: meaningAttributes
     })
     return (

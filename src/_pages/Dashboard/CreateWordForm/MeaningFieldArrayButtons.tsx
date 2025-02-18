@@ -1,6 +1,6 @@
 "use client"
 import { Meaning, WordForm } from '@/types';
-import { Button, ButtonGroup } from '@nextui-org/react';
+import { Button, ButtonGroup } from "@heroui/react";
 import React from 'react'
 import { UseFieldArrayAppend, UseFieldArrayPrepend } from 'react-hook-form';
 
@@ -14,12 +14,11 @@ export default function MeaningFieldArrayButtons({
     meaningDefaultValues: Partial<Meaning>
 }) {
     return (
-        <ButtonGroup radius='sm' className="w-full">
+        <ButtonGroup radius='sm' className="w-full flex  gap-2 ">
             <Button
                 radius='sm'
                 className="w-full"
                 type="button"
-                variant="ghost"
                 onPress={() => {
                     append(meaningDefaultValues);
                 }}
@@ -30,7 +29,6 @@ export default function MeaningFieldArrayButtons({
                 radius='sm'
                 className="w-full"
                 type="button"
-                variant="ghost"
                 onPress={() => {
                     prepend(meaningDefaultValues);
                 }}

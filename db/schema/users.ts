@@ -1,9 +1,7 @@
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import {
-  integer,
   pgEnum,
   pgTable,
-  primaryKey,
   text,
   timestamp,
   varchar,
@@ -26,7 +24,6 @@ export const users = pgTable("users", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   username: varchar("username", { length: 255 }),
-  password: varchar("password", { length: 510 }),
   role: rolesEnum("role").default("user").notNull(),
 });
 

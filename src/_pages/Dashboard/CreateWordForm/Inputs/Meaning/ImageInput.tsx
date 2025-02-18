@@ -1,6 +1,6 @@
 "use client"
 import { WordForm } from '@/types';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import React, { ChangeEvent } from 'react'
 import { Control, FieldArrayWithId, FormState, UseFormClearErrors } from 'react-hook-form';
 

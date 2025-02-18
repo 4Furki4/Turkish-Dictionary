@@ -1,7 +1,7 @@
 "use client"
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types';
-import { Autocomplete, AutocompleteItem } from '@nextui-org/react';
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { useTranslations } from 'next-intl';
 import React from 'react'
 import { Control, Controller, UseFormClearErrors, UseFormGetFieldState, UseFormSetError, UseFormWatch } from 'react-hook-form';
@@ -21,7 +21,7 @@ export default function WordRootLanguageInput({
     getFieldState: UseFormGetFieldState<WordForm>,
     locale: string,
 }) {
-    const { data: langs, isLoading, isError, isSuccess, error: fetchError } = api.admin.getLanguages.useQuery();
+    const { data: langs, isLoading, isError, isSuccess, error: fetchError } = api.params.getLanguages.useQuery();
     const t = useTranslations('LanguageAndRootInput')
 
     return (

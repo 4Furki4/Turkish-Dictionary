@@ -2,7 +2,7 @@
 import AddAuthorModal from '@/src/components/customs/Modals/AddAuthor';
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
-import { Button, Select, Selection, SelectItem, useDisclosure } from '@nextui-org/react'
+import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/react"
 import { Plus } from 'lucide-react';
 import React from 'react'
 import { Control, Controller, UseFormClearErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
@@ -32,7 +32,7 @@ export default function MeaningxampleSentenceAuthorInput({
         setValue(() => new Set(selectedAuthor))
         setFieldValue(`meanings.${index}.example.author`, selectedAuthor)
     };
-    const { data } = api.admin.getExampleSentenceAuthors.useQuery(undefined, {
+    const { data } = api.params.getExampleSentenceAuthors.useQuery(undefined, {
         initialData: defaultExampleSentenceAuthors
     });
     return (

@@ -2,21 +2,10 @@ import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { pgEnum, pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { meanings } from "./meanings";
 
-export const partOfSpeechEnum = pgEnum("partOfSpeech", [
-  "isim",
-  "fiil",
-  "sıfat",
-  "zarf",
-  "zamir",
-  "ünlem",
-  "edat",
-  "bağlaç",
-]);
-export type PartOfSpeech = (typeof partOfSpeechEnum.enumValues)[number];
 
 export const partOfSpeechs = pgTable("part_of_speechs", {
   id: serial("id").primaryKey(),
-  partOfSpeech: partOfSpeechEnum("part_of_speech").notNull(),
+  partOfSpeech: varchar("part_of_speech", { length: 255 }).notNull(),
   requestType: varchar("request_type", { length: 255 }).default("partOfSpeech"),
 });
 

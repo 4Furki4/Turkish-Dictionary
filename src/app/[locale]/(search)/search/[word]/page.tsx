@@ -8,13 +8,18 @@ import { notFound } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { words } from '@/db/schema/words';
 
-export const dynamic = "force-dynamic";
+export async function generateMetadata(
+    props: {
+        params: Promise<{ word: string, locale: string }>
+    }
+) {
+    const params = await props.params;
 
-export async function generateMetadata({
-    params: { word, locale }
-}: {
-    params: { word: string, locale: string }
-}) {
+    const {
+        word,
+        locale
+    } = params;
+
     const parsedWord = decodeURIComponent(word) // parse the word to utf-8 format string
     const response = await api.word.getWord(parsedWord);
     const defString = response.length > 0 ? response[0].word_data.meanings.map((meaning, idx) => {
@@ -40,12 +45,19 @@ export async function generateStaticParams() {
     return data.map((word) => ({ word: word.name }))
 }
 
-export default async function SearchResultPage({
-    params: { locale, word }
-}: {
-    params: { locale: string, word: string }
+export default async function SearchResultPage(
+    props: {
+        params: Promise<{ locale: string, word: string }>
 
-}) {
+    }
+) {
+    const params = await props.params;
+
+    const {
+        locale,
+        word
+    } = params;
+
     const formattedWord = decodeURI(word).trim()
     const response = await db.query.words.findMany({
         where: eq(words.name, formattedWord)
@@ -54,11 +66,8 @@ export default async function SearchResultPage({
         notFound()
     }
     return (
-        <section className='p-6 mx-auto max-w-7xl w-full'>
-            <Suspense fallback={<Loading />}>
-                <SearchResult word={formattedWord} locale={locale as "en" | "tr"} />
-            </Suspense>
-        </section>
+        <Suspense fallback={<Loading />}>
+            <SearchResult word={formattedWord} locale={locale as "en" | "tr"} />
+        </Suspense>
     )
-
 }

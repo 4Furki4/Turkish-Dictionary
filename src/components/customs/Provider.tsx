@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
-import { NextUIProvider } from "@nextui-org/react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-export default function Providers({ children }: { children: React.ReactNode }) {
+import { HeroUIProvider } from "@heroui/react";
+import { type ThemeProviderProps } from 'next-themes/dist/types'
+import { ThemeProvider } from "next-themes";
+export default function Providers({ children, ...props }: ThemeProviderProps) {
   return (
-    <NextUIProvider className="min-h-[100dvh] overflow-x-hidden relative flex flex-col place-items-stretch">
-      <NextThemesProvider
+    <HeroUIProvider className="min-h-[100dvh] relative flex flex-col place-items-stretch overflow-y-hidden">
+      <ThemeProvider
+        {...props}
         attribute="class"
         defaultTheme="dark"
-        themes={["dark", "light", "dark-purple", "light-purple"]}
+        themes={["dark", "light"]}
       >
         {children}
-      </NextThemesProvider>
-    </NextUIProvider>
+      </ThemeProvider>
+    </HeroUIProvider>
   );
 }
