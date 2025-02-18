@@ -102,7 +102,7 @@ export default function Hero({ children }: {
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl sm:leading-[5rem] bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60 glow-text">
             {t("hero.title")}
           </h1>
-          <p className="mt-6 text-lg leading-8 text-secondary">
+          <p className="mt-6 text-lg leading-8">
             {t("hero.description")}
           </p>
 
@@ -114,9 +114,9 @@ export default function Hero({ children }: {
                   inputWrapper: [
                     "rounded-sm",
                     "backdrop-blur-sm",
-                    "border-2 border-primary/20",
+                    "border-2 border-primary/40",
                     "shadow-xl",
-                    "group-data-[hover=true]:border-primary/40",
+                    "group-data-[hover=true]:border-primary/60",
                   ],
                   input: [
                     "py-6",

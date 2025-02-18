@@ -104,7 +104,7 @@ export default withUt({
       themes: {
         light: {
           colors: {
-            background: "#dbfcff",
+
             primary: {
               DEFAULT: "#a91101",
               50: '#ffe5e2',

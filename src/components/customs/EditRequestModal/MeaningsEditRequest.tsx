@@ -245,7 +245,7 @@ function MeaningEditRequestForm({
                 variant="light"
                 onPress={onEdit}
               >
-                <PencilIcon className="h-4 w-4" />
+                <PencilIcon className="h-4 w-4 text-warning" />
               </Button>
               <Button
                 isIconOnly

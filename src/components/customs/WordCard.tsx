@@ -48,7 +48,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
           )}
         </h2>
         {word_data.root.root && word_data.root[`language_${locale}`] ? (
-          <Chip color="secondary" size="sm" className="rounded-sm text-secondary-900 dark:bg-secondary-600 ">
+          <Chip color="primary" size="sm" className="rounded-sm text-primary-50 dark:bg-primary-600 ">
             <div className="flex h-6 items-center space-x-1">
               <span className="sr-only">Root:</span>
               <h3 aria-label="the root of the word">{word_data.root.root}</h3>
@@ -65,7 +65,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
             {word_data.meanings.map((meaning, index) => (
               <li key={meaning.meaning_id} className="grid gap-1">
                 <div className="flex gap-2" >
-                  <Divider orientation="vertical" className="w-[2px] bg-secondary" />
+                  <Divider orientation="vertical" className="w-[2px] bg-primary" />
                   <p>
                     {meaning.part_of_speech}
                     {meaning.attributes && meaning.attributes.length > 0
@@ -92,15 +92,14 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
         </>
       </CardBody>
       <CardFooter>
-        {/* TODO: Show a message to the user when they are not signed in */}
         {
-          session ? <Button onPress={onOpenChange} color="secondary" variant="flat">
+          session ? <Button onPress={onOpenChange} color="primary" variant="solid">
             Request Edit
           </Button> :
 
             <Popover showArrow placement="bottom">
               <PopoverTrigger>
-                <Button color="secondary" variant="ghost">
+                <Button color="primary" variant="faded">
                   Request Edit
                 </Button>
               </PopoverTrigger>
@@ -110,7 +109,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                     <p>
                       You can request an edit if you are
                     </p>
-                    <HeroUILink as={Link} href={"/signin"}>
+                    <HeroUILink as={Link} href={"/signin"} underline="always">
                       signed in
                     </HeroUILink>
                   </div>
