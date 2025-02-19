@@ -150,10 +150,9 @@ export default function UserList(
             case "name":
                 return (
                     <User name={cellValue} description={
-                        <NextUILink as='div'>
-                            <Link href={'/profile'}> {/* TODO: will navigate to /users/[username] in the future */}
-                                {item.username}
-                            </Link>
+                        <NextUILink as={Link} href={'/profile'}>
+                            {/* TODO: will navigate to /users/[username] in the future */}
+                            {item.username}
                         </NextUILink>
                     } avatarProps={{
                         src: item.src ?? undefined

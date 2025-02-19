@@ -25,10 +25,8 @@ export default function DashboardLinks() {
   return (
     <div className='flex gap-2'>
       {links.map((link, index) => (
-        <NextUILink as="div" key={index} underline={pathname === link.href ? "always" : "hover"}>
-          <Link href={link.href}>
-            {link.label}
-          </Link>
+        <NextUILink as={Link} href={link.href} key={index} underline={pathname === link.href ? "always" : "hover"}>
+          {link.label}
         </NextUILink>
       ))}
     </div>
