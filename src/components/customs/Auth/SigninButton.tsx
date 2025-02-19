@@ -1,21 +1,15 @@
-import { signIn } from "@/src/server/auth/auth";
+"use client"
 import { Button } from "@heroui/button";
-export default async function SigninButton({ provider, IntlMessage, startContent }: { provider: "google" | "discord" | "github", IntlMessage: string, startContent: React.ReactNode }) {
+import { signIn } from "next-auth/react";
+export default function SigninButton({ provider, IntlMessage, startContent, redirectUrl }: { provider: "google" | "discord" | "github", IntlMessage: string, startContent: React.ReactNode, redirectUrl?: string }) {
     return (
-        <form
-            className="w-full "
-            action={async () => {
-                "use server"
-                await signIn(provider)
-            }}
-        >
-            <Button
-                className="rounded-sm w-full"
-                variant="faded"
-                color="primary"
-                type="submit"
-                startContent={startContent}
-            > {IntlMessage} </Button>
-        </form>
+        <Button
+            onPress={() => signIn(provider, { redirectTo: redirectUrl })}
+            className="rounded-sm w-full"
+            variant="faded"
+            color="primary"
+            type="submit"
+            startContent={startContent}
+        > {IntlMessage} </Button>
     )
 } 
