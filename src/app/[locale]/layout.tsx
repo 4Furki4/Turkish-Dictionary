@@ -44,9 +44,6 @@ export default async function RootLayout({
   }
   return (
     <html suppressHydrationWarning lang={locale as string} className="dark">
-      <head>
-        <script src="https://unpkg.com/react-scan/dist/auto.global.js" async />
-      </head>
       <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
           {/* <NextSSRPlugin
