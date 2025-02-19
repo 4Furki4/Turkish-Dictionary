@@ -1,8 +1,10 @@
+"use client"
 import Image from "next/image";
 import { GithubIcon } from "lucide-react";
 import SigninButton from "./SigninButton";
 import SigninWithEmailForm from "./SigninWithEmailForm";
 import { Divider } from "@heroui/react";
+import { useSearchParams } from "next/navigation";
 
 type IntlProps = {
   SignInWithGoogleIntl: string;
@@ -25,14 +27,15 @@ export default function SigninForm({
   EmailSigninLabelIntl,
   InvalidEmailIntl,
 }: IntlProps) {
+  const searchParams = useSearchParams()
+  const rediredtUrl = searchParams.get("callbackUrl") ?? "/"
   return (
     <div
-
       className="flex flex-col gap-2 w-11/12 sm:w-full max-w-xl shadow-md bg-content1 backdrop-saturate-150 p-6 sm:p-12 rounded-sm"
     >
-      <SigninButton provider="google" IntlMessage={SignInWithGoogleIntl} startContent={<Image src={"/svg/providers/google.svg"} width={24} height={24} alt="google-icon" />} />
-      <SigninButton provider="discord" IntlMessage={SignInWithDiscordIntl} startContent={<Image src={"/svg/providers/discord-blue.svg"} width={24} height={24} alt="discord-icon" />} />
-      <SigninButton provider="github" IntlMessage={SignInWithGitHubIntl} startContent={<GithubIcon className="text-foreground" size={24} />} />
+      <SigninButton provider="google" IntlMessage={SignInWithGoogleIntl} startContent={<Image src={"/svg/providers/google.svg"} width={24} height={24} alt="google-icon" />} redirectUrl={rediredtUrl} />
+      <SigninButton provider="discord" IntlMessage={SignInWithDiscordIntl} startContent={<Image src={"/svg/providers/discord-blue.svg"} width={24} height={24} alt="discord-icon" />} redirectUrl={rediredtUrl} />
+      <SigninButton provider="github" IntlMessage={SignInWithGitHubIntl} startContent={<GithubIcon className="text-foreground" size={24} />} redirectUrl={rediredtUrl} />
       <Divider></Divider>
       <SigninWithEmailForm SigninWithEmailIntl={SigninWithEmailIntl} EnterYourEmailIntl={EnterYourEmailIntl} EmailSigninLabelIntl={EmailSigninLabelIntl} MagicLinkIntl={MagicLinkIntl} InvalidEmailIntl={InvalidEmailIntl} />
     </div>
