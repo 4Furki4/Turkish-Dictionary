@@ -139,13 +139,8 @@ export default function WordList() {
         );
       case "name":
         return (
-          <NextUILink as={'div'}>
-            <Link target="_blank" href={{
-              pathname: '/search/[word]',
-              params: { word: item.name }
-            }}>
-              {cellValue}
-            </Link>
+          <NextUILink as={Link} href={`/search/${item.name}`}>
+            {cellValue}
           </NextUILink>
         );
       default:
