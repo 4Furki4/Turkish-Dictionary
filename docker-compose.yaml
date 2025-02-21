@@ -1,14 +1,20 @@
+version: "3.8"
+
 services:
   web:
-    build: .
+    build:
+      context: .
+      target: runner
+      args:
+        - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
       - "3000:3000"
     environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - NODE_ENV=production
     depends_on:
       db:
         condition: service_healthy
-        restart: true
     networks:
       - my_network
 
@@ -30,10 +36,11 @@ services:
       retries: 5
       start_period: 30s
       timeout: 10s
-volumes:
-  postgres_data:
 
 networks:
   my_network:
-    name: my_network
     driver: bridge
+
+volumes:
+  postgres_data:
+

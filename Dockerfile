@@ -1,14 +1,15 @@
 FROM oven/bun:alpine AS base
 
-# Stage 1: Install dependencies
-FROM base AS deps
+# We'll use pre-built artifacts, so we only need the runtime stage
+FROM base AS runner
 WORKDIR /app
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
 
-# Stage 2: Build the application
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN SKIP_ENV_VALIDATION=1 bun run build
+# Copy pre-built artifacts
+COPY .next ./.next
+COPY public ./public
+COPY node_modules ./node_modules
+COPY package.json ./
+COPY bun.lockb ./
+
+EXPOSE 3000
+CMD ["bun", "start"]
