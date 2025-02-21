@@ -1,12 +1,14 @@
+FROM oven/bun:alpine AS base
 
-FROM node:18-alpine
-
+# Stage 1: Install dependencies
+FROM base AS deps
 WORKDIR /app
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
 
-COPY package.json ./
-
-RUN npm install
-
+# Stage 2: Build the application
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-CMD ["npm", "run", "dev"]
+RUN bun run build
