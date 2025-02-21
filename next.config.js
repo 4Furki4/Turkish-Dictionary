@@ -7,6 +7,7 @@ const nextConfig = {
     images: {
         domains: ["utfs.io"],
     },
+    output: "standalone"
 };
 
 module.exports = withNextIntl(nextConfig);
