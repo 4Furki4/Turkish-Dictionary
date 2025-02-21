@@ -11,4 +11,4 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN bun run build
+RUN SKIP_ENV_VALIDATION=1 bun run build
