@@ -36,14 +36,14 @@ export async function generateMetadata(
     }
 }
 
-export async function generateStaticParams() {
-    const data = await db.query.words.findMany({
-        columns: {
-            name: true
-        }
-    })
-    return data.map((word) => ({ word: word.name }))
-}
+// export async function generateStaticParams() {
+//     const data = await db.query.words.findMany({
+//         columns: {
+//             name: true
+//         }
+//     })
+//     return data.map((word) => ({ word: word.name }))
+// }
 
 export default async function SearchResultPage(
     props: {
