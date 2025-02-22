@@ -12,7 +12,6 @@ import WordRootOriginInput from "./CreateWordForm/Inputs/Word/RootOriginInput";
 import WordPrefixInput from "./CreateWordForm/Inputs/Word/PrefixInput";
 import WordSuffixInput from "./CreateWordForm/Inputs/Word/SuffixInput";
 import MeaningFieldArrayButtons from "./CreateWordForm/MeaningFieldArrayButtons";
-import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
 import WordAttributesInput from "./CreateWordForm/Inputs/Word/WordAttributes";
@@ -87,39 +86,39 @@ export default function CreateWord({ locale }: {
         attributes: meaning.attributes?.map(attribute => parseInt(attribute))
       }
     })
-    const uploadedPictures = meaningsFormatted.map(async (meaning) => {
-      if (meaning.image?.[0]) {
-        const files = [meaning.image[0]];
-        const response = await uploadFiles(
-          "imageUploader",
-          {
-            files,
-            onUploadProgress({ file, progress }) {
-              console.log(`Uploaded ${progress}% of ${file}`);
-            },
-            onUploadBegin({ file }) {
-              console.log(`Started uploading ${file}`);
-              setIsUploading(true);
-            },
-          }
-        );
-        return response[0].url;
-      }
-      return undefined;
-    });
-    let uploadedPicturesUrls: (string | undefined)[] = [];
-    if (meaningsFormatted.every((meaning) => typeof meaning.image === typeof FileList)) {
-      const loadingToaster = toast.loading("Uploading images...");
+    // const uploadedPictures = meaningsFormatted.map(async (meaning) => {
+    //   if (meaning.image?.[0]) {
+    //     const files = [meaning.image[0]];
+    //     const response = await uploadFiles(
+    //       "imageUploader",
+    //       {
+    //         files,
+    //         onUploadProgress({ file, progress }) {
+    //           console.log(`Uploaded ${progress}% of ${file}`);
+    //         },
+    //         onUploadBegin({ file }) {
+    //           console.log(`Started uploading ${file}`);
+    //           setIsUploading(true);
+    //         },
+    //       }
+    //     );
+    //     return response[0].url;
+    //   }
+    //   return undefined;
+    // });
+    // let uploadedPicturesUrls: (string | undefined)[] = [];
+    // if (meaningsFormatted.every((meaning) => typeof meaning.image === typeof FileList)) {
+    //   const loadingToaster = toast.loading("Uploading images...");
 
-      uploadedPicturesUrls = await Promise.all(uploadedPictures);
-      setIsUploading(false);
-      toast.dismiss(loadingToaster);
-      toast.success("Images uploaded!");
-    }
+    //   // uploadedPicturesUrls = await Promise.all(uploadedPictures);
+    //   setIsUploading(false);
+    //   toast.dismiss(loadingToaster);
+    //   toast.success("Images uploaded!");
+    // }
     const meaningsWithImages = meaningsFormatted.map((meaning, index) => {
       return {
         ...meaning,
-        image: uploadedPicturesUrls[index],
+        // image: uploadedPicturesUrls[index],
       };
     });
     const word = {
