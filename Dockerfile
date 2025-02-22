@@ -12,23 +12,25 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Add wait-for-db script
+# Build the application
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
-
-# Wait for database and then build
-RUN chmod +x /app/scripts/wait-for-db.ts && \
-    bun run /app/scripts/wait-for-db.ts && \
-    bun run build
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
-# Copy built assets
+# Copy runtime files
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/node_modules ./node_modules
+
+# Make start script executable
+RUN chmod +x /app/scripts/start.sh
 
 EXPOSE 3000
-CMD ["bun", "server.js"]
+CMD ["/app/scripts/start.sh"]
