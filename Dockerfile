@@ -16,7 +16,7 @@ COPY . .
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN bun run build
+RUN SKIP_ENV_VALIDATION=1 bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
