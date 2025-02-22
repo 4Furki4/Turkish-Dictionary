@@ -12,10 +12,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build with database access
+# Add wait-for-db script
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
-RUN bun run build
+
+# Wait for database and then build
+RUN chmod +x /app/scripts/wait-for-db.ts && \
+    bun run /app/scripts/wait-for-db.ts && \
+    bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
