@@ -55,8 +55,19 @@
     "Contact": "Contact Admins"
   },
   "WordList": {
-    "title": "Turkish Dictionary Words",
+    "title": "Turkish Dictionary Word List",
+    "description": "Turkish Dictionary Word List where you can explore all words in the dictionary",
     "searchPlaceholder": "Search word",
+    "keywords": [
+      "Turkish",
+      "Dictionary",
+      "Word",
+      "Meaning",
+      "Database",
+      "Turkish Dictionary",
+      "Word List",
+      "All Turkish Words"
+    ],
     "wordsPerPage": "Words per page",
     "columns": {
       "word": "Word",

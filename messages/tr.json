@@ -56,6 +56,17 @@
   },
   "WordList": {
     "title": "Türkçe Sözlük Kelimeleri",
+    "description": "Türkçe Sözlük veritabanında bulunan kelimeleri keşfedin.",
+    "keywords": [
+      "Türkçe",
+      "Sözlük",
+      "Kelime",
+      "Anlam",
+      "Veritabanı",
+      "Türkçe Sözlük",
+      "Kelime Listesi",
+      "Tüm Türkçe Kelimeler"
+    ],
     "searchPlaceholder": "Kelime ara",
     "wordsPerPage": "Sayfa başına kelime",
     "columns": {

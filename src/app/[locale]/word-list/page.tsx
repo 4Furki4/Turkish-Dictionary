@@ -1,8 +1,7 @@
 import WordList from '@/src/_pages/word-list/word-list'
 import { api, HydrateClient } from '@/src/trpc/server'
 import React from 'react'
-import { Card, CardBody } from "@heroui/react";
-import { getTranslations, setRequestLocale, unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Metadata } from 'next';
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
@@ -45,12 +44,10 @@ export default async function WordListPage({ params, searchParams }: Props) {
     void api.word.getWordCount.prefetch({ search })
 
     return (
-        <Card className="max-w-7xl w-full mx-auto my-4" radius="sm">
-            <CardBody>
-                <HydrateClient>
-                    <WordList />
-                </HydrateClient>
-            </CardBody>
-        </Card>
+        <main className="max-w-7xl w-full mx-auto p-4">
+            <HydrateClient>
+                <WordList />
+            </HydrateClient>
+        </main>
     )
 }

@@ -48,7 +48,7 @@ export default function WordList() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    
+
     // Get initial values from URL params
     const initialPage = Number(searchParams.get('page')) || 1;
     const initialPerPage = Number(searchParams.get('per_page')) || 10;
@@ -56,7 +56,7 @@ export default function WordList() {
 
     const [pageNumber, setPageNumber] = React.useState<number>(initialPage);
     const [wordsPerPage, setWordsPerPage] = React.useState<number>(initialPerPage);
-    
+
     const { control, watch } = useForm({
         defaultValues: {
             search: initialSearch
@@ -66,7 +66,7 @@ export default function WordList() {
     // Update URL when parameters change
     const updateQueryParams = React.useCallback((params: { page?: number; per_page?: number; search?: string }) => {
         const newSearchParams = new URLSearchParams(searchParams);
-        
+
         Object.entries(params).forEach(([key, value]) => {
             if (value) {
                 newSearchParams.set(key, value.toString());
@@ -141,25 +141,33 @@ export default function WordList() {
 
     return (
         <section>
+
             <Table topContent={
-                <div className="flex gap-4">
-                    <Controller name="search" control={control} render={({ field }) => (
-                        <Input {...field} placeholder={t('searchPlaceholder')} size="lg" />
-                    )}
-                    />
-                    <Select label={t('wordsPerPage')} defaultSelectedKeys={[wordsPerPage.toString()]}
-                        size="sm"
-                        classNames={{
-                            base: "ml-auto max-w-64",
-                        }} onChange={(e) => {
-                            setWordsPerPage(parseInt(e.target.value));
-                        }}>
-                        {wordPerPageOptions.map((pageCount) => (
-                            <SelectItem key={pageCount.key}>
-                                {pageCount.label}
-                            </SelectItem>
-                        ))}
-                    </Select>
+                <div className="flex flex-col gap-4">
+                    <h1 className="text-fs-1">
+                        {t('title')}
+                    </h1>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <Controller name="search" control={control} render={({ field }) => (
+                            <Input {...field} placeholder={t('searchPlaceholder')} size="lg" />
+                        )}
+                        />
+                        <Select label={t('wordsPerPage')} defaultSelectedKeys={[wordsPerPage.toString()]}
+                            size="sm"
+                            className="break-words hypens-auto"
+                            classNames={{
+                                base: "ml-auto sm:max-w-64",
+                                label: "break-words hypens-auto"
+                            }} onChange={(e) => {
+                                setWordsPerPage(parseInt(e.target.value));
+                            }}>
+                            {wordPerPageOptions.map((pageCount) => (
+                                <SelectItem key={pageCount.key}>
+                                    {pageCount.label}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
                 </div>
             } bottomContent={
                 <Pagination isDisabled={totalPageNumber === undefined} classNames={{
