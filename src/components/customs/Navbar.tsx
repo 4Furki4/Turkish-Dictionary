@@ -1,4 +1,3 @@
-
 import {
   Navbar as NextuiNavbar,
   NavbarContent,
@@ -84,6 +83,11 @@ export default function Navbar({
             </NextIntlLink>
           </NavbarItem>
         ) : null}
+        <NavbarItem className="hidden sm:flex">
+          <NextIntlLink href={"/word-list"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+            <span className={`text-nowrap`}>{WordListIntl}</span>
+          </NextIntlLink>
+        </NavbarItem>
         <NavbarItem>
           <Dropdown classNames={{
             content: ["rounded-sm"],

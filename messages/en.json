@@ -53,5 +53,14 @@
     "NoResults": "Word not found",
     "NoMeaningError": "Word found but no meanings found. Please contact with admins!",
     "Contact": "Contact Admins"
+  },
+  "WordList": {
+    "title": "Turkish Dictionary Words",
+    "searchPlaceholder": "Search word",
+    "wordsPerPage": "Words per page",
+    "columns": {
+      "word": "Word",
+      "meaning": "Meaning"
+    }
   }
 }

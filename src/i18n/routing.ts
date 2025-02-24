@@ -35,6 +35,10 @@ export const routing = defineRouting({
       "en": "/forgot-password",
       "tr": "/sifremi-unuttum",
     },
+    "/word-list": {
+      "en": "/word-list",
+      "tr": "/kelime-listesi",
+    },
     "/saved-words": {
       "en": "/saved-words",
       "tr": "/kaydedilen-kelimeler",

@@ -19,10 +19,15 @@ export const wordRouter = createTRPCRouter({
       z.object({
         take: z.number().optional().default(5),
         skip: z.number().optional().default(0),
+        search: z.string().optional(),
       })
     )
     .query(async ({ input, ctx: { db } }) => {
       const purifiedInput = purifyObject(input)
+      const searchCondition = purifiedInput.search 
+        ? sql`AND w.name ILIKE ${`%${purifiedInput.search}%`}`
+        : sql``;
+        
       const wordsWithMeanings = await db.execute(
         sql
           `
@@ -43,6 +48,7 @@ export const wordRouter = createTRPCRouter({
                     word_id,
                     id
             ) m ON w.id = m.word_id
+        WHERE 1=1 ${searchCondition}
         ORDER BY
             w.id
         LIMIT ${purifiedInput.take} OFFSET ${purifiedInput.skip};
@@ -202,8 +208,24 @@ export const wordRouter = createTRPCRouter({
       return recommendations.map(({ word_id, name }) => ({ word_id, name }));
     }),
   getWordCount: publicProcedure
-    .query(async ({ ctx: { db } }) => {
-      const countOfWords = await db.select({ count: count() }).from(words);
-      return countOfWords[0].count
+    .input(
+      z.object({
+        search: z.string().optional(),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      const purifiedInput = purifyObject(input)
+      const searchCondition = purifiedInput.search 
+        ? sql`WHERE name ILIKE ${`%${purifiedInput.search}%`}`
+        : sql``;
+
+      const result = await db.execute(
+        sql`
+        SELECT COUNT(*) as count
+        FROM words
+        ${searchCondition}
+        `
+      ) as { count: number }[];
+      return Number(result[0].count);
     }),
 });

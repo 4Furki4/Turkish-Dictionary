@@ -53,5 +53,14 @@
     "NoResults": "Sonuç bulunamadı",
     "NoMeaningError": "Kelime bulundu ancak anlamı bulunamadı. Lütfen yöneticiyle iletişime geçin.",
     "Contact": "İletişime Geçin"
+  },
+  "WordList": {
+    "title": "Türkçe Sözlük Kelimeleri",
+    "searchPlaceholder": "Kelime ara",
+    "wordsPerPage": "Sayfa başına kelime",
+    "columns": {
+      "word": "Kelime",
+      "meaning": "Anlam"
+    }
   }
 }

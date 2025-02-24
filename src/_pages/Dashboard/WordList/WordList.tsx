@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -21,8 +21,8 @@ import {
 import { Edit3, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { Link as NextUILink } from "@heroui/react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Link } from "@/src/i18n/routing";
-import { DashboardWordList, Language } from "@/types";
 import WordListDeleteModal from "./WordListDeleteModal";
 import { Pagination } from "@heroui/pagination";
 import { Select, SelectItem } from "@heroui/select";
@@ -54,10 +54,39 @@ export default function WordList() {
     wordId: number;
     name: string;
   }>({ wordId: 0, name: "" });
-  const [pageNumber, setPageNumber] = React.useState<number>(1);
-  const [wordsPerPage, setWordsPerPage] = React.useState<number>(10);
 
-  const { data: wordCount } = api.word.getWordCount.useQuery()
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Get initial values from URL params
+  const initialPage = Number(searchParams.get('page')) || 1;
+  const initialPerPage = Number(searchParams.get('per_page')) || 10;
+
+  const [pageNumber, setPageNumber] = React.useState<number>(initialPage);
+  const [wordsPerPage, setWordsPerPage] = React.useState<number>(initialPerPage);
+
+  // Update URL when parameters change
+  const updateQueryParams = React.useCallback((params: { page?: number; per_page?: number }) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) {
+        newSearchParams.set(key, value.toString());
+      } else {
+        newSearchParams.delete(key);
+      }
+    });
+
+    router.push(`${pathname}?${newSearchParams.toString()}`);
+  }, [pathname, router, searchParams]);
+
+  // Handle parameter changes
+  useEffect(() => {
+    updateQueryParams({ page: pageNumber, per_page: wordsPerPage });
+  }, [pageNumber, wordsPerPage, updateQueryParams]);
+
+  const { data: wordCount } = api.word.getWordCount.useQuery({})
   const { data: languages } = api.params.getLanguages.useQuery()
   const { data: partOfSpeechRaw } = api.params.getPartOfSpeeches.useQuery()
   const partOfSpeeches = partOfSpeechRaw?.map(pos => ({
@@ -157,7 +186,7 @@ export default function WordList() {
               Create Word
             </Button>
           </NextUILink>
-          <Select label={"Words per page"} defaultSelectedKeys={["10"]}
+          <Select label={"Words per page"} defaultSelectedKeys={[wordsPerPage.toString()]}
             size="sm"
             classNames={{
               base: "ml-auto max-w-64",
@@ -174,7 +203,7 @@ export default function WordList() {
       } bottomContent={
         <Pagination isDisabled={totalPageNumber === undefined} classNames={{
           wrapper: ["mx-auto"]
-        }} isCompact showControls total={totalPageNumber ?? 1} initialPage={1} onChange={async (page) => {
+        }} isCompact showControls total={totalPageNumber ?? 1} initialPage={pageNumber} onChange={async (page) => {
           setPageNumber(page);
         }} />
       } classNames={{
