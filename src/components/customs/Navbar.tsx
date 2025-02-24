@@ -19,7 +19,6 @@ import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { usePathname, Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from "next-auth";
-import { useCallback } from "react";
 
 type NavbarProps = {
   session: Session | null;
@@ -30,7 +29,6 @@ export default function Navbar({
   session,
   WordListIntl,
   SignInIntl,
-  HomeIntl,
   setIsSidebarOpen
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
@@ -41,12 +39,6 @@ export default function Navbar({
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
     pathName
   );
-  const getDynamicPathnames = useCallback((path: typeof pathName) => {
-    if (path === "/search/[word]") {
-      return `/search/${params.word}`;
-    }
-    return path;
-  }, [pathName, params.token, params.word])
   return (
     <NextuiNavbar
       className="bg-background-foreground/100 border-b border-border"

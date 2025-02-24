@@ -15,7 +15,7 @@ import {
 import WordEditRequest from "./EditRequestModal/WordEditRequest";
 import MeaningsEditRequest from "./EditRequestModal/MeaningsEditRequest";
 import { Session } from "next-auth";
-import { Link } from "@/src/i18n/routing";
+import { signIn } from "next-auth/react";
 
 export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
@@ -30,19 +30,18 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
         base: ["p-6"]
       }}
     >
-      <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
       <CardHeader className="block sm:flex justify-center ">
-        <h2 className="text-fs-4 w-full text-center sm:text-start">
+        <h2 className="text-fs-3 w-full text-center sm:text-start break-words hyphens-auto">
           {word_data.prefix && (
-            <span className="text-fs-2">
+            <span className="text-fs-0">
               <span aria-label="word prefix">{word_data.prefix}</span>
-              <span aria-hidden>-,</span>
+              <span aria-hidden>- </span>
             </span>
           )}
           {word_data.word_name}
           {word_data.suffix && (
-            <span className="text-fs-2">
-              <span aria-hidden></span>
+            <span className="text-fs-0">
+              <span aria-hidden> -</span>
               <span aria-label="word-suffix">{word_data.suffix}</span>
             </span>
           )}
@@ -73,7 +72,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                       : null}
                   </p>
                 </div>
-                <p className="text-fs-1">
+                <p className="text-fs-1 break-words hyphens-auto">
                   {meaning.meaning}
                 </p>
                 {meaning.sentence ? (
@@ -91,34 +90,38 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
           </ul>
         </>
       </CardBody>
-      <CardFooter>
-        {
-          session ? <Button onPress={onOpenChange} color="primary" variant="solid">
-            Request Edit
-          </Button> :
-
-            <Popover showArrow placement="bottom">
-              <PopoverTrigger>
-                <Button color="primary" variant="faded">
-                  Request Edit
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <div className="flex flex-col items-center">
-                  <div>
-                    <p>
-                      You can request an edit if you are
-                    </p>
-                    <HeroUILink as={Link} href={"/signin"} underline="always">
-                      signed in
-                    </HeroUILink>
-                  </div>
-                </div>
-              </PopoverContent>
-
-            </Popover>
-        }
-        <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+      <CardFooter className="flex justify-between">
+        <>
+          {
+            session ?
+              (<Button onPress={onOpenChange} color="primary" variant="solid">
+                Request Edit
+              </Button>)
+              : (
+                <Popover showArrow placement="bottom">
+                  <PopoverTrigger>
+                    <Button color="primary" variant="faded">
+                      Request Edit
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div className="flex flex-col items-center">
+                      <div>
+                        <p>
+                          You can request an edit if you are
+                        </p>
+                        <button onClick={() => signIn()} className="text-primary underline underline-offset-2">
+                          signed in
+                        </button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )
+          }
+          <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
+        </>
+        <Modal size="3xl" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
           <ModalContent>
             {(onClose) => (
               <>
