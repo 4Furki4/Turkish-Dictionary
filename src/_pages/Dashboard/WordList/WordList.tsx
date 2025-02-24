@@ -28,6 +28,10 @@ import { Pagination } from "@heroui/pagination";
 import { Select, SelectItem } from "@heroui/select";
 import EditWordModal from "./EditModal/EditWordModal";
 import { keepPreviousData } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { useDebounce } from "@uidotdev/usehooks";
+import { Controller } from "react-hook-form";
+import { Input } from "@heroui/react";
 
 const wordPerPageOptions = [
   {
@@ -62,12 +66,19 @@ export default function WordList() {
   // Get initial values from URL params
   const initialPage = Number(searchParams.get('page')) || 1;
   const initialPerPage = Number(searchParams.get('per_page')) || 10;
+  const initialSearch = searchParams.get('search') || "";
 
   const [pageNumber, setPageNumber] = React.useState<number>(initialPage);
   const [wordsPerPage, setWordsPerPage] = React.useState<number>(initialPerPage);
 
+  const { control, watch, setFocus } = useForm({
+    defaultValues: {
+      search: initialSearch
+    }
+  });
+
   // Update URL when parameters change
-  const updateQueryParams = React.useCallback((params: { page?: number; per_page?: number }) => {
+  const updateQueryParams = React.useCallback((params: { page?: number; per_page?: number; search?: string }) => {
     const newSearchParams = new URLSearchParams(searchParams);
 
     Object.entries(params).forEach(([key, value]) => {
@@ -82,11 +93,23 @@ export default function WordList() {
   }, [pathname, router, searchParams]);
 
   // Handle parameter changes
-  useEffect(() => {
+  React.useEffect(() => {
     updateQueryParams({ page: pageNumber, per_page: wordsPerPage });
   }, [pageNumber, wordsPerPage, updateQueryParams]);
 
-  const { data: wordCount } = api.word.getWordCount.useQuery({})
+  const debouncedSearch = useDebounce(watch("search"), 500);
+
+  React.useEffect(() => {
+    if (debouncedSearch !== initialSearch) {
+      updateQueryParams({ search: debouncedSearch || undefined, page: 1 });
+      setFocus("search");
+      setPageNumber(1); // Reset to first page on new search
+    }
+  }, [debouncedSearch, initialSearch, updateQueryParams]);
+
+  const { data: wordCount } = api.word.getWordCount.useQuery({
+    search: debouncedSearch
+  })
   const { data: languages } = api.params.getLanguages.useQuery()
   const { data: partOfSpeechRaw } = api.params.getPartOfSpeeches.useQuery()
   const partOfSpeeches = partOfSpeechRaw?.map(pos => ({
@@ -96,7 +119,8 @@ export default function WordList() {
   const totalPageNumber = wordCount ? Math.ceil(wordCount / wordsPerPage) : undefined;
   const wordsQuery = api.word.getWords.useQuery({
     take: wordsPerPage,
-    skip: (pageNumber - 1) * wordsPerPage
+    skip: (pageNumber - 1) * wordsPerPage,
+    search: debouncedSearch
   }, {
     placeholderData: keepPreviousData
   })
@@ -179,26 +203,35 @@ export default function WordList() {
   return (
     <section>
       <Table topContent={
-        <div className="flex gap-4">
-          <NextUILink as={Link} href={'/dashboard/create-word'}>
-            <Button variant="solid" color="primary" startContent={<Plus />} isIconOnly className="sm:hidden" />
-            <Button variant="solid" color="primary" startContent={<Plus />} className="max-sm:hidden">
-              Create Word
-            </Button>
-          </NextUILink>
-          <Select label={"Words per page"} defaultSelectedKeys={[wordsPerPage.toString()]}
-            size="sm"
-            classNames={{
-              base: "ml-auto max-w-64",
-            }} onChange={(e) => {
-              setWordsPerPage(parseInt(e.target.value));
-            }}>
-            {wordPerPageOptions.map((pageCount) => (
-              <SelectItem key={pageCount.key}>
-                {pageCount.label}
-              </SelectItem>
-            ))}
-          </Select>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <NextUILink as={Link} href={"/dashboard/create-word"} className="w-fit">
+              <Button
+                startContent={<Plus className="w-4 h-4" />}
+                color="primary"
+                size="lg"
+              >
+                Create Word
+              </Button>
+            </NextUILink>
+            <Controller name="search" control={control} render={({ field }) => (
+              <Input {...field} placeholder="Search word" size="lg" />
+            )}
+            />
+            <Select label={"Words per page"} defaultSelectedKeys={[wordsPerPage.toString()]}
+              size="sm"
+              classNames={{
+                base: "ml-auto sm:max-w-64",
+              }} onChange={(e) => {
+                setWordsPerPage(parseInt(e.target.value));
+              }}>
+              {wordPerPageOptions.map((pageCount) => (
+                <SelectItem key={pageCount.key}>
+                  {pageCount.label}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
         </div>
       } bottomContent={
         <Pagination isDisabled={totalPageNumber === undefined} classNames={{

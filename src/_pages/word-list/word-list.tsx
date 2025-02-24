@@ -7,15 +7,12 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    useDisclosure,
     Spinner,
-    Button,
     Input,
 } from "@heroui/react";
 import { api } from "@/src/trpc/react";
 import { Link as NextUILink } from "@heroui/react";
 import { Link } from "@/src/i18n/routing";
-import { DashboardWordList } from "@/types";
 import { Pagination } from "@heroui/pagination";
 import { Select, SelectItem } from "@heroui/select";
 import { keepPreviousData } from "@tanstack/react-query";
@@ -154,10 +151,8 @@ export default function WordList() {
                         />
                         <Select label={t('wordsPerPage')} defaultSelectedKeys={[wordsPerPage.toString()]}
                             size="sm"
-                            className="break-words hypens-auto"
                             classNames={{
                                 base: "ml-auto sm:max-w-64",
-                                label: "break-words hypens-auto"
                             }} onChange={(e) => {
                                 setWordsPerPage(parseInt(e.target.value));
                             }}>
