@@ -192,7 +192,7 @@ export default function WordList() {
         );
       case "name":
         return (
-          <NextUILink as={Link} href={`/search/${item.name}`}>
+          <NextUILink target='_blank' as={Link} href={`/search/${item.name}`}>
             {cellValue}
           </NextUILink>
         );
