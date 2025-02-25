@@ -108,6 +108,7 @@ export default function Navbar({
                       query: searchParams.toString(),
                       params: {
                         word: params.word as any,
+                        id: params.id as any
                       },
                     }}
                     locale="tr"
@@ -125,6 +126,7 @@ export default function Navbar({
                       query: searchParams.toString(),
                       params: {
                         word: params.word as any,
+                        id: params.id as any
                       },
                     }}
                     locale="en"
@@ -201,7 +203,7 @@ export default function Navbar({
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"profile"} className="rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/profile">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
                       Profile
                     </Link>
                   </DropdownItem>

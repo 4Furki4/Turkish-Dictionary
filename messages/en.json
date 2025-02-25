@@ -73,5 +73,21 @@
       "word": "Word",
       "meaning": "Meaning"
     }
+  },
+  "Profile": {
+    "welcome_message": "Welcome to Turkish Dictionary!",
+    "profile_completion_message": "Please complete your profile to continue",
+    "username": "Username",
+    "name": "Name",
+    "email": "Email",
+    "updating": "Updating...",
+    "complete_profile": "Complete Profile",
+    "update_profile": "Update Profile",
+    "loading": "Loading...",
+    "anonymous": "Anonymous",
+    "profile_updated": "Profile updated successfully",
+    "user_not_found": "User not found",
+    "user_not_found_description": "We couldn't find the user you're looking for.",
+    "back_to_home": "Back to Home"
   }
 }

@@ -1,10 +1,11 @@
 import { count, eq, sql } from "drizzle-orm";
-import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
+import { adminProcedure, createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { WordSearchResult } from "@/types";
 import { savedWords } from "@/db/schema/saved_words";
 import { rolesEnum, users } from "@/db/schema/users";
 import { TRPCError } from "@trpc/server";
+
 export const userRouter = createTRPCRouter({
   getSavedWords: protectedProcedure.query(async ({ ctx: { session, db } }) => {
     const userWithSavedWords = await db.execute(sql`
@@ -177,5 +178,60 @@ export const userRouter = createTRPCRouter({
     return {
       message: "The user is deleted successfully!"
     }
-  })
+  }),
+  getProfile: publicProcedure
+    .input(z.object({
+      userId: z.string()
+    }))
+    .query(async ({ ctx: { db }, input: { userId } }) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+          username: true,
+          image: true,
+        }
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found"
+        });
+      }
+
+      return user;
+    }),
+
+  updateProfile: protectedProcedure
+    .input(z.object({
+      username: z.string().min(3),
+      name: z.string().min(2),
+    }))
+    .mutation(async ({ ctx: { db, session }, input }) => {
+      // Check if username is taken by another user
+      const existingUser = await db.query.users.findFirst({
+        where: sql`username = ${input.username} AND id != ${session.user.id}`,
+      });
+
+      if (existingUser) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Username is already taken"
+        });
+      }
+
+      const updateData = {
+        username: input.username,
+        name: input.name,
+      };
+
+      await db.update(users)
+        .set(updateData)
+        .where(eq(users.id, session.user.id));
+
+      return { success: true };
+    }),
 });

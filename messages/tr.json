@@ -73,5 +73,21 @@
       "word": "Kelime",
       "meaning": "Anlam"
     }
+  },
+  "Profile": {
+    "welcome_message": "Türkçe Sözlüğe Hoş Geldiniz!",
+    "profile_completion_message": "Devam etmek için lütfen profilinizi tamamlayın",
+    "username": "Kullanıcı Adı",
+    "name": "İsim",
+    "email": "E-posta",
+    "updating": "Güncelleniyor...",
+    "complete_profile": "Profili Tamamla",
+    "update_profile": "Profili Güncelle",
+    "loading": "Yükleniyor...",
+    "anonymous": "Anonim",
+    "profile_updated": "Profiliniz başarıyla güncellendi",
+    "user_not_found": "Kullanıcı bulunamadı",
+    "user_not_found_description": "Maattessüf aradığınız kullanıcıyı bulamadık.",
+    "back_to_home": "Ana sayfaya dön"
   }
 }
