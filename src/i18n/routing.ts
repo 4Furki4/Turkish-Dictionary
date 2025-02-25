@@ -35,13 +35,13 @@ export const routing = defineRouting({
       "en": "/forgot-password",
       "tr": "/sifremi-unuttum",
     },
+    "/word-list": {
+      "en": "/word-list",
+      "tr": "/kelime-listesi",
+    },
     "/saved-words": {
       "en": "/saved-words",
       "tr": "/kaydedilen-kelimeler",
-    },
-    "/profile": {
-      "en": "/profile",
-      "tr": "/profil",
     },
     "/dashboard": {
       "en": "/dashboard",
@@ -86,6 +86,14 @@ export const routing = defineRouting({
     "/search/[word]": {
       "en": "/search/[word]",
       "tr": "/arama/[word]",
+    },
+    "/profile/[id]": {
+      "en": "/profile/[id]",
+      "tr": "/profil/[id]",
+    },
+    "complete-profile": {
+      "en": "/complete-profile",
+      "tr": "/profil-tamamla",
     },
     // Dynamic params are supported via square brackets
   }

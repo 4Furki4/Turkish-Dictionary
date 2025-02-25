@@ -53,5 +53,41 @@
     "NoResults": "Sonuç bulunamadı",
     "NoMeaningError": "Kelime bulundu ancak anlamı bulunamadı. Lütfen yöneticiyle iletişime geçin.",
     "Contact": "İletişime Geçin"
+  },
+  "WordList": {
+    "title": "Türkçe Sözlük Kelimeleri",
+    "description": "Türkçe Sözlük veritabanında bulunan kelimeleri keşfedin.",
+    "keywords": [
+      "Türkçe",
+      "Sözlük",
+      "Kelime",
+      "Anlam",
+      "Veritabanı",
+      "Türkçe Sözlük",
+      "Kelime Listesi",
+      "Tüm Türkçe Kelimeler"
+    ],
+    "searchPlaceholder": "Kelime ara",
+    "wordsPerPage": "Sayfa başına kelime",
+    "columns": {
+      "word": "Kelime",
+      "meaning": "Anlam"
+    }
+  },
+  "Profile": {
+    "welcome_message": "Türkçe Sözlüğe Hoş Geldiniz!",
+    "profile_completion_message": "Devam etmek için lütfen profilinizi tamamlayın",
+    "username": "Kullanıcı Adı",
+    "name": "İsim",
+    "email": "E-posta",
+    "updating": "Güncelleniyor...",
+    "complete_profile": "Profili Tamamla",
+    "update_profile": "Profili Güncelle",
+    "loading": "Yükleniyor...",
+    "anonymous": "Anonim",
+    "profile_updated": "Profiliniz başarıyla güncellendi",
+    "user_not_found": "Kullanıcı bulunamadı",
+    "user_not_found_description": "Maattessüf aradığınız kullanıcıyı bulamadık.",
+    "back_to_home": "Ana sayfaya dön"
   }
 }

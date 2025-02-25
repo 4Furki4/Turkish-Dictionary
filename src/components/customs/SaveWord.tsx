@@ -1,15 +1,17 @@
 "use client"
+import { cn } from '@/src/lib/utils';
 import { api } from '@/src/trpc/react';
-import { Bookmark } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import React from 'react'
 import { toast } from 'sonner';
 
 export default function SaveWord({
     word_data,
-    isSavedWord
+    isSavedWord,
+    className
 }: {
-    word_data: any, isSavedWord?: boolean
+    word_data: any, isSavedWord?: boolean, className?: string
 }) {
     const savedWordsQuery = api.user.getWordSaveStatus.useQuery(word_data.word_id, {
         initialData: isSavedWord
@@ -40,16 +42,16 @@ export default function SaveWord({
     });
     return (
         <button
-            className="absolute top-4 right-6 cursor-pointer z-50 sm:hover:scale-125 transition-all"
+            className={cn("cursor-pointer z-50 sm:hover:scale-125 transition-all", className)}
             onClick={async () => {
                 await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
             }}
             disabled={saveWordMutation.isPending}
         >
-            <Bookmark
-                aria-label="bookmark icon"
-                size={32}
-                fill={savedWordsQuery.data ? "#F59E0B" : "#fff"}
+            <Heart
+                aria-label="save word"
+                size={28}
+                className={`${savedWordsQuery.data ? "fill-primary text-primary" : "fill-transparent text-gray-400"} transition-colors`}
             />
         </button>
     )

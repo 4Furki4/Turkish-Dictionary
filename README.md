@@ -1,38 +1,123 @@
 # Turkish Dictionary
 
 ## Project Aim
+
 - The world and languages we use to understand the world are always changing, especially in the modern world. My goal is to create an engaging, non-native speaker-friendly, and up-to-date Turkish dictionary, by also consulting with experts in fields such as science.
 - I'll follow the dictionary book that's been used in the [Official Turkish Dictionary](https://sozluk.gov.tr)
 
 ## Feature Roadmap
-No spesific order yet.
-- Minigames to learn or practice Turkish Words and grammar such as randomized letters to find a word and more.
-- Contributing to the dictionary by adding pronunciations of the words, and requesting missing words, especially outdated ones, for changes in words.
-- Save and learn words. I'll add creating cards to learn words and integrate the saved words to be added to the cards quickly.
-- Requesting new features and giving feedback with ease.
 
-## Contribute to the project
-- Open issues to report bugs or request features. The guide for opening issues will be added soon.
-### The Tech Stack
-- create-t3-app with Next 13.5.2 app dir, tRPC, next auth, and drizzle. (Yes, I love type-safety!)
-- NextUI
-- nodemail
-- uploadthing to upload files
-- react hook form
-- next-intl for internationalization
+Current and planned features:
 
-### Env Variables You Need
-````ts
-UPLOADTHING_SECRET= // See uploadthing.com to get started.
+- Minigames to learn or practice Turkish words and grammar
+  - Randomized letter puzzles to find words
+  - More games coming soon!
+- Community contributions
+  - Word pronunciations
+  - Missing word requests
+  - Word change suggestions
+  - Visual aids and images for words and meanings
+- Personal learning tools
+  - Save words for later
+  - Flashcard creation system
+  - Quick integration of saved words into learning cards
+- User feedback system
+  - Easy feature requests
+  - Intuitive feedback submission
+- Visual learning support
+  - Images for words to enhance understanding
+  - Visual context for different word meanings
+  - User-contributed image suggestions
+
+## Tech Stack
+
+### Core Technologies
+
+- **Frontend & Backend**
+  - Next.js (App Router) with React 18
+  - create-t3-app stack
+  - tRPC for type-safe API
+  - NextUI for modern UI components
+  - next-intl for internationalization
+
+### Database & Authentication
+
+- PostgreSQL database
+- NextAuth for authentication
+  - Multiple OAuth providers (Google, GitHub, Discord)
+
+### Additional Features
+
+- Nodemailer for email functionality
+- Uploadthing for file uploads
+- React Hook Form for form handling
+- Docker support for development environment
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- Docker and Docker Compose (for local development)
+- PostgreSQL (automatically handled by Docker)
+
+### Development Setup
+
+1. Clone the repository
+2. Copy the `.env.example` file to `.env` and fill in the required variables
+3. Start the development environment:
+
+   ```bash
+   docker-compose up -d    # Starts PostgreSQL database
+   npm install            # Install dependencies
+   npm run dev           # Start development server
+   ```
+
+### Environment Variables
+
+```env
+# Database
+DATABASE_URL=              # PostgreSQL connection URL
+
+# Authentication
+NEXTAUTH_SECRET=          # See https://next-auth.js.org/configuration/options#secret
+NEXTAUTH_URL=             # http://localhost:3000 for local development
+
+# OAuth Providers
+AUTH_DISCORD_ID=
+AUTH_DISCORD_SECRET=
+AUTH_GITHUB_ID=
+AUTH_GITHUB_SECRET=
+AUTH_GOOGLE_ID=
+AUTH_GOOGLE_SECRET=
+
+# Login via Email (Magic Link)
+EMAIL_SERVER_USER=
+EMAIL_SERVER_PASSWORD=
+EMAIL_SERVER_HOST=
+EMAIL_SERVER_PORT=
+EMAIL_FROM=
+
+# File Upload
+UPLOADTHING_SECRET=       # From uploadthing.com
+
+# Email
 NODEMAIL_PASSWORD=
 NODEMAIL_EMAIL=
-DATABASE_URL= // postgres database URL
-NEXTAUTH_SECRET= see https://next-auth.js.org/configuration/options#secret
-NEXTAUTH_URL= http://localhost:3000
--oAuth Applications-
-GOOGLE_CLIENT_SECRET=
-GOOGLE_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-GITHUB_CLIENT_ID=
-DISCORD_CLIENT_SECRET=
-````
+```
+
+## Contributing
+
+We welcome contributions! Please check our issues page for current tasks or bug reports. A detailed contribution guide will be added soon.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+MIT License means:
+
+- ✓ Commercial use
+- ✓ Modification
+- ✓ Distribution
+- ✓ Private use
+- ✓ Liability and warranty limitations

@@ -53,5 +53,41 @@
     "NoResults": "Word not found",
     "NoMeaningError": "Word found but no meanings found. Please contact with admins!",
     "Contact": "Contact Admins"
+  },
+  "WordList": {
+    "title": "Turkish Dictionary Word List",
+    "description": "Turkish Dictionary Word List where you can explore all words in the dictionary",
+    "searchPlaceholder": "Search word",
+    "keywords": [
+      "Turkish",
+      "Dictionary",
+      "Word",
+      "Meaning",
+      "Database",
+      "Turkish Dictionary",
+      "Word List",
+      "All Turkish Words"
+    ],
+    "wordsPerPage": "Words per page",
+    "columns": {
+      "word": "Word",
+      "meaning": "Meaning"
+    }
+  },
+  "Profile": {
+    "welcome_message": "Welcome to Turkish Dictionary!",
+    "profile_completion_message": "Please complete your profile to continue",
+    "username": "Username",
+    "name": "Name",
+    "email": "Email",
+    "updating": "Updating...",
+    "complete_profile": "Complete Profile",
+    "update_profile": "Update Profile",
+    "loading": "Loading...",
+    "anonymous": "Anonymous",
+    "profile_updated": "Profile updated successfully",
+    "user_not_found": "User not found",
+    "user_not_found_description": "We couldn't find the user you're looking for.",
+    "back_to_home": "Back to Home"
   }
 }

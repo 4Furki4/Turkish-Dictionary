@@ -1,4 +1,3 @@
-
 import {
   Navbar as NextuiNavbar,
   NavbarContent,
@@ -19,7 +18,6 @@ import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { usePathname, Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from "next-auth";
-import { useCallback } from "react";
 
 type NavbarProps = {
   session: Session | null;
@@ -30,7 +28,6 @@ export default function Navbar({
   session,
   WordListIntl,
   SignInIntl,
-  HomeIntl,
   setIsSidebarOpen
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
@@ -41,12 +38,6 @@ export default function Navbar({
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
     pathName
   );
-  const getDynamicPathnames = useCallback((path: typeof pathName) => {
-    if (path === "/search/[word]") {
-      return `/search/${params.word}`;
-    }
-    return path;
-  }, [pathName, params.token, params.word])
   return (
     <NextuiNavbar
       className="bg-background-foreground/100 border-b border-border"
@@ -92,6 +83,11 @@ export default function Navbar({
             </NextIntlLink>
           </NavbarItem>
         ) : null}
+        <NavbarItem className="hidden sm:flex">
+          <NextIntlLink href={"/word-list"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+            <span className={`text-nowrap`}>{WordListIntl}</span>
+          </NextIntlLink>
+        </NavbarItem>
         <NavbarItem>
           <Dropdown classNames={{
             content: ["rounded-sm"],
@@ -112,6 +108,7 @@ export default function Navbar({
                       query: searchParams.toString(),
                       params: {
                         word: params.word as any,
+                        id: params.id as any
                       },
                     }}
                     locale="tr"
@@ -129,6 +126,7 @@ export default function Navbar({
                       query: searchParams.toString(),
                       params: {
                         word: params.word as any,
+                        id: params.id as any
                       },
                     }}
                     locale="en"
@@ -205,7 +203,7 @@ export default function Navbar({
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"profile"} className="rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/profile">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
                       Profile
                     </Link>
                   </DropdownItem>

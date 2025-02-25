@@ -149,9 +149,8 @@ export default function UserList(
                 );
             case "name":
                 return (
-                    <User name={cellValue} description={
-                        <NextUILink as={Link} href={'/profile'}>
-                            {/* TODO: will navigate to /users/[username] in the future */}
+                    <User name={
+                        <NextUILink target='_blank' as={Link} href={`/profile/${item.key}`}>
                             {item.username}
                         </NextUILink>
                     } avatarProps={{
