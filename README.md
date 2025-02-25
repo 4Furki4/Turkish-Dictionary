@@ -112,12 +112,9 @@ We welcome contributions! Please check our issues page for current tasks or bug 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). This means:
 
-MIT License means:
-
-- ✓ Commercial use
-- ✓ Modification
-- ✓ Distribution
-- ✓ Private use
-- ✓ Liability and warranty limitations
+- You can use, modify, and distribute this software.
+- If you modify and use this software in a network service (like a web application), you must make the complete source code available to users.
+- Any modifications must also be licensed under AGPL-3.0.
+- Full license terms can be found in the LICENSE file.
