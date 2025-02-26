@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /dashboard
-
-User-agent: GPTBot
-Disallow: /

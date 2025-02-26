@@ -50,6 +50,13 @@
       "when": 1739026392164,
       "tag": "0006_thankful_shiver_man",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1740568839032,
+      "tag": "0007_bright_xavin",
+      "breakpoints": true
     }
   ]
 }

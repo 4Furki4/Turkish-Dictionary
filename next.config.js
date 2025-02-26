@@ -6,8 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {
     images: {
         domains: ["utfs.io"],
-    },
+    }
 };
 
 module.exports = withNextIntl(nextConfig);
-

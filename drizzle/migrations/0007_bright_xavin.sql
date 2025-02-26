@@ -1,0 +1,1 @@
+ALTER TABLE "words" ADD COLUMN "view_count" integer DEFAULT 0;
