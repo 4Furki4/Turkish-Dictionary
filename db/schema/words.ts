@@ -20,6 +20,7 @@ export const words = pgTable("words", {
   updated_at: date("updated_at"),
   prefix: varchar("prefix", { length: 255 }),
   suffix: varchar("suffix", { length: 255 }),
+  viewCount: integer("view_count").default(0),
   requestType: varchar("request_type", { length: 255 }).default("word"),
 }, (t) => {
   return {

@@ -27,14 +27,6 @@ export const routing = defineRouting({
       "en": "/signin",
       "tr": "/giris-yap",
     },
-    "/signup": {
-      "en": "/signup",
-      "tr": "/kayit-ol",
-    },
-    "/forgot-password": {
-      "en": "/forgot-password",
-      "tr": "/sifremi-unuttum",
-    },
     "/word-list": {
       "en": "/word-list",
       "tr": "/kelime-listesi",
@@ -79,6 +71,10 @@ export const routing = defineRouting({
       "en": "/dashboard/dynamic-parameters/languages",
       "tr": "/panel/dinamik-parametreler/diller",
     },
+    "/dashboard/dynamic-parameters/roots": {
+      "en": "/dashboard/dynamic-parameters/roots",
+      "tr": "/panel/dinamik-parametreler/kökler",
+    },
     "/search": {
       "en": "/search",
       "tr": "/arama",
@@ -91,7 +87,7 @@ export const routing = defineRouting({
       "en": "/profile/[id]",
       "tr": "/profil/[id]",
     },
-    "complete-profile": {
+    "/complete-profile": {
       "en": "/complete-profile",
       "tr": "/profil-tamamla",
     },

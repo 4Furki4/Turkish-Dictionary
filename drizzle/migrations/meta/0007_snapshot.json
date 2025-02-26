@@ -1,6 +1,6 @@
 {
-  "id": "dc68ccdc-55ff-4234-8f58-d1dd9dd78f7f",
-  "prevId": "2e0da750-715f-4fe0-97c6-30032786aefc",
+  "id": "6f091cd2-2312-4660-986e-6c2d95185c16",
+  "prevId": "dc68ccdc-55ff-4234-8f58-d1dd9dd78f7f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1136,6 +1136,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
+        },
+        "view_count": {
+          "name": "view_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
         },
         "request_type": {
           "name": "request_type",
