@@ -1,10 +1,9 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { CheckIcon, Edit3, Edit3Icon, HeartHandshake, Search as SearchIcon, Stars } from "lucide-react";
+import { Edit3, HeartHandshake, Search as SearchIcon, Stars } from "lucide-react";
 import { useRouter } from "@/src/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { Input } from "@heroui/input";
-import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import { api } from "@/src/trpc/react";

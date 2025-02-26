@@ -2,9 +2,8 @@
 import { rolesEnum } from "@/db/schema/users";
 import { api } from "@/src/trpc/react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem, Selection, Button } from "@heroui/react";
-import { useSession } from "next-auth/react";
-import React, { useEffect } from 'react'
-import { Controller, Form, useForm } from "react-hook-form";
+import React from 'react'
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const roles = rolesEnum.enumValues

@@ -1,7 +1,6 @@
 import { integer, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { authors } from "./authors";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
-import { words } from "./words";
 import { meanings } from "./meanings";
 
 export const examples = pgTable("examples", {

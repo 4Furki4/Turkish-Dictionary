@@ -1,6 +1,6 @@
 "use client"
 import { EditWordForm, Language } from '@/types'
-import { Autocomplete, AutocompleteItem, Select, SelectItem } from "@heroui/react"
+import { Autocomplete, AutocompleteItem } from "@heroui/react"
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 

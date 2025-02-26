@@ -4,7 +4,7 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./save-word";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Link as HeroUILink, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 
 import {
   Tabs,

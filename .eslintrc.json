@@ -1,8 +1,8 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "plugin:testing-library/react",
-    "jest-dom/recommended"
-  ]
+  "extends": ["next/core-web-vitals", "plugin:testing-library/react"],
+  "plugins": ["unused-imports"],
+  "rules": {
+    "unused-imports/no-unused-imports": "warn"
+  }
 }
 

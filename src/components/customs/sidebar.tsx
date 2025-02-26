@@ -1,5 +1,5 @@
 "use client"
-import { HistoryIcon, HomeIcon, Languages, LayoutDashboard, ListTree, Palette, StarIcon } from 'lucide-react'
+import { HistoryIcon, HomeIcon, LayoutDashboard, ListTree, StarIcon } from 'lucide-react'
 import React from 'react'
 import { Link as NextIntlLink, usePathname } from "@/src/i18n/routing";
 import { Session } from 'next-auth';
@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/sheet"
 import { Separator } from '@/components/ui/separator';
 import { useTheme } from 'next-themes';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { signOut, } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 export default function Sidebar(

@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import {
   Table,
   TableHeader,

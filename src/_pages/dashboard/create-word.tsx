@@ -3,7 +3,7 @@ import { MeaningInputs, WordForm, WordFormSubmit } from "@/types";
 import {
   Button,
 } from "@heroui/react";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import WordNameInput from "./create-word-form/inputs/word/name-input";
 import WordPhoneticInput from "./create-word-form/inputs/word/phonetic-input";

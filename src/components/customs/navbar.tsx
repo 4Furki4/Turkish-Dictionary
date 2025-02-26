@@ -11,7 +11,7 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@heroui/react";
-import { Book, Languages, Menu, Moon, Palette, Sun } from "lucide-react";
+import { Book, Languages, Menu, Moon, Sun } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";

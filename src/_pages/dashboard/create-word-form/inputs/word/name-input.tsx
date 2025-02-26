@@ -1,9 +1,8 @@
 "use client"
-import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types';
 import { Input } from "@heroui/react";
 import React from 'react'
-import { Control, Controller, UseFormSetError, UseFormWatch } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 
 export default function WordNameInput({
     control,

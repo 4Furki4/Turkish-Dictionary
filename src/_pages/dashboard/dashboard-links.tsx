@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { Link, usePathname, useRouter } from "@/src/i18n/routing";
+import { Link, usePathname } from "@/src/i18n/routing";
 import { Link as NextUILink } from "@heroui/react"
 import { Settings } from "lucide-react";
 
