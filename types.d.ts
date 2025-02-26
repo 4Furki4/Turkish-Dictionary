@@ -1,6 +1,3 @@
-import { InsertMeaning } from "./db/schema/meanings";
-import { PartOfSpeech } from "./db/schema/part_of_speechs";
-import { InsertRoot } from "./db/schema/roots";
 import { InsertWord } from "./db/schema/words";
 
 type LoginInputs = {

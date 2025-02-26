@@ -7,7 +7,6 @@ import { purifyObject } from "@/src/lib/utils";
 export const requestRouter = createTRPCRouter({
     getWordAttributesMergedRequests: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
         const result = await db.select().from(requests).where(and(eq(requests.entityType, "word_attributes"), eq(requests.action, "create"), eq(requests.userId, user.id)))
-        console.log("new data", result[0].newData)
         return result
     }),
     requestEditWord: protectedProcedure.input(z.object({

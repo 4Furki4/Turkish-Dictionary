@@ -1,4 +1,4 @@
-import WordList from "@/src/_pages/Dashboard/WordList/WordList";
+import WordList from "@/src/_pages/dashboard/word-list/word-list";
 import { api, HydrateClient } from "@/src/trpc/server";
 import { Metadata } from "next";
 import React from "react";

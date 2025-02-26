@@ -8,13 +8,12 @@ import { roots } from "@/db/schema/roots";
 import { meaningAttributes, meaningsAttributes } from "@/db/schema/meaning_attributes";
 import { authors } from "@/db/schema/authors";
 import { WordSearchResult } from "@/types";
-import { partOfSpeechs } from "@/db/schema/part_of_speechs";
 import { examples } from "@/db/schema/examples";
 import { languages } from "@/db/schema/languages";
 import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
 import { AddWordSchema, EditWordSchema } from "../schemas/admin";
 import { addWordWithTransaction } from "../controllers/admin/create";
-import { dynamicParametersRouter } from "./admin/dynamicParameters";
+import { dynamicParametersRouter } from "./admin/dynamic-parameters";
 
 export const adminRouter = createTRPCRouter({
   dynamicParameters: dynamicParametersRouter,

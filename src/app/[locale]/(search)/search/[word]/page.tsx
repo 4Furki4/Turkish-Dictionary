@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { api } from '@/src/trpc/server'
 import { db } from '@/db';
-import SearchResult from '@/src/_pages/search/SearchResult';
+import SearchResult from '@/src/_pages/search/search-result';
 import Loading from '../_loading';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';

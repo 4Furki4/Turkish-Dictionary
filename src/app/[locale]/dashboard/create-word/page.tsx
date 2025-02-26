@@ -1,4 +1,4 @@
-import CreateWord from "@/src/_pages/Dashboard/CreateWord";
+import CreateWord from "@/src/_pages/dashboard/create-word";
 import { api, HydrateClient } from "@/src/trpc/server";
 import React from "react";
 

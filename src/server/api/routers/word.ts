@@ -3,8 +3,7 @@ import {
   createTRPCRouter,
   publicProcedure,
 } from "../trpc";
-import { sql, count } from "drizzle-orm";
-import { words } from "@/db/schema/words";
+import { sql } from "drizzle-orm";
 import { DashboardWordList, WordSearchResult } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";

@@ -1,5 +1,5 @@
-import Dashboard from "@/src/_pages/Dashboard/Dashboard";
-import DashboardUnauthorizedMessage from "@/src/_pages/Dashboard/DashboardUnauthorizedLogin";
+import Dashboard from "@/src/_pages/dashboard/dashboard";
+import DashboardUnauthorizedMessage from "@/src/_pages/dashboard/dashboard-unauthorized-login";
 import { auth } from "@/src/server/auth/auth";
 import { Metadata } from "next";
 import { redirect, RedirectType } from "next/navigation";

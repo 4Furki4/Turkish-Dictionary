@@ -2,7 +2,6 @@ import {
   pgTable,
   serial,
   varchar,
-  text,
   date,
   integer,
   index,

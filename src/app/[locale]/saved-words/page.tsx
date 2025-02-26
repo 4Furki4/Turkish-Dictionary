@@ -1,4 +1,4 @@
-import WordCard from "@/src/components/customs/WordCard";
+import WordCard from "@/src/components/customs/word-card";
 import { auth } from "@/src/server/auth/auth";
 import { api } from "@/src/trpc/server";
 import { Metadata } from "next";

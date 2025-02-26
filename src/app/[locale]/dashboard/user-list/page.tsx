@@ -1,4 +1,4 @@
-import UserList from '@/src/_pages/Dashboard/UserList/UserList'
+import UserList from '@/src/_pages/dashboard/user-list/user-list'
 import { api } from '@/src/trpc/server'
 import React from 'react'
 
