@@ -1,7 +1,7 @@
 "use client";
 
-import DynamicParameterForm from "@/src/components/DynamicParameterForm";
-import DynamicParameterTable from "@/src/components/DynamicParameterTable";
+import DynamicParameterForm from "@/src/components/dynamic-parameter-form";
+import DynamicParameterTable from "@/src/components/dynamic-parameter-table";
 import { api } from "@/src/trpc/react";
 import { useState } from "react";
 

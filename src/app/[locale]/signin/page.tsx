@@ -1,4 +1,4 @@
-import SigninForm from "@/src/components/customs/Auth/SigninForm";
+import SigninForm from "@/src/components/customs/auth/signin-form";
 import React from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
