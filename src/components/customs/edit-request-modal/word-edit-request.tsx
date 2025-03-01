@@ -130,11 +130,10 @@ export default function WordEditRequest({
           <Autocomplete
             radius='sm'
             {...field}
-            isVirtualized
             label="Language"
             isLoading={languagesIsLoading}
             labelPlacement='outside'
-            items={languages || []}
+            defaultItems={languages || []}
             placeholder="Select Language"
             defaultSelectedKey={word_data.root.language_code}
             onSelectionChange={(item) => {
