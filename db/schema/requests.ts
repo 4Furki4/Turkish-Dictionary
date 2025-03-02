@@ -49,7 +49,7 @@ export const requests = pgTable("requests", {
   newData: jsonb("new_data"),
   requestDate: timestamp("request_date").defaultNow(),
   status: statusEnum("status").default("pending"),
-  reason: text("reason").notNull(),
+  reason: text("reason"),
 });
 
 export const requestsRelations = relations(requests, ({ one }) => ({

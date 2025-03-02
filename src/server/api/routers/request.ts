@@ -3,11 +3,35 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { purifyObject } from "@/src/lib/utils";
+import { wordAttributes } from "@/db/schema/word_attributes";
 
 export const requestRouter = createTRPCRouter({
-    getWordAttributesMergedRequests: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
-        const result = await db.select().from(requests).where(and(eq(requests.entityType, "word_attributes"), eq(requests.action, "create"), eq(requests.userId, user.id)))
-        return result
+    // In src/server/api/routers/params.ts
+    getWordAttributesWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
+        // Get approved attributes from the main table
+        const approvedAttributes = await db.select({
+            id: wordAttributes.id,
+            attribute: wordAttributes.attribute
+        }).from(wordAttributes);
+
+        // Get user's pending attribute requests
+        const pendingRequests = await db.select({
+            id: requests.id,
+            newData: requests.newData
+        }).from(requests)
+            .where(and(
+                eq(requests.userId, user.id),
+                eq(requests.entityType, "word_attributes"),
+                eq(requests.action, "create"),
+                eq(requests.status, "pending")
+            ));
+        console.log("pendingRequests", pendingRequests)
+        // Combine and return both sets
+        const pendingRequestsWithIds = pendingRequests.map(req => ({
+            id: -req.id, // Use negative IDs for pending items to avoid conflicts
+            attribute: (req.newData as { attribute: string }).attribute,
+        }))
+        return [...approvedAttributes, ...pendingRequestsWithIds];
     }),
     requestEditWord: protectedProcedure.input(z.object({
         word_id: z.number(),
@@ -23,8 +47,8 @@ export const requestRouter = createTRPCRouter({
         const wordAttributes = input.attributes?.map((attribute) => ({ attribute: Number(attribute) }))
         const { word_id, ...restInput } = input;
         const wordData = {
-            ...restInput,
-            attribute_ids: wordAttributes
+            attributes: wordAttributes,
+            ...restInput
         }
         const preparedData = Object.keys(wordData).reduce<Record<string, unknown>>((acc, key) => {
             if (wordData[key as keyof typeof wordData]) {
@@ -86,4 +110,14 @@ export const requestRouter = createTRPCRouter({
             })
         })
     }),
+    newWordAttribute: protectedProcedure.input(z.string().min(2)).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+        await db.transaction(async (tx) => {
+            await tx.insert(requests).values({
+                entityType: "word_attributes",
+                action: "create",
+                userId: user.id,
+                newData: JSON.stringify({ attribute: input }),
+            })
+        })
+    })
 })
