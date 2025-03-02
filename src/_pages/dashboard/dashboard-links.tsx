@@ -1,10 +1,10 @@
 "use client"
-import React from 'react'
+import React from 'react';
 import { Link, usePathname } from "@/src/i18n/routing";
-import { Link as NextUILink } from "@heroui/react"
+import { Link as NextUILink } from "@heroui/react";
 import { Settings } from "lucide-react";
 
-const links: { href: "/dashboard" | "/dashboard/user-list" | "/dashboard/dynamic-parameters"; label: string; icon?: React.ReactNode; }[] = [
+const links: { href: string; label: string; icon?: React.ReactNode; }[] = [
   {
     href: "/dashboard",
     label: "Word List",
@@ -16,6 +16,11 @@ const links: { href: "/dashboard" | "/dashboard/user-list" | "/dashboard/dynamic
   {
     href: "/dashboard/dynamic-parameters",
     label: "Dynamic Parameters",
+    icon: <Settings className="w-5 h-5" />,
+  },
+  {
+    href: "/dashboard/requests",
+    label: "Requests",
     icon: <Settings className="w-5 h-5" />,
   },
 ]

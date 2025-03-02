@@ -91,6 +91,14 @@ export const routing = defineRouting({
       "en": "/complete-profile",
       "tr": "/profil-tamamla",
     },
+    "/dashboard/requests": {
+      "en": "/dashboard/requests",
+      "tr": "/panel/istekler",
+    },
+    "/dashboard/requests/[id]": {
+      "en": "/dashboard/requests/[id]",
+      "tr": "/panel/istekler/[id]",
+    },
     // Dynamic params are supported via square brackets
   }
 
