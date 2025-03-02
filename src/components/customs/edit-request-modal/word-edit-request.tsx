@@ -60,7 +60,6 @@ export default function WordEditRequest({
   })
 
   const onSubmit = async (data: WordEditRequestForm) => {
-    console.log("data", data)
     const preparedData = {
       word_id: word_data.word_id,
       reason: data.reason,
@@ -71,8 +70,8 @@ export default function WordEditRequest({
         return acc;
       }, {})
     }
-    if (Object.keys(dirtyFields).length === 0) {
-      toast.error("No changes found")
+    if (Object.keys(dirtyFields).filter((key) => key !== 'reason').length === 0) {
+      toast.error("no-changes")
       return
     }
     mutate(preparedData)
