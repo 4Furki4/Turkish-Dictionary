@@ -180,10 +180,10 @@ export function RequestDetails({ requestId }: { requestId: number }) {
               </div>
             )}
 
-            {request.requestableId && (
+            {request.entityId && (
               <div>
                 <p className="text-sm text-gray-500">Entity ID</p>
-                <p>{request.requestableId}</p>
+                <p>{request.entityId}</p>
               </div>
             )}
           </CardBody>

@@ -7,6 +7,8 @@ import { wordAttributes } from "@/db/schema/word_attributes";
 import { users } from "@/db/schema/users";
 import { words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
+import { getHandler } from "../handlers/request-handlers/registry";
+import { TRPCError } from "@trpc/server";
 
 export const requestRouter = createTRPCRouter({
     // In src/server/api/routers/params.ts
@@ -65,7 +67,7 @@ export const requestRouter = createTRPCRouter({
                 entityType: "words",
                 action: "update",
                 userId: user.id,
-                requestableId: input.word_id,
+                entityId: input.word_id,
                 newData: JSON.stringify(purifiedData),
                 reason: input.reason
             })
@@ -93,7 +95,7 @@ export const requestRouter = createTRPCRouter({
                 entityType: "meanings",
                 action: "update",
                 userId: user.id,
-                requestableId: meaning_id,
+                entityId: meaning_id,
                 newData: JSON.stringify(purifiedData),
                 reason
             })
@@ -108,7 +110,7 @@ export const requestRouter = createTRPCRouter({
                 entityType: "meanings",
                 action: "delete",
                 userId: user.id,
-                requestableId: input.meaning_id,
+                entityId: input.meaning_id,
                 reason: input.reason
             })
         })
@@ -156,7 +158,7 @@ export const requestRouter = createTRPCRouter({
                 userName: users.name,
                 userImage: users.image,
                 entityType: requests.entityType,
-                requestableId: requests.requestableId,
+                requestableId: requests.entityId,
                 action: requests.action,
                 newData: requests.newData,
                 requestDate: requests.requestDate,
@@ -215,17 +217,24 @@ export const requestRouter = createTRPCRouter({
 
             // Get related entity data based on entityType
             let entityData = null;
-            if (request.requestableId) {
-                switch (request.entityType) {
-                    case "words":
-                        entityData = await db.select().from(words).where(eq(words.id, request.requestableId));
-                        break;
-                    case "meanings":
-                        entityData = await db.select().from(meanings).where(eq(meanings.id, request.requestableId));
-                        break;
-                    // Add other entity types as needed
+            if (!request.entityId) {
+                return {
+                    request,
+                    user,
+                    entityData: null
                 }
             }
+
+            switch (request.entityType) {
+                case "words":
+                    entityData = await db.select().from(words).where(eq(words.id, request.entityId));
+                    break;
+                case "meanings":
+                    entityData = await db.select().from(meanings).where(eq(meanings.id, request.entityId));
+                    break;
+                // Add other entity types as needed
+            }
+
 
             return {
                 request,
@@ -247,48 +256,25 @@ export const requestRouter = createTRPCRouter({
                 const requestData = await tx.select().from(requests).where(eq(requests.id, requestId));
 
                 if (!requestData.length) {
-                    throw new Error("Request not found");
+                    throw new TRPCError({
+                        code: "NOT_FOUND",
+                        message: "Request not found"
+                    });
                 }
 
                 const request = requestData[0];
 
                 // Process the request based on entityType and action
-                switch (request.entityType) {
-                    case "word_attributes":
-                        if (request.action === "create" && request.newData) {
-                            // Extract attribute from newData
-                            const attributeData = request.newData as { attribute: string };
-
-                            // Insert the new attribute into the word_attributes table
-                            await tx.insert(wordAttributes).values({
-                                attribute: attributeData.attribute
-                            });
-                        }
-                        break;
-                    case "words":
-                        if (request.action === "update" && request.newData && request.requestableId) {
-                            // Update the word
-                            await tx.update(words)
-                                .set(request.newData as any)
-                                .where(eq(words.id, request.requestableId));
-                        } else if (request.action === "delete" && request.requestableId) {
-                            // Delete the word
-                            await tx.delete(words).where(eq(words.id, request.requestableId));
-                        }
-                        break;
-                    case "meanings":
-                        if (request.action === "update" && request.newData && request.requestableId) {
-                            // Update the meaning
-                            await tx.update(meanings)
-                                .set(request.newData as any)
-                                .where(eq(meanings.id, request.requestableId));
-                        } else if (request.action === "delete" && request.requestableId) {
-                            // Delete the meaning
-                            await tx.delete(meanings).where(eq(meanings.id, request.requestableId));
-                        }
-                        break;
-                    // Add other entity types as needed
+                const handler = getHandler(request.entityType, request.action)
+                if (!handler) {
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: "Unsupported request type"
+                    });
                 }
+
+                // Process the request with the handler
+                await handler.handle({ tx, request });
 
                 // Update the request status to approved
                 await tx.update(requests)
