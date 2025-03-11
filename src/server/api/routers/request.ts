@@ -11,6 +11,184 @@ import { getHandler } from "../handlers/request-handlers/registry";
 import { TRPCError } from "@trpc/server";
 
 export const requestRouter = createTRPCRouter({
+    // User request management endpoints
+    getUserRequests: protectedProcedure
+        .input(z.object({
+            page: z.number().default(1),
+            limit: z.number().default(10),
+            entityType: z.enum([
+                "words", "meanings", "roots", "related_words",
+                "part_of_speechs", "examples", "authors",
+                "word_attributes", "meaning_attributes"
+            ]).optional(),
+            action: z.enum(["create", "update", "delete"]).optional(),
+            status: z.enum(["pending", "approved", "rejected"]).optional(),
+        }))
+        .query(async ({ input, ctx: { db, session: { user } } }) => {
+            const { page, limit, entityType, action, status } = input;
+            const offset = (page - 1) * limit;
+
+            // Build the where clause based on filters
+            let whereClause: SQL<unknown> | undefined = eq(requests.userId, user.id);
+            
+            if (entityType) {
+                whereClause = and(whereClause, eq(requests.entityType, entityType));
+            }
+            if (action) {
+                whereClause = and(whereClause, eq(requests.action, action));
+            }
+            if (status) {
+                whereClause = and(whereClause, eq(requests.status, status));
+            }
+
+            // Get the user's requests
+            const userRequests = await db.select({
+                id: requests.id,
+                entityType: requests.entityType,
+                entityId: requests.entityId,
+                action: requests.action,
+                newData: requests.newData,
+                requestDate: requests.requestDate,
+                status: requests.status,
+                reason: requests.reason
+            })
+                .from(requests)
+                .where(whereClause)
+                .limit(limit)
+                .offset(offset)
+                .orderBy(sql`${requests.requestDate} DESC`);
+
+            // Get total count for pagination
+            const countResult = await db.select({
+                count: sql<number>`count(*)`
+            })
+                .from(requests)
+                .where(whereClause);
+
+            const totalCount = countResult[0]?.count || 0;
+            const totalPages = Math.ceil(totalCount / limit);
+
+            return {
+                requests: userRequests,
+                pagination: {
+                    currentPage: page,
+                    totalPages,
+                    totalCount,
+                    hasNextPage: page < totalPages,
+                    hasPreviousPage: page > 1
+                }
+            };
+        }),
+
+    getUserRequest: protectedProcedure
+        .input(z.object({
+            requestId: z.number()
+        }))
+        .query(async ({ input, ctx: { db, session: { user } } }) => {
+            const { requestId } = input;
+
+            // Get the request ensuring it belongs to the current user
+            const requestData = await db.select()
+                .from(requests)
+                .where(and(
+                    eq(requests.id, requestId),
+                    eq(requests.userId, user.id)
+                ));
+
+            if (!requestData.length) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Request not found"
+                });
+            }
+
+            const request = requestData[0];
+
+            // Get related entity data based on entityType
+            let entityData = null;
+            if (request.entityId) {
+                switch (request.entityType) {
+                    case "words":
+                        entityData = await db.select().from(words).where(eq(words.id, request.entityId));
+                        break;
+                    case "meanings":
+                        entityData = await db.select().from(meanings).where(eq(meanings.id, request.entityId));
+                        break;
+                    // Add other entity types as needed
+                }
+            }
+
+            return {
+                request,
+                entityData: entityData?.[0] || null
+            };
+        }),
+
+    cancelRequest: protectedProcedure
+        .input(z.object({
+            requestId: z.number()
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { requestId } = input;
+
+            // Check if the request exists and belongs to the user
+            const requestData = await db.select()
+                .from(requests)
+                .where(and(
+                    eq(requests.id, requestId),
+                    eq(requests.userId, user.id),
+                    eq(requests.status, "pending") // Can only cancel pending requests
+                ));
+
+            if (!requestData.length) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Request not found or cannot be canceled"
+                });
+            }
+
+            // Delete the request
+            await db.delete(requests)
+                .where(eq(requests.id, requestId));
+
+            return { success: true };
+        }),
+        
+    updateRequest: protectedProcedure
+        .input(z.object({
+            requestId: z.number(),
+            newData: z.record(z.unknown()),
+            reason: z.string().optional()
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { requestId, newData, reason } = input;
+
+            // Check if the request exists and belongs to the user
+            const requestData = await db.select()
+                .from(requests)
+                .where(and(
+                    eq(requests.id, requestId),
+                    eq(requests.userId, user.id),
+                    eq(requests.status, "pending") // Can only update pending requests
+                ));
+
+            if (!requestData.length) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Request not found or cannot be updated"
+                });
+            }
+
+            // Update the request
+            await db.update(requests)
+                .set({
+                    newData: JSON.stringify(newData),
+                    reason: reason || requestData[0].reason
+                })
+                .where(eq(requests.id, requestId));
+
+            return { success: true };
+        }),
     // In src/server/api/routers/params.ts
     getWordAttributesWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
         // Get approved attributes from the main table

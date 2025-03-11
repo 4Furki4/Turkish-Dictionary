@@ -89,5 +89,91 @@
     "user_not_found": "User not found",
     "user_not_found_description": "We couldn't find the user you're looking for.",
     "back_to_home": "Back to Home"
+  },
+  "Metadata": {
+    "requests": {
+      "title": "My Requests | Turkish Dictionary",
+      "description": "View and manage your contributions to the Turkish Dictionary"
+    },
+    "requestDetail": {
+      "title": "Request Details | Turkish Dictionary",
+      "description": "View and manage details of your dictionary contribution request"
+    }
+  },
+  "Requests": {
+    "myRequests": "My Requests",
+    "requestDetails": "Request Details",
+    "backToAllRequests": "Back to All Requests",
+    "entityTypes": {
+      "title": "Entity Type",
+      "all": "All Types",
+      "words": "Words",
+      "meanings": "Meanings",
+      "roots": "Roots",
+      "related_words": "Related Words",
+      "part_of_speechs": "Parts of Speech",
+      "examples": "Examples",
+      "authors": "Authors",
+      "word_attributes": "Word Attributes",
+      "meaning_attributes": "Meaning Attributes"
+    },
+    "actions": {
+      "title": "Action",
+      "all": "All Actions",
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "status": {
+      "title": "Status",
+      "all": "All Statuses",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "tableColumns": {
+      "entityType": "ENTITY TYPE",
+      "action": "ACTION",
+      "status": "STATUS",
+      "date": "REQUEST DATE",
+      "actions": "ACTIONS"
+    },
+    "buttons": {
+      "viewDetails": "View Details",
+      "cancel": "Cancel",
+      "edit": "Edit Request",
+      "cancelRequest": "Cancel Request",
+      "cancelEditing": "Cancel Editing",
+      "saveChanges": "Save Changes",
+      "keepRequest": "No, Keep Request",
+      "confirmCancel": "Yes, Cancel Request",
+      "updateRequest": "Update Request",
+      "back": "Back",
+      "backToRequests": "Back to Requests"
+    },
+    "messages": {
+      "errorLoading": "Error loading requests",
+      "noRequests": "No requests found",
+      "errorLoadingDetail": "Error loading request details",
+      "cancelConfirmation": "Are you sure you want to cancel this request? This action cannot be undone.",
+      "updateRequest": "Update your request details:",
+      "reasonLabel": "Reason for Update:",
+      "reasonPlaceholder": "Why are you updating this request?",
+      "itemsPerPage": "Items per page"
+    },
+    "details": {
+      "requestInfo": "Request Information",
+      "entityType": "Entity Type:",
+      "action": "Action:",
+      "status": "Status:",
+      "reason": "Reason:",
+      "newData": "New Data",
+      "changes": "Changes",
+      "currentData": "Current Data",
+      "noReason": "No reason provided",
+      "request": "Request:",
+      "empty": "Empty",
+      "updateFrom": "Updated from"
+    }
   }
 }

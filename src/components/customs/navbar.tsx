@@ -196,6 +196,12 @@ export default function Navbar({
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
+
+                  </DropdownItem>
+                  <DropdownItem key={"requests"} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/requests">
+                      My Requests
+                    </Link>
                   </DropdownItem>
                   <DropdownItem key={"search-history"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
