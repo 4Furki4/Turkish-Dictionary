@@ -26,7 +26,7 @@ import { useTranslations } from "next-intl";
 
 export default function RequestsList() {
   const t = useTranslations("Requests");
-  
+
   const entityTypeLabels = useMemo<Record<EntityTypes, string>>(() => ({
     words: t("entityTypes.words"),
     meanings: t("entityTypes.meanings"),
@@ -38,37 +38,37 @@ export default function RequestsList() {
     word_attributes: t("entityTypes.word_attributes"),
     meaning_attributes: t("entityTypes.meaning_attributes"),
   }), [t]);
-  
+
   const actionLabels = useMemo<Record<Actions, string>>(() => ({
     create: t("actions.create"),
     update: t("actions.update"),
     delete: t("actions.delete"),
   }), [t]);
-  
+
   const statusLabels = useMemo<Record<Status, string>>(() => ({
     pending: t("status.pending"),
     approved: t("status.approved"),
     rejected: t("status.rejected"),
   }), [t]);
 
-const actionColors = useMemo<Record<Actions, "primary" | "warning" | "danger">>(() => ({
-  create: "primary",
-  update: "warning",
-  delete: "danger",
-}), []);
+  const actionColors = useMemo<Record<Actions, "primary" | "warning" | "danger">>(() => ({
+    create: "primary",
+    update: "warning",
+    delete: "danger",
+  }), []);
 
-const statusColors = useMemo<Record<Status, "primary" | "success" | "danger">>(() => ({
-  pending: "primary",
-  approved: "success",
-  rejected: "danger",
-}), []);
+  const statusColors = useMemo<Record<Status, "primary" | "success" | "danger">>(() => ({
+    pending: "primary",
+    approved: "success",
+    rejected: "danger",
+  }), []);
 
-const requestsPerPageOptions = [
-  { label: "5", key: "5" },
-  { label: "10", key: "10" },
-  { label: "20", key: "20" },
-  { label: "50", key: "50" }
-];
+  const requestsPerPageOptions = [
+    { label: "5", key: "5" },
+    { label: "10", key: "10" },
+    { label: "20", key: "20" },
+    { label: "50", key: "50" }
+  ];
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -158,9 +158,9 @@ const requestsPerPageOptions = [
           : "Unknown";
       case "actions":
         return (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Link
-              className="text-primary hover:underline"
+              className="text-secondary hover:underline"
               href={`/requests/${request.id}` as any}
             >
               {t("buttons.viewDetails")}
@@ -169,7 +169,7 @@ const requestsPerPageOptions = [
               <Button
                 size="sm"
                 color="danger"
-                variant="ghost"
+                variant="light"
                 as={Link}
                 href={`/requests/${request.id}?action=cancel` as any}
               >

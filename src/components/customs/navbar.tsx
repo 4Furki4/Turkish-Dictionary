@@ -192,11 +192,15 @@ export default function Navbar({
                     }
                   }}
                 >
+                  <DropdownItem key={"profile"} className="rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
+                      Profile
+                    </Link>
+                  </DropdownItem>
                   <DropdownItem key={"saved-words"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
                       Saved Words
                     </Link>
-
                   </DropdownItem>
                   <DropdownItem key={"requests"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/requests">
@@ -206,11 +210,6 @@ export default function Navbar({
                   <DropdownItem key={"search-history"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
                       Search History
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key={"profile"} className="rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
-                      Profile
                     </Link>
                   </DropdownItem>
                   <DropdownItem
