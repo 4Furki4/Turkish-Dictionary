@@ -1,0 +1,1 @@
+ALTER TABLE "meanings" ALTER COLUMN "order" SET DEFAULT 1;

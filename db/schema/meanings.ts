@@ -19,9 +19,9 @@ export const meanings = pgTable("meanings", {
       onDelete: "cascade",
     }),
   imageUrl: varchar("imageUrl", { length: 255 }),
+  order: integer("order").notNull().default(1),
   partOfSpeechId: integer("part_of_speech_id")
-    .references(() => partOfSpeechs.id)
-    .notNull(),
+    .references(() => partOfSpeechs.id),
   requestType: varchar("request_type", { length: 255 }).default("meaning"),
 });
 

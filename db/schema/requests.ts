@@ -44,12 +44,12 @@ export const requests = pgTable("requests", {
     .notNull()
     .references(() => users.id),
   entityType: entityTypesEnum("entity_type").notNull(),
-  requestableId: integer("entity_id"),
+  entityId: integer("entity_id"),
   action: actionsEnum("action").notNull(),
   newData: jsonb("new_data"),
-  requestDate: timestamp("request_date").defaultNow(),
-  status: statusEnum("status").default("pending"),
-  reason: text("reason").notNull(),
+  requestDate: timestamp("request_date").defaultNow().notNull(),
+  status: statusEnum("status").default("pending").notNull(),
+  reason: text("reason"),
 });
 
 export const requestsRelations = relations(requests, ({ one }) => ({
@@ -58,27 +58,27 @@ export const requestsRelations = relations(requests, ({ one }) => ({
     references: [users.id],
   }),
   word: one(words, {
-    fields: [requests.requestableId, requests.entityType],
+    fields: [requests.entityId, requests.entityType],
     references: [words.id, words.requestType],
   }),
   meaning: one(meanings, {
-    fields: [requests.requestableId, requests.entityType],
+    fields: [requests.entityId, requests.entityType],
     references: [meanings.id, meanings.requestType],
   }),
   partOfSpeech: one(partOfSpeechs, {
-    fields: [requests.requestableId, requests.entityType],
+    fields: [requests.entityId, requests.entityType],
     references: [partOfSpeechs.id, partOfSpeechs.requestType],
   }),
   root: one(roots, {
-    fields: [requests.requestableId, requests.entityType],
+    fields: [requests.entityId, requests.entityType],
     references: [roots.id, roots.requestType],
   }),
   author: one(authors, {
-    fields: [requests.requestableId, requests.entityType],
+    fields: [requests.entityId, requests.entityType],
     references: [authors.id, authors.requestType],
   }),
   example: one(examples, {
-    fields: [requests.requestableId, requests.entityType],
+    fields: [requests.entityId, requests.entityType],
     references: [examples.id, examples.requestType],
   }),
 }));
@@ -87,11 +87,12 @@ export type SelectRequest = {
   id: number;
   userId: string;
   entityType: EntityTypes;
-  entityId: number;
+  entityId: number | null;
   action: Actions;
   newData: any;
   requestDate: Date;
   status: Status;
+  reason: string | null;
 };
 
 export type InsertRequest = {

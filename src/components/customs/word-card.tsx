@@ -11,7 +11,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs"
+} from "@/components/ui/tabs";
 import WordEditRequest from "./edit-request-modal/word-edit-request";
 import MeaningsEditRequest from "./edit-request-modal/meanings-edit-request";
 import { Session } from "next-auth";
@@ -134,7 +134,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                       <TabsTrigger value="words">Words</TabsTrigger>
                       <TabsTrigger value="meanings">Meanings</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="words">
+                    <TabsContent className="mt-8" value="words">
                       <WordEditRequest data={{ word_data }} />
                     </TabsContent>
                     <TabsContent value="meanings">

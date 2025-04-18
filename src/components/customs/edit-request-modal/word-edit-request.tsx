@@ -6,10 +6,10 @@ import { z } from "zod"
 import { api } from "@/src/trpc/react"
 import { toast } from "sonner"
 import { Input } from "@heroui/input"
-import { Select, SelectItem } from "@heroui/select"
 import { Autocomplete, AutocompleteItem } from "@heroui/react"
 import { Textarea } from "@heroui/input"
 import { WordSearchResult } from "@/types"
+import WordAttributesRequestInput from "./word/word-attributes-request-input"
 
 const wordEditRequestSchema = z.object({
   language: z.string().optional(),
@@ -22,7 +22,7 @@ const wordEditRequestSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
 })
 
-type WordEditRequestForm = z.infer<typeof wordEditRequestSchema>
+export type WordEditRequestForm = z.infer<typeof wordEditRequestSchema>
 
 export default function WordEditRequest({
   data: { word_data },
@@ -30,8 +30,7 @@ export default function WordEditRequest({
   data: WordSearchResult
 }) {
   const { data: languages, isLoading: languagesIsLoading } = api.params.getLanguages.useQuery()
-  const { data: wordAttributes, isLoading: wordAttributesIsLoading } = api.params.getWordAttributes.useQuery()
-  const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesMergedRequests.useQuery()
+  const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesWithRequested.useQuery()
   const { mutate, isPending } = api.request.requestEditWord.useMutation({
     onSuccess: () => {
       toast.success("Edit request submitted successfully")
@@ -61,7 +60,6 @@ export default function WordEditRequest({
   })
 
   const onSubmit = async (data: WordEditRequestForm) => {
-    console.log("data", data)
     const preparedData = {
       word_id: word_data.word_id,
       reason: data.reason,
@@ -72,15 +70,15 @@ export default function WordEditRequest({
         return acc;
       }, {})
     }
-    if (Object.keys(dirtyFields).length === 0) {
-      toast.error("No changes found")
+    if (Object.keys(dirtyFields).filter((key) => key !== 'reason').length === 0) {
+      toast.error("no-changes")
       return
     }
     mutate(preparedData)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <Controller
         name="name"
         control={control}
@@ -88,6 +86,7 @@ export default function WordEditRequest({
           <Input
             {...field}
             label="Word Name"
+            labelPlacement="outside"
             placeholder="Enter word name"
             isInvalid={!!error}
             errorMessage={error?.message}
@@ -95,116 +94,108 @@ export default function WordEditRequest({
         )}
       />
 
-      <Controller
-        name="phonetic"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <Input
-            {...field}
-            label="Phonetic"
-            placeholder="Enter phonetic"
-            isInvalid={!!error}
-            errorMessage={error?.message}
-          />
-        )}
-      />
 
-      <Controller
-        name="prefix"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <Input
-            {...field}
-            label="Prefix"
-            placeholder="Enter prefix"
-            isInvalid={!!error}
-            errorMessage={error?.message}
-          />
-        )}
-      />
 
-      <Controller
-        name="language"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <Autocomplete
-            radius='sm'
-            {...field}
-            label="Language"
-            isLoading={languagesIsLoading}
-            labelPlacement='outside'
-            defaultItems={languages || []}
-            placeholder="Select Language"
-            defaultSelectedKey={word_data.root.language_code}
-            onSelectionChange={(item) => {
-              field.onChange(item);
-              setValue("language", item as string)
-            }}
-            isInvalid={error !== undefined}
-            errorMessage={error?.message}
-          >
-            {(language) => (
-              <AutocompleteItem key={language.language_code} value={language.language_code}>
-                {language.language_en}
-                {/* TODO: i18n needed */}
-              </AutocompleteItem>
-            )}
-          </Autocomplete>
-        )}
-      />
+      <div className="grid grid-cols-2 gap-4">
+        <Controller
+          name="prefix"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Input
+              {...field}
+              label="Prefix"
+              labelPlacement="outside"
+              placeholder="Enter prefix"
+              isInvalid={!!error}
+              errorMessage={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="suffix"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Input
+              {...field}
+              label="Suffix"
+              labelPlacement="outside"
+              placeholder="Enter suffix"
+              isInvalid={!!error}
+              errorMessage={error?.message}
+            />
+          )}
+        />
+      </div>
 
-      <Controller
-        name="root"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <Input
-            {...field}
-            label="Root"
-            placeholder="Enter root"
-            isInvalid={!!error}
-            errorMessage={error?.message}
-          />
-        )}
-      />
+      <div className="grid grid-cols-2 gap-4">
 
-      <Controller
-        name="suffix"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <Input
-            {...field}
-            label="Suffix"
-            placeholder="Enter suffix"
-            isInvalid={!!error}
-            errorMessage={error?.message}
-          />
-        )}
-      />
+        <Controller
+          name="language"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Autocomplete
+              radius='sm'
+              {...field}
+              label="Language"
+              isLoading={languagesIsLoading}
+              labelPlacement='outside'
+              defaultItems={languages || []}
+              placeholder="Select Language"
+              defaultSelectedKey={word_data.root.language_code}
+              onSelectionChange={(item) => {
+                field.onChange(item);
+                setValue("language", item as string)
+              }}
+              isInvalid={error !== undefined}
+              errorMessage={error?.message}
+            >
+              {(language) => (
+                <AutocompleteItem key={language.language_code} value={language.language_code}>
+                  {language.language_en}
+                  {/* TODO: i18n needed */}
+                </AutocompleteItem>
+              )}
+            </Autocomplete>
+          )}
+        />
 
-      <Controller
-        name="attributes"
-        control={control}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Select
-            items={wordAttributes || []}
-            label="Attributes"
-            placeholder="Select attributes"
-            selectionMode="multiple"
-            selectedKeys={new Set(value)}
-            onSelectionChange={(keys) => onChange(Array.from(keys))}
-            isLoading={wordAttributesIsLoading}
-            isInvalid={!!error}
-            errorMessage={error?.message}
-            className="w-full"
-          >
-            {(attr) => (
-              <SelectItem key={attr.id.toString()} value={attr.id.toString()}>
-                {attr.attribute}
-              </SelectItem>
-            )}
-          </Select>
-        )}
-      />
+        <Controller
+          name="root"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Input
+              {...field}
+              label="Root"
+              labelPlacement="outside"
+              placeholder="Enter root"
+              isInvalid={!!error}
+              errorMessage={error?.message}
+            />
+          )}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <WordAttributesRequestInput
+          wordAttributes={wordAttributesWithRequested}
+          wordAttributesIsLoading={wordAttributesWithRequestedIsLoading}
+          control={control}
+        />
+        <Controller
+          name="phonetic"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Input
+              {...field}
+              label="Phonetic"
+              labelPlacement="outside"
+              placeholder="Enter phonetic"
+              isInvalid={!!error}
+              errorMessage={error?.message}
+            />
+          )}
+        />
+      </div>
 
       <Controller
         name="reason"
@@ -214,6 +205,7 @@ export default function WordEditRequest({
             {...field}
             label="Reason for Change"
             placeholder="Please explain why you want to make these changes"
+            labelPlacement="outside"
             isInvalid={!!error}
             errorMessage={error?.message}
             className="w-full"
