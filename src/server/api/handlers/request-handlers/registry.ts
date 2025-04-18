@@ -3,6 +3,7 @@ import { EntityTypes, Actions } from "@/db/schema/requests";
 import { RequestHandler } from "./types";
 import { CreateWordAttributeHandler, UpdateWordAttributeHandler } from "./word-attribute-handlers";
 import { UpdateWordHandler } from "./word-handler";
+import { UpdateMeaningHandler, DeleteMeaningHandler } from "./meaning-handler";
 // Import other handlers
 
 type HandlerRegistry = {
@@ -18,6 +19,10 @@ const registry: HandlerRegistry = {
     },
     words: {
         update: new UpdateWordHandler(),
+    },
+    meanings: {
+        update: new UpdateMeaningHandler(),
+        delete: new DeleteMeaningHandler(),
     },
     // Add other entity types and actions...
 };
