@@ -8,6 +8,7 @@
     "start": "next start",
     "serve": "next build && next start",
     "seed:tdk": "bun src/scripts/seed-tdk.ts",
+    "seed:prod": "NODE_ENV=production bun src/scripts/seed-tdk.ts",
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
