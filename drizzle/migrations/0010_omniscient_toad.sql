@@ -1,0 +1,1 @@
+ALTER TABLE "meanings" ALTER COLUMN "part_of_speech_id" DROP NOT NULL;

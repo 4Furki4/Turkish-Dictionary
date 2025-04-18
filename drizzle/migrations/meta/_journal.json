@@ -71,6 +71,34 @@
       "when": 1741183149713,
       "tag": "0009_lovely_genesis",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1744919237023,
+      "tag": "0010_omniscient_toad",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1744930233043,
+      "tag": "0011_concerned_dorian_gray",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1744933732641,
+      "tag": "0012_freezing_lady_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1744933877672,
+      "tag": "0013_sloppy_famine",
+      "breakpoints": true
     }
   ]
 }

@@ -77,7 +77,7 @@ type WordFormSubmit = Prettify<{
 }>;
 type Language = {
   id: number;
-  language_en: string;
+  language_en: string | null;
   language_tr: string;
   language_code: string;
 }

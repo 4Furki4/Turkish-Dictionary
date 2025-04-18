@@ -22,11 +22,9 @@ export const words = pgTable("words", {
   suffix: varchar("suffix", { length: 255 }),
   viewCount: integer("view_count").default(0),
   requestType: varchar("request_type", { length: 255 }).default("word"),
-}, (t) => {
-  return {
-    name_index: index("name_idx").on(t.name)
-  }
-});
+}, (t) => [
+  index("name_idx").on(t.name),
+]);
 
 export const wordsRelations = relations(words, ({ many, one }) => ({
   meanings: many(meanings),
