@@ -89,5 +89,92 @@
     "user_not_found": "Kullanıcı bulunamadı",
     "user_not_found_description": "Maattessüf aradığınız kullanıcıyı bulamadık.",
     "back_to_home": "Ana sayfaya dön"
+  },
+  "Metadata": {
+    "requests": {
+      "title": "İsteklerim | Türkçe Sözlük",
+      "description": "Türkçe Sözlüğe yaptığınız katkıları görüntüleyin ve yönetin"
+    },
+    "requestDetail": {
+      "title": "İstek Detayları | Türkçe Sözlük",
+      "description": "Sözlük katkı isteğinizin detaylarını görüntüleyin ve yönetin"
+    }
+  },
+  "Requests": {
+    "myRequests": "İsteklerim",
+    "requestDetails": "İstek Detayları",
+    "backToAllRequests": "Tüm İsteklere Dön",
+    "entityTypes": {
+      "title": "Varlık Türü",
+      "all": "Tüm Türler",
+      "words": "Kelimeler",
+      "meanings": "Anlamlar",
+      "roots": "Kökler",
+      "related_words": "İlgili Kelimeler",
+      "part_of_speechs": "Sözcük Türleri",
+      "examples": "Örnekler",
+      "authors": "Yazarlar",
+      "word_attributes": "Kelime Özellikleri",
+      "meaning_attributes": "Anlam Özellikleri"
+    },
+    "actions": {
+      "title": "İşlem",
+      "all": "Tüm İşlemler",
+      "create": "Oluşturma",
+      "update": "Güncelleme",
+      "delete": "Silme"
+    },
+    "status": {
+      "title": "Durum",
+      "all": "Tüm Durumlar",
+      "pending": "Beklemede",
+      "approved": "Onaylandı",
+      "rejected": "Reddedildi"
+    },
+    "tableColumns": {
+      "entityType": "TÜR",
+      "action": "İŞLEM",
+      "status": "DURUM",
+      "date": "İSTEK TARİHİ",
+      "actions": "İŞLEMLER"
+    },
+    "buttons": {
+      "viewDetails": "Detayları Gör",
+      "cancel": "İptal Et",
+      "edit": "İsteği Düzenle",
+      "cancelRequest": "İsteği İptal Et",
+      "cancelEditing": "Düzenlemeyi İptal Et",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "keepRequest": "Hayır, İsteği Koru",
+      "confirmCancel": "Evet, İsteği İptal Et",
+      "updateRequest": "İsteği Güncelle",
+      "back": "Geri",
+      "backToRequests": "İsteklere Geri Dön"
+    },
+    "messages": {
+      "errorLoading": "İstekler yüklenirken hata oluştu",
+      "noRequests": "İstek bulunamadı",
+      "errorLoadingDetail": "İstek detayları yüklenirken hata oluştu",
+      "cancelConfirmation": "Bu isteği iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "updateRequest": "İstek detaylarınızı güncelleyin:",
+      "reasonLabel": "Güncelleme Nedeni:",
+      "reasonPlaceholder": "Bu isteği neden güncelliyorsunuz?",
+      "itemsPerPage": "Sayfa başına öğe"
+    },
+    "details": {
+      "requestInfo": "İstek Bilgileri",
+      "entityType": "Tür:",
+      "action": "İşlem:",
+      "status": "Durum:",
+      "reason": "Neden:",
+      "newData": "Yeni Veri",
+      "changes": "Değişiklikler",
+      "currentData": "Mevcut Veri",
+      "sideBySide": "Yan Yana",
+      "noReason": "Neden belirtilmedi",
+      "request": "İstek:",
+      "empty": "Boş",
+      "updateFrom": "Güncellenecek değer"
+    }
   }
 }
