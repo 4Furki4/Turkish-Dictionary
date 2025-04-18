@@ -211,7 +211,7 @@ async function seedDatabase() {
                     const [{ id: meaningId }] = await tx
                         .insert(meanings)
                         .values({
-                            meaning: anlam.anlam,
+                            meaning: String(anlam.anlam).replace(/►/g, '').trim(),
                             wordId,
                             partOfSpeechId: posId,
                             order: parseInt(anlam.anlam_sira || '0', 10)
