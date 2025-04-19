@@ -6,7 +6,7 @@ import {
   integer,
   index,
 } from "drizzle-orm/pg-core";
-import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations, sql } from "drizzle-orm";
 import { SelectMeaning, meanings } from "./meanings";
 import { pronounciations } from "./pronounciations";
 import { savedWords } from "./saved_words";
@@ -23,7 +23,7 @@ export const words = pgTable("words", {
   viewCount: integer("view_count").default(0),
   requestType: varchar("request_type", { length: 255 }).default("word"),
 }, (t) => [
-  index("name_idx").on(t.name),
+  index("name_idx").using('gin', sql`name gin_trgm_ops`)
 ]);
 
 export const wordsRelations = relations(words, ({ many, one }) => ({

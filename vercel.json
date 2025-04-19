@@ -1,0 +1,8 @@
+{
+    "crons": [
+        {
+            "path": "/api/trpc/health.warmup",
+            "schedule": "*/4 * * * *"
+        }
+    ]
+}
