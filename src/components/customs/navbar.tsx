@@ -11,14 +11,15 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@heroui/react";
-import { Book, Languages, Menu, Moon, Sun } from "lucide-react";
+import { Languages, Menu, Moon, Sun } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { usePathname, Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from "next-auth";
-
+import logo from "@/public/svg/navbar/logo.svg";
+import Image from "next/image";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -73,7 +74,7 @@ export default function Navbar({
         <NavbarItem>
           <NavbarBrand>
             <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
-              <Book className="h-6 w-6 text-primary" />
+              <Image src={logo} alt="Turkish Dictionary Logo" className="h-8 w-8" />
               <span className="text-fs-1 font-bold text-primary">{TitleIntl}</span>
             </NextIntlLink>
             <button className="sm:hidden">
