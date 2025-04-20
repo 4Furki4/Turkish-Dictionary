@@ -22,11 +22,11 @@ export default function NewWordAttributeRequestModal({
     const addWordAttributeMutation = api.request.newWordAttribute.useMutation({
         onError(error, variables, context) {
             console.log(error)
-            toast.error("An error occured, please try again.")
+            toast.error(t("Requests.ErrorSubmittingRequest"))
         },
         onSuccess(data) {
             reset()
-            toast.success("Attribute has been added successfully!")
+            toast.success(t("Requests.AttributeRequestedSuccessfully"))
             requestUtils.getWordAttributesWithRequested.invalidate()
             onClose()
         }
@@ -50,10 +50,10 @@ export default function NewWordAttributeRequestModal({
                                 <Controller control={newAttributeControl} name='attribute' rules={{
                                     required: {
                                         value: true,
-                                        message: t("Attribute is required.")
+                                        message: t("Forms.Attributes.Required")
                                     },
                                     minLength: {
-                                        message: t("Attribute length must be greater than 2."),
+                                        message: t("Forms.Attributes.LengthMustBeGreaterThan2"),
                                         value: 2
                                     }
                                 }} render={({ field, fieldState: { error } }) => (
@@ -61,7 +61,7 @@ export default function NewWordAttributeRequestModal({
                                 )} />
                                 <div className='grid grid-cols-2 gap-2'>
                                     <Button size='sm' type='submit' color='primary' isLoading={addWordAttributeMutation.isPending}>
-                                        {t("Requests.WordEditModal.SubmitRequest")}
+                                        {t("Requests.SubmitRequest")}
                                     </Button>
                                     <Button size='sm' onPress={close}>
                                         {t("Cancel")}

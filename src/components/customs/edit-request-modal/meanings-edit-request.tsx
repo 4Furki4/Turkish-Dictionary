@@ -13,6 +13,7 @@ import MeaningAttributesInput from "./meanings/meaning-attributes-input"
 import MeaningAuthorInput from "./meanings/meaning-author-input"
 import PartOfSpeechInput from "./meanings/part-of-speech-input"
 import DeleteMeaningModal from "./delete-meaning-modal"
+import { useTranslations } from "next-intl"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
@@ -21,6 +22,16 @@ const meaningSchema = z.object({
   sentence: z.string().optional(),
   author_id: z.string().optional(),
   reason: z.string().min(1, "Reason is required"),
+})
+
+const getMeaningIntlSchema = (meaningRequired: string, partOfSpeechRequired: string, reasonRequired: string) => z.object({
+  meaning_id: z.number(),
+  meaning: z.string().min(1, meaningRequired),
+  part_of_speech_id: z.string().min(1, partOfSpeechRequired),
+  attributes: z.array(z.string()).optional(),
+  sentence: z.string().optional(),
+  author_id: z.string().optional(),
+  reason: z.string().min(1, reasonRequired),
 })
 
 export type MeaningEditRequestForm = z.infer<typeof meaningSchema>
@@ -59,24 +70,24 @@ export default function MeaningsEditRequest({
   const { data: authors, isLoading: authorsIsLoading } = api.params.getExampleSentenceAuthors.useQuery()
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
   const [deletingMeaning, setDeletingMeaning] = React.useState<Meaning | null>(null)
-
+  const t = useTranslations()
   const requestEditMeaning = api.request.requestEditMeaning.useMutation({
     onSuccess: () => {
-      toast.success("Edit request submitted successfully")
+      toast.success(t("Requests.EditRequestSubmittedSuccessfully"))
       setEditingIndex(null)
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to submit edit request")
+      toast.error(error.message || t("Requests.FailedToSubmitEditRequest"))
     },
   })
 
   const requestDeleteMeaning = api.request.requestDeleteMeaning.useMutation({
     onSuccess: () => {
-      toast.success("Delete request submitted successfully")
+      toast.success(t("Requests.DeleteRequestSubmittedSuccessfully"))
       setDeletingMeaning(null)
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to submit delete request")
+      toast.error(error.message || t("Requests.FailedToSubmitDeleteRequest"))
     },
   })
 
@@ -195,13 +206,14 @@ function MeaningEditRequestForm({
   authorsIsLoading: boolean;
   onSubmit: (data: MeaningEditSubmitData) => Promise<void>;
 }) {
+  const t = useTranslations()
   const {
     control,
     handleSubmit,
-    formState: { dirtyFields },
+    formState: { dirtyFields, errors },
     watch
   } = useForm<MeaningEditRequestForm>({
-    resolver: zodResolver(meaningSchema),
+    resolver: zodResolver(getMeaningIntlSchema(t("Forms.Meanings.Required"), t("Forms.PartOfSpeech.Required"), t("Requests.ReasonRequired"))),
     defaultValues: {
       meaning_id: meaning.meaning_id,
       meaning: meaning.meaning,
@@ -222,7 +234,7 @@ function MeaningEditRequestForm({
     }
 
     if (Object.keys(dirtyFields).length === 1 && dirtyFields.reason) {
-      toast.error("No changes found")
+      toast.error(t("Requests.NoChanges"))
       return
     }
 
@@ -260,7 +272,7 @@ function MeaningEditRequestForm({
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row justify-between items-center">
-        <span className="font-semibold">Meaning {index + 1}</span>
+        <span className="font-semibold">{t("Meaning")} {index + 1}</span>
         <div className="flex space-x-2">
           {!isEditing && (
             <>
@@ -292,8 +304,8 @@ function MeaningEditRequestForm({
               render={({ field, fieldState: { error } }) => (
                 <Textarea
                   {...field}
-                  label="Meaning"
-                  placeholder="Enter meaning"
+                  label={t("Meaning")}
+                  placeholder={t("EnterMeaning")}
                   isInvalid={!!error}
                   errorMessage={error?.message}
                 />
@@ -324,8 +336,8 @@ function MeaningEditRequestForm({
               render={({ field, fieldState: { error } }) => (
                 <Textarea
                   {...field}
-                  label="Example Sentence"
-                  placeholder="Enter example sentence"
+                  label={t("ExampleSentence")}
+                  placeholder={t("EnterExampleSentence")}
                   isInvalid={!!error}
                   errorMessage={error?.message}
                 />
@@ -344,8 +356,8 @@ function MeaningEditRequestForm({
               render={({ field, fieldState: { error } }) => (
                 <Textarea
                   {...field}
-                  label="Reason for Change"
-                  placeholder="Please explain why you want to make these changes"
+                  label={t("Requests.Reason")}
+                  placeholder={t("Requests.EnterReason")}
                   isInvalid={!!error}
                   errorMessage={error?.message}
                 />
@@ -358,29 +370,30 @@ function MeaningEditRequestForm({
                 variant="light"
                 onPress={onCancel}
               >
-                Cancel
+                {t("Cancel")}
               </Button>
               <Button
                 color="secondary"
                 variant="flat"
                 type="submit"
               >
-                Submit Changes
+                {t("Requests.SubmitRequest")}
               </Button>
             </div>
           </form>
         ) : (
-          <>
+          <div className="space-y-2">
             <p>{meaning.meaning}</p>
-            <p className="text-sm text-gray-500">
-              Part of Speech: {meaning.part_of_speech}
-            </p>
+            {meaning.part_of_speech ? <p className="text-sm text-gray-500">
+              {t("PartOfSpeech")}: {meaning.part_of_speech}
+            </p> : null
+            }
             {meaning.sentence && (
-              <p className="text-sm italic">
-                Example: {meaning.sentence}
+              <p className="text-sm">
+                {t("ExampleSentence")}: {meaning.sentence}
               </p>
             )}
-          </>
+          </div>
         )}
       </CardBody>
     </Card>

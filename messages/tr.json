@@ -225,12 +225,19 @@
       "empty": "Boş",
       "updateFrom": "Güncellenecek değer"
     },
-    "WordEditModal": {
-      "Reason": "Değişiklik Nedeni",
-      "EnterReason": "Lütfen değişiklik nedeni giriniz",
-      "SubmitRequest": "İsteği Gönder",
-      "RequestedAttributeByYou": "Sizin eklediğiniz özellik"
-    }
+    "RequestedAttributeByYou": "Sizin eklediğiniz özellik",
+    "NoChanges": "Değişiklik tespit edilmedi",
+    "Reason": "Değişiklik Nedeni",
+    "EnterReason": "Lütfen değişiklik nedeni giriniz",
+    "EditRequestSubmittedSuccessfully": "Değişiklik isteği başarıyla gönderildi",
+    "DeleteRequestSubmittedSuccessfully": "Silme isteği başarıyla gönderildi",
+    "FailedToSubmitEditRequest": "Değişiklik isteği gönderirken hata oluştu",
+    "FailedToSubmitDeleteRequest": "Silme isteği gönderirken hata oluştu",
+    "SubmitRequest": "İsteği Gönder",
+    "DeleteMeaningRequest": "Anlam Silme İsteği",
+    "DeleteMeaningRequestSentence": "\"{meaning}\" anlamı için silme isteğini göndermek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
+    "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
+    "ReasonRequired": "Lütfen değişiklik nedeni giriniz"
   },
   "Phonetic": "Fonetik",
   "WordName": "Kelime",
@@ -249,5 +256,27 @@
   "NewWordAttribute": "Yeni Kelime Özelliği",
   "EnterWordAttribute": "Kelime Özelliği Giriniz",
   "AddNewWordAttribute": "Yeni Kelime Özelliği Ekle",
-  "Cancel": "İptal Et"
+  "Cancel": "İptal Et",
+  "Meaning": "Anlam",
+  "EnterMeaning": "Anlam Giriniz",
+  "ExampleSentence": "Örnek Cümle",
+  "EnterExampleSentence": "Örnek Cümle Giriniz",
+  "SelectPartOfSpeech": "Sözcük Türü Seçin",
+  "PartOfSpeech": "Sözcük Türü",
+  "Author": "Yazar",
+  "SelectAuthor": "Yazar Seçin",
+  "Attributes": "Özellikler",
+  "YouCanSelectAnAttributeForThisMeaning": "Bu anlam için özellikler seçebilirsiniz",
+  "Forms": {
+    "Attributes": {
+      "Required": "Özellik gerekli, lütfen bir özellik giriniz.",
+      "LengthMustBeGreaterThan2": "Özellik uzunluğu 2 karakterden uzun olmalıdır."
+    },
+    "Meanings": {
+      "Required": "Anlam gerekli, lütfen bir anlam giriniz."
+    },
+    "PartOfSpeech": {
+      "Required": "Sözcük Türü gerekli, lütfen bir sözcük türü giriniz."
+    }
+  }
 }

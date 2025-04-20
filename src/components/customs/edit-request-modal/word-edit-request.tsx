@@ -36,7 +36,7 @@ export default function WordEditRequest({
   const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesWithRequested.useQuery()
   const { mutate, isPending } = api.request.requestEditWord.useMutation({
     onSuccess: () => {
-      toast.success(t("EditRequestSubmittedSuccessfully"))
+      toast.success(t("Requests.EditRequestSubmittedSuccessfully"))
     },
     onError: (error) => {
       toast.error(error.message)
@@ -205,8 +205,8 @@ export default function WordEditRequest({
         render={({ field, fieldState: { error } }) => (
           <Textarea
             {...field}
-            label={t("Requests.WordEditModal.Reason")}
-            placeholder={t("Requests.WordEditModal.EnterReason")}
+            label={t("Requests.Reason")}
+            placeholder={t("Requests.EnterReason")}
             labelPlacement="outside"
             isInvalid={!!error}
             errorMessage={error?.message}
@@ -216,8 +216,8 @@ export default function WordEditRequest({
       />
 
       <div className="flex justify-end space-x-2">
-        <Button color="secondary" variant="flat" type="submit">
-          {t("Requests.WordEditModal.SubmitRequest")}
+        <Button color="secondary" variant="flat" type="submit" isLoading={isPending}>
+          {t("Requests.SubmitRequest")}
         </Button>
       </div>
     </form>

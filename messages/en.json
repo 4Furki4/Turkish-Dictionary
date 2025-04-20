@@ -225,12 +225,20 @@
       "empty": "Empty",
       "updateFrom": "Updated from"
     },
-    "WordEditModal": {
-      "Reason": "Reason for Change",
-      "EnterReason": "Please enter your reason for the change",
-      "SubmitRequest": "Submit Request",
-      "RequestedAttributeByYou": "Requested Attribute by You"
-    }
+    "RequestedAttributeByYou": "Requested Attribute by You",
+    "NoChanges": "No changes detected",
+    "EditRequestSubmittedSuccessfully": "Edit request submitted successfully",
+    "Reason": "Reason for Change",
+    "EnterReason": "Please enter your reason for the change",
+    "DeleteRequestSubmittedSuccessfully": "Delete request submitted successfully",
+    "FailedToSubmitEditRequest": "Failed to submit edit request",
+    "FailedToSubmitDeleteRequest": "Failed to submit delete request",
+    "SubmitRequest": "Submit Request",
+    "DeleteMeaningRequest": "Delete Meaning Request",
+    "DeleteMeaningRequestSentence": "Are you sure you want to request deletion of the meaning \"{meaning}\"? Please provide a reason for the deletion.",
+    "AttributeIsRequired": "Attribute is required, please enter an attribute.",
+    "AttributeRequestedSuccessfully": "Attribute requested successfully",
+    "ReasonRequired": "Please enter your reason for the change"
   },
   "WordName": "Word Name",
   "Prefix": "Prefix",
@@ -248,5 +256,25 @@
   "NewWordAttribute": "New Word Attribute",
   "EnterWordAttribute": "Enter Word Attribute",
   "AddNewWordAttribute": "Add New Word Attribute",
-  "Cancel": "Cancel"
+  "Cancel": "Cancel",
+  "Meaning": "Meaning",
+  "EnterMeaning": "Enter Meaning",
+  "ExampleSentence": "Example Sentence",
+  "EnterExampleSentence": "Enter Example Sentence",
+  "Author": "Author",
+  "SelectAuthor": "Select Author",
+  "Attributes": "Attributes",
+  "YouCanSelectAnAttributeForThisMeaning": "You can select attributes for this meaning",
+  "Forms": {
+    "Attributes": {
+      "Required": "Attribute is required, please enter an attribute.",
+      "LengthMustBeGreaterThan2": "Attribute length must be greater than 2 characters."
+    },
+    "Meanings": {
+      "Required": "Meaning is required, please enter a meaning."
+    },
+    "PartOfSpeech": {
+      "Required": "Part of speech is required, please enter a part of speech."
+    }
+  }
 }
