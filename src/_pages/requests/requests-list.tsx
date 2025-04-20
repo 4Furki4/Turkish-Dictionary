@@ -233,9 +233,9 @@ export default function RequestsList() {
                     className="w-full sm:w-48"
                   >
                     <>
-                      <SelectItem key="all" value="all">{t("entityTypes.all")}</SelectItem>
+                      <SelectItem key="all" >{t("entityTypes.all")}</SelectItem>
                       {Object.entries(entityTypeLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} >
                           {label}
                         </SelectItem>
                       ))}
@@ -255,9 +255,9 @@ export default function RequestsList() {
                     className="w-full sm:w-36"
                   >
                     <>
-                      <SelectItem key="all" value="all">{t("actions.all")}</SelectItem>
+                      <SelectItem key="all">{t("actions.all")}</SelectItem>
                       {Object.entries(actionLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} >
                           {label}
                         </SelectItem>
                       ))}
@@ -275,9 +275,9 @@ export default function RequestsList() {
                     className="w-full sm:w-36"
                   >
                     <>
-                      <SelectItem key="all" value="all">{t("status.all")}</SelectItem>
+                      <SelectItem key="all">{t("status.all")}</SelectItem>
                       {Object.entries(statusLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} >
                           {label}
                         </SelectItem>
                       ))}

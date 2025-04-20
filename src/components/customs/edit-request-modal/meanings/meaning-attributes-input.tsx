@@ -34,7 +34,7 @@ export default function MeaningAttributesInput({ control, meaningAttributes, mea
                     className="w-full"
                 >
                     {(attr) => (
-                        <SelectItem key={attr.id.toString()} value={attr.id.toString()}>
+                        <SelectItem key={attr.id.toString()} >
                             {attr.attribute}
                         </SelectItem>
                     )}

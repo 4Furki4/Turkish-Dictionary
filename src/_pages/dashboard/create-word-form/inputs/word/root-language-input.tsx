@@ -23,7 +23,6 @@ export default function WordRootLanguageInput({
 }) {
     const { data: langs, isLoading, isError, isSuccess, error: fetchError } = api.params.getLanguages.useQuery();
     const t = useTranslations('LanguageAndRootInput')
-
     return (
         <Controller
             control={control}

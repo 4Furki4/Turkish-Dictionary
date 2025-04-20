@@ -47,7 +47,7 @@ export default function MeaningPartOfSpeechInput({
                     }}
                 >
                     {partOfSpeeches.map((key) => (
-                        <SelectItem key={key.id} value={key.id}>
+                        <SelectItem key={key.id}>
                             {key.partOfSpeech}
                         </SelectItem>
                     ))}

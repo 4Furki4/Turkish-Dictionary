@@ -34,7 +34,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
   const fullData = details?.[0];
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xs">
       <CardHeader>
         <h3 className="text-lg font-medium">{wordData.word_name}</h3>
         {wordData.root?.root && (

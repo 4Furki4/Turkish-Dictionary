@@ -150,7 +150,7 @@ export default function WordEditRequest({
               errorMessage={error?.message}
             >
               {(language) => (
-                <AutocompleteItem key={language.language_code} value={language.language_code}>
+                <AutocompleteItem key={language.language_code} >
                   {language.language_en}
                   {/* TODO: i18n needed */}
                 </AutocompleteItem>

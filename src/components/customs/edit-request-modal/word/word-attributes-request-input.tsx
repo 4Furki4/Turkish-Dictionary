@@ -58,7 +58,7 @@ export default function WordAttributesRequestInput({
                             <SelectItem endContent={attr.id < 0 ? (
                                 <Tooltip content="requested attribute by you">
                                     <FileClock className="text-warning" />
-                                </Tooltip>) : ""} key={attr.id.toString()} value={attr.id.toString()}>
+                                </Tooltip>) : ""} key={attr.id.toString()}>
                                 {attr.attribute}
                             </SelectItem>
                         )}

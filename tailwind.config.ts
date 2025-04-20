@@ -1,8 +1,8 @@
-import { heroui } from "@heroui/react";
+const { heroui } = require("@heroui/react");
 /** @type {import('tailwindcss').Config} */
-import { withUt } from "uploadthing/tw";
 
-export default withUt({
+
+export default ({
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -91,7 +91,6 @@ export default withUt({
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
     heroui({
       prefix: "heroui-",
       layout: {

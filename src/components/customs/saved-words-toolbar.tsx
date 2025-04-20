@@ -76,7 +76,7 @@ export default function SavedWordsToolbar({ onSearch, onAlphabetSort, onDateSort
           }}
         >
           {alphabetOptions.map((option) => (
-            <SelectItem key={option.key} value={option.key}>
+            <SelectItem key={option.key} >
               {option.label}
             </SelectItem>
           ))}
@@ -93,7 +93,7 @@ export default function SavedWordsToolbar({ onSearch, onAlphabetSort, onDateSort
           }}
         >
           {dateOptions.map((option) => (
-            <SelectItem key={option.key} value={option.key}>
+            <SelectItem key={option.key} >
               {option.label}
             </SelectItem>
           ))}
@@ -109,7 +109,7 @@ export default function SavedWordsToolbar({ onSearch, onAlphabetSort, onDateSort
           onChange={(e) => onPerPageChange(Number((e.target as HTMLSelectElement).value))}
         >
           {wordPerPageOptions.map((option) => (
-            <SelectItem key={option.key} value={option.key}>
+            <SelectItem key={option.key} >
               {option.label}
             </SelectItem>
           ))}

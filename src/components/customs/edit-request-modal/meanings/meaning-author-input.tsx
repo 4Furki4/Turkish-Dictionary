@@ -27,7 +27,7 @@ export default function MeaningAuthorInput({ control, meaningAuthors, meaningAut
                     className="w-full"
                 >
                     {(author) => (
-                        <SelectItem key={author.id.toString()} value={author.id.toString()}>
+                        <SelectItem key={author.id.toString()} >
                             {author.name}
                         </SelectItem>
                     )}

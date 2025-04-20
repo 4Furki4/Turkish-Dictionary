@@ -45,7 +45,7 @@ export default function PartOfSpeechInput({
                     errorMessage={errors.meanings ? errors.meanings[index]?.partOfSpeechId?.message : undefined}
                 >
                     {partOfSpeeches.map((key) => (
-                        <SelectItem key={key.id} value={key.partOfSpeech}>
+                        <SelectItem key={key.id} >
                             {key.partOfSpeech}
                         </SelectItem>
                     ))}

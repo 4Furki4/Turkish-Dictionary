@@ -28,7 +28,7 @@ export default function PartOfSpeechInput({ control, partOfSpeeches, meaningPart
                     className="w-full"
                 >
                     {(pos) => (
-                        <SelectItem key={pos.id.toString()} value={pos.id.toString()}>
+                        <SelectItem key={pos.id.toString()} >
                             {pos.partOfSpeech}
                         </SelectItem>
                     )}
