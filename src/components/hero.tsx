@@ -162,6 +162,16 @@ export default function Hero({ children }: {
                 errorMessage={inputError}
                 type="search"
               />
+              {showRecommendations && isLoading && (
+                <div className="absolute z-10 w-full mt-1 bg-background/90 backdrop-blur-sm border border-primary/20 rounded-md shadow-lg text-left border-b-0 p-2">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="h-6 px-4 py-2 bg-muted-foreground/20 rounded-sm my-2 animate-pulse"
+                    />
+                  ))}
+                </div>
+              )}
               {showRecommendations && recommendations && recommendations.length > 0 && (
                 <div className="absolute z-10 w-full mt-1 bg-background/90 backdrop-blur-sm border border-primary/20 rounded-md shadow-lg text-left border-b-0">
                   <ul role="listbox">
@@ -171,7 +181,7 @@ export default function Hero({ children }: {
                         role="option"
                         aria-selected={index === selectedIndex}
                         className={`px-4 py-2 cursor-pointer transition-colors border-b border-primary/20 ${index === selectedIndex
-                          ? "bg-primary/10"
+                          ? "bg-primary/30"
                           : "hover:bg-primary/10"
                           }`}
                         onClick={() => handleRecommendationClick(rec.name)}
