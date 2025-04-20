@@ -2,7 +2,13 @@
   "Navbar": {
     "Home": "Home",
     "Word List": "Word List",
-    "Sign In": "Sign In"
+    "Sign In": "Sign In",
+    "Title": "Turkish Dictionary",
+    "Profile": "Profile",
+    "Logout": "Logout",
+    "SavedWords": "Saved Words",
+    "MyRequests": "My Requests",
+    "SearchHistory": "Search History"
   },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
@@ -39,7 +45,14 @@
   },
   "WordCard": {
     "UnauthSave": "You need to be signed in to save words",
-    "Saved": "Word saved!"
+    "Saved": "Word saved!",
+    "EditWord": "Edit Word",
+    "Words": "Words",
+    "Meanings": "Meanings",
+    "Close": "Close",
+    "You can request an edit if you are signed in": "You can request an edit if you are signed in",
+    "SignIn": "Sign in",
+    "RequestEdit": "Request Edit"
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",
@@ -211,6 +224,29 @@
       "request": "Request:",
       "empty": "Empty",
       "updateFrom": "Updated from"
+    },
+    "WordEditModal": {
+      "Reason": "Reason for Change",
+      "EnterReason": "Please enter your reason for the change",
+      "SubmitRequest": "Submit Request",
+      "RequestedAttributeByYou": "Requested Attribute by You"
     }
-  }
+  },
+  "WordName": "Word Name",
+  "Prefix": "Prefix",
+  "Suffix": "Suffix",
+  "Language": "Language",
+  "Root": "Root",
+  "Phonetic": "Phonetic",
+  "EnterWordName": "Enter Word Name",
+  "EnterPrefix": "Enter Prefix",
+  "EnterSuffix": "Enter Suffix",
+  "EnterRoot": "Enter Root",
+  "EnterLanguage": "Enter Language",
+  "EnterPhonetic": "Enter Phonetic",
+  "SelectAttributes": "Select Attributes",
+  "NewWordAttribute": "New Word Attribute",
+  "EnterWordAttribute": "Enter Word Attribute",
+  "AddNewWordAttribute": "Add New Word Attribute",
+  "Cancel": "Cancel"
 }

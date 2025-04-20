@@ -2,7 +2,13 @@
   "Navbar": {
     "Home": "Ana Sayfa",
     "Word List": "Kelime Listesi",
-    "Sign In": "Giriş Yap"
+    "Sign In": "Giriş Yap",
+    "Title": "Türkçe Sözlük",
+    "Profile": "Profil",
+    "Logout": "Çıkış Yap",
+    "SavedWords": "Kaydedilen Kelimeler",
+    "MyRequests": "İsteklerim",
+    "SearchHistory": "Arama Geçmişi"
   },
   "SigninForm": {
     "Sign in with Google": "Google ile Giriş Yap",
@@ -39,7 +45,14 @@
   },
   "WordCard": {
     "UnauthSave": "Kaydetmek için giriş yapın",
-    "Saved": "Kelime kaydedildi"
+    "Saved": "Kelime kaydedildi",
+    "EditWord": "Kelime Düzenle",
+    "Words": "Kelimeler",
+    "Meanings": "Anlamlar",
+    "Close": "Kapat",
+    "You can request an edit if you are signed in": "Giriş yapmışsanız bir düzenleme talebi gönderebilirsiniz",
+    "SignIn": "Giriş Yap",
+    "RequestEdit": "Düzenleme Talep Et"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
@@ -211,6 +224,30 @@
       "request": "İstek:",
       "empty": "Boş",
       "updateFrom": "Güncellenecek değer"
+    },
+    "WordEditModal": {
+      "Reason": "Değişiklik Nedeni",
+      "EnterReason": "Lütfen değişiklik nedeni giriniz",
+      "SubmitRequest": "İsteği Gönder",
+      "RequestedAttributeByYou": "Sizin eklediğiniz özellik"
     }
-  }
+  },
+  "Phonetic": "Fonetik",
+  "WordName": "Kelime",
+  "Prefix": "Ön ek",
+  "Suffix": "Son ek",
+  "Language": "Dil",
+  "Root": "Kök",
+  "EnterWordName": "Kelime Giriniz",
+  "EnterPrefix": "Ön ek Giriniz",
+  "EnterSuffix": "Son ek Giriniz",
+  "EnterRoot": "Kök Giriniz",
+  "EnterLanguage": "Dil Giriniz",
+  "EnterPhonetic": "Fonetik Giriniz",
+  "WordAttribute": "Kelime Özelliği",
+  "SelectAttributes": "Özellikleri Seçin",
+  "NewWordAttribute": "Yeni Kelime Özelliği",
+  "EnterWordAttribute": "Kelime Özelliği Giriniz",
+  "AddNewWordAttribute": "Yeni Kelime Özelliği Ekle",
+  "Cancel": "İptal Et"
 }

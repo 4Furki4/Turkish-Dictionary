@@ -16,9 +16,11 @@ import WordEditRequest from "./edit-request-modal/word-edit-request";
 import MeaningsEditRequest from "./edit-request-modal/meanings-edit-request";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
+  const t = useTranslations("WordCard");
   return (
     <Card
       as={"article"}
@@ -95,23 +97,23 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
           {
             session ?
               (<Button onPress={onOpenChange} color="primary" variant="solid">
-                Request Edit
+                {t("RequestEdit")}
               </Button>)
               : (
                 <Popover showArrow placement="bottom">
                   <PopoverTrigger>
                     <Button color="primary" variant="faded">
-                      Request Edit
+                      {t("RequestEdit")}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent>
                     <div className="flex flex-col items-center">
                       <div>
                         <p>
-                          You can request an edit if you are
+                          {t("You can request an edit if you are signed in")}
                         </p>
                         <button onClick={() => signIn()} className="text-primary underline underline-offset-2">
-                          signed in
+                          {t("SignIn")}
                         </button>
                       </div>
                     </div>
@@ -126,13 +128,13 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
             {(onClose) => (
               <>
                 <ModalHeader>
-                  Edit Word
+                  {t("EditWord")}
                 </ModalHeader>
                 <ModalBody>
                   <Tabs defaultValue="words">
                     <TabsList>
-                      <TabsTrigger value="words">Words</TabsTrigger>
-                      <TabsTrigger value="meanings">Meanings</TabsTrigger>
+                      <TabsTrigger value="words">{t("Words")}</TabsTrigger>
+                      <TabsTrigger value="meanings">{t("Meanings")}</TabsTrigger>
                     </TabsList>
                     <TabsContent className="mt-8" value="words">
                       <WordEditRequest data={{ word_data }} />
@@ -144,7 +146,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                 </ModalBody>
                 <ModalFooter>
                   <Button onPress={onClose}>
-                    Close
+                    {t("Close")}
                   </Button>
                 </ModalFooter>
               </>

@@ -22,12 +22,19 @@ import { Session } from "next-auth";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Record<"WordListIntl" | "SignInIntl" | "HomeIntl", string>;
+} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl", string>;
 
 export default function Navbar({
   session,
+  TitleIntl,
   WordListIntl,
   SignInIntl,
+  HomeIntl,
+  ProfileIntl,
+  SavedWordsIntl,
+  MyRequestsIntl,
+  SearchHistoryIntl,
+  LogoutIntl,
   setIsSidebarOpen
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
@@ -67,7 +74,7 @@ export default function Navbar({
           <NavbarBrand>
             <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
               <Book className="h-6 w-6 text-primary" />
-              <span className="text-fs-1 font-bold text-primary">Turkish Dictionary</span>
+              <span className="text-fs-1 font-bold text-primary">{TitleIntl}</span>
             </NextIntlLink>
             <button className="sm:hidden">
               <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
@@ -194,22 +201,22 @@ export default function Navbar({
                 >
                   <DropdownItem key={"profile"} className="rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
-                      Profile
+                      {ProfileIntl}
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"saved-words"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
-                      Saved Words
+                      {SavedWordsIntl}
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"requests"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/requests">
-                      My Requests
+                      {MyRequestsIntl}
                     </Link>
                   </DropdownItem>
                   <DropdownItem key={"search-history"} className="text-center rounded-sm">
                     <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
-                      Search History
+                      {SearchHistoryIntl}
                     </Link>
                   </DropdownItem>
                   <DropdownItem
@@ -218,7 +225,7 @@ export default function Navbar({
                     color="danger"
                     onPress={() => signOut()}
                   >
-                    Sign Out
+                    {LogoutIntl}
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

@@ -57,10 +57,16 @@ export default async function RootLayout({
           /> */}
           <Providers>
             <NextIntlClientProvider messages={messages}>
-              <Wrapper HomeIntl={t("Home")}
+              <Wrapper TitleIntl={t("Title")}
+                HomeIntl={t("Home")}
                 session={session}
                 SignInIntl={t("Sign In")}
-                WordListIntl={t("Word List")} />
+                WordListIntl={t("Word List")}
+                ProfileIntl={t("Profile")}
+                SavedWordsIntl={t("SavedWords")}
+                MyRequestsIntl={t("MyRequests")}
+                SearchHistoryIntl={t("SearchHistory")}
+                LogoutIntl={t("Logout")} />
               {children}
               <Footer />
             </NextIntlClientProvider>
