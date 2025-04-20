@@ -1,10 +1,10 @@
-import WordCard from "@/src/components/customs/word-card";
 import { auth } from "@/src/server/auth/auth";
-import { api } from "@/src/trpc/server";
+import { api, HydrateClient } from "@/src/trpc/server";
 import { Metadata } from "next";
 import { Params } from "next/dist/server/request/params";
 import { redirect, RedirectType } from "next/navigation";
 import React from "react";
+import SavedWordsPage from "@/src/components/customs/saved-words-page";
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale } = await params
@@ -26,17 +26,13 @@ export default async function SavedWords(
   } = params;
   const session = await auth();
   if (!session) redirect("/signin", RedirectType.replace);
-  const savedWords = await api.user.getSavedWords();
+  void api.user.getSavedWords.prefetch({});
   return (
-    <section className="max-w-5xl mx-auto grid gap-5 mt-5">
-      {savedWords.length > 0 ? savedWords?.map((word) => (
-        <WordCard
-          session={session}
-          locale={locale as "en" | "tr"}
-          key={word.word_data.word_id}
-          word={word}
-        />
-      )) : <div>No saved words yet</div>}
-    </section>
+    <HydrateClient>
+      <SavedWordsPage
+        session={session}
+        locale={locale as "en" | "tr"}
+      />
+    </HydrateClient>
   );
 }

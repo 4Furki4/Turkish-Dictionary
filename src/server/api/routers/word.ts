@@ -23,10 +23,10 @@ export const wordRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx: { db } }) => {
       const purifiedInput = purifyObject(input)
-      const searchCondition = purifiedInput.search 
+      const searchCondition = purifiedInput.search
         ? sql`AND w.name ILIKE ${`%${purifiedInput.search}%`}`
         : sql``;
-        
+
       const wordsWithMeanings = await db.execute(
         sql
           `
@@ -214,7 +214,7 @@ export const wordRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx: { db } }) => {
       const purifiedInput = purifyObject(input)
-      const searchCondition = purifiedInput.search 
+      const searchCondition = purifiedInput.search
         ? sql`WHERE name ILIKE ${`%${purifiedInput.search}%`}`
         : sql``;
 

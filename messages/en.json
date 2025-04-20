@@ -74,6 +74,42 @@
       "meaning": "Meaning"
     }
   },
+  "SavedWords": {
+    "Toolbar": {
+      "searchPlaceholder": "Search saved words...",
+      "filters": "Filters",
+      "sort": {
+        "az": "A → Z",
+        "za": "Z → A",
+        "dateAsc": "Date Added ↑",
+        "dateDesc": "Date Added ↓"
+      },
+      "sortPlaceholder": "Sort",
+      "pagination": {
+        "wordsPerPage": "Words per page"
+      }
+    },
+    "Table": {
+      "searchPlaceholder": "Search saved words...",
+      "columns": {
+        "savedAt": "Saved At",
+        "name": "Name",
+        "actions": "Actions"
+      },
+      "actions": {
+        "unsave": "Unsave"
+      },
+      "pagination": {
+        "wordsPerPage": "Words per page"
+      },
+      "emptyMessage": "No saved words found"
+    },
+    "Card": {
+      "savedAt": "Saved At",
+      "view": "View",
+      "unsave": "Unsave"
+    }
+  },
   "Profile": {
     "welcome_message": "Welcome to Turkish Dictionary!",
     "profile_completion_message": "Please complete your profile to continue",

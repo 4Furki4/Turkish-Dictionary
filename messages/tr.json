@@ -74,6 +74,42 @@
       "meaning": "Anlam"
     }
   },
+  "SavedWords": {
+    "Toolbar": {
+      "searchPlaceholder": "Kaydedilen kelimelerde ara...",
+      "filters": "Filtreler",
+      "sort": {
+        "az": "A → Z",
+        "za": "Z → A",
+        "dateAsc": "Eklenme Tarihi ↑",
+        "dateDesc": "Eklenme Tarihi ↓"
+      },
+      "sortPlaceholder": "Sıralama",
+      "pagination": {
+        "wordsPerPage": "Sayfa başına kelime"
+      }
+    },
+    "Table": {
+      "searchPlaceholder": "Kaydedilen kelimelerde ara...",
+      "columns": {
+        "savedAt": "Kaydedilme Tarihi",
+        "name": "Kelime",
+        "actions": "İşlemler"
+      },
+      "actions": {
+        "unsave": "Kaydı Kaldır"
+      },
+      "pagination": {
+        "wordsPerPage": "Sayfa başına kelime"
+      },
+      "emptyMessage": "Kaydedilen kelime bulunamadı"
+    },
+    "Card": {
+      "savedAt": "Kaydedilme Tarihi",
+      "view": "Görüntüle",
+      "unsave": "Kaydı Kaldır"
+    }
+  },
   "Profile": {
     "welcome_message": "Türkçe Sözlüğe Hoş Geldiniz!",
     "profile_completion_message": "Devam etmek için lütfen profilinizi tamamlayın",

@@ -39,8 +39,8 @@ type MeaningEditSubmitData = {
 type Meaning = {
   meaning_id: number;
   meaning: string;
-  part_of_speech: string;
-  part_of_speech_id: number;
+  part_of_speech?: string;
+  part_of_speech_id?: number;
   sentence: string | undefined;
   author: string | undefined;
   author_id: number | undefined;
@@ -205,7 +205,7 @@ function MeaningEditRequestForm({
     defaultValues: {
       meaning_id: meaning.meaning_id,
       meaning: meaning.meaning,
-      part_of_speech_id: meaning.part_of_speech_id.toString(),
+      part_of_speech_id: meaning.part_of_speech_id?.toString(),
       attributes: meaning.attributes?.map(at => at.attribute_id.toString()) ?? [],
       sentence: meaning.sentence ?? "",
       author_id: meaning.author_id?.toString() ?? "",

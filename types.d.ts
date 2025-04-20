@@ -112,7 +112,21 @@ type WordSearchResult = {
     }[];
   }
 }
-
+type SavedWordsResult = {
+  word_data: {
+    word_id: number;
+    word_name: string;
+    saved_at: string;
+    attributes?: {
+      attribute_id: number;
+      attribute: string;
+    }[];
+    root: {
+      root: string;
+      language: string;
+    };
+  }
+}
 type DashboardWordList = {
   word_id: number;
   name: string;

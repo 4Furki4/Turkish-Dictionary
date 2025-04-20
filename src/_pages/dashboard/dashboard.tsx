@@ -3,7 +3,7 @@ import React from "react";
 import DashboardLinks from "./dashboard-links";
 
 
-export default async function Dashboard({
+export default function Dashboard({
   locale,
   children,
 }: {
