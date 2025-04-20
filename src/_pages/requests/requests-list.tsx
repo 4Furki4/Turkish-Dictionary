@@ -22,11 +22,12 @@ import { EntityTypes, Actions, Status, entityTypesEnum, actionsEnum, statusEnum 
 import { Link } from "@/src/i18n/routing";
 import { Pagination } from "@heroui/pagination";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { tr } from "date-fns/locale";
 
 export default function RequestsList() {
   const t = useTranslations("Requests");
-
+  const locale = useLocale();
   const entityTypeLabels = useMemo<Record<EntityTypes, string>>(() => ({
     words: t("entityTypes.words"),
     meanings: t("entityTypes.meanings"),
@@ -154,6 +155,7 @@ export default function RequestsList() {
         return request.requestDate
           ? formatDistanceToNow(new Date(request.requestDate), {
             addSuffix: true,
+            locale: locale === 'tr' ? tr : undefined
           })
           : "Unknown";
       case "actions":

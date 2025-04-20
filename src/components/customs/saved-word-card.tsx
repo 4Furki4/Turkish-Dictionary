@@ -8,7 +8,8 @@ import { useTranslations } from "next-intl";
 import { api } from "@/src/trpc/react";
 import WordCard from "./word-card";
 import { Session } from "next-auth";
-
+import { formatDistanceToNow } from "date-fns";
+import { tr } from "date-fns/locale";
 interface SavedWordCardProps {
   wordData: {
     word_id: number;
@@ -46,7 +47,10 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
       <CardBody>
         <p className="text-sm">
           {t("savedAt")}:{" "}
-          {new Date(wordData.saved_at).toLocaleDateString()}
+          {formatDistanceToNow(new Date(wordData.saved_at), {
+            addSuffix: true,
+            locale: locale === 'tr' ? tr : undefined
+          })}
         </p>
       </CardBody>
       <CardFooter className="flex justify-between">
