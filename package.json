@@ -43,6 +43,7 @@
     "@types/eslint": "^8.56.10",
     "@uidotdev/usehooks": "^2.4.1",
     "@uploadthing/react": "^6.0.2",
+    "@vercel/speed-insights": "^1.2.0",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
