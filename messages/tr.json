@@ -8,7 +8,8 @@
     "Logout": "Çıkış Yap",
     "SavedWords": "Kaydedilen Kelimeler",
     "MyRequests": "İsteklerim",
-    "SearchHistory": "Arama Geçmişi"
+    "SearchHistory": "Arama Geçmişi",
+    "Dashboard": "Paneli"
   },
   "SigninForm": {
     "Sign in with Google": "Google ile Giriş Yap",

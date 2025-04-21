@@ -8,7 +8,8 @@
     "Logout": "Logout",
     "SavedWords": "Saved Words",
     "MyRequests": "My Requests",
-    "SearchHistory": "Search History"
+    "SearchHistory": "Search History",
+    "Dashboard": "Dashboard"
   },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
