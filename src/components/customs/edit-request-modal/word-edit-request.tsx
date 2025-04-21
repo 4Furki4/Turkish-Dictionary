@@ -10,6 +10,7 @@ import { Autocomplete, AutocompleteItem } from "@heroui/react"
 import { Textarea } from "@heroui/input"
 import { WordSearchResult } from "@/types"
 import WordAttributesRequestInput from "./word/word-attributes-request-input"
+import { useTranslations, useLocale } from "next-intl";
 
 const wordEditRequestSchema = z.object({
   language: z.string().optional(),
@@ -29,11 +30,13 @@ export default function WordEditRequest({
 }: {
   data: WordSearchResult
 }) {
+  const locale = useLocale();
+  const t = useTranslations();
   const { data: languages, isLoading: languagesIsLoading } = api.params.getLanguages.useQuery()
   const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesWithRequested.useQuery()
   const { mutate, isPending } = api.request.requestEditWord.useMutation({
     onSuccess: () => {
-      toast.success("Edit request submitted successfully")
+      toast.success(t("Requests.EditRequestSubmittedSuccessfully"))
     },
     onError: (error) => {
       toast.error(error.message)
@@ -71,7 +74,7 @@ export default function WordEditRequest({
       }, {})
     }
     if (Object.keys(dirtyFields).filter((key) => key !== 'reason').length === 0) {
-      toast.error("no-changes")
+      toast.error(t("NoChanges"))
       return
     }
     mutate(preparedData)
@@ -85,9 +88,9 @@ export default function WordEditRequest({
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
-            label="Word Name"
+            label={t("WordName")}
             labelPlacement="outside"
-            placeholder="Enter word name"
+            placeholder={t("EnterWordName")}
             isInvalid={!!error}
             errorMessage={error?.message}
           />
@@ -103,9 +106,9 @@ export default function WordEditRequest({
           render={({ field, fieldState: { error } }) => (
             <Input
               {...field}
-              label="Prefix"
+              label={t("Prefix")}
               labelPlacement="outside"
-              placeholder="Enter prefix"
+              placeholder={t("EnterPrefix")}
               isInvalid={!!error}
               errorMessage={error?.message}
             />
@@ -117,9 +120,9 @@ export default function WordEditRequest({
           render={({ field, fieldState: { error } }) => (
             <Input
               {...field}
-              label="Suffix"
+              label={t("Suffix")}
               labelPlacement="outside"
-              placeholder="Enter suffix"
+              placeholder={t("EnterSuffix")}
               isInvalid={!!error}
               errorMessage={error?.message}
             />
@@ -136,11 +139,11 @@ export default function WordEditRequest({
             <Autocomplete
               radius='sm'
               {...field}
-              label="Language"
+              label={t("Language")}
               isLoading={languagesIsLoading}
               labelPlacement='outside'
               defaultItems={languages || []}
-              placeholder="Select Language"
+              placeholder={t("EnterLanguage")}
               defaultSelectedKey={word_data.root.language_code}
               onSelectionChange={(item) => {
                 field.onChange(item);
@@ -150,9 +153,8 @@ export default function WordEditRequest({
               errorMessage={error?.message}
             >
               {(language) => (
-                <AutocompleteItem key={language.language_code} value={language.language_code}>
-                  {language.language_en}
-                  {/* TODO: i18n needed */}
+                <AutocompleteItem key={language.language_code} >
+                  {locale === "en" ? language.language_en : language.language_tr}
                 </AutocompleteItem>
               )}
             </Autocomplete>
@@ -165,9 +167,9 @@ export default function WordEditRequest({
           render={({ field, fieldState: { error } }) => (
             <Input
               {...field}
-              label="Root"
+              label={t("Root")}
               labelPlacement="outside"
-              placeholder="Enter root"
+              placeholder={t("EnterRoot")}
               isInvalid={!!error}
               errorMessage={error?.message}
             />
@@ -187,9 +189,9 @@ export default function WordEditRequest({
           render={({ field, fieldState: { error } }) => (
             <Input
               {...field}
-              label="Phonetic"
+              label={t("Phonetic")}
               labelPlacement="outside"
-              placeholder="Enter phonetic"
+              placeholder={t("EnterPhonetic")}
               isInvalid={!!error}
               errorMessage={error?.message}
             />
@@ -203,8 +205,8 @@ export default function WordEditRequest({
         render={({ field, fieldState: { error } }) => (
           <Textarea
             {...field}
-            label="Reason for Change"
-            placeholder="Please explain why you want to make these changes"
+            label={t("Requests.Reason")}
+            placeholder={t("Requests.EnterReason")}
             labelPlacement="outside"
             isInvalid={!!error}
             errorMessage={error?.message}
@@ -214,8 +216,8 @@ export default function WordEditRequest({
       />
 
       <div className="flex justify-end space-x-2">
-        <Button color="secondary" variant="flat" type="submit">
-          Submit Request
+        <Button color="secondary" variant="flat" type="submit" isLoading={isPending}>
+          {t("Requests.SubmitRequest")}
         </Button>
       </div>
     </form>

@@ -3,7 +3,7 @@ import { Control, Controller } from "react-hook-form";
 import { WordEditRequestForm } from "../word-edit-request";
 import { FileClock, Plus } from "lucide-react";
 import NewWordAttributeRequestModal from "./new-word-attribute-request-modal";
-
+import { useTranslations } from "next-intl";
 export default function WordAttributesRequestInput({
     control,
     wordAttributes,
@@ -20,6 +20,7 @@ export default function WordAttributesRequestInput({
     wordAttributesIsLoading: boolean
 }) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+    const t = useTranslations();
     return (
         <>
             <NewWordAttributeRequestModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
@@ -29,8 +30,8 @@ export default function WordAttributesRequestInput({
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <Select
                         items={wordAttributes || []}
-                        label="Attributes"
-                        placeholder="Select attributes"
+                        label={t("WordAttribute")}
+                        placeholder={t("SelectAttributes")}
                         labelPlacement="outside"
                         selectionMode="multiple"
                         selectedKeys={new Set(value)}
@@ -48,7 +49,7 @@ export default function WordAttributesRequestInput({
                             // color='primary'
                             >
                                 <div className='sr-only'>
-                                    new-word-attribute
+                                    {t("NewWordAttribute")}
                                 </div>
                                 <Plus></Plus>
                             </Button>
@@ -56,9 +57,9 @@ export default function WordAttributesRequestInput({
                     >
                         {(attr) => (
                             <SelectItem endContent={attr.id < 0 ? (
-                                <Tooltip content="requested attribute by you">
+                                <Tooltip content={t("Requests.RequestedAttributeByYou")}>
                                     <FileClock className="text-warning" />
-                                </Tooltip>) : ""} key={attr.id.toString()} value={attr.id.toString()}>
+                                </Tooltip>) : ""} key={attr.id.toString()}>
                                 {attr.attribute}
                             </SelectItem>
                         )}

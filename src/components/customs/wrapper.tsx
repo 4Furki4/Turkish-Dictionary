@@ -1,13 +1,18 @@
 import { Session } from "next-auth";
 import NavbarAndSidebar from "./navbar-and-sidebar";
-export function Wrapper({ session, HomeIntl, SignInIntl, WordListIntl }: {
+export function Wrapper({ session, HomeIntl, SignInIntl, WordListIntl, TitleIntl, ProfileIntl, SavedWordsIntl, MyRequestsIntl, SearchHistoryIntl, LogoutIntl }: {
     session: Session | null
     HomeIntl: string
     SignInIntl: string
     WordListIntl: string
-
+    TitleIntl: string
+    ProfileIntl: string
+    SavedWordsIntl: string
+    MyRequestsIntl: string
+    SearchHistoryIntl: string
+    LogoutIntl: string
 }) {
     return (
-        <NavbarAndSidebar session={session} HomeIntl={HomeIntl} SignInIntl={SignInIntl} WordListIntl={WordListIntl} />
+        <NavbarAndSidebar session={session} HomeIntl={HomeIntl} SignInIntl={SignInIntl} WordListIntl={WordListIntl} TitleIntl={TitleIntl} ProfileIntl={ProfileIntl} SavedWordsIntl={SavedWordsIntl} MyRequestsIntl={MyRequestsIntl} SearchHistoryIntl={SearchHistoryIntl} LogoutIntl={LogoutIntl} />
     )
 }

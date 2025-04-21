@@ -2,7 +2,13 @@
   "Navbar": {
     "Home": "Ana Sayfa",
     "Word List": "Kelime Listesi",
-    "Sign In": "Giriş Yap"
+    "Sign In": "Giriş Yap",
+    "Title": "Türkçe Sözlük",
+    "Profile": "Profil",
+    "Logout": "Çıkış Yap",
+    "SavedWords": "Kaydedilen Kelimeler",
+    "MyRequests": "İsteklerim",
+    "SearchHistory": "Arama Geçmişi"
   },
   "SigninForm": {
     "Sign in with Google": "Google ile Giriş Yap",
@@ -39,7 +45,14 @@
   },
   "WordCard": {
     "UnauthSave": "Kaydetmek için giriş yapın",
-    "Saved": "Kelime kaydedildi"
+    "Saved": "Kelime kaydedildi",
+    "EditWord": "Kelime Düzenle",
+    "Words": "Kelimeler",
+    "Meanings": "Anlamlar",
+    "Close": "Kapat",
+    "You can request an edit if you are signed in": "Giriş yapmışsanız bir düzenleme talebi gönderebilirsiniz",
+    "SignIn": "Giriş Yap",
+    "RequestEdit": "Düzenleme Talep Et"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
@@ -72,6 +85,42 @@
     "columns": {
       "word": "Kelime",
       "meaning": "Anlam"
+    }
+  },
+  "SavedWords": {
+    "Toolbar": {
+      "searchPlaceholder": "Kaydedilen kelimelerde ara...",
+      "filters": "Filtreler",
+      "sort": {
+        "az": "A → Z",
+        "za": "Z → A",
+        "dateAsc": "Eklenme Tarihi ↑",
+        "dateDesc": "Eklenme Tarihi ↓"
+      },
+      "sortPlaceholder": "Sıralama",
+      "pagination": {
+        "wordsPerPage": "Sayfa başına kelime"
+      }
+    },
+    "Table": {
+      "searchPlaceholder": "Kaydedilen kelimelerde ara...",
+      "columns": {
+        "savedAt": "Kaydedilme Tarihi",
+        "name": "Kelime",
+        "actions": "İşlemler"
+      },
+      "actions": {
+        "unsave": "Kaydı Kaldır"
+      },
+      "pagination": {
+        "wordsPerPage": "Sayfa başına kelime"
+      },
+      "emptyMessage": "Kaydedilen kelime bulunamadı"
+    },
+    "Card": {
+      "savedAt": "Kaydedilme Tarihi",
+      "view": "Görüntüle",
+      "unsave": "Kaydı Kaldır"
     }
   },
   "Profile": {
@@ -175,6 +224,59 @@
       "request": "İstek:",
       "empty": "Boş",
       "updateFrom": "Güncellenecek değer"
+    },
+    "RequestedAttributeByYou": "Sizin eklediğiniz özellik",
+    "NoChanges": "Değişiklik tespit edilmedi",
+    "Reason": "Değişiklik Nedeni",
+    "EnterReason": "Lütfen değişiklik nedeni giriniz",
+    "EditRequestSubmittedSuccessfully": "Değişiklik isteği başarıyla gönderildi",
+    "DeleteRequestSubmittedSuccessfully": "Silme isteği başarıyla gönderildi",
+    "FailedToSubmitEditRequest": "Değişiklik isteği gönderirken hata oluştu",
+    "FailedToSubmitDeleteRequest": "Silme isteği gönderirken hata oluştu",
+    "SubmitRequest": "İsteği Gönder",
+    "DeleteMeaningRequest": "Anlam Silme İsteği",
+    "DeleteMeaningRequestSentence": "\"{meaning}\" anlamı için silme isteğini göndermek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
+    "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
+    "ReasonRequired": "Lütfen değişiklik nedeni giriniz"
+  },
+  "Phonetic": "Fonetik",
+  "WordName": "Kelime",
+  "Prefix": "Ön ek",
+  "Suffix": "Son ek",
+  "Language": "Dil",
+  "Root": "Kök",
+  "EnterWordName": "Kelime Giriniz",
+  "EnterPrefix": "Ön ek Giriniz",
+  "EnterSuffix": "Son ek Giriniz",
+  "EnterRoot": "Kök Giriniz",
+  "EnterLanguage": "Dil Giriniz",
+  "EnterPhonetic": "Fonetik Giriniz",
+  "WordAttribute": "Kelime Özelliği",
+  "SelectAttributes": "Özellikleri Seçin",
+  "NewWordAttribute": "Yeni Kelime Özelliği",
+  "EnterWordAttribute": "Kelime Özelliği Giriniz",
+  "AddNewWordAttribute": "Yeni Kelime Özelliği Ekle",
+  "Cancel": "İptal Et",
+  "Meaning": "Anlam",
+  "EnterMeaning": "Anlam Giriniz",
+  "ExampleSentence": "Örnek Cümle",
+  "EnterExampleSentence": "Örnek Cümle Giriniz",
+  "SelectPartOfSpeech": "Sözcük Türü Seçin",
+  "PartOfSpeech": "Sözcük Türü",
+  "Author": "Yazar",
+  "SelectAuthor": "Yazar Seçin",
+  "Attributes": "Özellikler",
+  "YouCanSelectAnAttributeForThisMeaning": "Bu anlam için özellikler seçebilirsiniz",
+  "Forms": {
+    "Attributes": {
+      "Required": "Özellik gerekli, lütfen bir özellik giriniz.",
+      "LengthMustBeGreaterThan2": "Özellik uzunluğu 2 karakterden uzun olmalıdır."
+    },
+    "Meanings": {
+      "Required": "Anlam gerekli, lütfen bir anlam giriniz."
+    },
+    "PartOfSpeech": {
+      "Required": "Sözcük Türü gerekli, lütfen bir sözcük türü giriniz."
     }
   }
 }

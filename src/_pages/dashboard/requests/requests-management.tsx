@@ -191,9 +191,9 @@ export default function RequestsManagement() {
                 className="w-full sm:w-48"
               >
                 <>
-                  <SelectItem key="all" value="all">All Types</SelectItem>
+                  <SelectItem key="all">All Types</SelectItem>
                   {Object.entries(entityTypeLabels).map(([key, label]) => (
-                    <SelectItem key={key} value={key}>
+                    <SelectItem key={key}>
                       {label}
                     </SelectItem>
                   ))}
@@ -208,9 +208,9 @@ export default function RequestsManagement() {
                 className="w-full sm:w-36"
               >
                 <>
-                  <SelectItem key="all" value="all">All Actions</SelectItem>
+                  <SelectItem key="all">All Actions</SelectItem>
                   {Object.entries(actionLabels).map(([key, label]) => (
-                    <SelectItem key={key} value={key}>
+                    <SelectItem key={key}>
                       {label}
                     </SelectItem>
                   ))}

@@ -22,11 +22,12 @@ import { EntityTypes, Actions, Status, entityTypesEnum, actionsEnum, statusEnum 
 import { Link } from "@/src/i18n/routing";
 import { Pagination } from "@heroui/pagination";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { tr } from "date-fns/locale";
 
 export default function RequestsList() {
   const t = useTranslations("Requests");
-
+  const locale = useLocale();
   const entityTypeLabels = useMemo<Record<EntityTypes, string>>(() => ({
     words: t("entityTypes.words"),
     meanings: t("entityTypes.meanings"),
@@ -154,6 +155,7 @@ export default function RequestsList() {
         return request.requestDate
           ? formatDistanceToNow(new Date(request.requestDate), {
             addSuffix: true,
+            locale: locale === 'tr' ? tr : undefined
           })
           : "Unknown";
       case "actions":
@@ -233,9 +235,9 @@ export default function RequestsList() {
                     className="w-full sm:w-48"
                   >
                     <>
-                      <SelectItem key="all" value="all">{t("entityTypes.all")}</SelectItem>
+                      <SelectItem key="all" >{t("entityTypes.all")}</SelectItem>
                       {Object.entries(entityTypeLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} >
                           {label}
                         </SelectItem>
                       ))}
@@ -255,9 +257,9 @@ export default function RequestsList() {
                     className="w-full sm:w-36"
                   >
                     <>
-                      <SelectItem key="all" value="all">{t("actions.all")}</SelectItem>
+                      <SelectItem key="all">{t("actions.all")}</SelectItem>
                       {Object.entries(actionLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} >
                           {label}
                         </SelectItem>
                       ))}
@@ -275,9 +277,9 @@ export default function RequestsList() {
                     className="w-full sm:w-36"
                   >
                     <>
-                      <SelectItem key="all" value="all">{t("status.all")}</SelectItem>
+                      <SelectItem key="all">{t("status.all")}</SelectItem>
                       {Object.entries(statusLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} >
                           {label}
                         </SelectItem>
                       ))}

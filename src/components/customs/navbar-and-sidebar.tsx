@@ -9,12 +9,23 @@ export default function NavbarAndSidebar({
     HomeIntl,
     SignInIntl,
     WordListIntl,
-
+    TitleIntl,
+    ProfileIntl,
+    SavedWordsIntl,
+    MyRequestsIntl,
+    SearchHistoryIntl,
+    LogoutIntl
 }: {
     session: Session | null
     HomeIntl: string
     SignInIntl: string
     WordListIntl: string
+    TitleIntl: string
+    ProfileIntl: string
+    SavedWordsIntl: string
+    MyRequestsIntl: string
+    SearchHistoryIntl: string
+    LogoutIntl: string
 }) {
     // Render children if on client side, otherwise return null
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -25,6 +36,12 @@ export default function NavbarAndSidebar({
                 HomeIntl={HomeIntl}
                 SignInIntl={SignInIntl}
                 WordListIntl={WordListIntl}
+                TitleIntl={TitleIntl}
+                ProfileIntl={ProfileIntl}
+                SavedWordsIntl={SavedWordsIntl}
+                MyRequestsIntl={MyRequestsIntl}
+                SearchHistoryIntl={SearchHistoryIntl}
+                LogoutIntl={LogoutIntl}
                 setIsSidebarOpen={setIsSidebarOpen}
             />
             <Sidebar session={session} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />

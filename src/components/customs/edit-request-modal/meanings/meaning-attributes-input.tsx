@@ -2,7 +2,7 @@ import React from 'react'
 import { Control, Controller } from 'react-hook-form'
 import { Select, SelectItem } from '@heroui/react'
 import { MeaningEditRequestForm } from '../meanings-edit-request'
-
+import { useTranslations } from 'next-intl'
 export default function MeaningAttributesInput({ control, meaningAttributes, meaningAttributesIsLoading }:
     {
         control: Control<MeaningEditRequestForm>,
@@ -12,6 +12,7 @@ export default function MeaningAttributesInput({ control, meaningAttributes, mea
         }[] | undefined,
         meaningAttributesIsLoading: boolean
     }) {
+    const t = useTranslations()
     return (
         <Controller
             name={`attributes`}
@@ -21,8 +22,8 @@ export default function MeaningAttributesInput({ control, meaningAttributes, mea
                     as={'div'}
                     items={meaningAttributes || []}
                     radius='sm'
-                    label="Attributes"
-                    placeholder='You can select an attribute for this meaning'
+                    label={t("Attributes")}
+                    placeholder={t("YouCanSelectAnAttributeForThisMeaning")}
                     selectionMode="multiple"
                     isLoading={meaningAttributesIsLoading}
                     selectedKeys={new Set(value)}
@@ -34,7 +35,7 @@ export default function MeaningAttributesInput({ control, meaningAttributes, mea
                     className="w-full"
                 >
                     {(attr) => (
-                        <SelectItem key={attr.id.toString()} value={attr.id.toString()}>
+                        <SelectItem key={attr.id.toString()} >
                             {attr.attribute}
                         </SelectItem>
                     )}

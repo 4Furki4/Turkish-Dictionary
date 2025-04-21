@@ -33,7 +33,7 @@ export default function WordLanguageInput({
                     errorMessage={error?.message}
                 >
                     {languages.map((lang) => (
-                        <AutocompleteItem key={lang.language_code} value={lang.language_code}>
+                        <AutocompleteItem key={lang.language_code} >
                             {lang.language_en}
                             {/* TODO: i18n needed */}
                         </AutocompleteItem>

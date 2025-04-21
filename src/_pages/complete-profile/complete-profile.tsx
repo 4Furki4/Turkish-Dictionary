@@ -5,7 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { Input } from '@heroui/react';
+import { Button, Input } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { Session } from 'next-auth';
 import { toast } from 'sonner';
@@ -13,7 +13,6 @@ import { toast } from 'sonner';
 const completeProfileSchema = z.object({
     username: z.string().min(3, "Username must be at least 3 characters"),
     name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email address")
 });
 
 type CompleteProfileForm = z.infer<typeof completeProfileSchema>;
@@ -30,7 +29,7 @@ export default function CompleteProfile({ session }: { session: Session | null }
     });
 
     const updateProfile = api.user.updateProfile.useMutation({
-        onSuccess: async () => {
+        onSuccess: () => {
             router.push(`/profile/${session?.user?.id}`);
         },
         onError: (error) => {
@@ -40,8 +39,9 @@ export default function CompleteProfile({ session }: { session: Session | null }
         }
     });
 
-    const onSubmit = async (data: CompleteProfileForm) => {
-        await updateProfile.mutateAsync(data);
+    const onSubmit = (data: CompleteProfileForm) => {
+        console.log('data', data);
+        updateProfile.mutate(data);
     };
 
     return (
@@ -78,13 +78,13 @@ export default function CompleteProfile({ session }: { session: Session | null }
                         )} />
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         className="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary-500 transition-colors"
                         disabled={updateProfile.isPending}
                     >
                         {updateProfile.isPending ? t("updating") : t("complete_profile")}
-                    </button>
+                    </Button>
                 </form>
             </div>
         </main>

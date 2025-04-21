@@ -27,7 +27,7 @@ const editMeaningFormSchema = z.object({
     id: z.string().or(z.number()).optional().nullable(),
     meaning: z.string().min(1, "Meaning input cannot be empty!"),
     attributes: z.union([z.array(z.string()), z.undefined()]),
-    partOfSpeechId: z.string().min(1, "Please select a part of speech option."),
+    partOfSpeechId: z.string().optional(),
     exampleSentence: z.union([z.string(), z.undefined()]),
     authorId: z.union([z.string(), z.undefined()])
 })

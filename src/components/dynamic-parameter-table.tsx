@@ -129,7 +129,7 @@ export default function DynamicParameterTable({
                   onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
                 >
                   {itemsPerPageOptions.map((option) => (
-                    <SelectItem key={option.key} value={option.key}>
+                    <SelectItem key={option.key} >
                       {option.label}
                     </SelectItem>
                   ))}

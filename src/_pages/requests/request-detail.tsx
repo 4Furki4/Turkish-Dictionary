@@ -421,7 +421,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
         </Button>
       </div>
 
-      <Card className="border-default shadow-sm">
+      <Card className="border-default shadow-xs">
         <CardHeader className="border-b border-default bg-default-50 px-6 py-5">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
@@ -781,7 +781,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                       <input
                         id={key}
                         type="text"
-                        className="w-full rounded-md border border-default p-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary bg-content1"
+                        className="w-full rounded-md border border-default p-2 focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary bg-content1"
                         value={editedData[key] !== undefined
                           ? String(editedData[key])
                           : String(value)}

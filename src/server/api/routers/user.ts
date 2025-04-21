@@ -1,20 +1,45 @@
 import { count, eq, sql } from "drizzle-orm";
 import { adminProcedure, createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
-import { WordSearchResult } from "@/types";
+import { SavedWordsResult, WordSearchResult } from "@/types";
 import { savedWords } from "@/db/schema/saved_words";
 import { rolesEnum, users } from "@/db/schema/users";
 import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
-  getSavedWords: protectedProcedure.query(async ({ ctx: { session, db } }) => {
-    const userWithSavedWords = await db.execute(sql`
+  getSavedWords: protectedProcedure.input(z.object({
+    search: z.string().optional().default(""),
+    sortAlphabet: z.enum(["az", "za"]).default("az"),
+    sortDate: z.enum(["dateAsc", "dateDesc"]).default("dateAsc"),
+    sortBy: z.enum(["alphabet", "date"]).default("date"),
+    take: z.number().optional().default(10),
+    skip: z.number().optional().default(0),
+  })).query(async ({ ctx: { session, db }, input: { search, sortAlphabet, sortDate, sortBy, take, skip } }) => {
+    console.log('sordDate', sortDate);
+    const alphabetOrder =
+      sortAlphabet === "az"
+        ? sql`w.name ASC`
+        : sortAlphabet === "za"
+          ? sql`w.name DESC`
+          : sql``;
+    const dateOrder =
+      sortDate === "dateAsc"
+        ? sql`sw."createdAt" ASC`
+        : sortDate === "dateDesc"
+          ? sql`sw."createdAt" DESC`
+          : sql``;
+    const primaryOrder = sortBy === "alphabet" ? alphabetOrder : dateOrder;
+    const secondaryOrder = sortBy === "alphabet" ? dateOrder : alphabetOrder;
+    const searchClause = search ? sql`AND w.name ILIKE ${'%' + search + '%'}` : sql``;
+    const userWithSavedWords = (await db.execute(sql`
     SELECT
     JSON_BUILD_OBJECT(
       'word_id',
       w.id,
       'word_name',
       w.name,
+      'saved_at',
+      sw."createdAt",
       'attributes',
       (
         SELECT
@@ -33,37 +58,44 @@ export const userRouter = createTRPCRouter({
           ws_a.word_id = w.id
       ),
       'root',
-      JSON_BUILD_OBJECT('root', r.root, 'language', l.language_en),
-      'meanings',
-      JSON_AGG(
-        JSON_BUILD_OBJECT(
-          'meaning_id',
-          m.id,
-          'meaning',
-          m.meaning,
-          'part_of_speech',
-          pos.part_of_speech
-        )
-      )
+      JSON_BUILD_OBJECT('root', r.root, 'language', l.language_en)
     ) AS word_data
   FROM
     users u
     INNER JOIN saved_words sw ON u.id = sw.user_id
     LEFT JOIN words w ON sw.word_id = w.id
-    LEFT JOIN meanings m ON w.id = m.word_id
-    LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
     LEFT JOIN roots r ON r.word_id = w.id
     LEFT JOIN languages l ON r.language_id::integer = l.id
   WHERE
-    u.id = ${session.user.id}
-  GROUP BY
+    u.id = ${session.user.id} 
+    ${searchClause}
+    GROUP BY
     w.id,
     w.name,
     r.root,
-    l.language_en;
-    `) as WordSearchResult[]
-
+    l.language_en,
+    sw."createdAt" 
+    ORDER BY
+    ${primaryOrder},
+    ${secondaryOrder}
+    LIMIT ${take}
+    OFFSET ${skip};
+    `)) as SavedWordsResult[];
+    console.log('userWithSavedWords', userWithSavedWords)
     return userWithSavedWords.length > 0 ? userWithSavedWords : [];
+  }),
+  getSavedWordCount: protectedProcedure.input(z.object({
+    search: z.string().optional().default(""),
+  })).query(async ({ ctx: { session, db }, input: { search } }) => {
+    const searchClause = search ? sql`AND w.name ILIKE ${'%' + search + '%'}` : sql``;
+    const result = await db.execute(sql`
+      SELECT COUNT(*) AS count
+      FROM saved_words sw
+      JOIN words w ON sw.word_id = w.id
+      WHERE sw.user_id = ${session.user.id}
+      ${searchClause};
+    `) as { count: number }[];
+    return Number(result[0]?.count ?? 0);
   }),
   getWordSaveStatus: protectedProcedure
     .input(z.number())

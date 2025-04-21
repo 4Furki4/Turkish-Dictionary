@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
     Table,
     TableHeader,
@@ -54,40 +54,43 @@ export default function WordList() {
     const [pageNumber, setPageNumber] = React.useState<number>(initialPage);
     const [wordsPerPage, setWordsPerPage] = React.useState<number>(initialPerPage);
 
-    const { control, watch } = useForm({
+    const { control, watch, setValue } = useForm({
         defaultValues: {
             search: initialSearch
         }
     });
 
-    // Update URL when parameters change
-    const updateQueryParams = React.useCallback((params: { page?: number; per_page?: number; search?: string }) => {
-        const newSearchParams = new URLSearchParams(searchParams);
-
-        Object.entries(params).forEach(([key, value]) => {
-            if (value) {
-                newSearchParams.set(key, value.toString());
-            } else {
-                newSearchParams.delete(key);
-            }
-        });
-
-        router.push(`${pathname}?${newSearchParams.toString()}`);
-    }, [pathname, router, searchParams]);
-
-    // Handle parameter changes
-    React.useEffect(() => {
-        updateQueryParams({ page: pageNumber, per_page: wordsPerPage });
-    }, [pageNumber, wordsPerPage, updateQueryParams]);
-
     const debouncedSearch = useDebounce(watch("search"), 500);
+    const isFirstRender = useRef(true);
 
-    React.useEffect(() => {
-        if (debouncedSearch !== initialSearch) {
-            updateQueryParams({ search: debouncedSearch || undefined, page: 1 });
-            setPageNumber(1); // Reset to first page on new search
+    // reset to first page when search changes
+    useEffect(() => {
+        setPageNumber(1);
+    }, [debouncedSearch]);
+
+    // update state on URL param changes (back/forward)
+    useEffect(() => {
+        if (isFirstRender.current) return;
+        const paramPage = Number(searchParams.get('page')) || 1;
+        const paramPer = Number(searchParams.get('per_page')) || 10;
+        const paramSearch = searchParams.get('search') || '';
+        setPageNumber(paramPage);
+        setWordsPerPage(paramPer);
+        setValue('search', paramSearch, { shouldDirty: false });
+    }, [searchParams, setValue]);
+
+    // sync state to URL, enable back/forward history
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
         }
-    }, [debouncedSearch, initialSearch, updateQueryParams]);
+        const params = new URLSearchParams();
+        if (debouncedSearch) params.set('search', debouncedSearch);
+        params.set('page', pageNumber.toString());
+        params.set('per_page', wordsPerPage.toString());
+        router.push(`${pathname}?${params.toString()}`);
+    }, [pageNumber, wordsPerPage, debouncedSearch, pathname, router]);
 
     const { data: wordCount } = api.word.getWordCount.useQuery({
         search: debouncedSearch
