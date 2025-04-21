@@ -59,7 +59,8 @@
     "GoBackToHomepage": "Go back to homepage",
     "Columns": {
       "Word": "Word",
-      "Meaning": "Meaning"
+      "Meaning": "Meaning",
+      "Actions": "Actions"
     },
     "CreateWord": "Create Word",
     "MustAddMeaning": "You must add a meaning!",
