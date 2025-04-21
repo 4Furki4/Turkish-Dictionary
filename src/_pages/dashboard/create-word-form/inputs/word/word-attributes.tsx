@@ -6,6 +6,7 @@ import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/re
 import { Plus, X } from 'lucide-react'
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
+import { useTranslations } from 'next-intl';
 
 export default function WordAttributesInput({
     control,
@@ -14,6 +15,7 @@ export default function WordAttributesInput({
     control: Control<WordForm>,
     setValue: UseFormSetValue<WordForm>
 }) {
+    const t = useTranslations();
     const [wordAttributes] = api.params.getWordAttributes.useSuspenseQuery()
     const [values, setValues] = React.useState<Selection>(new Set([]));
 
@@ -37,8 +39,8 @@ export default function WordAttributesInput({
                         radius='sm'
                         as={'div'}
                         tabIndex={0}
-                        placeholder='Select an attribute...'
-                        label='Attribute'
+                        placeholder={t('SelectAttributes')}
+                        label={t('Attributes')}
                         labelPlacement='outside'
                         selectedKeys={values}
                         isInvalid={error !== undefined} errorMessage={error?.message}
@@ -54,9 +56,9 @@ export default function WordAttributesInput({
                                     setFieldValue("attributes", [])
                                 }}
                             >
-                                <X aria-description='Reset all selected values button' />
+                                <X aria-description={t('ResetAllSelectedValuesButton')} />
                                 <div className='sr-only'>
-                                    Reset selected values
+                                    {t('ResetAllSelectedValuesButton')}
                                 </div>
                             </Button>
                         )}
@@ -68,7 +70,7 @@ export default function WordAttributesInput({
                             >
                                 <Plus></Plus>
                                 <div className='sr-only'>
-                                    Add new word attribute
+                                    {t('AddNewWordAttribute')}
                                 </div>
                             </Button>
                         )}

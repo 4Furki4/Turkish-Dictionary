@@ -32,6 +32,7 @@ import { useForm } from "react-hook-form";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Controller } from "react-hook-form";
 import { Input } from "@heroui/react";
+import { useTranslations } from "next-intl";
 
 const wordPerPageOptions = [
   {
@@ -52,6 +53,7 @@ const wordPerPageOptions = [
   }
 ]
 export default function WordList() {
+  const t = useTranslations();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalChange } = useDisclosure();
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalChange } = useDisclosure();
   const [selectedWord, setSelectedWord] = React.useState<{
@@ -139,15 +141,15 @@ export default function WordList() {
   const columns = [
     {
       key: "name",
-      label: "word",
+      label: t("Dashboard.Columns.Word"),
     },
     {
       key: "meaning",
-      label: "meaning",
+      label: t("Dashboard.Columns.Meaning"),
     },
     {
       key: "actions",
-      label: "Actions",
+      label: t("Dashboard.Columns.Actions"),
     },
   ];
   const renderCell = useCallback((item: Row, columnKey: React.Key) => {
@@ -215,14 +217,14 @@ export default function WordList() {
                 color="primary"
                 size="lg"
               >
-                Create Word
+                {t("Dashboard.CreateWord")}
               </Button>
             </NextUILink>
             <Controller name="search" control={control} render={({ field }) => (
-              <Input {...field} placeholder="Search word" size="lg" />
+              <Input {...field} placeholder={t("SearchWord")} size="lg" />
             )}
             />
-            <Select label={"Words per page"} defaultSelectedKeys={[wordsPerPage.toString()]}
+            <Select label={t("WordsPerPage")} defaultSelectedKeys={[wordsPerPage.toString()]}
               size="sm"
               classNames={{
                 base: "ml-auto sm:max-w-64",

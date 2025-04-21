@@ -53,7 +53,7 @@ export default function NewWordAttributeRequestModal({
                                         message: t("Forms.Attributes.Required")
                                     },
                                     minLength: {
-                                        message: t("Forms.Attributes.LengthMustBeGreaterThan2"),
+                                        message: t("Forms.Attributes.MinLength2"),
                                         value: 2
                                     }
                                 }} render={({ field, fieldState: { error } }) => (

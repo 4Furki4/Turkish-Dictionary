@@ -22,7 +22,7 @@ export default function WordRootLanguageInput({
     locale: string,
 }) {
     const { data: langs, isLoading, isError, isSuccess, error: fetchError } = api.params.getLanguages.useQuery();
-    const t = useTranslations('LanguageAndRootInput')
+    const t = useTranslations()
     return (
         <Controller
             control={control}
@@ -49,12 +49,12 @@ export default function WordRootLanguageInput({
             render={({ field, fieldState: { error } }) => (
                 <Autocomplete
                     radius='sm'
-                    placeholder="You can search for a language"
+                    placeholder={t('EnterLanguage')}
                     description="The root language is required when root is specified!"
                     labelPlacement='outside'
                     isLoading={isLoading}
                     defaultItems={isSuccess ? langs : []}
-                    label="Select an language"
+                    label={t('Language')}
                     onSelectionChange={(item) => {
                         field.onChange(item);
                         clearErrors("language");

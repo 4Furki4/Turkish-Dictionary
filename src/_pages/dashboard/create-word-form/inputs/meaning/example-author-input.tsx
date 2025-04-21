@@ -4,10 +4,11 @@ import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
 import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/react"
 import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import React from 'react'
 import { Control, Controller, UseFormClearErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 
-export default function MeaningxampleSentenceAuthorInput({
+export default function MeaningExampleSentenceAuthorInput({
     index,
     control,
     defaultExampleSentenceAuthors,
@@ -25,6 +26,7 @@ export default function MeaningxampleSentenceAuthorInput({
     watch: UseFormWatch<WordForm>,
     setFieldValue: UseFormSetValue<WordForm>
 }) {
+    const t = useTranslations();
     const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
     const [value, setValue] = React.useState<Selection>(new Set());
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -46,7 +48,7 @@ export default function MeaningxampleSentenceAuthorInput({
                         clearErrors(exampleSentenceFormName)
                         return true
                     }
-                    if (!exampleSentence && author) return "Example sentence is required when author is selected!"
+                    if (!exampleSentence && author) return t('ExampleSentence.Required')
                     return true
                 },
             }}
@@ -62,10 +64,10 @@ export default function MeaningxampleSentenceAuthorInput({
                         selectedKeys={value}
                         selectionMode='single'
                         radius='sm'
-                        label="Author"
+                        label={t('Author')}
                         labelPlacement='outside'
-                        placeholder='You can select an author for the example sentence'
-                        description="Author is optional."
+                        placeholder={t('SelectAuthor')}
+                        description={t('Forms.ExampleSentence.Description')}
                         endContent={(
                             <Button
                                 isIconOnly
@@ -73,7 +75,7 @@ export default function MeaningxampleSentenceAuthorInput({
                                 variant='light'
                             >
                                 <div className='sr-only'>
-                                    Add new word attribute
+                                    {t('AddNewAuthor')}
                                 </div>
                                 <Plus></Plus>
                             </Button>

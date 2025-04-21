@@ -6,6 +6,9 @@ import { NewAttributeForm } from '@/types';
 import { toast } from 'sonner';
 import { Controller, useForm } from 'react-hook-form';
 import { AriaModalOverlayProps } from '@react-aria/overlays';
+import { useTranslations } from 'next-intl';
+
+
 type AddWordAttributeModalProps = {
     onClose: () => void,
     isOpen: boolean,
@@ -17,16 +20,17 @@ export default function AddWordAttributeModal({
     onOpenChange,
     ...modalProps
 }: AddWordAttributeModalProps) {
+    const t = useTranslations()
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
     const paramsUtils = api.useUtils().params
     const addWordAttributeMutation = api.admin.addNewWordAttribute.useMutation({
         onError(error, variables, context) {
             console.log(error)
-            toast.error("An error occured, please try again.")
+            toast.error(t("AnErrorOccuredPleaseTryAgain"))
         },
         onSuccess(data) {
             reset()
-            toast.success("Attribute has been added successfully!")
+            toast.success(t("AttributeAddedSuccessfully"))
             onClose()
             paramsUtils.getWordAttributes.invalidate()
         }
@@ -40,7 +44,7 @@ export default function AddWordAttributeModal({
                 {(close) => (
                     <>
                         <ModalHeader>
-                            Add new word attribute
+                            {t("AddNewWordAttribute")}
                         </ModalHeader>
                         <ModalBody>
                             <form key={'add-word-attribute-form'} onSubmit={(e) => {
@@ -50,21 +54,21 @@ export default function AddWordAttributeModal({
                                 <Controller control={newAttributeControl} name='attribute' rules={{
                                     required: {
                                         value: true,
-                                        message: "Attribute is required."
+                                        message: t("Forms.Attributes.Required")
                                     },
                                     minLength: {
-                                        message: "Attribute length must be greater than 2.",
+                                        message: t("Forms.Attributes.MinLength2"),
                                         value: 2
                                     }
                                 }} render={({ field, fieldState: { error } }) => (
-                                    <Input placeholder='Type new attribute' {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
+                                    <Input placeholder={t("EnterWordAttribute")} {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
                                 )} />
                                 <div className='grid grid-cols-2 gap-2'>
                                     <Button size='sm' type='submit' color='primary' isLoading={addWordAttributeMutation.isPending}>
-                                        Submit
+                                        {t("Submit")}
                                     </Button>
                                     <Button size='sm' onPress={close}>
-                                        Cancel
+                                        {t("Cancel")}
                                     </Button>
                                 </div>
                             </form>

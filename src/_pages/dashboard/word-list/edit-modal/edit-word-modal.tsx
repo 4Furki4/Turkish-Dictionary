@@ -132,7 +132,7 @@ export default function EditWordModal({
         id: m.meaning_id,
         meaning: m.meaning,
         exampleSentence: m.sentence ?? '',
-        partOfSpeechId: m.part_of_speech_id.toString(),
+        partOfSpeechId: m.part_of_speech_id?.toString(),
         attributes: m.attributes?.map((att) => att.attribute_id.toString()),
         authorId: m.author_id?.toString(),
     })) ?? []
@@ -168,7 +168,7 @@ export default function EditWordModal({
                 id: m.id,
                 meaning: m.meaning,
                 attributes: m.attributes?.map((at) => parseInt(at)),
-                partOfSpeechId: parseInt(m.partOfSpeechId),
+                partOfSpeechId: m.partOfSpeechId ? parseInt(m.partOfSpeechId) : null,
                 authorId: m.authorId ? parseInt(m.authorId) : null,
                 exampleSentence: m.exampleSentence === "" ? null : m.exampleSentence,
             })),

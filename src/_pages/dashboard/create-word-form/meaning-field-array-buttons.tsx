@@ -3,6 +3,7 @@ import { Meaning, WordForm } from '@/types';
 import { Button, ButtonGroup } from "@heroui/react";
 import React from 'react'
 import { UseFieldArrayAppend, UseFieldArrayPrepend } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 export default function MeaningFieldArrayButtons({
     append,
@@ -13,6 +14,7 @@ export default function MeaningFieldArrayButtons({
     prepend: UseFieldArrayPrepend<WordForm>,
     meaningDefaultValues: Partial<Meaning>
 }) {
+    const t = useTranslations();
     return (
         <ButtonGroup radius='sm' className="w-full flex  gap-2 ">
             <Button
@@ -23,7 +25,7 @@ export default function MeaningFieldArrayButtons({
                     append(meaningDefaultValues);
                 }}
             >
-                Append <span className="max-sm:hidden">Meaning</span>
+                {t('Dashboard.Append')}
             </Button>
             <Button
                 radius='sm'
@@ -33,7 +35,7 @@ export default function MeaningFieldArrayButtons({
                     prepend(meaningDefaultValues);
                 }}
             >
-                Prepend <span className="max-sm:hidden">Meaning</span>
+                {t('Dashboard.Prepend')}
             </Button>
         </ButtonGroup>
     )

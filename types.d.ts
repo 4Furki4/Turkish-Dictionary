@@ -45,7 +45,7 @@ type Meaning = {
     sentence: string | undefined;
     author?: string | undefined;
   };
-  partOfSpeechId: number | undefined;
+  partOfSpeechId?: number | undefined;
   attributes: string[];
 };
 
@@ -67,7 +67,7 @@ type WordFormSubmit = Prettify<{
   attributes: number[]
   meanings: {
     meaning: string;
-    partOfSpeechId: number;
+    partOfSpeechId?: number;
     attributes: number[];
     example?: {
       sentence: string;
@@ -98,8 +98,8 @@ type WordSearchResult = {
     meanings: {
       meaning_id: number;
       meaning: string;
-      part_of_speech: string;
-      part_of_speech_id: number
+      part_of_speech?: string;
+      part_of_speech_id?: number
       sentence: string | undefined;
       author: string | undefined;
       author_id: number | undefined
@@ -137,7 +137,7 @@ type EditMeaningForm = {
   id: string | number
   meaning: string
   attributes?: string[]
-  partOfSpeechId: string
+  partOfSpeechId?: string
   exampleSentence: string | undefined
   authorId: string | undefined
 }

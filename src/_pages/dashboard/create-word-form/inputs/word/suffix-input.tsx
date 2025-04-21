@@ -3,12 +3,14 @@ import { WordForm } from '@/types'
 import { Input } from "@heroui/react"
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
+import { useTranslations } from 'next-intl';
 
 export default function WordSuffixInput({
     control
 }: {
     control: Control<WordForm>
 }) {
+    const t = useTranslations();
     return (
         <Controller
             control={control}
@@ -17,9 +19,10 @@ export default function WordSuffixInput({
                 <Input
                     {...field}
                     radius='sm'
-                    label="Suffix"
+                    label={t('Suffix')}
+                    placeholder={t('EnterSuffix')}
                     labelPlacement='outside'
-                    description="Suffix is optional"
+                    description={t('SuffixIsOptional')}
                 />
             )}
         />

@@ -69,9 +69,12 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                   <Divider orientation="vertical" className="w-[2px] bg-primary" />
                   <p>
                     {meaning.part_of_speech}
-                    {meaning.attributes && meaning.attributes.length > 0
-                      ? `, ${meaning.attributes.map((attr) => attr.attribute).join(", ")}`
-                      : null}
+                    {meaning.attributes && meaning.attributes.length > 0 && (
+                      <>
+                        {meaning.part_of_speech ? ", " : ""}
+                        {meaning.attributes.map(attr => attr.attribute).join(", ")}
+                      </>
+                    )}
                   </p>
                 </div>
                 <p className="text-fs-1 break-words hyphens-auto">

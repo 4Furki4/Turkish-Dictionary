@@ -17,7 +17,7 @@ import { useTranslations } from "next-intl"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
-  part_of_speech_id: z.string().min(1, "Part of speech is required"),
+  part_of_speech_id: z.string().optional().nullable(),
   attributes: z.array(z.string()).optional(),
   sentence: z.string().optional(),
   author_id: z.string().optional(),
@@ -27,7 +27,7 @@ const meaningSchema = z.object({
 const getMeaningIntlSchema = (meaningRequired: string, partOfSpeechRequired: string, reasonRequired: string) => z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, meaningRequired),
-  part_of_speech_id: z.string().min(1, partOfSpeechRequired),
+  part_of_speech_id: z.string().optional().nullable(),
   attributes: z.array(z.string()).optional(),
   sentence: z.string().optional(),
   author_id: z.string().optional(),
@@ -246,7 +246,7 @@ function MeaningEditRequestForm({
           let value;
           switch (key) {
             case 'part_of_speech_id':
-              value = parseInt(data[key]);
+              value = data[key] ? parseInt(data[key]) : undefined;
               break;
             case 'attributes':
               const attrValue = data[key];

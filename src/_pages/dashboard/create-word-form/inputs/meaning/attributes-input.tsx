@@ -6,7 +6,7 @@ import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/re
 import { Plus, X } from 'lucide-react';
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
-
+import { useTranslations } from 'next-intl';
 export default function MeaningAttributesInput({
     index,
     control,
@@ -21,7 +21,7 @@ export default function MeaningAttributesInput({
     }[],
     setFieldValue: UseFormSetValue<WordForm>
 }) {
-    {/* TODO: LET THEM SELECT THE ADDED ATTRIBUTES OR ADD NEW ONE */ }
+    const t = useTranslations();
     const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
     const [values, setValues] = React.useState<Selection>(new Set([]));
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -49,13 +49,13 @@ export default function MeaningAttributesInput({
                         as={'div'}
                         tabIndex={0}
                         radius='sm'
-                        label="Attributes"
+                        label={t('Attributes')}
                         classNames={{
                             trigger: "pl-1",
                         }}
                         labelPlacement='outside'
-                        description="Attribute is optional"
-                        placeholder='Select a meaning attribute'
+                        description={t('Forms.MeaningAttributes.Description')}
+                        placeholder={t('Forms.MeaningAttributes.Select')}
                         selectionMode='multiple'
                         onChange={handleSelectionChange}
                         isLoading={isLoading}
@@ -85,7 +85,7 @@ export default function MeaningAttributesInput({
                             // color='primary'
                             >
                                 <div className='sr-only'>
-                                    Add new word attribute
+                                    {t('AddNewWordAttribute')}
                                 </div>
                                 <Plus></Plus>
                             </Button>

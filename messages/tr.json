@@ -56,7 +56,21 @@
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
-    "GoBackToHomepage": "Ana sayfaya dön"
+    "GoBackToHomepage": "Ana sayfaya dön",
+    "Columns": {
+      "Word": "Kelime",
+      "Meaning": "Anlam",
+      "Actions": "İşlemler"
+    },
+    "CreateWord": "Kelime Ekle",
+    "MustAddMeaning": "Anlam eklemelisiniz!",
+    "MustHaveAMeaning": "Anlam gerekli, lütfen bir anlam giriniz.",
+    "WordCreated": "Kelime oluşturuldu!",
+    "UploadingImages": "Resimler yükleniyor...",
+    "ImagesUploaded": "Resimler yüklendi!",
+    "Error": "Hata",
+    "Append": "Sona Ekle",
+    "Prepend": "Öne Ekle"
   },
   "LanguageAndRootInput": {
     "rootInputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
@@ -266,17 +280,50 @@
   "Author": "Yazar",
   "SelectAuthor": "Yazar Seçin",
   "Attributes": "Özellikler",
+  "SearchWord": "Kelime Ara",
+  "WordsPerPage": "Sayfa başına kelime",
+  "PrefixIsOptional": "Ön ek isteğe bağlı",
+  "SuffixIsOptional": "Son ek isteğe bağlı",
+  "RemoveMeaning": "Anlamı kaldır",
   "YouCanSelectAnAttributeForThisMeaning": "Bu anlam için özellikler seçebilirsiniz",
+  "MeaningAttributesDescription": "Lütfen bir özellik seçiniz",
+  "AddNewAuthor": "Yeni Yazar Ekle",
+  "ResetAllSelectedValuesButton": "Tüm Seçenekleri Sıfırla",
+  "AddNewMeaningAttribute": "Yeni Anlam Özelliği Ekle",
+  "EnterMeaningAttribute": "Anlam Özelliği Giriniz",
+  "Submit": "Gönder",
+  "AttributeAddedSuccessfully": "Özellik başarıyla eklendi",
+  "AnErrorOccuredPleaseTryAgain": "Bir hata oluştu, lütfen tekrar deneyin.",
+  "AuthorAddedSuccessfully": "Yazar başarıyla eklendi",
+  "EnterAuthor": "Yazar Giriniz",
   "Forms": {
     "Attributes": {
       "Required": "Özellik gerekli, lütfen bir özellik giriniz.",
-      "LengthMustBeGreaterThan2": "Özellik uzunluğu 2 karakterden uzun olmalıdır."
+      "MinLength2": "Özellik uzunluğu 2 karakterden uzun olmalıdır."
     },
     "Meanings": {
       "Required": "Anlam gerekli, lütfen bir anlam giriniz."
     },
     "PartOfSpeech": {
-      "Required": "Sözcük Türü gerekli, lütfen bir sözcük türü giriniz."
+      "Description": "Sözcük türü isteğe bağlı.",
+      "Select": "Lütfen bir sözcük türü seçiniz",
+      "Required": "Lütfen bir sözcük türü seçiniz"
+    },
+    "MeaningAttributes": {
+      "Description": "Anlam özellikleri isteğe bağlı",
+      "Select": "Lütfen bir anlam özelliği seçiniz",
+      "Required": "Lütfen bir anlam özelliği seçiniz",
+      "MinLength2": "Anlam özelliği uzunluğu 2 karakterden uzun olmalıdır."
+    },
+    "ExampleSentence": {
+      "Description": "Örnek cümle isteğe bağlı"
+    },
+    "WordName": {
+      "Required": "Kelime adı gerekli, lütfen bir kelime adı giriniz."
+    },
+    "Author": {
+      "NameRequired": "Yazar adı gerekli, lütfen bir yazar adı giriniz.",
+      "MinLength2": "Yazar adı uzunluğu 2 karakterden uzun olmalıdır."
     }
   }
 }

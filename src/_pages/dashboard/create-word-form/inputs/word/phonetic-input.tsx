@@ -2,6 +2,7 @@
 import { WordForm } from '@/types'
 import { Input } from "@heroui/react"
 import React from 'react'
+import { useTranslations } from 'next-intl';
 import { Control, Controller } from 'react-hook-form'
 
 export default function WordPhoneticInput({
@@ -9,6 +10,7 @@ export default function WordPhoneticInput({
 }: {
     control: Control<WordForm>
 }) {
+    const t = useTranslations();
     return (
         <Controller
             control={control}
@@ -17,9 +19,10 @@ export default function WordPhoneticInput({
                 <Input
                     {...field}
                     radius='sm'
-                    label="Phonetic"
+                    label={t('Phonetic')}
+                    placeholder={t('EnterPhonetic')}
                     labelPlacement='outside'
-                    description="Phonetics is optional"
+                    description={t('EnterPhonetic')}
                 />
             )}
         />

@@ -6,6 +6,7 @@ import { NewAttributeForm } from '@/types';
 import { toast } from 'sonner';
 import { Controller, useForm } from 'react-hook-form';
 import { AriaModalOverlayProps } from '@react-aria/overlays';
+import { useTranslations } from 'next-intl';
 type AddMeaningAttributeModalProps = {
     onClose: () => void,
     isOpen: boolean,
@@ -17,16 +18,17 @@ export default function AddMeaningAttributeModal({
     onOpenChange,
     ...modalProps
 }: AddMeaningAttributeModalProps) {
+    const t = useTranslations();
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
     const paramsUtils = api.useUtils().params
     const addMeaningAttributeMutation = api.admin.addNewMeaningAttribute.useMutation({
         onError(error, variables, context) {
             console.log(error)
-            toast.error("An error occured, please try again.")
+            toast.error(t("AnErrorOccuredPleaseTryAgain"))
         },
         onSuccess(data) {
             reset()
-            toast.success("Attribute has been added successfully!")
+            toast.success(t("AttributeAddedSuccessfully"))
             onClose()
             paramsUtils.getExampleSentenceAuthors.invalidate()
         }
@@ -40,7 +42,7 @@ export default function AddMeaningAttributeModal({
                 {(close) => (
                     <>
                         <ModalHeader>
-                            Add new meaning attribute
+                            {t('AddNewMeaningAttribute')}
                         </ModalHeader>
                         <ModalBody>
                             <form key={'add-word-attribute-form'} onSubmit={(e) => {
@@ -50,21 +52,21 @@ export default function AddMeaningAttributeModal({
                                 <Controller control={newAttributeControl} name='attribute' rules={{
                                     required: {
                                         value: true,
-                                        message: "Attribute is required."
+                                        message: t('Forms.MeaningAttributes.Required')
                                     },
                                     minLength: {
-                                        message: "Attribute length must be greater than 2.",
+                                        message: t('Forms.MeaningAttributes.MinLength2'),
                                         value: 2
                                     }
                                 }} render={({ field, fieldState: { error } }) => (
-                                    <Input placeholder='Type new attribute' {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
+                                    <Input placeholder={t('EnterMeaningAttribute')} {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
                                 )} />
                                 <div className='grid grid-cols-2 gap-2'>
                                     <Button size='sm' type='submit' color='primary' isLoading={addMeaningAttributeMutation.isPending}>
-                                        Submit
+                                        {t('Submit')}
                                     </Button>
                                     <Button size='sm' onPress={close}>
-                                        Cancel
+                                        {t('Cancel')}
                                     </Button>
                                 </div>
                             </form>
