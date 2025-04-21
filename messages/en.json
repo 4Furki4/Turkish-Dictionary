@@ -8,7 +8,8 @@
     "Logout": "Logout",
     "SavedWords": "Saved Words",
     "MyRequests": "My Requests",
-    "SearchHistory": "Search History"
+    "SearchHistory": "Search History",
+    "Dashboard": "Dashboard"
   },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
@@ -56,7 +57,21 @@
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",
-    "GoBackToHomepage": "Go back to homepage"
+    "GoBackToHomepage": "Go back to homepage",
+    "Columns": {
+      "Word": "Word",
+      "Meaning": "Meaning",
+      "Actions": "Actions"
+    },
+    "CreateWord": "Create Word",
+    "MustAddMeaning": "You must add a meaning!",
+    "MustHaveAMeaning": "You must have a meaning!",
+    "WordCreated": "Word created!",
+    "UploadingImages": "Uploading images...",
+    "ImagesUploaded": "Images uploaded!",
+    "Error": "Error",
+    "Append": "Append",
+    "Prepend": "Prepend"
   },
   "LanguageAndRootInput": {
     "rootInputError": "Root is required when language specified",
@@ -264,17 +279,46 @@
   "Author": "Author",
   "SelectAuthor": "Select Author",
   "Attributes": "Attributes",
+  "PartOfSpeech": "Part of Speech",
+  "SearchWord": "Search Word",
+  "WordsPerPage": "Words per page",
+  "PrefixIsOptional": "Prefix is optional",
+  "SuffixIsOptional": "Suffix is optional",
+  "RemoveMeaning": "Remove Meaning",
   "YouCanSelectAnAttributeForThisMeaning": "You can select attributes for this meaning",
+  "MeaningAttributesDescription": "Please select attributes for this meaning",
+  "AddNewAuthor": "Add New Author",
+  "ResetAllSelectedValuesButton": "Reset All Selected Values",
+  "AddNewMeaningAttribute": "Add New Meaning Attribute",
+  "EnterMeaningAttribute": "Enter Meaning Attribute",
+  "Submit": "Submit",
+  "AttributeAddedSuccessfully": "Attribute added successfully",
+  "AnErrorOccuredPleaseTryAgain": "An error occured, please try again.",
+  "AuthorAddedSuccessfully": "Author added successfully",
+  "EnterAuthor": "Enter Author",
   "Forms": {
     "Attributes": {
       "Required": "Attribute is required, please enter an attribute.",
-      "LengthMustBeGreaterThan2": "Attribute length must be greater than 2 characters."
+      "MinLength2": "Attribute length must be greater than 2 characters."
     },
     "Meanings": {
       "Required": "Meaning is required, please enter a meaning."
     },
     "PartOfSpeech": {
-      "Required": "Part of speech is required, please enter a part of speech."
+      "Description": "Part of speech is optional",
+      "Select": "Please select a part of speech"
+    },
+    "MeaningAttributes": {
+      "Description": "Attributes are optional",
+      "Select": "Please select an attribute",
+      "Required": "Please select an attribute",
+      "MinLength2": "Attribute length must be greater than 2 characters."
+    },
+    "ExampleSentence": {
+      "Description": "Example sentence is optional"
+    },
+    "WordName": {
+      "Required": "Word name is required, please enter a word name."
     }
   }
 }

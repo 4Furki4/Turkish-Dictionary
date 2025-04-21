@@ -3,7 +3,7 @@ import { EditWordForm } from '@/types'
 import { Select, Selection, SelectItem } from "@heroui/react"
 import React from 'react'
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
-
+import { useTranslations } from 'next-intl'
 export default function PartOfSpeechInput({
     control,
     index,
@@ -20,6 +20,7 @@ export default function PartOfSpeechInput({
     selectedPartOfSpeechId: string | undefined
     setFieldValue: UseFormSetValue<EditWordForm>
 }) {
+    const t = useTranslations()
     const [value, setValue] = React.useState<Selection>(new Set([selectedPartOfSpeechId?.toString() ?? '']));
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedAttribute = e.target.value
@@ -36,7 +37,7 @@ export default function PartOfSpeechInput({
                     selectedKeys={value}
                     onChange={handleSelectionChange}
                     radius='sm'
-                    label="Part of speech"
+                    label={t("PartOfSpeech")}
                     labelPlacement='outside'
                     isRequired
                     disallowEmptySelection

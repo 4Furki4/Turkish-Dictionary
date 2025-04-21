@@ -5,6 +5,7 @@ import {
 } from "@heroui/react";
 import React, { useCallback } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslations } from 'next-intl';
 import WordNameInput from "./create-word-form/inputs/word/name-input";
 import WordPhoneticInput from "./create-word-form/inputs/word/phonetic-input";
 import WordRootLanguageInput from "./create-word-form/inputs/word/root-language-input";
@@ -34,6 +35,7 @@ const meaningDefaultValues: MeaningInputs = {
 export default function CreateWord({ locale }: {
   locale: string;
 }) {
+  const t = useTranslations();
   const {
     handleSubmit,
     control,
@@ -62,15 +64,18 @@ export default function CreateWord({ locale }: {
     rules: {
       required: {
         value: true,
-        message: "You must have a meaning",
+        message: t('Dashboard.MustHaveAMeaning'),
       },
-      minLength: 1,
+      minLength: {
+        value: 1,
+        message: t('Dashboard.MustHaveAMeaning'),
+      },
     },
   });
   const [imagePreviewUrls, setImagePreviewUrls] = React.useState<string[]>([]);
   const wordMutation = api.admin.addWord.useMutation({
     onSuccess: () => {
-      toast.success("Word created!")
+      toast.success(t('Dashboard.WordCreated'))
     }
   });
   const [isUploading, setIsUploading] = React.useState(false);
@@ -109,12 +114,12 @@ export default function CreateWord({ locale }: {
     });
     let uploadedPicturesUrls: (string | undefined)[] = [];
     if (meaningsFormatted.every((meaning) => typeof meaning.image === typeof FileList)) {
-      const loadingToaster = toast.loading("Uploading images...");
+      const loadingToaster = toast.loading(t('Dashboard.UploadingImages'));
 
       uploadedPicturesUrls = await Promise.all(uploadedPictures);
       setIsUploading(false);
       toast.dismiss(loadingToaster);
-      toast.success("Images uploaded!");
+      toast.success(t('Dashboard.ImagesUploaded'));
     }
     const meaningsWithImages = meaningsFormatted.map((meaning, index) => {
       return {
@@ -129,11 +134,11 @@ export default function CreateWord({ locale }: {
     }
     wordMutation.mutate(word as WordFormSubmit)
     // reset();
-  }, [wordMutation, setIsUploading, setImagePreviewUrls]);
+  }, [wordMutation, setIsUploading, setImagePreviewUrls, t]);
 
   return (
     <section className="max-w-7xl w-full mx-auto">
-      <h1 className="text-center text-fs-2">Create Word</h1>
+      <h1 className="text-center text-fs-2">{t('Dashboard.CreateWord')}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         <div className="flex flex-col max-w-full sm:grid sm:grid-cols-2 gap-2">
           <WordNameInput control={control} />
@@ -159,9 +164,9 @@ export default function CreateWord({ locale }: {
         ) : (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>{t('Dashboard.Error')}</AlertTitle>
             <AlertDescription>
-              You must add a meaning!
+              {t('Dashboard.MustAddMeaning')}
             </AlertDescription>
           </Alert>
         )}
@@ -175,7 +180,7 @@ export default function CreateWord({ locale }: {
             className="w-full"
             radius="sm"
           >
-            Submit
+            {t('Dashboard.CreateWord')}
           </Button>
         </div>
       </form>

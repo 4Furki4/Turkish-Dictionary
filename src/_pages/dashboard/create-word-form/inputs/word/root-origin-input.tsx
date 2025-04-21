@@ -18,7 +18,7 @@ export default function WordRootOriginInput({
     clearErrors: UseFormClearErrors<WordForm>,
     getFieldState: UseFormGetFieldState<WordForm>
 }) {
-    const t = useTranslations('LanguageAndRootInput')
+    const t = useTranslations()
     return (
         <Controller
             control={control}
@@ -46,9 +46,10 @@ export default function WordRootOriginInput({
                 <Input
                     {...field}
                     radius='sm'
-                    label="Root"
+                    label={t('Root')}
+                    placeholder={t('EnterRoot')}
                     labelPlacement='outside'
-                    description={"The root is required when root language selected!"}
+                    description={t('EnterRoot')}
                     errorMessage={error?.message}
                     isInvalid={error !== undefined}
                 />

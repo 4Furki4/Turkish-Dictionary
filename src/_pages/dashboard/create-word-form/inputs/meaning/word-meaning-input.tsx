@@ -3,7 +3,7 @@ import { WordForm } from '@/types'
 import { Input } from "@heroui/react"
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
-
+import { useTranslations } from 'next-intl';
 export default function WordMeaningInput({
     index,
     control,
@@ -12,6 +12,7 @@ export default function WordMeaningInput({
     index: number,
     control: Control<WordForm>,
 }) {
+    const t = useTranslations();
     return (
         <Controller
             name={`meanings.${index}.meaning`}
@@ -19,16 +20,16 @@ export default function WordMeaningInput({
             rules={{
                 required: {
                     value: true,
-                    message: "Meaning is required",
+                    message: t('Forms.Meanings.Required'),
                 },
             }}
             render={({ field, fieldState: { error } }) => (
                 <Input
                     {...field}
                     radius='sm'
-                    label="Meaning"
+                    label={t('Meaning')}
                     labelPlacement='outside'
-                    description="Meaning is required."
+                    description={t('Forms.Meanings.Required')}
                     isRequired
                     errorMessage={error?.message}
                     isInvalid={error !== undefined}

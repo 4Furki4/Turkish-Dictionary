@@ -3,12 +3,14 @@ import { WordForm } from '@/types';
 import { Input } from "@heroui/react";
 import React from 'react'
 import { Control, Controller } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 export default function WordNameInput({
     control,
 }: {
     control: Control<WordForm>,
 }) {
+    const t = useTranslations();
     return (
         <Controller
             control={control}
@@ -16,19 +18,20 @@ export default function WordNameInput({
             rules={{
                 required: {
                     value: true,
-                    message: "Name is required",
+                    message: t('Forms.WordName.Required'),
                 },
             }}
             render={({ field, fieldState: { error } }) => (
                 <Input
                     {...field}
                     radius='sm'
-                    label="Name"
+                    label={t('WordName')}
+                    placeholder={t('EnterWordName')}
                     labelPlacement='outside'
-                    description="Name is required"
+                    description={error ? t('Forms.WordName.Required') : undefined}
                     errorMessage={error?.message}
                     isInvalid={error !== undefined}
-                    isRequired={true}
+                    isRequired
                 />
             )}
         />

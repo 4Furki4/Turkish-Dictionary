@@ -3,7 +3,7 @@ export const EditMeaningSchema = z.object({
     id: z.string().or(z.number()).optional().nullable(),
     meaning: z.string().min(1, "Meaning input cannot be empty!"),
     attributes: z.array(z.number()).optional().nullable(),
-    partOfSpeechId: z.number({ required_error: "Part of Speech is required!" }),
+    partOfSpeechId: z.number({ required_error: "Part of Speech is required!" }).optional().nullable(),
     exampleSentence: z.string().min(5).optional().nullable(),
     authorId: z.number().optional().nullable()
 })
@@ -31,7 +31,7 @@ export const AddWordSchema = z.object({
     attributes: z.number().array().optional(),
     meanings: z.array(z.object({
         meaning: z.string(),
-        partOfSpeechId: z.number(),
+        partOfSpeechId: z.number().optional().nullable(),
         attributes: z.array(z.number()),
         example: z.object({
             sentence: z.string(),

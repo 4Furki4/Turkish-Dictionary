@@ -3,6 +3,7 @@ import { Select, SelectItem } from "@heroui/react"
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
 import { WordForm } from '@/types';
+import { useTranslations } from "next-intl";
 export default function MeaningPartOfSpeechInput({
     index,
     control,
@@ -15,24 +16,17 @@ export default function MeaningPartOfSpeechInput({
         partOfSpeech: string;
     }[]
 }) {
+    const t = useTranslations();
     return (
         <Controller
             name={`meanings.${index}.partOfSpeechId`}
             control={control}
-            rules={{
-                required: {
-                    value: true,
-                    message: "Part of Speech is required",
-                },
-            }}
-
             render={({ field, fieldState: { error, isDirty } }) => (
                 <Select
-                    label="Part of Speech"
+                    label={t('PartOfSpeech')}
                     labelPlacement='outside'
-                    placeholder='Please select a part of speech for this meaning'
-                    description="Part of speech is required"
-                    isRequired
+                    description={t('Forms.PartOfSpeech.Description')}
+                    placeholder={t('Forms.PartOfSpeech.Select')}
                     isInvalid={error !== undefined && isDirty}
                     errorMessage={isDirty && error?.message}
                     {...field}
