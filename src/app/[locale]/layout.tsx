@@ -12,6 +12,8 @@ import { routing } from "@/src/i18n/routing";
 import { notFound } from "next/navigation";
 import { auth } from "@/src/server/auth/auth";
 import { Params } from "next/dist/server/request/params";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -46,6 +48,7 @@ export default async function RootLayout({
     <html suppressHydrationWarning lang={locale as string} className="dark">
       <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
+
           {/* <NextSSRPlugin
 
             //   The `extractRouterConfig` will extract **only** the route configs
@@ -68,6 +71,7 @@ export default async function RootLayout({
                 SearchHistoryIntl={t("SearchHistory")}
                 LogoutIntl={t("Logout")} />
               {children}
+              <SpeedInsights />
               <Footer />
             </NextIntlClientProvider>
           </Providers>
