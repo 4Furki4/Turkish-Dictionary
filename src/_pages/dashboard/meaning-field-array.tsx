@@ -53,9 +53,9 @@ export default function MeaningFieldArray({
                             <MeaningExampleSentenceInput index={index} control={control} />
                             <MeaningExampleAuthorInput index={index} control={control} defaultExampleSentenceAuthors={authors} setFieldValue={setValue} clearErrors={clearErrors} watch={watch} />
                         </div>
-                        {/* <div className="grid gap-2">
+                        <div className="grid gap-2">
                             <MeaningImageInput index={index} control={control} formState={formState} clearErrors={clearErrors} field={field} setImagePreviewUrls={setImagePreviewUrls} imagePreviewUrls={imagePreviewUrls} />
-                        </div> */}
+                        </div>
                         <Button className="rounded-sm" onPress={() => remove(index)}>{t('RemoveMeaning')}</Button>
                     </CardBody>
                 </Card>

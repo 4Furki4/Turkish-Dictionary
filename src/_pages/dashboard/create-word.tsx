@@ -13,13 +13,13 @@ import WordRootOriginInput from "./create-word-form/inputs/word/root-origin-inpu
 import WordPrefixInput from "./create-word-form/inputs/word/prefix-input";
 import WordSuffixInput from "./create-word-form/inputs/word/suffix-input";
 import MeaningFieldArrayButtons from "./create-word-form/meaning-field-array-buttons";
-import { uploadFiles } from "@/src/lib/uploadthing";
 import { toast } from "sonner";
 import { api } from "@/src/trpc/react";
 import WordAttributesInput from "./create-word-form/inputs/word/word-attributes";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import MeaningFieldArray from "./meaning-field-array";
+import { uploadFiles } from "@/src/utils/uploadthing";
 
 
 const meaningDefaultValues: MeaningInputs = {
@@ -100,12 +100,15 @@ export default function CreateWord({ locale }: {
           {
             files,
             onUploadProgress({ file, progress }) {
+              toast.info(`Uploading ${file}`);
               console.log(`Uploaded ${progress}% of ${file}`);
             },
             onUploadBegin({ file }) {
+              toast.info(t('Dashboard.StartedUploading', { file }));
               console.log(`Started uploading ${file}`);
               setIsUploading(true);
             },
+
           }
         );
         return response[0].url;
@@ -173,7 +176,7 @@ export default function CreateWord({ locale }: {
         <div className="flex flex-col gap-2">
           <MeaningFieldArrayButtons append={append} prepend={prepend} meaningDefaultValues={meaningDefaultValues} />
           <Button
-            // isLoading={wordMutation.isLoading || isUploading}
+            isLoading={wordMutation.isPending || isUploading}
             type="submit"
             variant="faded"
             color="primary"
