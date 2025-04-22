@@ -2,6 +2,7 @@
 import { MeaningInputs, WordForm, WordFormSubmit } from "@/types";
 import {
   Button,
+  Progress,
 } from "@heroui/react";
 import React, { useCallback } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -79,6 +80,8 @@ export default function CreateWord({ locale }: {
     }
   });
   const [isUploading, setIsUploading] = React.useState(false);
+  const [uploadProgress, setUploadProgress] = React.useState<number | null>(null);
+
   const onSubmit = useCallback(async (data: WordForm) => {
     let { meanings } = data;
     const meaningsFormatted = meanings.map((meaning) => {
@@ -100,7 +103,8 @@ export default function CreateWord({ locale }: {
           {
             files,
             onUploadProgress({ file, progress }) {
-              toast.info(`Uploading ${file}`);
+              setUploadProgress(progress);
+              toast.info(t('Dashboard.UploadingImages', { progress }));
               console.log(`Uploaded ${progress}% of ${file}`);
             },
             onUploadBegin({ file }) {
@@ -108,28 +112,26 @@ export default function CreateWord({ locale }: {
               console.log(`Started uploading ${file}`);
               setIsUploading(true);
             },
-
           }
         );
-        return response[0].url;
+        return response[0].ufsUrl;
+
       }
       return undefined;
     });
-    let uploadedPicturesUrls: (string | undefined)[] = [];
-    if (meaningsFormatted.every((meaning) => typeof meaning.image === typeof FileList)) {
-      const loadingToaster = toast.loading(t('Dashboard.UploadingImages'));
-
-      uploadedPicturesUrls = await Promise.all(uploadedPictures);
+    const hasImages = meaningsFormatted.some((meaning) => meaning.image?.[0]);
+    const loadingToaster = hasImages ? toast.loading(t('Dashboard.UploadingImages')) : undefined;
+    const uploadedPicturesUrls = await Promise.all(uploadedPictures);
+    console.log('uploadedPicturesUrls', uploadedPicturesUrls);
+    if (hasImages && loadingToaster) {
       setIsUploading(false);
       toast.dismiss(loadingToaster);
       toast.success(t('Dashboard.ImagesUploaded'));
     }
-    const meaningsWithImages = meaningsFormatted.map((meaning, index) => {
-      return {
-        ...meaning,
-        image: uploadedPicturesUrls[index],
-      };
-    });
+    const meaningsWithImages = meaningsFormatted.map((meaning, index) => ({
+      ...meaning,
+      image: uploadedPicturesUrls[index],
+    }));
     const word = {
       ...data,
       attributes: data.attributes?.map((val) => parseInt(val)),
@@ -185,6 +187,11 @@ export default function CreateWord({ locale }: {
           >
             {t('Dashboard.CreateWord')}
           </Button>
+          {isUploading && (
+            <div className="flex justify-center">
+              <Progress className="w-full" value={uploadProgress ?? undefined} />
+            </div>
+          )}
         </div>
       </form>
     </section>

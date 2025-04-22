@@ -30,10 +30,10 @@ export default function WordRootOriginInput({
                         !value &&
                         getFieldState("root").isTouched
                     ) {
-                        return t("rootInputError");
+                        return t("Forms.Root.InputError");
                     } else if (!watch("language") && value) {
                         setError("language", {
-                            message: t("languageInputError")
+                            message: t("Forms.Root.LanguageInputError")
                         });
                         return true;
                     } else {

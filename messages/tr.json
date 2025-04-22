@@ -68,6 +68,7 @@
     "MustHaveAMeaning": "Anlam gerekli, lütfen bir anlam giriniz.",
     "WordCreated": "Kelime oluşturuldu!",
     "UploadingImages": "Resimler yükleniyor...",
+    "StartedUploading": "Resimler yüklenmeye başlandı...",
     "ImagesUploaded": "Resimler yüklendi!",
     "Error": "Hata",
     "Append": "Sona Ekle",
@@ -325,6 +326,13 @@
     "Author": {
       "NameRequired": "Yazar adı gerekli, lütfen bir yazar adı giriniz.",
       "MinLength2": "Yazar adı uzunluğu 2 karakterden uzun olmalıdır."
+    },
+    "Root": {
+      "InputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
+      "LanguageInputError": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
+    },
+    "Language": {
+      "Description": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
     }
   }
 }
