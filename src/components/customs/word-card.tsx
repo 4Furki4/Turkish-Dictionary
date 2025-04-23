@@ -51,13 +51,16 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
             <Button className="bg-transparent" isIconOnly>
               <Volume2 className="w-6 h-6" />
             </Button>
-            <div className="hidden md:flex items-center text-sm text-muted-foreground ml-4">
-              <span className="px-2">•</span>
-              <span>
-                <span className="text-fs--2">{word_data.root.root}</span>
-                {word_data.root.language_tr && ` (${word_data.root.language_tr})`}
-              </span>
-            </div>
+
+            {word_data.root.root && (
+              <div className="hidden md:flex items-center text-sm text-muted-foreground ml-4">
+                <span className="px-2">•</span>
+                <span>
+                  <span className="text-fs--2">{word_data.root.root}</span>
+                  {word_data.root.language_tr && ` (${word_data.root.language_tr})`}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
@@ -137,10 +140,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
             </Tab>
             <Tab value={"related_words"} title={t("RelatedWords")}>
               <ul className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-2">
-                {Array.from({ length: 10 }, (_, index) => ({
-                  related_word_id: index,
-                  related_word_name: `Related Word ${index + 1}`
-                })).map((related_word) => (
+                {word_data.relatedWords?.map((related_word) => (
                   <li key={related_word.related_word_id}>
                     <Card>
                       <CardBody>
@@ -154,7 +154,19 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
               </ul>
             </Tab>
             <Tab value={"related_phrases"} title={t("RelatedPhrases")}>
-
+              <ul className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-2">
+                {word_data.relatedPhrases?.map((related_phrase) => (
+                  <li key={related_phrase.related_phrase_id}>
+                    <Card>
+                      <CardBody>
+                        <NextUILink target="_blank" as={Link} href={`/search/${related_phrase.related_phrase}`}>
+                          {related_phrase.related_phrase}
+                        </NextUILink>
+                      </CardBody>
+                    </Card>
+                  </li>
+                ))}
+              </ul>
             </Tab>
           </Tabs>
         </>

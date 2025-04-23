@@ -33,11 +33,12 @@ function slugify(text: string) {
 }
 
 async function getOrCreateLanguage(tx: any, code: string): Promise<number> {
-    const existing = await tx.select().from(languages).where(eq(languages.language_code, code));
+    const existing = await tx.select().from(languages).where(eq(languages.language_tr, code));
     if (existing.length) return existing[0].id;
+    const newCode = code.slice(0, 2).toLowerCase();
     const [{ id }] = await tx
         .insert(languages)
-        .values({ language_code: code, language_tr: code, language_en: code })
+        .values({ language_tr: code, language_code: newCode, language_en: code })
         .returning({ id: languages.id });
     return id;
 }
@@ -140,14 +141,11 @@ async function seedDatabase() {
 
             await db.transaction(async tx => {
                 // parse lisan
-                let code = '';
                 let rootText = '';
                 if (detail.lisan) {
                     const parts = detail.lisan.split(' ');
-                    code = parts[0].replace(/\.$/, '');
                     rootText = parts.slice(1).join(' ');
                 }
-                const languageId = code ? await getOrCreateLanguage(tx, code) : undefined;
 
                 // words upsert (prefix/suffix)
                 let wordId: number;
@@ -256,8 +254,10 @@ async function seedDatabase() {
                 }
 
                 // birlesikler (compound words)
-                for (const comp of detail.birlesikler || []) {
-                    const related = (comp && (comp.madde || comp)) as string;
+                const compounds: string[] = Array.isArray(detail.birlesikler)
+                    ? (detail.birlesikler as any[]).map((comp: any) => comp.madde || String(comp))
+                    : String(detail.birlesikler || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+                for (const related of compounds) {
                     // ensure compound word exists
                     const existComp = await tx.select().from(words).where(eq(words.name, related));
                     let compId: number;
