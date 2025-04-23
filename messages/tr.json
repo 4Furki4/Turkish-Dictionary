@@ -53,7 +53,9 @@
     "Close": "Kapat",
     "You can request an edit if you are signed in": "Giriş yapmışsanız bir düzenleme talebi gönderebilirsiniz",
     "SignIn": "Giriş Yap",
-    "RequestEdit": "Düzenleme Talep Et"
+    "RequestEdit": "Düzenleme Talep Et",
+    "RelatedWords": "İlgili Kelimeler",
+    "RelatedPhrases": "İlgili Atasözleri ve Deyimler"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
