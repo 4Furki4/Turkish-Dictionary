@@ -1,4 +1,5 @@
 import {
+  date,
   integer,
   pgTable,
   serial,
@@ -24,6 +25,8 @@ export const meanings = pgTable("meanings", {
   partOfSpeechId: integer("part_of_speech_id")
     .references(() => partOfSpeechs.id),
   requestType: varchar("request_type", { length: 255 }).default("meaning"),
+  createdAt: date("created_at").defaultNow(),
+  updatedAt: date("updated_at"),
 });
 
 export const meaningsRelations = relations(meanings, ({ one, many }) => ({

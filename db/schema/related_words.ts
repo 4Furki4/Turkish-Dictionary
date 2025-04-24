@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { date, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { words } from "./words";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { users } from "./users";
@@ -16,7 +16,8 @@ export const relatedWords = pgTable("related_words", {
     }),
   relationType: varchar("relation_type", { length: 255 }).default("relatedWord"), // relatedWord, antonym, synonym, correction, compound, see_also, turkish_equivalent, obsolete
   requestType: varchar("request_type", { length: 255 }).default("relatedWord"),
-  createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+  createdAt: date("created_at").defaultNow(),
+  updatedAt: date("updated_at"),
   userId: text("user_id").references(() => users.id, {
     onDelete: "set null",
   }),
