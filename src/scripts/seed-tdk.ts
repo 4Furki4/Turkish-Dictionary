@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import fetch from 'node-fetch';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db } from '@/db';
 import { languages } from '@/db/schema/languages';
 import { roots } from '@/db/schema/roots';
@@ -137,9 +137,11 @@ async function seedDatabase() {
             }
             const details = await res.json();
             if (!Array.isArray(details) || !details.length) return;
-            const detail = details.find((d: any) => d.madde === word) || details[0];
+            // Process all variants of the word
+            for (const detail of details) {
+                if (detail.madde !== word) continue; // Skip if not matching our search word
 
-            await db.transaction(async tx => {
+                await db.transaction(async tx => {
                 // parse lisan
                 let rootText = '';
                 if (detail.lisan) {
@@ -151,15 +153,39 @@ async function seedDatabase() {
                 let wordId: number;
                 const prefixVal = detail.on_taki || null;
                 const suffixVal = detail.taki || null;
-                const existingWord = await tx.select().from(words).where(eq(words.name, detail.madde));
+                // Get variant number from kac field (defaults to 0 if not present)
+                const variantNum = detail.kac ? parseInt(String(detail.kac), 10) : 0;
+                
+                // Check if this exact variant already exists
+                const existingWord = await tx.select()
+                    .from(words)
+                    .where(
+                        and(
+                            eq(words.name, detail.madde),
+                            eq(words.variant, variantNum)
+                        )
+                    );
                 if (existingWord.length) {
                     wordId = existingWord[0].id;
                     await tx.update(words)
-                        .set({ phonetic: detail.telaffuz || null, prefix: prefixVal, suffix: suffixVal, updated_at: new Date().toISOString() })
+                        .set({ 
+                            phonetic: detail.telaffuz || null, 
+                            prefix: prefixVal, 
+                            suffix: suffixVal, 
+                            variant: variantNum,
+                            updated_at: new Date().toISOString() 
+                        })
                         .where(eq(words.id, wordId));
                 } else {
                     const [{ id }] = await tx.insert(words)
-                        .values({ name: detail.madde, phonetic: detail.telaffuz || null, prefix: prefixVal, suffix: suffixVal, updated_at: new Date().toISOString() })
+                        .values({ 
+                            name: detail.madde, 
+                            phonetic: detail.telaffuz || null, 
+                            prefix: prefixVal, 
+                            suffix: suffixVal, 
+                            variant: variantNum,
+                            updated_at: new Date().toISOString() 
+                        })
                         .returning({ id: words.id });
                     wordId = id;
                 }
@@ -273,7 +299,8 @@ async function seedDatabase() {
                         .values({ wordId, relatedWordId: compId })
                         .onConflictDoNothing();
                 }
-            });
+                });
+            }
         } catch (err) {
             console.error(`Error "${word}":`, err);
         }
