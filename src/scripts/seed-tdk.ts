@@ -352,8 +352,14 @@ async function seedDatabase() {
                     
                     for (const ornek of anlam.orneklerListe || []) {
                         const sentence = ornek.ornek || ornek.sentence;
-                        const authorName = ornek.yazar?.[0]?.tam_adi || 'unknown';
-                        const authorId = await getOrCreateAuthor(tx, authorName);
+                        
+                        // Handle examples without authors (keep authorId as null)
+                        let authorId = null;
+                        if (ornek.yazar && ornek.yazar[0] && ornek.yazar[0].tam_adi) {
+                            const authorName = ornek.yazar[0].tam_adi;
+                            authorId = await getOrCreateAuthor(tx, authorName);
+                        }
+                        
                         await tx
                             .insert(examples)
                             .values({ sentence, authorId, meaningId })
