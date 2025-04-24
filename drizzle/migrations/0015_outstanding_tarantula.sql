@@ -1,0 +1,1 @@
+ALTER TABLE "roots" ALTER COLUMN "language_id" DROP NOT NULL;
