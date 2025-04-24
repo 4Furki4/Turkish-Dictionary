@@ -18,7 +18,7 @@ export const relatedWords = pgTable("related_words", {
   requestType: varchar("request_type", { length: 255 }).default("relatedWord"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
   userId: text("user_id").references(() => users.id, {
-    onDelete: "cascade",
+    onDelete: "set null",
   }),
 
 });
