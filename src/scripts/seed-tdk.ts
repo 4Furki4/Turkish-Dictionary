@@ -232,18 +232,124 @@ async function seedDatabase() {
                         partName = posFromOz ? posFromOz.tam_adi : undefined;
                     }
                     const posId = partName ? await getOrCreatePartOfSpeech(tx, partName) : undefined;
-                    const [{ id: meaningId }] = await tx
-                        .insert(meanings)
-                        .values({
-                            meaning: String(anlam.anlam).replace(/►/g, '').trim(),
-                            wordId,
-                            partOfSpeechId: posId,
-                            order: parseInt(anlam.anlam_sira || '0', 10)
-                        })
-                        .onConflictDoNothing()
-                        .returning({ id: meanings.id });
+                    // Check if meaning contains navigation patterns (► or 343)
+                    const meaningText = String(anlam.anlam);
+                    
+                    // Check for ► navigation
+                    const arrowMatch = meaningText.match(/►\s*([^\s]+.*?)(?:\s*$|\.|,)/i);
+                    
+                    // Check for 343 navigation ("bakınız" - see also)
+                    const seeAlsoMatch = meaningText.match(/343\s+([^\s]+.*?)(?:\s*$|\.|,)/i);
+                    
+                    let meaningId: number;
+                    if (arrowMatch || seeAlsoMatch) {
+                        // Extract the related word and determine relation type
+                        let relatedWordText: string;
+                        let relationType: string;
+                        
+                        if (arrowMatch) {
+                            relatedWordText = arrowMatch[1].trim();
+                            // If lisan is empty, it's likely an obsolete word pointing to current usage
+                            // Otherwise, it's likely a foreign word pointing to Turkish equivalent
+                            relationType = !detail.lisan ? 'obsolete' : 'turkish_equivalent';
+                        } else if (seeAlsoMatch && seeAlsoMatch[1]) {
+                            relatedWordText = seeAlsoMatch[1].trim();
+                            relationType = 'see_also';
+                        } else {
+                            // Fallback in case neither match has valid capture groups
+                            relatedWordText = word;
+                            relationType = 'see_also';
+                        }
+                        // Related word and type already determined above
+                        
+                        // Check if related word exists
+                        let relatedWordId: number;
+                        const existingRelated = await tx.select().from(words).where(eq(words.name, relatedWordText));
+                        
+                        if (existingRelated.length) {
+                            relatedWordId = existingRelated[0].id;
+                        } else {
+                            // Create the related word
+                            const [{ id }] = await tx.insert(words)
+                                .values({ 
+                                    name: relatedWordText, 
+                                    updated_at: new Date().toISOString() 
+                                })
+                                .returning({ id: words.id });
+                            relatedWordId = id;
+                        }
+                        
+                        // Create relationship
+                        await tx.insert(relatedWords)
+                            .values({
+                                wordId,
+                                relatedWordId,
+                                relationType,
+                                updatedAt: new Date().toISOString()
+                            })
+                            .onConflictDoNothing();
+                            
+                        // For words that are just navigation pointers, we don't create a meaning
+                        // The frontend will handle these by checking if they have related words
+                        // but no meanings
+                        
+                        // Check if this is the only meaning for this word and if it's entirely a navigation
+                        const isOnlyMeaning = detail.anlamlarListe?.length === 1;
+                        const isEntirelyNavigation = (
+                            (arrowMatch && arrowMatch[0] === meaningText.trim()) ||
+                            (seeAlsoMatch && seeAlsoMatch[0] === meaningText.trim())
+                        );
+                        
+                        // If this is the only meaning and it's entirely navigation, skip creating a meaning
+                        if (isOnlyMeaning && isEntirelyNavigation) {
+                            // Skip creating meaning - we'll just have the relation
+                            console.log(`Skipping meaning for "${detail.madde}", just a navigation pointer to "${relatedWordText}"`); 
+                            meaningId = 0; // Dummy value, not used for examples since we'll skip that too
+                        } else {
+                            // Clean the meaning text by removing navigation patterns
+                            let cleanMeaning = meaningText;
+                            if (arrowMatch) {
+                                cleanMeaning = cleanMeaning.replace(/►\s*[^\s]+.*?(?:\s*$|\.|,)/i, '').trim();
+                            }
+                            if (seeAlsoMatch && seeAlsoMatch[0]) {
+                                cleanMeaning = cleanMeaning.replace(/343\s+[^\s]+.*?(?:\s*$|\.|,)/i, '').trim();
+                            }
+                            
+                            // If after cleaning there's no meaningful content, use a placeholder
+                            if (!cleanMeaning) {
+                                cleanMeaning = `Bakınız: ${relatedWordText}`;
+                            }
+                            
+                            const result = await tx
+                                .insert(meanings)
+                                .values({
+                                    meaning: cleanMeaning,
+                                    wordId,
+                                    partOfSpeechId: posId,
+                                    order: parseInt(anlam.anlam_sira || '0', 10)
+                                })
+                                .onConflictDoNothing()
+                                .returning({ id: meanings.id });
+                            meaningId = result[0].id;
+                        }
+                    } else {
+                        // Regular meaning without navigation
+                        const result = await tx
+                            .insert(meanings)
+                            .values({
+                                meaning: meaningText,
+                                wordId,
+                                partOfSpeechId: posId,
+                                order: parseInt(anlam.anlam_sira || '0', 10)
+                            })
+                            .onConflictDoNothing()
+                            .returning({ id: meanings.id });
+                        meaningId = result[0].id;
+                    }
 
-                    // examples
+                    // examples (skip if we skipped creating a meaning)
+                    if (meaningId === 0) continue;
+                    
                     for (const ornek of anlam.orneklerListe || []) {
                         const sentence = ornek.ornek || ornek.sentence;
                         const authorName = ornek.yazar?.[0]?.tam_adi || 'unknown';
