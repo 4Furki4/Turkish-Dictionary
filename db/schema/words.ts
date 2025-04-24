@@ -21,6 +21,7 @@ export const words = pgTable("words", {
   prefix: varchar("prefix", { length: 255 }),
   suffix: varchar("suffix", { length: 255 }),
   viewCount: integer("view_count").default(0),
+  variant: integer("variant").default(0),
   requestType: varchar("request_type", { length: 255 }).default("word"),
 }, (t) => [
   index("name_idx").using('gin', sql`name gin_trgm_ops`)

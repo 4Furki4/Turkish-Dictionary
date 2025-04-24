@@ -127,6 +127,13 @@
       "when": 1745504980933,
       "tag": "0017_luxuriant_nighthawk",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1745507971068,
+      "tag": "0018_shallow_stryfe",
+      "breakpoints": true
     }
   ]
 }
