@@ -55,38 +55,38 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
         <div className="w-full flex items-center justify-between">
 
           <div className="w-full flex items-center gap-2">
-            <h2 className="text-fs-3 text-center sm:text-start break-words hyphens-auto">
-              {word_data.prefix && (
-                <span className="text-fs-0">
-                  <span aria-label="word prefix">{word_data.prefix}</span>
-                  <span aria-hidden>- </span>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-fs-3 text-center sm:text-start break-words hyphens-auto">
+                {word_data.prefix && (
+                  <span className="text-fs-0">
+                    <span aria-label="word prefix">{word_data.prefix}</span>
+                    <span aria-hidden>- </span>
+                  </span>
+                )}
+                {word_data.word_name}
+                {word_data.suffix && (
+                  <span className="text-fs-0">
+                    <span aria-hidden> -</span>
+                    <span aria-label="word-suffix">{word_data.suffix}</span>
+                  </span>
+                )}
+              </h2>
+              
+              {/* Phonetic pronunciation inline with word */}
+              {word_data.phonetic && (
+                <span className="text-muted-foreground text-fs-0 italic">
+                  <span aria-label="word-phonetic">[{word_data.phonetic}]</span>
                 </span>
               )}
-              {word_data.word_name}
-              {word_data.suffix && (
-                <span className="text-fs-0">
-                  <span aria-hidden> -</span>
-                  <span aria-label="word-suffix">{word_data.suffix}</span>
-                </span>
-              )}
-            </h2>
-            <Button className="bg-transparent" isIconOnly>
+            </div>
+
+            <Button className="bg-transparent" isIconOnly isDisabled> {/* TODO: add voice to word */}
               <Volume2 className="w-6 h-6" />
             </Button>
-
-            {word_data.root.root && (
-              <div className="hidden md:flex items-center text-sm text-muted-foreground ml-4">
-                <span className="px-2">•</span>
-                <span>
-                  <span className="text-fs--2">{word_data.root.root}</span>
-                  {word_data.root.language_tr && ` (${word_data.root.language_tr})`}
-                </span>
-              </div>
-            )}
           </div>
           <div className="flex items-center gap-4">
             <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
-            <Button disabled disableRipple isIconOnly className="bg-transparent"
+            <Button disabled disableRipple isIconOnly className="bg-transparent" isDisabled
               onPress={(e) => {
                 // TODO: generate image of word card
               }}
@@ -99,25 +99,40 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
           </div>
         </div>
 
-        <div>
-          {word_data.attributes?.map((attribute) => (
-            <Chip key={attribute.attribute_id} size="sm" variant="solid" className="flex rounded-lg dark:text-primary-50 bg-primary-100 dark:bg-primary/50">
-              {attribute.attribute}
-            </Chip>
-          ))}
+        <div className="space-y-2 mt-2">
+          {/* Root information section */}
+          {word_data.root.root && (
+            <div className="flex items-center text-sm text-muted-foreground">
+              <span className="font-medium mr-2">{t("Root")}:</span>
+              <span>
+                <span className="text-fs--1 font-medium">{word_data.root.root}</span>
+                {word_data.root[`language_${locale}`] && (
+                  <span className="ml-1 text-fs--2">
+                    ({word_data.root[`language_${locale}`]})
+                  </span>
+                )}
+              </span>
+            </div>
+          )}
+          
+          {/* Word attributes section */}
+          {word_data.attributes && word_data.attributes.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {word_data.attributes.map((attribute) => (
+                <Chip 
+                  key={attribute.attribute_id} 
+                  size="sm" 
+                  variant="solid" 
+                  className="flex rounded-lg dark:text-primary-50 bg-primary-100 dark:bg-primary/50"
+                >
+                  {attribute.attribute}
+                </Chip>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* {word_data.root.root && word_data.root[`language_${locale}`] ? (
-          <Chip color="primary" size="sm" className="rounded-sm text-primary-50 dark:bg-primary-600 ">
-            <div className="flex h-6 items-center space-x-1">
-              <span className="sr-only">Root:</span>
-              <h3 aria-label="the root of the word">{word_data.root.root}</h3>
-              {word_data.root.root && word_data.root[`language_${locale}`] ? <Divider className="" orientation="vertical"></Divider> : null}
-              <span className="sr-only">Root Language:</span>
-              <h3 aria-label="the root language">{word_data.root[`language_${locale}`]}</h3>
-            </div>
-          </Chip>
-        ) : null} */}
+
       </CardHeader>
       <CardBody>
         <>
