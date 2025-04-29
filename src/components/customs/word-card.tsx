@@ -16,6 +16,8 @@ import { Link } from "@/src/i18n/routing";
 import { Camera, Share2, Volume2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
+import clsx from "clsx";
+import Image from "next/image";
 
 export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
@@ -140,17 +142,54 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                           )}
                         </p>
                       </div>
-                      <p className="text-fs-1 break-words hyphens-auto">
-                        {meaning.meaning}
-                      </p>
-                      {meaning.sentence ? (
-                        <div className="w-full italic px-2 text-fs--1 text-left bg-muted/50 p-2">
-                          <p>
-                            <q>{meaning.sentence}</q>
-                          </p>
-                          {meaning.author && <p>-{meaning.author}</p>}
+                      <></>
+                      <div className='flex flex-col md:flex-row gap-4'>
+                        <div className={clsx('w-full', {
+                          'md:w-2/3': meaning.imageUrl
+                        })}>
+                          {meaning.meaning.search('Bakınız: ') === -1 ? (
+                            <>
+                              <p className="text-fs-1 break-words hyphens-auto">
+                                {meaning.meaning}
+                              </p>
+                              {meaning.sentence ? (
+                                <div className="w-full italic px-2 text-fs--1 text-left bg-muted/50 p-2">
+                                  <p>
+                                    <q>{meaning.sentence}</q>
+                                  </p>
+                                  {meaning.author && <p>-{meaning.author}</p>}
+                                </div>
+                              ) : null}
+                            </>
+                          ) : (
+                            <p>
+                              {locale === "en" ? "See Also: " : "Bakınız: "}
+                              <NextUILink
+                                href={`/search/${meaning.meaning.split('Bakınız: ')[1]}`}
+                                as={Link}
+                                size="lg"
+                                showAnchorIcon
+                                underline="always"
+                              >
+                                {meaning.meaning.split('Bakınız: ')[1]}
+                              </NextUILink>
+                            </p>
+                          )}
                         </div>
-                      ) : null}
+                        {meaning.imageUrl && (
+                          <div className="md:w-1/3 h-auto rounded-md overflow-hidden">
+
+                            <Image
+                              src={meaning.imageUrl}
+                              alt={meaning.meaning}
+                              width={300}
+                              height={200}
+                              className="w-full h-auto object-cover rounded-md"
+                            />
+                          </div>
+                        )}
+                      </div>
+
                       {/* do not render a divider after the last meaning. */}
                       {index === word_data.meanings.length - 1 ? null : <Divider />}
                     </li>
