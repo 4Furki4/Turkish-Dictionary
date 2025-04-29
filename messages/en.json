@@ -56,7 +56,11 @@
     "RequestEdit": "Request Edit",
     "RelatedWords": "Related Words",
     "RelatedPhrases": "Related Phrases",
-    "NavigationWord": "Navigation Word"
+    "NavigationWord": "Navigation Word",
+    "urlCopied": "URL Copied",
+    "urlCopiedDescription": "Word page URL has been copied to clipboard",
+    "urlCopyFailed": "Copy Failed",
+    "urlCopyFailedDescription": "Failed to copy URL to clipboard"
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",

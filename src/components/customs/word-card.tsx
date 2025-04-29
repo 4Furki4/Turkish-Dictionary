@@ -14,10 +14,30 @@ import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/routing";
 import { Camera, Share2, Volume2 } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 
 export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
   const t = useTranslations("WordCard");
+  const pathname = usePathname();
+
+  // Function to copy the current page URL to clipboard
+  const copyPageUrl = () => {
+    if (typeof window !== "undefined") {
+      const baseUrl = window.location.origin;
+      const fullUrl = `${baseUrl}${pathname}`;
+
+      navigator.clipboard.writeText(fullUrl)
+        .then(() => {
+          toast.success(t("urlCopiedDescription"));
+        })
+        .catch((error) => {
+          console.error("Failed to copy URL:", error);
+          toast.error(t("urlCopyFailedDescription"));
+        });
+    }
+  };
   return (
     <Card
       as={"article"}
@@ -71,9 +91,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
             >
               <Camera className="w-6 h-6" />
             </Button>
-            <Button disableRipple isIconOnly className="bg-transparent" onPress={(e) => {
-              // TODO: copy page url
-            }}>
+            <Button disableRipple isIconOnly className="bg-transparent" onPress={copyPageUrl}>
               <Share2 className="w-6 h-6" />
             </Button>
           </div>
@@ -146,9 +164,9 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                       <p className="text-fs-1">{t("NavigationWord")}</p>
                       <div className="flex flex-wrap gap-2">
                         {word_data.relatedWords.map((related) => (
-                          <NextUILink 
+                          <NextUILink
                             key={related.related_word_id}
-                            as={Link} 
+                            as={Link}
                             href={`/search/${related.related_word_name}`}
                             className="px-3 py-1 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors"
                           >
