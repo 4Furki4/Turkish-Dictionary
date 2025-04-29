@@ -55,7 +55,8 @@
     "SignIn": "Sign in",
     "RequestEdit": "Request Edit",
     "RelatedWords": "Related Words",
-    "RelatedPhrases": "Related Phrases"
+    "RelatedPhrases": "Related Phrases",
+    "NavigationWord": "Navigation Word"
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",

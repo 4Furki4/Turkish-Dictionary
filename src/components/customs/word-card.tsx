@@ -13,7 +13,7 @@ import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/routing";
-import { Camera, Share2, Volume1, Volume2 } from "lucide-react";
+import { Camera, Share2, Volume2 } from "lucide-react";
 
 export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
@@ -106,37 +106,67 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
             tabContent: "text-primary"
           }}>
             <Tab value={"meaning"} title={t("Meanings")} >
-              <ul className="grid gap-2">
-                {word_data.meanings.map((meaning, index) => (
-                  <li key={meaning.meaning_id} className="grid gap-1">
-                    <div className="flex gap-2" >
-                      <Divider orientation="vertical" className="w-[2px] bg-primary" />
-                      <p>
-                        {meaning.part_of_speech}
-                        {meaning.attributes && meaning.attributes.length > 0 && (
-                          <>
-                            {meaning.part_of_speech ? ", " : ""}
-                            {meaning.attributes.map(attr => attr.attribute).join(", ")}
-                          </>
-                        )}
-                      </p>
-                    </div>
-                    <p className="text-fs-1 break-words hyphens-auto">
-                      {meaning.meaning}
-                    </p>
-                    {meaning.sentence ? (
-                      <div className="w-full italic px-2 text-fs--1 text-left bg-muted/50 p-2">
+              {word_data.meanings && word_data.meanings.length > 0 ? (
+                <ul className="grid gap-2">
+                  {word_data.meanings.map((meaning, index) => (
+                    <li key={meaning.meaning_id} className="grid gap-1">
+                      <div className="flex gap-2" >
+                        <Divider orientation="vertical" className="w-[2px] bg-primary" />
                         <p>
-                          <q>{meaning.sentence}</q>
+                          {meaning.part_of_speech}
+                          {meaning.attributes && meaning.attributes.length > 0 && (
+                            <>
+                              {meaning.part_of_speech ? ", " : ""}
+                              {meaning.attributes.map(attr => attr.attribute).join(", ")}
+                            </>
+                          )}
                         </p>
-                        {meaning.author && <p>-{meaning.author}</p>}
                       </div>
-                    ) : null}
-                    {/* do not render a divider after the last meaning. */}
-                    {index === word_data.meanings.length - 1 ? null : <Divider />}
-                  </li>
-                ))}
-              </ul>
+                      <p className="text-fs-1 break-words hyphens-auto">
+                        {meaning.meaning}
+                      </p>
+                      {meaning.sentence ? (
+                        <div className="w-full italic px-2 text-fs--1 text-left bg-muted/50 p-2">
+                          <p>
+                            <q>{meaning.sentence}</q>
+                          </p>
+                          {meaning.author && <p>-{meaning.author}</p>}
+                        </div>
+                      ) : null}
+                      {/* do not render a divider after the last meaning. */}
+                      {index === word_data.meanings.length - 1 ? null : <Divider />}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                // Handle navigation-only words (words with no meanings but with related words)
+                <div className="p-4 border border-primary/20 rounded-md bg-primary/5">
+                  {word_data.relatedWords && word_data.relatedWords.length > 0 ? (
+                    <div className="space-y-4">
+                      <p className="text-fs-1">{t("NavigationWord")}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {word_data.relatedWords.map((related) => (
+                          <NextUILink 
+                            key={related.related_word_id}
+                            as={Link} 
+                            href={`/search/${related.related_word_name}`}
+                            className="px-3 py-1 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors"
+                          >
+                            {related.related_word_name}
+                            {related.relation_type && (
+                              <span className="ml-1 text-xs text-muted-foreground">
+                                ({t(related.relation_type)})
+                              </span>
+                            )}
+                          </NextUILink>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p>{t("NoMeaningsFound")}</p>
+                  )}
+                </div>
+              )}
             </Tab>
             <Tab value={"related_words"} title={t("RelatedWords")}>
               <ul className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-2">

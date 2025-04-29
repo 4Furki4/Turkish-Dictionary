@@ -279,15 +279,39 @@ async function seedDatabase() {
                             relatedWordId = id;
                         }
                         
-                        // Create relationship
-                        await tx.insert(relatedWords)
-                            .values({
-                                wordId,
-                                relatedWordId,
-                                relationType,
-                                updatedAt: new Date().toISOString()
-                            })
-                            .onConflictDoNothing();
+                        // Check if relationship already exists before creating it
+                        const existingRelation = await tx.select()
+                            .from(relatedWords)
+                            .where(
+                                and(
+                                    eq(relatedWords.wordId, wordId),
+                                    eq(relatedWords.relatedWordId, relatedWordId)
+                                )
+                            );
+                            
+                        if (existingRelation.length === 0) {
+                            // Create relationship only if it doesn't exist
+                            await tx.insert(relatedWords)
+                                .values({
+                                    wordId,
+                                    relatedWordId,
+                                    relationType,
+                                    updatedAt: new Date().toISOString()
+                                });
+                        } else {
+                            // Optionally update the relation type if needed
+                            await tx.update(relatedWords)
+                                .set({ 
+                                    relationType,
+                                    updatedAt: new Date().toISOString() 
+                                })
+                                .where(
+                                    and(
+                                        eq(relatedWords.wordId, wordId),
+                                        eq(relatedWords.relatedWordId, relatedWordId)
+                                    )
+                                );
+                        }
                             
                         // For words that are just navigation pointers, we don't create a meaning
                         // The frontend will handle these by checking if they have related words
@@ -353,6 +377,9 @@ async function seedDatabase() {
                     for (const ornek of anlam.orneklerListe || []) {
                         const sentence = ornek.ornek || ornek.sentence;
                         
+                        // Skip examples without sentences (required field)
+                        if (!sentence) continue;
+                        
                         // Handle examples without authors (keep authorId as null)
                         let authorId = null;
                         if (ornek.yazar && ornek.yazar[0] && ornek.yazar[0].tam_adi) {
@@ -383,11 +410,41 @@ async function seedDatabase() {
                 // related phrases
                 for (const phrase of detail.atasozu || []) {
                     const related = phrase.madde;
-                    const rows = await tx.select().from(words).where(eq(words.name, related));
-                    if (rows.length) {
+                    
+                    // Check if the phrase already exists as a word
+                    let relatedPhraseId: number;
+                    const existingPhrase = await tx.select().from(words).where(eq(words.name, related));
+                    
+                    if (existingPhrase.length) {
+                        relatedPhraseId = existingPhrase[0].id;
+                    } else {
+                        // Create the phrase as a new word
+                        const [{ id }] = await tx.insert(words)
+                            .values({ 
+                                name: related, 
+                                updated_at: new Date().toISOString() 
+                            })
+                            .returning({ id: words.id });
+                        relatedPhraseId = id;
+                    }
+                    
+                    // Check if relationship already exists
+                    const existingRelation = await tx.select()
+                        .from(relatedPhrases)
+                        .where(
+                            and(
+                                eq(relatedPhrases.wordId, wordId),
+                                eq(relatedPhrases.relatedPhraseId, relatedPhraseId)
+                            )
+                        );
+                        
+                    if (existingRelation.length === 0) {
+                        // Create the relationship
                         await tx.insert(relatedPhrases)
-                            .values({ wordId, relatedPhraseId: rows[0].id })
-                            .onConflictDoNothing();
+                            .values({ 
+                                wordId, 
+                                relatedPhraseId 
+                            });
                     }
                 }
 

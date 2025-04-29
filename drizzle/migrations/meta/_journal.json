@@ -141,6 +141,13 @@
       "when": 1745508146234,
       "tag": "0019_elite_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1745939503134,
+      "tag": "0020_known_fat_cobra",
+      "breakpoints": true
     }
   ]
 }

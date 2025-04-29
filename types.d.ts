@@ -111,7 +111,7 @@ type WordSearchResult = {
         }
       ]
     }[];
-    relatedWords?: { related_word_id: number; related_word_name: string }[];
+    relatedWords?: { related_word_id: number; related_word_name: string; relation_type?: string }[];
     relatedPhrases?: { related_phrase_id: number; related_phrase: string }[];
   }
 }

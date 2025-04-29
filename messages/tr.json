@@ -55,7 +55,8 @@
     "SignIn": "Giriş Yap",
     "RequestEdit": "Düzenleme Talep Et",
     "RelatedWords": "İlgili Kelimeler",
-    "RelatedPhrases": "İlgili Atasözleri ve Deyimler"
+    "RelatedPhrases": "İlgili Atasözleri ve Deyimler",
+    "NavigationWord": "Yönlendirilen Kelime"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
