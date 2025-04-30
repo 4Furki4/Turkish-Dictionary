@@ -98,6 +98,7 @@ type WordSearchResult = {
     meanings: {
       meaning_id: number;
       meaning: string;
+      imageUrl: string | null;
       part_of_speech?: string;
       part_of_speech_id?: number
       sentence: string | undefined;
@@ -110,6 +111,8 @@ type WordSearchResult = {
         }
       ]
     }[];
+    relatedWords?: { related_word_id: number; related_word_name: string; relation_type?: string }[];
+    relatedPhrases?: { related_phrase_id: number; related_phrase: string }[];
   }
 }
 type SavedWordsResult = {

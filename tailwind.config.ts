@@ -2,7 +2,7 @@ const { heroui } = require("@heroui/react");
 /** @type {import('tailwindcss').Config} */
 
 
-export default ({
+module.exports = ({
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -103,7 +103,6 @@ export default ({
       themes: {
         light: {
           colors: {
-
             primary: {
               DEFAULT: "#a91101",
               50: '#ffe5e2',

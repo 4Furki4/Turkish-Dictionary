@@ -58,10 +58,13 @@ export default async function SearchResultPage(
         word
     } = params;
 
-    const formattedWord = decodeURI(word).trim()
+    // Properly decode URL parameters with special characters like commas
+    const formattedWord = decodeURIComponent(word).trim()
+    console.log('formattedWord', formattedWord)
     const response = await db.query.words.findMany({
         where: eq(words.name, formattedWord)
     })
+    console.log('response', response)
     if (response.length === 0) {
         notFound()
     }

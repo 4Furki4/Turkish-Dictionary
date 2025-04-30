@@ -58,9 +58,7 @@ export default function SearchForm({
                     endContent={<button type="submit">
                         <SearchIcon className="w-6 h-6" />
                     </button>}
-                    aria-required
                     autoFocus
-
                     role="search"
                     aria-label="search words"
                     value={wordInput}

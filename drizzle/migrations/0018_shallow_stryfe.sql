@@ -1,0 +1,1 @@
+ALTER TABLE "words" ADD COLUMN "variant" integer DEFAULT 0;

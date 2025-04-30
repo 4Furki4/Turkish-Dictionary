@@ -1,4 +1,5 @@
 import {
+  date,
   integer,
   pgTable,
   serial,
@@ -9,6 +10,7 @@ import { words } from "./words";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { partOfSpeechs } from "./part_of_speechs";
 import { meaningsAttributes } from "./meaning_attributes";
+import { examples } from "./examples";
 
 export const meanings = pgTable("meanings", {
   id: serial("id").primaryKey(),
@@ -23,6 +25,8 @@ export const meanings = pgTable("meanings", {
   partOfSpeechId: integer("part_of_speech_id")
     .references(() => partOfSpeechs.id),
   requestType: varchar("request_type", { length: 255 }).default("meaning"),
+  createdAt: date("created_at").defaultNow(),
+  updatedAt: date("updated_at"),
 });
 
 export const meaningsRelations = relations(meanings, ({ one, many }) => ({
@@ -35,6 +39,7 @@ export const meaningsRelations = relations(meanings, ({ one, many }) => ({
     references: [partOfSpeechs.id],
   }),
   attributes: many(meaningsAttributes),
+  examples: many(examples),
 }));
 
 export type SelectMeaning = InferSelectModel<typeof meanings>;

@@ -96,9 +96,9 @@ export default function Hero({ children }: {
         <div className="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-linear-to-tr from-primary via-primary/75 to-primary/25 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 pb-12 pt-10 sm:pb-16 lg:px-8">
+      <div className="mx-auto max-w-7xl px-2 pb-12 pt-10 sm:pb-16 lg:px-8">
         <div className="mx-auto text-center space-y-8">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl sm:leading-[5rem] bg-clip-text text-transparent bg-linear-to-r from-primary via-primary/80 to-primary/60 glow-text">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl sm:leading-[5rem] bg-clip-text text-transparent bg-linear-to-r from-primary via-primary/80 to-primary/60">
             {t("hero.title")}
           </h1>
           <p className="mt-6 text-lg leading-8">

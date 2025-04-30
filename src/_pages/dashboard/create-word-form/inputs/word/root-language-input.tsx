@@ -34,10 +34,10 @@ export default function WordRootLanguageInput({
                         !!watch("root") &&
                         getFieldState("language").isTouched
                     ) {
-                        return t("languageInputError");
+                        return t("Forms.Root.LanguageInputError");
                     } else if (!watch("root") && value) {
                         setError("root", {
-                            message: t("rootInputError")
+                            message: t("Forms.Root.InputError")
                         });
                         return true;
                     } else {
@@ -50,7 +50,7 @@ export default function WordRootLanguageInput({
                 <Autocomplete
                     radius='sm'
                     placeholder={t('EnterLanguage')}
-                    description="The root language is required when root is specified!"
+                    description={t('Forms.Language.Description')}
                     labelPlacement='outside'
                     isLoading={isLoading}
                     defaultItems={isSuccess ? langs : []}

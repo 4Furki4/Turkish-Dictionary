@@ -108,6 +108,7 @@ export const wordRouter = createTRPCRouter({
                 JSON_BUILD_OBJECT(
                   'meaning_id', m.id,
                   'meaning', m.meaning,
+                  'imageUrl', m."imageUrl",
                   'part_of_speech', pos.part_of_speech,
                   'part_of_speech_id', pos.id,
                   'attributes', ma.attributes,
@@ -124,6 +125,34 @@ export const wordRouter = createTRPCRouter({
               LEFT JOIN meanings_attributes_agg ma ON ma.meaning_id = m.id
             GROUP BY m.word_id
           ),
+          -- related words
+          related_words_agg AS (
+            SELECT
+              rw."word_id",
+              JSON_AGG(
+                JSON_BUILD_OBJECT(
+                  'related_word_id', rw.related_word_id,
+                  'related_word_name', w2.name
+                )
+              ) AS related_words
+            FROM related_words rw
+            JOIN words w2 ON rw.related_word_id = w2.id
+            GROUP BY rw.word_id
+          ),
+          -- related phrases
+          related_phrases_agg AS (
+            SELECT
+              rp."phrase_id",
+              JSON_AGG(
+                JSON_BUILD_OBJECT(
+                  'related_phrase_id', rp.related_phrase_id,
+                  'related_phrase', p.name
+                )
+              ) AS related_phrases
+            FROM related_phrases rp
+            JOIN words p ON rp.related_phrase_id = p.id
+            GROUP BY rp.phrase_id
+          ),
           -- words with meanings and root
           words_with_meanings AS (
             SELECT
@@ -133,6 +162,8 @@ export const wordRouter = createTRPCRouter({
               w.prefix AS prefix,
               w.suffix AS suffix,
               COALESCE(wa.attributes, '[]'::json) AS word_attributes,
+              COALESCE(rw.related_words, '[]'::json) AS related_words,
+              COALESCE(rp.related_phrases, '[]'::json) AS related_phrases,
               JSON_BUILD_OBJECT(
                 'root', r.root,
                 'language_en', l.language_en,
@@ -143,6 +174,8 @@ export const wordRouter = createTRPCRouter({
             FROM
               words w
               LEFT JOIN word_attributes_agg wa ON w.id = wa.word_id
+              LEFT JOIN related_words_agg rw ON w.id = rw.word_id
+              LEFT JOIN related_phrases_agg rp ON w.id = rp.phrase_id
               LEFT JOIN roots r ON r.word_id = w.id
               LEFT JOIN languages l ON r.language_id = l.id
               LEFT JOIN meanings_agg ma ON w.id = ma.word_id
@@ -159,12 +192,15 @@ export const wordRouter = createTRPCRouter({
               'suffix', suffix,
               'attributes', word_attributes,
               'root', root,
-              'meanings', meanings
+              'meanings', meanings,
+              'relatedWords', related_words,
+              'relatedPhrases', related_phrases
             ) AS word_data
           FROM
             words_with_meanings;
           `,
         ) as WordSearchResult[]
+      console.log('wordsWithMeanings', wordsWithMeanings)
       return wordsWithMeanings
     }),
   getRecommendations: publicProcedure

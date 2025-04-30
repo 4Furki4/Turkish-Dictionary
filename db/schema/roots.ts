@@ -13,7 +13,7 @@ import { languages } from "./languages";
 export const roots = pgTable("roots", {
   id: serial("id").primaryKey(),
   root: varchar("root", { length: 255 }),
-  languageId: integer('language_id').notNull().references(() => languages.id),
+  languageId: integer('language_id').references(() => languages.id),
   userId: text("user_id"),
   wordId: integer("word_id").notNull().references(() => words.id, {
     onDelete: "cascade",

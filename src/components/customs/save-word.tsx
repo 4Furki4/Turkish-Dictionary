@@ -1,6 +1,7 @@
 "use client"
 import { cn } from '@/src/lib/utils';
 import { api } from '@/src/trpc/react';
+import { Button } from '@heroui/react';
 import { Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import React from 'react'
@@ -41,18 +42,20 @@ export default function SaveWord({
         },
     });
     return (
-        <button
-            className={cn("cursor-pointer z-50 sm:hover:scale-125 transition-all", className)}
-            onClick={async () => {
+        <Button
+            className={cn("cursor-pointer z-50 sm:hover:scale-125 transition-all bg-transparent", className)}
+            onPress={async () => {
                 await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
             }}
+            isIconOnly
+            disableRipple
+
             disabled={saveWordMutation.isPending}
         >
             <Heart
                 aria-label="save word"
-                size={28}
-                className={`${savedWordsQuery.data ? "fill-primary text-primary" : "fill-transparent text-gray-400"} transition-colors`}
+                className={`w-5 h-5 sm:w-6 sm:h-6 ${savedWordsQuery.data ? "fill-primary text-primary" : "fill-transparent text-gray-400"} transition-colors`}
             />
-        </button>
+        </Button>
     )
 }

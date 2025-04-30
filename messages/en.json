@@ -53,7 +53,17 @@
     "Close": "Close",
     "You can request an edit if you are signed in": "You can request an edit if you are signed in",
     "SignIn": "Sign in",
-    "RequestEdit": "Request Edit"
+    "RequestEdit": "Request Edit",
+    "RelatedWords": "Related Words",
+    "RelatedPhrases": "Related Phrases",
+    "NavigationWord": "Navigation Word",
+    "Root": "Root",
+    "urlCopied": "URL Copied",
+    "urlCopiedDescription": "Word page URL has been copied to clipboard",
+    "urlCopyFailed": "Copy Failed",
+    "urlCopyFailedDescription": "Failed to copy URL to clipboard",
+    "NoRelatedWordsFound": "No related words found",
+    "NoRelatedPhrasesFound": "No related phrases found"
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",
@@ -68,6 +78,7 @@
     "MustHaveAMeaning": "You must have a meaning!",
     "WordCreated": "Word created!",
     "UploadingImages": "Uploading images...",
+    "StartedUploading": "Images uploading started...",
     "ImagesUploaded": "Images uploaded!",
     "Error": "Error",
     "Append": "Append",
@@ -319,6 +330,13 @@
     },
     "WordName": {
       "Required": "Word name is required, please enter a word name."
+    },
+    "Language": {
+      "Description": "Please select a language"
+    },
+    "Root": {
+      "InputError": "Root is required when language specified",
+      "LanguageInputError": "Language is required when root specified"
     }
   }
 }

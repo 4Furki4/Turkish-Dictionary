@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import fetch from 'node-fetch';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db } from '@/db';
 import { languages } from '@/db/schema/languages';
 import { roots } from '@/db/schema/roots';
@@ -33,11 +33,12 @@ function slugify(text: string) {
 }
 
 async function getOrCreateLanguage(tx: any, code: string): Promise<number> {
-    const existing = await tx.select().from(languages).where(eq(languages.language_code, code));
+    const existing = await tx.select().from(languages).where(eq(languages.language_tr, code));
     if (existing.length) return existing[0].id;
+    const newCode = code.slice(0, 2).toLowerCase();
     const [{ id }] = await tx
         .insert(languages)
-        .values({ language_code: code, language_tr: code, language_en: code })
+        .values({ language_tr: code, language_code: newCode, language_en: code })
         .returning({ id: languages.id });
     return id;
 }
@@ -136,32 +137,55 @@ async function seedDatabase() {
             }
             const details = await res.json();
             if (!Array.isArray(details) || !details.length) return;
-            const detail = details.find((d: any) => d.madde === word) || details[0];
+            // Process all variants of the word
+            for (const detail of details) {
+                if (detail.madde !== word) continue; // Skip if not matching our search word
 
-            await db.transaction(async tx => {
+                await db.transaction(async tx => {
                 // parse lisan
-                let code = '';
                 let rootText = '';
                 if (detail.lisan) {
                     const parts = detail.lisan.split(' ');
-                    code = parts[0].replace(/\.$/, '');
                     rootText = parts.slice(1).join(' ');
                 }
-                const languageId = code ? await getOrCreateLanguage(tx, code) : undefined;
 
                 // words upsert (prefix/suffix)
                 let wordId: number;
                 const prefixVal = detail.on_taki || null;
                 const suffixVal = detail.taki || null;
-                const existingWord = await tx.select().from(words).where(eq(words.name, detail.madde));
+                // Get variant number from kac field (defaults to 0 if not present)
+                const variantNum = detail.kac ? parseInt(String(detail.kac), 10) : 0;
+                
+                // Check if this exact variant already exists
+                const existingWord = await tx.select()
+                    .from(words)
+                    .where(
+                        and(
+                            eq(words.name, detail.madde),
+                            eq(words.variant, variantNum)
+                        )
+                    );
                 if (existingWord.length) {
                     wordId = existingWord[0].id;
                     await tx.update(words)
-                        .set({ phonetic: detail.telaffuz || null, prefix: prefixVal, suffix: suffixVal, updated_at: new Date().toISOString() })
+                        .set({ 
+                            phonetic: detail.telaffuz || null, 
+                            prefix: prefixVal, 
+                            suffix: suffixVal, 
+                            variant: variantNum,
+                            updated_at: new Date().toISOString() 
+                        })
                         .where(eq(words.id, wordId));
                 } else {
                     const [{ id }] = await tx.insert(words)
-                        .values({ name: detail.madde, phonetic: detail.telaffuz || null, prefix: prefixVal, suffix: suffixVal, updated_at: new Date().toISOString() })
+                        .values({ 
+                            name: detail.madde, 
+                            phonetic: detail.telaffuz || null, 
+                            prefix: prefixVal, 
+                            suffix: suffixVal, 
+                            variant: variantNum,
+                            updated_at: new Date().toISOString() 
+                        })
                         .returning({ id: words.id });
                     wordId = id;
                 }
@@ -208,22 +232,161 @@ async function seedDatabase() {
                         partName = posFromOz ? posFromOz.tam_adi : undefined;
                     }
                     const posId = partName ? await getOrCreatePartOfSpeech(tx, partName) : undefined;
-                    const [{ id: meaningId }] = await tx
-                        .insert(meanings)
-                        .values({
-                            meaning: String(anlam.anlam).replace(/►/g, '').trim(),
-                            wordId,
-                            partOfSpeechId: posId,
-                            order: parseInt(anlam.anlam_sira || '0', 10)
-                        })
-                        .onConflictDoNothing()
-                        .returning({ id: meanings.id });
+                    // Check if meaning contains navigation patterns (► or 343)
+                    const meaningText = String(anlam.anlam);
+                    
+                    // Check for ► navigation
+                    const arrowMatch = meaningText.match(/►\s*([^\s]+.*?)(?:\s*$|\.|,)/i);
+                    
+                    // Check for 343 navigation ("bakınız" - see also)
+                    const seeAlsoMatch = meaningText.match(/343\s+([^\s]+.*?)(?:\s*$|\.|,)/i);
+                    
+                    let meaningId: number;
+                    if (arrowMatch || seeAlsoMatch) {
+                        // Extract the related word and determine relation type
+                        let relatedWordText: string;
+                        let relationType: string;
+                        
+                        if (arrowMatch) {
+                            relatedWordText = arrowMatch[1].trim();
+                            // If lisan is empty, it's likely an obsolete word pointing to current usage
+                            // Otherwise, it's likely a foreign word pointing to Turkish equivalent
+                            relationType = !detail.lisan ? 'obsolete' : 'turkish_equivalent';
+                        } else if (seeAlsoMatch && seeAlsoMatch[1]) {
+                            relatedWordText = seeAlsoMatch[1].trim();
+                            relationType = 'see_also';
+                        } else {
+                            // Fallback in case neither match has valid capture groups
+                            relatedWordText = word;
+                            relationType = 'see_also';
+                        }
+                        // Related word and type already determined above
+                        
+                        // Check if related word exists
+                        let relatedWordId: number;
+                        const existingRelated = await tx.select().from(words).where(eq(words.name, relatedWordText));
+                        
+                        if (existingRelated.length) {
+                            relatedWordId = existingRelated[0].id;
+                        } else {
+                            // Create the related word
+                            const [{ id }] = await tx.insert(words)
+                                .values({ 
+                                    name: relatedWordText, 
+                                    updated_at: new Date().toISOString() 
+                                })
+                                .returning({ id: words.id });
+                            relatedWordId = id;
+                        }
+                        
+                        // Check if relationship already exists before creating it
+                        const existingRelation = await tx.select()
+                            .from(relatedWords)
+                            .where(
+                                and(
+                                    eq(relatedWords.wordId, wordId),
+                                    eq(relatedWords.relatedWordId, relatedWordId)
+                                )
+                            );
+                            
+                        if (existingRelation.length === 0) {
+                            // Create relationship only if it doesn't exist
+                            await tx.insert(relatedWords)
+                                .values({
+                                    wordId,
+                                    relatedWordId,
+                                    relationType,
+                                    updatedAt: new Date().toISOString()
+                                });
+                        } else {
+                            // Optionally update the relation type if needed
+                            await tx.update(relatedWords)
+                                .set({ 
+                                    relationType,
+                                    updatedAt: new Date().toISOString() 
+                                })
+                                .where(
+                                    and(
+                                        eq(relatedWords.wordId, wordId),
+                                        eq(relatedWords.relatedWordId, relatedWordId)
+                                    )
+                                );
+                        }
+                            
+                        // For words that are just navigation pointers, we don't create a meaning
+                        // The frontend will handle these by checking if they have related words
+                        // but no meanings
+                        
+                        // Check if this is the only meaning for this word and if it's entirely a navigation
+                        const isOnlyMeaning = detail.anlamlarListe?.length === 1;
+                        const isEntirelyNavigation = (
+                            (arrowMatch && arrowMatch[0] === meaningText.trim()) ||
+                            (seeAlsoMatch && seeAlsoMatch[0] === meaningText.trim())
+                        );
+                        
+                        // If this is the only meaning and it's entirely navigation, skip creating a meaning
+                        if (isOnlyMeaning && isEntirelyNavigation) {
+                            // Skip creating meaning - we'll just have the relation
+                            console.log(`Skipping meaning for "${detail.madde}", just a navigation pointer to "${relatedWordText}"`); 
+                            meaningId = 0; // Dummy value, not used for examples since we'll skip that too
+                        } else {
+                            // Clean the meaning text by removing navigation patterns
+                            let cleanMeaning = meaningText;
+                            if (arrowMatch) {
+                                cleanMeaning = cleanMeaning.replace(/►\s*[^\s]+.*?(?:\s*$|\.|,)/i, '').trim();
+                            }
+                            if (seeAlsoMatch && seeAlsoMatch[0]) {
+                                cleanMeaning = cleanMeaning.replace(/343\s+[^\s]+.*?(?:\s*$|\.|,)/i, '').trim();
+                            }
+                            
+                            // If after cleaning there's no meaningful content, use a placeholder
+                            if (!cleanMeaning) {
+                                cleanMeaning = `Bakınız: ${relatedWordText}`;
+                            }
+                            
+                            const result = await tx
+                                .insert(meanings)
+                                .values({
+                                    meaning: cleanMeaning,
+                                    wordId,
+                                    partOfSpeechId: posId,
+                                    order: parseInt(anlam.anlam_sira || '0', 10)
+                                })
+                                .onConflictDoNothing()
+                                .returning({ id: meanings.id });
+                            meaningId = result[0].id;
+                        }
+                    } else {
+                        // Regular meaning without navigation
+                        const result = await tx
+                            .insert(meanings)
+                            .values({
+                                meaning: meaningText,
+                                wordId,
+                                partOfSpeechId: posId,
+                                order: parseInt(anlam.anlam_sira || '0', 10)
+                            })
+                            .onConflictDoNothing()
+                            .returning({ id: meanings.id });
+                        meaningId = result[0].id;
+                    }
 
-                    // examples
+                    // examples (skip if we skipped creating a meaning)
+                    if (meaningId === 0) continue;
+                    
                     for (const ornek of anlam.orneklerListe || []) {
                         const sentence = ornek.ornek || ornek.sentence;
-                        const authorName = ornek.yazar?.[0]?.tam_adi || 'unknown';
-                        const authorId = await getOrCreateAuthor(tx, authorName);
+                        
+                        // Skip examples without sentences (required field)
+                        if (!sentence) continue;
+                        
+                        // Handle examples without authors (keep authorId as null)
+                        let authorId = null;
+                        if (ornek.yazar && ornek.yazar[0] && ornek.yazar[0].tam_adi) {
+                            const authorName = ornek.yazar[0].tam_adi;
+                            authorId = await getOrCreateAuthor(tx, authorName);
+                        }
+                        
                         await tx
                             .insert(examples)
                             .values({ sentence, authorId, meaningId })
@@ -247,17 +410,49 @@ async function seedDatabase() {
                 // related phrases
                 for (const phrase of detail.atasozu || []) {
                     const related = phrase.madde;
-                    const rows = await tx.select().from(words).where(eq(words.name, related));
-                    if (rows.length) {
+                    
+                    // Check if the phrase already exists as a word
+                    let relatedPhraseId: number;
+                    const existingPhrase = await tx.select().from(words).where(eq(words.name, related));
+                    
+                    if (existingPhrase.length) {
+                        relatedPhraseId = existingPhrase[0].id;
+                    } else {
+                        // Create the phrase as a new word
+                        const [{ id }] = await tx.insert(words)
+                            .values({ 
+                                name: related, 
+                                updated_at: new Date().toISOString() 
+                            })
+                            .returning({ id: words.id });
+                        relatedPhraseId = id;
+                    }
+                    
+                    // Check if relationship already exists
+                    const existingRelation = await tx.select()
+                        .from(relatedPhrases)
+                        .where(
+                            and(
+                                eq(relatedPhrases.wordId, wordId),
+                                eq(relatedPhrases.relatedPhraseId, relatedPhraseId)
+                            )
+                        );
+                        
+                    if (existingRelation.length === 0) {
+                        // Create the relationship
                         await tx.insert(relatedPhrases)
-                            .values({ wordId, relatedPhraseId: rows[0].id })
-                            .onConflictDoNothing();
+                            .values({ 
+                                wordId, 
+                                relatedPhraseId 
+                            });
                     }
                 }
 
                 // birlesikler (compound words)
-                for (const comp of detail.birlesikler || []) {
-                    const related = (comp && (comp.madde || comp)) as string;
+                const compounds: string[] = Array.isArray(detail.birlesikler)
+                    ? (detail.birlesikler as any[]).map((comp: any) => comp.madde || String(comp))
+                    : String(detail.birlesikler || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+                for (const related of compounds) {
                     // ensure compound word exists
                     const existComp = await tx.select().from(words).where(eq(words.name, related));
                     let compId: number;
@@ -273,7 +468,8 @@ async function seedDatabase() {
                         .values({ wordId, relatedWordId: compId })
                         .onConflictDoNothing();
                 }
-            });
+                });
+            }
         } catch (err) {
             console.error(`Error "${word}":`, err);
         }

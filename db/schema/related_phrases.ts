@@ -1,4 +1,4 @@
-import { integer, pgTable } from "drizzle-orm/pg-core";
+import { date, integer, pgTable } from "drizzle-orm/pg-core";
 import { words } from "./words";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 
@@ -13,6 +13,8 @@ export const relatedPhrases = pgTable("related_phrases", {
     .references(() => words.id, {
       onDelete: "cascade",
     }),
+  createdAt: date("created_at").defaultNow(),
+  updatedAt: date("updated_at"),
 });
 export const relatedWordsToWordsRelations = relations(
   relatedPhrases,

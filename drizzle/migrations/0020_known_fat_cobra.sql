@@ -1,0 +1,1 @@
+ALTER TABLE "related_words" ADD CONSTRAINT "related_words_word_id_related_word_id_pk" PRIMARY KEY("word_id","related_word_id");

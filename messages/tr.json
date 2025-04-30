@@ -53,7 +53,17 @@
     "Close": "Kapat",
     "You can request an edit if you are signed in": "Giriş yapmışsanız bir düzenleme talebi gönderebilirsiniz",
     "SignIn": "Giriş Yap",
-    "RequestEdit": "Düzenleme Talep Et"
+    "RequestEdit": "Düzenleme Talep Et",
+    "RelatedWords": "İlgili Kelimeler",
+    "RelatedPhrases": "İlgili Atasözleri ve Deyimler",
+    "NavigationWord": "Yönlendirilen Kelime",
+    "Root": "Köken",
+    "urlCopied": "URL Kopyalandı",
+    "urlCopiedDescription": "Kelime sayfasının bağlantısı panoya kopyalandı",
+    "urlCopyFailed": "Kopyalama Başarısız",
+    "urlCopyFailedDescription": "Kelime sayfasının bağlantısı panoya kopyalanamadı",
+    "NoRelatedWordsFound": "İlgili kelime bulunamadı",
+    "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
@@ -68,6 +78,7 @@
     "MustHaveAMeaning": "Anlam gerekli, lütfen bir anlam giriniz.",
     "WordCreated": "Kelime oluşturuldu!",
     "UploadingImages": "Resimler yükleniyor...",
+    "StartedUploading": "Resimler yüklenmeye başlandı...",
     "ImagesUploaded": "Resimler yüklendi!",
     "Error": "Hata",
     "Append": "Sona Ekle",
@@ -325,6 +336,13 @@
     "Author": {
       "NameRequired": "Yazar adı gerekli, lütfen bir yazar adı giriniz.",
       "MinLength2": "Yazar adı uzunluğu 2 karakterden uzun olmalıdır."
+    },
+    "Root": {
+      "InputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
+      "LanguageInputError": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
+    },
+    "Language": {
+      "Description": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
     }
   }
 }

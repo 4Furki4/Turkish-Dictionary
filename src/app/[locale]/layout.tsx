@@ -58,8 +58,8 @@ export default async function RootLayout({
 
             routerConfig={extractRouterConfig(ourFileRouter)}
           /> */}
-          <Providers>
-            <NextIntlClientProvider messages={messages}>
+          <NextIntlClientProvider messages={messages}>
+            <Providers>
               <Wrapper TitleIntl={t("Title")}
                 HomeIntl={t("Home")}
                 session={session}
@@ -73,8 +73,8 @@ export default async function RootLayout({
               {children}
               <SpeedInsights />
               <Footer />
-            </NextIntlClientProvider>
-          </Providers>
+            </Providers>
+          </NextIntlClientProvider>
         </TRPCReactProvider>
         <Toaster />
       </body>
