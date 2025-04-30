@@ -51,25 +51,42 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
         base: ["p-2"]
       }}
     >
-      <CardHeader className="w-full block">
+      <CardHeader className="w-full flex flex-col items-start">
+        <div className="flex w-full items-center gap-4">
+          <Button className="bg-transparent mr-auto" isIconOnly isDisabled> {/* TODO: add voice to word */}
+            <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
+          </Button>
+          <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
+          <Button disabled disableRipple isIconOnly className="bg-transparent" isDisabled
+            onPress={(e) => {
+              // TODO: generate image of word card
+            }}
+          >
+            <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
+          </Button>
+          <Button disableRipple isIconOnly className="bg-transparent" onPress={copyPageUrl}>
+            <Share2 className="w-5 h-5 sm:w-6 sm:h-6" />
+          </Button>
+
+        </div>
         <div className="w-full flex items-center justify-between">
           <div className="w-full flex items-center gap-2">
             <div className="flex items-baseline gap-2">
-              <h2 className="text-fs-3 text-center sm:text-start break-words hyphens-auto">
-                {word_data.prefix && (
-                  <span className="text-fs-0">
-                    <span aria-label="word prefix">{word_data.prefix}</span>
-                    <span aria-hidden>- </span>
-                  </span>
-                )}
+              {word_data.prefix && (
+                <span className="text-fs-0">
+                  <span aria-label="word prefix">{word_data.prefix}</span>
+                  <span aria-hidden>- </span>
+                </span>
+              )}
+              <h2 className="text-fs-2 md:text-fs-3 text-start break-words hyphens-auto">
                 {word_data.word_name}
-                {word_data.suffix && (
-                  <span className="text-fs-0">
-                    <span aria-hidden> -</span>
-                    <span aria-label="word-suffix">{word_data.suffix}</span>
-                  </span>
-                )}
               </h2>
+              {word_data.suffix && (
+                <span className="text-fs-0">
+                  <span aria-hidden> -</span>
+                  <span aria-label="word-suffix">{word_data.suffix}</span>
+                </span>
+              )}
 
               {/* Phonetic pronunciation inline with word */}
               {word_data.phonetic && (
@@ -78,30 +95,12 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                 </span>
               )}
             </div>
-
-            <Button className="bg-transparent" isIconOnly isDisabled> {/* TODO: add voice to word */}
-              <Volume2 className="w-6 h-6" />
-            </Button>
-          </div>
-          <div className="flex items-center gap-4">
-            <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
-            <Button disabled disableRipple isIconOnly className="bg-transparent" isDisabled
-              onPress={(e) => {
-                // TODO: generate image of word card
-              }}
-            >
-              <Camera className="w-6 h-6" />
-            </Button>
-            <Button disableRipple isIconOnly className="bg-transparent" onPress={copyPageUrl}>
-              <Share2 className="w-6 h-6" />
-            </Button>
           </div>
         </div>
-
         <div className="space-y-2 mt-2">
           {/* Root information section */}
           {word_data.root.root && (
-            <div className="flex items-center text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
               <span className="font-medium mr-2">{t("Root")}:</span>
               <span>
                 <span className="text-fs--1 font-medium">{word_data.root.root}</span>
