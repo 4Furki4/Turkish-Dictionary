@@ -61,7 +61,9 @@
     "urlCopied": "URL Kopyalandı",
     "urlCopiedDescription": "Kelime sayfasının bağlantısı panoya kopyalandı",
     "urlCopyFailed": "Kopyalama Başarısız",
-    "urlCopyFailedDescription": "Kelime sayfasının bağlantısı panoya kopyalanamadı"
+    "urlCopyFailedDescription": "Kelime sayfasının bağlantısı panoya kopyalanamadı",
+    "NoRelatedWordsFound": "İlgili kelime bulunamadı",
+    "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",

@@ -61,7 +61,9 @@
     "urlCopied": "URL Copied",
     "urlCopiedDescription": "Word page URL has been copied to clipboard",
     "urlCopyFailed": "Copy Failed",
-    "urlCopyFailedDescription": "Failed to copy URL to clipboard"
+    "urlCopyFailedDescription": "Failed to copy URL to clipboard",
+    "NoRelatedWordsFound": "No related words found",
+    "NoRelatedPhrasesFound": "No related phrases found"
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",

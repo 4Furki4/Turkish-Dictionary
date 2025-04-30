@@ -46,14 +46,13 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
       aria-label="word card"
       role="article"
       isBlurred
-      className="border border-border rounded-sm p-4 w-full"
+      className="border border-border rounded-sm p-2 w-full"
       classNames={{
-        base: ["p-6"]
+        base: ["p-2"]
       }}
     >
       <CardHeader className="w-full block">
         <div className="w-full flex items-center justify-between">
-
           <div className="w-full flex items-center gap-2">
             <div className="flex items-baseline gap-2">
               <h2 className="text-fs-3 text-center sm:text-start break-words hyphens-auto">
@@ -71,7 +70,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                   </span>
                 )}
               </h2>
-              
+
               {/* Phonetic pronunciation inline with word */}
               {word_data.phonetic && (
                 <span className="text-muted-foreground text-fs-0 italic">
@@ -114,15 +113,15 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
               </span>
             </div>
           )}
-          
+
           {/* Word attributes section */}
           {word_data.attributes && word_data.attributes.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {word_data.attributes.map((attribute) => (
-                <Chip 
-                  key={attribute.attribute_id} 
-                  size="sm" 
-                  variant="solid" 
+                <Chip
+                  key={attribute.attribute_id}
+                  size="sm"
+                  variant="solid"
                   className="flex rounded-lg dark:text-primary-50 bg-primary-100 dark:bg-primary/50"
                 >
                   {attribute.attribute}
@@ -137,8 +136,8 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
       <CardBody>
         <>
           <Tabs disableAnimation classNames={{
-            tabList: "w-full dark:bg-card",
-            tabContent: "text-primary"
+            tabList: "w-full dark:bg-card ",
+            tabContent: "text-primary md:w-full",
           }}>
             <Tab value={"meaning"} title={t("Meanings")} >
               {word_data.meanings && word_data.meanings.length > 0 ? (
@@ -241,34 +240,53 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
               )}
             </Tab>
             <Tab value={"related_words"} title={t("RelatedWords")}>
-              <ul className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-2">
-                {word_data.relatedWords?.map((related_word) => (
-                  <li key={related_word.related_word_id}>
-                    <Card>
-                      <CardBody>
-                        <NextUILink target="_blank" as={Link} href={`/search/${related_word.related_word_name}`}>
-                          {related_word.related_word_name}
-                        </NextUILink>
-                      </CardBody>
-                    </Card>
-                  </li>
-                ))}
-              </ul>
+              {word_data.relatedWords && word_data.relatedWords.length > 0 ? (
+                <div className="p-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {word_data.relatedWords.map((related_word) => (
+                      <Card key={related_word.related_word_id}>
+                        <CardBody>
+                          <NextUILink
+                            key={related_word.related_word_id}
+                            as={Link}
+                            href={`/search/${related_word.related_word_name}`}
+                          >
+                            {related_word.related_word_name}
+                          </NextUILink>
+                        </CardBody>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 text-center text-muted-foreground">
+                  <p>{t("NoRelatedWordsFound") || "No related words found"}</p>
+                </div>
+              )}
             </Tab>
             <Tab value={"related_phrases"} title={t("RelatedPhrases")}>
-              <ul className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-2">
-                {word_data.relatedPhrases?.map((related_phrase) => (
-                  <li key={related_phrase.related_phrase_id}>
-                    <Card>
-                      <CardBody>
-                        <NextUILink target="_blank" as={Link} href={`/search/${related_phrase.related_phrase}`}>
-                          {related_phrase.related_phrase}
-                        </NextUILink>
-                      </CardBody>
-                    </Card>
-                  </li>
-                ))}
-              </ul>
+              {word_data.relatedPhrases && word_data.relatedPhrases.length > 0 ? (
+                <div className="p-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {word_data.relatedPhrases.map((related_phrase) => (
+                      <Card key={related_phrase.related_phrase_id}>
+                        <CardBody>
+                          <NextUILink
+                            as={Link}
+                            href={`/search/${related_phrase.related_phrase}`}
+                          >
+                            {related_phrase.related_phrase}
+                          </NextUILink>
+                        </CardBody>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 text-center text-muted-foreground">
+                  <p>{t("NoRelatedPhrasesFound") || "No related phrases found"}</p>
+                </div>
+              )}
             </Tab>
           </Tabs>
         </>
