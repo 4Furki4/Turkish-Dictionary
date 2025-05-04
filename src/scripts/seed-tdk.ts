@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import fetch from 'node-fetch';
-import { eq, and, or, sql } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db } from '@/db';
 import { languages } from '@/db/schema/languages';
 import { roots } from '@/db/schema/roots';
@@ -14,6 +14,9 @@ import { relatedWords } from '@/db/schema/related_words';
 import { meaningAttributes, meaningsAttributes } from '@/db/schema/meaning_attributes';
 import { wordAttributes, wordsAttributes } from '@/db/schema/word_attributes';
 import pMap from 'p-map'
+
+// Create a phrase cache to prevent duplicate phrase words
+const phraseCache = new Map<string, number>();
 const AUTOCOMPLETE_URL = 'https://sozluk.gov.tr/autocomplete.json';
 const SAPKA_URL = 'https://sozluk.gov.tr/assets/js/autocompleteSapka.json';
 const DETAIL_URL = (word: string) => `https://sozluk.gov.tr/gts?ara=${encodeURIComponent(word)}`;
@@ -426,35 +429,24 @@ async function seedDatabase() {
                     // Process all related phrases at once to avoid duplicates
                     const phrases = detail.atasozu || [];
                     if (phrases.length > 0) {
-                        // Collect all phrase texts
-                        const phraseTexts = phrases.map((phrase: Record<string, any>) => phrase.madde);
-                        
-                        // Get existing words that match these phrases (case-insensitive)
-                        // First get all words with these names
-                        const lowerPhraseTexts = phraseTexts.map((p: string) => p.toLowerCase());
-                        const existingPhraseWords = await tx.select()
-                            .from(words)
-                            .where(
-                                or(
-                                    ...lowerPhraseTexts.map((text: string) => 
-                                        sql`LOWER(${words.name}) = ${text}`
-                                    )
-                                )
-                            );
-                        
-                        // Create a lookup map for faster access
-                        const existingPhrasesMap = new Map<string, number>();
-                        existingPhraseWords.forEach(word => {
-                            existingPhrasesMap.set(word.name.toLowerCase(), word.id);
-                        });
+                        // Initialize phrase cache if it's empty
+                        if (phraseCache.size === 0) {
+                            // Pre-populate cache with existing phrases from database
+                            console.log("Building phrase cache from database...");
+                            const allExistingPhrases = await tx.select().from(words);
+                            for (const word of allExistingPhrases) {
+                                phraseCache.set(word.name.toLowerCase(), word.id);
+                            }
+                            console.log(`Cached ${phraseCache.size} existing words/phrases`);
+                        }
                         
                         // Process each phrase
                         for (const phrase of phrases) {
                             const related = phrase.madde as string;
                             let relatedPhraseId: number;
                             
-                            // Check if this phrase already exists (case-insensitive)
-                            const existingId = existingPhrasesMap.get(related.toLowerCase());
+                            // Check if this phrase already exists in our cache (case-insensitive)
+                            const existingId = phraseCache.get(related.toLowerCase());
                             
                             if (existingId) {
                                 // Use existing word
@@ -470,8 +462,8 @@ async function seedDatabase() {
                                     .returning({ id: words.id });
                                 relatedPhraseId = id;
                                 
-                                // Add to our map to prevent duplicates in subsequent iterations
-                                existingPhrasesMap.set(related.toLowerCase(), id);
+                                // Add to our cache to prevent duplicates
+                                phraseCache.set(related.toLowerCase(), id);
                                 console.log(`Created new phrase: "${related}" (ID: ${relatedPhraseId})`);
                             }
 
