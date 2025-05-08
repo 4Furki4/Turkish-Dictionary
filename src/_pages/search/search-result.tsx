@@ -19,7 +19,19 @@ export default async function SearchResult({ word, locale }: { word: string, loc
     }
   }))
   return response.length > 0 ? (
-    response.map((word) => <WordCard key={word.word_data.word_id} word={word} isSavedWord={isSavedWords.find((value) => value.wordId === word.word_data.word_id)!.isSaved} locale={locale} session={session} />)
+    response.map((word, index) => {
+      // Ensure we have a valid unique key for each word card
+      const uniqueKey = word.word_data?.word_id || `word-${index}`;
+      return (
+        <WordCard 
+          key={uniqueKey} 
+          word={word} 
+          isSavedWord={isSavedWords.find((value) => value.wordId === word.word_data?.word_id)?.isSaved || false} 
+          locale={locale} 
+          session={session} 
+        />
+      );
+    })
   ) : (
     <>
       <h1 className="text-center text-fs-3">{word}</h1>

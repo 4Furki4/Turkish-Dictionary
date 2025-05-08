@@ -63,7 +63,9 @@
     "urlCopyFailed": "Kopyalama Başarısız",
     "urlCopyFailedDescription": "Kelime sayfasının bağlantısı panoya kopyalanamadı",
     "NoRelatedWordsFound": "İlgili kelime bulunamadı",
-    "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı"
+    "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
+    "obsolete": "eskimiş anlam",
+    "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı."
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
