@@ -233,7 +233,9 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
                       </div>
                     </div>
                   ) : (
-                    <p>{t("NoMeaningsFound")}</p>
+                    <div className="p-4 text-center text-muted-foreground">
+                      <p>{t("NoMeaningsFound")}</p>
+                    </div>
                   )}
                 </div>
               )}
