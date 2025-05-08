@@ -4,7 +4,7 @@ import {
   publicProcedure,
 } from "../trpc";
 import { sql } from "drizzle-orm";
-import { DashboardWordList, WordSearchResult } from "@/types";
+import type { WordSearchResult, DashboardWordList } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";
 
@@ -66,142 +66,119 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input: name, ctx: { db } }) => {
-      // TODO: join word and meaning attributes...
-      const purifiedName = DOMPurify.sanitize(name)
-      const wordsWithMeanings =
-        await db.execute(sql`
-          -- word attributes
-          WITH word_attributes_agg AS (
-            SELECT
-              ws_a.word_id,
-              JSON_AGG(
-                JSON_BUILD_OBJECT(
-                  'attribute_id', w_a.id,
-                  'attribute', w_a.attribute
+      const purifiedName = DOMPurify.sanitize(name);
+      console.log('formattedWord', purifiedName);
+
+      // Optimized query with direct JSON aggregation - matches WordSearchResult type exactly
+      const result = await db.execute(sql`
+        WITH base_word AS (
+          SELECT w.id, w.name, w.phonetic, w.prefix, w.suffix
+          FROM words w
+          WHERE w.name = ${purifiedName}
+        )
+        SELECT json_build_object(
+              'word_id', w.id,
+              'word_name', w.name,
+              'phonetic', w.phonetic,
+              'prefix', w.prefix,
+              'suffix', w.suffix,
+              'attributes', COALESCE(
+                (SELECT json_agg(json_build_object(
+                  'attribute_id', wa.id, 
+                  'attribute', wa.attribute
+                ))
+                FROM words_attributes wattr
+                JOIN word_attributes wa ON wattr.attribute_id = wa.id
+                WHERE wattr.word_id = w.id), '[]'::json
+              ),
+              'root', COALESCE(
+                (SELECT json_build_object(
+                  'root', r.root,
+                  'language_en', l.language_en,
+                  'language_tr', l.language_tr,
+                  'language_code', l.language_code
                 )
-              ) AS attributes
-            FROM
-              words_attributes ws_a
-              JOIN word_attributes w_a ON ws_a.attribute_id = w_a.id
-            GROUP BY ws_a.word_id
-          ),
-          -- meaning attributes
-          meanings_attributes_agg AS (
-            SELECT
-              ma.meaning_id,
-              JSON_AGG(
-                JSON_BUILD_OBJECT(
-                  'attribute_id', m_a.id,
-                  'attribute', m_a.attribute
+                FROM roots r
+                JOIN languages l ON r.language_id = l.id
+                WHERE r.word_id = w.id
+                LIMIT 1), 
+                json_build_object(
+                  'root', null,
+                  'language_en', null,
+                  'language_tr', null,
+                  'language_code', null
                 )
-              ) AS attributes
-            FROM
-              meanings_attributes ma
-              JOIN meaning_attributes m_a ON ma.attribute_id = m_a.id
-            GROUP BY ma.meaning_id
-          ),
-          -- meanings
-          meanings_agg AS (
-            SELECT
-              m.word_id,
-              JSON_AGG(
-                JSON_BUILD_OBJECT(
+              ),
+              'meanings', COALESCE(
+                (SELECT json_agg(json_build_object(
                   'meaning_id', m.id,
                   'meaning', m.meaning,
                   'imageUrl', m."imageUrl",
-                  'part_of_speech', pos.part_of_speech,
-                  'part_of_speech_id', pos.id,
-                  'attributes', ma.attributes,
-                  'sentence', ex.sentence,
+                  'part_of_speech', p.part_of_speech,
+                  'part_of_speech_id', p.id,
+                  'attributes', COALESCE(
+                    (SELECT json_agg(json_build_object(
+                      'attribute_id', ma.id, 
+                      'attribute', ma.attribute
+                    ))
+                    FROM meanings_attributes mattr
+                    JOIN meaning_attributes ma ON mattr.attribute_id = ma.id
+                    WHERE mattr.meaning_id = m.id), '[]'::json
+                  ),
+                  'sentence', e.sentence,
                   'author', a.name,
                   'author_id', a.id
-                ) ORDER BY m.id
-              ) AS meanings
-            FROM
-              meanings m
-              LEFT JOIN part_of_speechs pos ON m.part_of_speech_id = pos.id
-              LEFT JOIN examples ex ON ex.meaning_id = m.id
-              LEFT JOIN authors a ON ex.author_id = a.id
-              LEFT JOIN meanings_attributes_agg ma ON ma.meaning_id = m.id
-            GROUP BY m.word_id
-          ),
-          -- related words
-          related_words_agg AS (
-            SELECT
-              rw."word_id",
-              JSON_AGG(
-                JSON_BUILD_OBJECT(
-                  'related_word_id', rw.related_word_id,
-                  'related_word_name', w2.name
-                )
-              ) AS related_words
-            FROM related_words rw
-            JOIN words w2 ON rw.related_word_id = w2.id
-            GROUP BY rw.word_id
-          ),
-          -- related phrases
-          related_phrases_agg AS (
-            SELECT
-              rp."phrase_id",
-              JSON_AGG(
-                JSON_BUILD_OBJECT(
-                  'related_phrase_id', rp.related_phrase_id,
-                  'related_phrase', p.name
-                )
-              ) AS related_phrases
-            FROM related_phrases rp
-            JOIN words p ON rp.related_phrase_id = p.id
-            GROUP BY rp.phrase_id
-          ),
-          -- words with meanings and root
-          words_with_meanings AS (
-            SELECT
-              w.id AS word_id,
-              w.name AS word_name,
-              w.phonetic AS phonetic,
-              w.prefix AS prefix,
-              w.suffix AS suffix,
-              COALESCE(wa.attributes, '[]'::json) AS word_attributes,
-              COALESCE(rw.related_words, '[]'::json) AS related_words,
-              COALESCE(rp.related_phrases, '[]'::json) AS related_phrases,
-              JSON_BUILD_OBJECT(
-                'root', r.root,
-                'language_en', l.language_en,
-                'language_tr', l.language_tr,
-                'language_code', l.language_code
-              ) AS root,
-              COALESCE(ma.meanings, '[]'::json) AS meanings
-            FROM
-              words w
-              LEFT JOIN word_attributes_agg wa ON w.id = wa.word_id
-              LEFT JOIN related_words_agg rw ON w.id = rw.word_id
-              LEFT JOIN related_phrases_agg rp ON w.id = rp.phrase_id
-              LEFT JOIN roots r ON r.word_id = w.id
-              LEFT JOIN languages l ON r.language_id = l.id
-              LEFT JOIN meanings_agg ma ON w.id = ma.word_id
-            WHERE
-              w.name = ${purifiedName}
-          )
-          -- finally combine all data as a single json object
-          SELECT
-            JSON_BUILD_OBJECT(
-              'word_id', word_id,
-              'word_name', word_name,
-              'phonetic', phonetic,
-              'prefix', prefix,
-              'suffix', suffix,
-              'attributes', word_attributes,
-              'root', root,
-              'meanings', meanings,
-              'relatedWords', related_words,
-              'relatedPhrases', related_phrases
-            ) AS word_data
-          FROM
-            words_with_meanings;
-          `,
-        ) as WordSearchResult[]
-      console.log('wordsWithMeanings', wordsWithMeanings)
-      return wordsWithMeanings
+                ) ORDER BY m."order" ASC)
+                FROM meanings m
+                LEFT JOIN part_of_speechs p ON m.part_of_speech_id = p.id
+                LEFT JOIN examples e ON e.meaning_id = m.id
+                LEFT JOIN authors a ON e.author_id = a.id
+                WHERE m.word_id = w.id), '[]'::json
+              ),
+              'relatedWords', COALESCE(
+                (SELECT json_agg(json_build_object(
+                  'related_word_id', rw.id,
+                  'related_word_name', rw.name,
+                  'relation_type', rel.relation_type
+                ))
+                FROM related_words rel
+                JOIN words rw ON rel.related_word_id = rw.id
+                WHERE rel.word_id = w.id), '[]'::json
+              ),
+              'relatedPhrases', COALESCE(
+                (SELECT json_agg(json_build_object(
+                  'related_phrase_id', rp.id,
+                  'related_phrase', rp.name
+                ))
+                FROM related_phrases rel
+                JOIN words rp ON rel.related_phrase_id = rp.id
+                WHERE rel.phrase_id = w.id), '[]'::json
+              )
+          ) AS word_data
+        FROM base_word w
+      `);
+      
+      // Filter any null or undefined results
+      const filteredResult = result.filter(Boolean) as any[];
+      
+      // Add detailed debugging
+      console.log('Raw database response:', JSON.stringify(filteredResult, null, 2));
+      
+      if (filteredResult.length > 0) {
+        // Fix the double-nesting issue
+        const formattedResult = filteredResult.map(item => {
+          // If we have a nested word_data structure, flatten it
+          if (item.word_data) {
+            return { word_data: item.word_data } as WordSearchResult;
+          }
+          return { word_data: item } as WordSearchResult;
+        });
+        
+        console.log('Formatted result:', JSON.stringify(formattedResult, null, 2));
+        return formattedResult;
+      }
+      
+      return [];
     }),
   getRecommendations: publicProcedure
     .input(

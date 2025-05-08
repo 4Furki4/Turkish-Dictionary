@@ -99,14 +99,14 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
         </div>
         <div className="space-y-2 mt-2">
           {/* Root information section */}
-          {word_data.root.root && (
+          {word_data.root?.root && (
             <div className="text-sm text-muted-foreground">
               <span className="font-medium mr-2">{t("Root")}:</span>
               <span>
-                <span className="text-fs--1 font-medium">{word_data.root.root}</span>
-                {word_data.root[`language_${locale}`] && (
+                <span className="text-fs--1 font-medium">{word_data.root?.root}</span>
+                {word_data.root?.[`language_${locale}`] && (
                   <span className="ml-1 text-fs--2">
-                    ({word_data.root[`language_${locale}`]})
+                    ({word_data.root?.[`language_${locale}`]})
                   </span>
                 )}
               </span>
