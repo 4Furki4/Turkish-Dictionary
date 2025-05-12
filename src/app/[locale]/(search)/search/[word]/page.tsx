@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { api } from '@/src/trpc/server'
+import { api } from '@/src/trpc/server';
 import { db } from '@/db';
 import SearchResult from '@/src/_pages/search/search-result';
 import Loading from '../_loading';
@@ -21,18 +21,23 @@ export async function generateMetadata(
         locale
     } = params;
 
-    const parsedWord = decodeURIComponent(word) // parse the word to utf-8 format string
-    const response = await api.word.getWord(parsedWord);
+    const parsedWord = decodeURIComponent(word).trim();
+
+    // --- Call tRPC procedure, skipping logging --- 
+    const response = await api.word.getWord({ name: parsedWord, skipLogging: true });
     // Type the response properly and add null checks
     const typedResponse = response as unknown as WordSearchResult[];
-    const defString = typedResponse.length > 0 && 
-      typedResponse[0]?.word_data?.meanings && 
-      Array.isArray(typedResponse[0].word_data.meanings) ? 
+    const wordExists = typedResponse.length > 0;
+    const defString = wordExists &&
+        typedResponse[0]?.word_data?.meanings &&
+        Array.isArray(typedResponse[0].word_data.meanings) ?
         typedResponse[0].word_data.meanings.map((meaning, idx) => {
-          return `${idx + 1}. ${meaning.meaning}:`
-        }).join(" ") : 
-        "No definition found for this word"
-    if (word) {
+            return `${idx + 1}. ${meaning.meaning}:`
+        }).join(" ") :
+        "No definition found for this word";
+    // --- End of tRPC call ---
+
+    if (wordExists) {
         const meta: Metadata = {
             title: locale === "en" ? `${parsedWord}` : `${parsedWord}`,
             description: locale === "en" ? `${parsedWord} definition: ${defString}` : `${parsedWord} kelimesinin anlamı: ${defString}`,
@@ -67,11 +72,11 @@ export default async function SearchResultPage(
 
     // Properly decode URL parameters with special characters like commas
     const formattedWord = decodeURIComponent(word).trim()
-    console.log('formattedWord', formattedWord)
+
     const response = await db.query.words.findMany({
         where: eq(words.name, formattedWord)
     })
-    console.log('response', response)
+
     if (response.length === 0) {
         notFound()
     }

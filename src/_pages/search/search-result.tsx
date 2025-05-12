@@ -7,7 +7,7 @@ import { auth } from "@/src/server/auth/auth";
 
 export default async function SearchResult({ word, locale }: { word: string, locale: "en" | "tr" }) {
   const t = await getTranslations('SearchResults')
-  const response = await api.word.getWord(word)
+  const response = await api.word.getWord({ name: word })
   const session = await auth()
   const isSavedWords = await Promise.all(response.map(async (word) => {
     if (!session) return { wordId: word.word_data.word_id, isSaved: false }

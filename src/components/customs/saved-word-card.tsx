@@ -28,7 +28,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
   const { isOpen, onOpenChange } = useDisclosure();
 
   const { data: details, isLoading: loadingDetails } = api.word.getWord.useQuery(
-    wordData.word_name,
+    { name: wordData.word_name, skipLogging: true },
     { enabled: isOpen }
   );
 

@@ -148,6 +148,20 @@
       "when": 1745939503134,
       "tag": "0020_known_fat_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1747067733385,
+      "tag": "0021_wet_red_ghost",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1747067784016,
+      "tag": "0022_odd_mandarin",
+      "breakpoints": true
     }
   ]
 }

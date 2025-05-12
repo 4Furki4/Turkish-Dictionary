@@ -340,5 +340,13 @@
       "InputError": "Root is required when language specified",
       "LanguageInputError": "Language is required when root specified"
     }
+  },
+  "Components": {
+    "PopularSearches": {
+      "title": "Popular Searches"
+    },
+    "TrendingSearches": {
+      "title": "Trending Searches"
+    }
   }
 }

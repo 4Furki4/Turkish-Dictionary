@@ -7,7 +7,7 @@ import { sql } from "drizzle-orm";
 import type { WordSearchResult, DashboardWordList } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";
-
+import { searchLogs, type NewSearchLog } from "@/db/schema/search_logs"
 
 export const wordRouter = createTRPCRouter({
   /**
@@ -60,16 +60,17 @@ export const wordRouter = createTRPCRouter({
    */
   getWord: publicProcedure
     .input(
-      z.string({
-        invalid_type_error: "Word must be a string",
-        required_error: "Word is required to get a word",
+      z.object({
+        name: z.string({
+          invalid_type_error: "Word must be a string",
+          required_error: "Word is required to get a word",
+        }),
+        skipLogging: z.boolean().optional().default(false),
       })
     )
-    .query(async ({ input: name, ctx: { db } }) => {
-      const purifiedName = DOMPurify.sanitize(name);
-      console.log('formattedWord', purifiedName);
+    .query(async ({ input, ctx: { db, session } }) => {
+      const purifiedName = DOMPurify.sanitize(input.name);
 
-      // Optimized query with direct JSON aggregation - matches WordSearchResult type exactly
       const result = await db.execute(sql`
         WITH base_word AS (
           SELECT w.id, w.name, w.phonetic, w.prefix, w.suffix
@@ -157,29 +158,104 @@ export const wordRouter = createTRPCRouter({
           ) AS word_data
         FROM base_word w
       `);
-      
+
       // Filter any null or undefined results
       const filteredResult = result.filter(Boolean) as any[];
-      
+
       // Add detailed debugging
       console.log('Raw database response:', JSON.stringify(filteredResult, null, 2));
-      
-      if (filteredResult.length > 0) {
-        // Fix the double-nesting issue
-        const formattedResult = filteredResult.map(item => {
-          // If we have a nested word_data structure, flatten it
-          if (item.word_data) {
-            return { word_data: item.word_data } as WordSearchResult;
+
+      if (filteredResult.length > 0 && filteredResult[0]?.word_data) {
+        const wordData = filteredResult[0].word_data as WordSearchResult['word_data']; // Type assertion for safety
+
+        // --- Conditionally Log search --- 
+        if (!input.skipLogging && wordData?.word_id) { 
+          const userId = session?.user?.id ?? null; // Get user ID if logged in, else null
+
+          const newLog: NewSearchLog = {
+            wordId: wordData.word_id,
+            userId
+            // searchTimestamp is handled by DB default
+          };
+
+          try {
+            await db.insert(searchLogs).values(newLog);
+            console.log(`Logged search for wordId: ${wordData.word_id}, userId: ${userId}`);
+          } catch (error) {
+            console.error("Failed to insert search log:", error);
           }
-          return { word_data: item } as WordSearchResult;
+        }
+
+        // Fix the double-nesting issue - Assuming WordSearchResult expects { word_data: ... }
+        const formattedResult = filteredResult.map(item => {
+          // Original code might have had issues if item structure varied
+          // Ensure consistent structure before returning
+          if (item.word_data) {
+            return { word_data: item.word_data };
+          } else if (item) { // Handle cases where word_data might be missing but item exists
+            console.warn("Unexpected item structure in getWord result:", item);
+            // Return a default/empty structure or handle as needed
+            // For now, let's assume item itself is the word_data if word_data key is absent
+            return { word_data: item };
+          } else {
+            return null; // Or handle null/undefined items appropriately
+          }
         });
-        
-        console.log('Formatted result:', JSON.stringify(formattedResult, null, 2));
-        return formattedResult;
+        // console.log('Formatted database response:', JSON.stringify(formattedResult, null, 2));
+        return formattedResult.filter(Boolean) as WordSearchResult[]; // Ensure no nulls are returned
+      } else {
+        return [];
       }
-      
-      return [];
     }),
+
+  /**
+   * Get popular words based on search logs
+   */
+  getPopularWords: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().optional().default(10),
+        period: z.enum(['allTime', 'last7Days', 'last30Days']).optional().default('allTime'),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      let periodFilter = sql`TRUE`; // Default for 'allTime', effectively no date filter
+
+      if (input.period === 'last7Days') {
+        periodFilter = sql`sl.search_timestamp >= NOW() - INTERVAL '7 days'`;
+      } else if (input.period === 'last30Days') {
+        periodFilter = sql`sl.search_timestamp >= NOW() - INTERVAL '30 days'`;
+      }
+
+      const query = sql`
+        SELECT
+            w.id AS id,
+            w.name AS name,
+            COUNT(sl.word_id)::integer AS search_count
+        FROM
+            search_logs sl
+        JOIN
+            words w ON sl.word_id = w.id
+        WHERE
+            ${periodFilter}
+        GROUP BY
+            w.id, w.name
+        ORDER BY
+            search_count DESC
+        LIMIT ${input.limit};
+      `;
+
+      try {
+        const popularWords = await db.execute(query) as Array<{ id: number; name: string; search_count: number }>;
+        return popularWords;
+      } catch (error) {
+        console.error("Error fetching popular words:", error);
+        // Optionally, throw a TRPCError or return a specific error structure
+        // For now, returning empty array on error to prevent breaking frontend
+        return [];
+      }
+    }),
+
   getRecommendations: publicProcedure
     .input(
       z.object({

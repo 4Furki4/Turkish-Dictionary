@@ -346,5 +346,13 @@
     "Language": {
       "Description": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
     }
+  },
+  "Components": {
+    "PopularSearches": {
+      "title": "Popüler Aramalar"
+    },
+    "TrendingSearches": {
+      "title": "Trend Aramalar"
+    }
   }
 }
