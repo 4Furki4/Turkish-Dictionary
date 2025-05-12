@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { api } from '@/src/trpc/react';
 import { Chip, Skeleton } from '@heroui/react';
 import { Link } from '@/src/i18n/routing';
@@ -15,7 +15,7 @@ export default function TrendingSearches() {
     const t = useTranslations('Components.TrendingSearches');
 
     const { data: trendingWords, isLoading, isError, error } = api.word.getPopularWords.useQuery(
-        { limit: 6, period: 'last7Days' } // Or 'last30Days'
+        { limit: 6, period: 'last7Days' }, // Or 'last30Days'
     );
 
     if (isLoading) {

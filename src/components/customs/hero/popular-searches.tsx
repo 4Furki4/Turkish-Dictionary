@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/src/i18n/routing';
 import { api } from '@/src/trpc/react';
 import { Chip, Skeleton } from '@heroui/react';
@@ -12,7 +12,6 @@ interface PopularWord {
 }
 
 export default function PopularSearches() {
-    const locale = useLocale();
     const t = useTranslations('Components.PopularSearches');
 
     const { data: popularWords, isLoading, isError, error } = api.word.getPopularWords.useQuery(

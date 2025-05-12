@@ -23,12 +23,12 @@ export default async function SearchResult({ word, locale }: { word: string, loc
       // Ensure we have a valid unique key for each word card
       const uniqueKey = word.word_data?.word_id || `word-${index}`;
       return (
-        <WordCard 
-          key={uniqueKey} 
-          word={word} 
-          isSavedWord={isSavedWords.find((value) => value.wordId === word.word_data?.word_id)?.isSaved || false} 
-          locale={locale} 
-          session={session} 
+        <WordCard
+          key={uniqueKey}
+          word={word}
+          isSavedWord={isSavedWords.find((value) => value.wordId === word.word_data?.word_id)?.isSaved || false}
+          locale={locale}
+          session={session}
         />
       );
     })
