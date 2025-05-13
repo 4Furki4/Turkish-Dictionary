@@ -19,11 +19,10 @@ import { toast } from "sonner";
 import clsx from "clsx";
 import Image from "next/image";
 
-export default function WordCard({ word: { word_data }, isSavedWord, locale, session }: { word: WordSearchResult, isSavedWord?: boolean, locale: "en" | "tr", session: Session | null }) {
+export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
   const t = useTranslations("WordCard");
   const pathname = usePathname();
-
   // Function to copy the current page URL to clipboard
   const copyPageUrl = () => {
     if (typeof window !== "undefined") {
@@ -56,7 +55,7 @@ export default function WordCard({ word: { word_data }, isSavedWord, locale, ses
           <Button className="bg-transparent mr-auto" isIconOnly isDisabled> {/* TODO: add voice to word */}
             <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
-          <SaveWord word_data={word_data} isSavedWord={isSavedWord} />
+          <SaveWord word_data={word_data} isSavedWord={!session ? false : undefined} />
           <Button disabled disableRipple isIconOnly className="bg-transparent" isDisabled
             onPress={(e) => {
               // TODO: generate image of word card

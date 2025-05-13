@@ -162,14 +162,11 @@ export const wordRouter = createTRPCRouter({
       // Filter any null or undefined results
       const filteredResult = result.filter(Boolean) as any[];
 
-      // Add detailed debugging
-      console.log('Raw database response:', JSON.stringify(filteredResult, null, 2));
-
       if (filteredResult.length > 0 && filteredResult[0]?.word_data) {
         const wordData = filteredResult[0].word_data as WordSearchResult['word_data']; // Type assertion for safety
 
         // --- Conditionally Log search --- 
-        if (!input.skipLogging && wordData?.word_id) { 
+        if (!input.skipLogging && wordData?.word_id) {
           const userId = session?.user?.id ?? null; // Get user ID if logged in, else null
 
           const newLog: NewSearchLog = {

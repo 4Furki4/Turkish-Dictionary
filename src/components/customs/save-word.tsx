@@ -44,8 +44,8 @@ export default function SaveWord({
     return (
         <Button
             className={cn("cursor-pointer z-50 sm:hover:scale-125 transition-all bg-transparent", className)}
-            onPress={async () => {
-                await saveWordMutation.mutateAsync({ wordId: word_data.word_id });
+            onPress={() => {
+                saveWordMutation.mutate({ wordId: word_data.word_id });
             }}
             isIconOnly
             disableRipple

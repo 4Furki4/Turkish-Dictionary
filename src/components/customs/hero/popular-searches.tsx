@@ -1,10 +1,10 @@
 "use client";
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
 import { Link } from '@/src/i18n/routing';
 import { api } from '@/src/trpc/react';
 import { Chip, Skeleton } from '@heroui/react';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface PopularWord {
     id: number;
@@ -13,7 +13,7 @@ interface PopularWord {
 
 export default function PopularSearches() {
     const t = useTranslations('Components.PopularSearches');
-
+    const locale = useLocale();
     const { data: popularWords, isLoading, isError, error } = api.word.getPopularWords.useQuery(
         { limit: 6, period: 'allTime' }
     );
@@ -47,12 +47,14 @@ export default function PopularSearches() {
             </h3>
             <div className="flex flex-wrap gap-2">
                 {popularWords.map((word: PopularWord) => (
-                    <Link key={word.id} href={{
-                        pathname: "/search/[word]",
-                        params: {
-                            word: encodeURIComponent(word.name)
-                        }
-                    }}>
+                    <Link key={word.id}
+                        href={{
+                            pathname: "/search/[word]",
+                            params: {
+                                word: encodeURIComponent(word.name)
+                            }
+                        }}
+                    >
                         <Chip className="rounded-sm 
                     bg-background/80 dark:bg-background/60
                     backdrop-blur-xs
