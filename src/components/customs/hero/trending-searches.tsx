@@ -21,7 +21,9 @@ export default function TrendingSearches() {
     if (isLoading) {
         return (
             <div className="mt-6">
-                <Skeleton className="h-5 w-32 mb-3" />
+                <h3 className="text-lg font-semibold mb-3">
+                    {t("title")}
+                </h3>
                 <div className="flex flex-wrap gap-2">
                     {Array.from({ length: 6 }).map((_, i) => (
                         <Skeleton key={i} className="h-8 w-20 rounded-md" />
@@ -62,7 +64,9 @@ export default function TrendingSearches() {
                         shadow-sm 
                         ring-1 ring-border/50
                         hover:bg-background dark:hover:bg-background/80
-                        transition-colors"
+                        transition-colors
+                        hover:underline
+                        "
                         >
                             {word.name}
                         </Chip>
