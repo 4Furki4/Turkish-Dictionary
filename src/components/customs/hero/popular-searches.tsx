@@ -14,33 +14,16 @@ interface PopularWord {
 export default function PopularSearches() {
     const t = useTranslations('Components.PopularSearches');
     const locale = useLocale();
-    const { data: popularWords, isLoading, isError, error } = api.word.getPopularWords.useQuery(
+    const [popularWords] = api.word.getPopularWords.useSuspenseQuery(
         { limit: 6, period: 'allTime' }
     );
-
-    if (isLoading) {
-        return (
-            <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-3">
-                    {t("title")}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <Skeleton key={i} className="h-8 w-20 rounded-md" />
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    if (isError) {
-        console.error("Error fetching popular searches:", error);
-        return null;
-    }
 
     if (!popularWords || popularWords.length === 0) {
         return null;
     }
+
+
+
 
     return (
         <div className="mt-6">
@@ -49,7 +32,9 @@ export default function PopularSearches() {
             </h3>
             <div className="flex flex-wrap gap-2">
                 {popularWords.map((word: PopularWord) => (
-                    <Link key={word.id}
+
+                    <Link
+                        key={word.id}
 
                         href={{
                             pathname: "/search/[word]",
@@ -58,18 +43,17 @@ export default function PopularSearches() {
                             }
                         }}
                     >
-                        <Chip className="rounded-sm 
+                        <Chip className="rounded-sm
                     bg-background/80 dark:bg-background/60
-                    backdrop-blur-xs
-                    px-4 py-2 
-                    text-sm font-medium 
+                    px-4 py-2
+                    text-sm font-medium
                     text-foreground
-                    shadow-sm 
+                    shadow-sm
                     ring-1 ring-border/50
                     hover:bg-background dark:hover:bg-background/80
                     transition-colors
                     hover:underline
-                    "
+                    backdrop-blur-xs"
                         >
                             {word.name}
                         </Chip>
