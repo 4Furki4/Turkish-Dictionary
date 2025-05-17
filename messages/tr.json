@@ -65,6 +65,8 @@
     "NoRelatedWordsFound": "İlgili kelime bulunamadı",
     "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
     "obsolete": "eskimiş anlam",
+    "turkish_equivalent": "türkçe karşılığı",
+    "see_also": "bakınız",
     "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı."
   },
   "Dashboard": {
