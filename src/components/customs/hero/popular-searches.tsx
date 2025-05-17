@@ -3,8 +3,8 @@
 import React from 'react';
 import { Link } from '@/src/i18n/routing';
 import { api } from '@/src/trpc/react';
-import { Chip, Skeleton } from '@heroui/react';
-import { useTranslations, useLocale } from 'next-intl';
+import { Chip } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 
 interface PopularWord {
     id: number;
@@ -13,7 +13,6 @@ interface PopularWord {
 
 export default function PopularSearches() {
     const t = useTranslations('Components.PopularSearches');
-    const locale = useLocale();
     const [popularWords] = api.word.getPopularWords.useSuspenseQuery(
         { limit: 6, period: 'allTime' }
     );
@@ -21,8 +20,6 @@ export default function PopularSearches() {
     if (!popularWords || popularWords.length === 0) {
         return null;
     }
-
-
 
 
     return (

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { api } from '@/src/trpc/react';
-import { Chip, Skeleton } from '@heroui/react';
+import { Chip } from '@heroui/react';
 import { Link } from '@/src/i18n/routing';
 
 interface TrendingWord {
