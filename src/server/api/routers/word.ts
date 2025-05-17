@@ -7,7 +7,8 @@ import { sql } from "drizzle-orm";
 import type { WordSearchResult, DashboardWordList } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";
-import { searchLogs, type NewSearchLog } from "@/db/schema/search_logs"
+import { searchLogs, type NewSearchLog } from "@/db/schema/search_logs";
+import { userSearchHistory, type InsertUserSearchHistory } from "@/db/schema/user_search_history";
 
 export const wordRouter = createTRPCRouter({
   /**
@@ -176,8 +177,23 @@ export const wordRouter = createTRPCRouter({
           };
 
           try {
+            // Insert into general search logs (existing functionality)
             await db.insert(searchLogs).values(newLog);
             console.log(`Logged search for wordId: ${wordData.word_id}, userId: ${userId}`);
+            
+            // Additionally log to user_search_history if user is logged in
+            if (userId) {
+              const userHistoryLog: InsertUserSearchHistory = {
+                userId,
+                wordId: wordData.word_id,
+                // searchedAt is handled by DB default
+              };
+              
+              // Use fire-and-forget pattern (don't await) to avoid slowing down the response
+              db.insert(userSearchHistory).values(userHistoryLog)
+                .then(() => console.log(`Logged user search history for userId: ${userId}, wordId: ${wordData.word_id}`))
+                .catch(err => console.error("Failed to insert user search history:", err));
+            }
           } catch (error) {
             console.error("Failed to insert search log:", error);
           }

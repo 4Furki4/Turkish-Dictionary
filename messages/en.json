@@ -311,6 +311,16 @@
   "AnErrorOccuredPleaseTryAgain": "An error occured, please try again.",
   "AuthorAddedSuccessfully": "Author added successfully",
   "EnterAuthor": "Enter Author",
+  "SearchHistory": {
+    "title": "Search History",
+    "emptyHistory": "Your search history is empty.",
+    "loading": "Loading your search history...",
+    "error": "Failed to load search history. Please try again.",
+    "searchedOn": "Searched on",
+    "refresh": "Refresh search history",
+    "item": "item",
+    "items": "items"
+  },
   "Forms": {
     "Attributes": {
       "Required": "Attribute is required, please enter an attribute.",

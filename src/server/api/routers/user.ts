@@ -1,12 +1,48 @@
-import { count, eq, sql } from "drizzle-orm";
+import { count, eq, sql, desc } from "drizzle-orm";
 import { adminProcedure, createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
-import { SavedWordsResult, WordSearchResult } from "@/types";
+import { SavedWordsResult } from "@/types";
 import { savedWords } from "@/db/schema/saved_words";
 import { rolesEnum, users } from "@/db/schema/users";
 import { TRPCError } from "@trpc/server";
+import { userSearchHistory } from "@/db/schema/user_search_history";
+import { words } from "@/db/schema/words";
 
 export const userRouter = createTRPCRouter({
+  /**
+   * Get the search history for the currently logged-in user
+   */
+  getUserSearchHistory: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().int().positive().optional().default(25)
+      })
+    )
+    .query(async ({ input, ctx: { db, session } }) => {
+      const userId = session.user.id;
+      
+      try {
+        // Query user search history with word details
+        const history = await db.select({
+          wordId: userSearchHistory.wordId,
+          wordName: words.name,
+          searchedAt: userSearchHistory.searchedAt
+        })
+        .from(userSearchHistory)
+        .innerJoin(words, eq(userSearchHistory.wordId, words.id))
+        .where(eq(userSearchHistory.userId, userId))
+        .orderBy(desc(userSearchHistory.searchedAt))
+        .limit(input.limit);
+        
+        return history;
+      } catch (error) {
+        console.error("Error fetching user search history:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to retrieve search history"
+        });
+      }
+    }),
   getSavedWords: protectedProcedure.input(z.object({
     search: z.string().optional().default(""),
     sortAlphabet: z.enum(["az", "za"]).default("az"),

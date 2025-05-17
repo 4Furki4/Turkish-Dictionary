@@ -162,6 +162,13 @@
       "when": 1747067784016,
       "tag": "0022_odd_mandarin",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1747523959648,
+      "tag": "0023_acoustic_warstar",
+      "breakpoints": true
     }
   ]
 }
