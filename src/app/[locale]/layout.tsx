@@ -13,7 +13,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/src/server/auth/auth";
 import { Params } from "next/dist/server/request/params";
 import { SpeedInsights } from "@vercel/speed-insights/next"
-
+import { Analytics } from "@vercel/analytics/next"
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -103,6 +103,7 @@ export default async function RootLayout({
                 LogoutIntl={t("Logout")} />
               {children}
               <SpeedInsights />
+              <Analytics />
               <Footer />
             </Providers>
           </NextIntlClientProvider>
