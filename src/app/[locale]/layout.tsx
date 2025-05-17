@@ -17,18 +17,46 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
-export async function generateMetadata({ params }: { params: Params }) {
-  const { locale } = await params
-  const metadata: Metadata = {
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { locale } = await params;
+  const isEnglish = locale === "en";
+
+  return {
+    metadataBase: new URL('https://turkce-sozluk.com'),
     title: {
-      template: locale === "en" ? "%s | Turkish Dictionary" : "%s | Türkçe Sözlük",
-      default: locale === "en" ? "Turkish Dictionary - Words, Definitions and Examples" : "Türkçe Sözlük - Kelimeler, Anlamları ve Örnek Cümleler",
+      template: isEnglish ? "%s | Turkish Dictionary" : "%s | Türkçe Sözlük",
+      default: isEnglish
+        ? "Turkish Dictionary - Words, Definitions and Examples"
+        : "Türkçe Sözlük - Kelimeler, Anlamları ve Örnek Cümleler",
     },
-    description:
-      locale === "en" ? "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later." : "Türkçe kelimeleri arayabileceğiniz ve daha sonra hesabınıza kaydedebileceğiniz çevrimiçi Türkçe Sözlük.",
-  }
-  return metadata;
-};
+    description: isEnglish
+      ? "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later."
+      : "Türkçe kelimeleri arayabileceğiniz ve daha sonra hesabınıza kaydedebileceğiniz çevrimiçi Türkçe Sözlük.",
+    openGraph: {
+      title: isEnglish ? "Turkish Dictionary" : "Türkçe Sözlük",
+      description: isEnglish
+        ? "Comprehensive Turkish dictionary with definitions, examples, and more"
+        : "Kapsamlı Türkçe sözlük, tanımlar, örnekler ve daha fazlası",
+      type: 'website',
+      locale: isEnglish ? 'en_US' : 'tr_TR',
+      siteName: isEnglish ? 'Turkish Dictionary' : 'Türkçe Sözlük',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: isEnglish ? "Turkish Dictionary" : "Türkçe Sözlük",
+      description: isEnglish
+        ? "Comprehensive Turkish dictionary with definitions, examples, and more"
+        : "Kapsamlı Türkçe sözlük, tanımlar, örnekler ve daha fazlası",
+    },
+    alternates: {
+      canonical: '/',
+      languages: {
+        'en': 'https://turkce-sozluk.com/en',
+        'tr': 'https://turkce-sozluk.com/tr',
+      },
+    },
+  };
+}
 export default async function RootLayout({
   children,
   params
@@ -45,7 +73,10 @@ export default async function RootLayout({
     notFound();
   }
   return (
-    <html suppressHydrationWarning lang={locale as string} className="dark">
+    <html suppressHydrationWarning lang={locale as string} className="dark" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </head>
       <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
 
