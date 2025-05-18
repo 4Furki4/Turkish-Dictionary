@@ -38,15 +38,15 @@ export async function generateMetadata(
 
     const isEnglish = locale === 'en';
     const title = parsedWord;
-    const description = isEnglish 
-        ? `${parsedWord} definition: ${defString}` 
+    const description = isEnglish
+        ? `${parsedWord} definition: ${defString}`
         : `${parsedWord} kelimesinin anlamı: ${defString}`;
 
     if (wordExists) {
         return {
             title: title,
             description: description,
-            keywords: isEnglish 
+            keywords: isEnglish
                 ? [
                     parsedWord,
                     `${parsedWord} definition`,
@@ -55,7 +55,7 @@ export async function generateMetadata(
                     'Turkish words',
                     'learn Turkish',
                     'Turkish vocabulary'
-                ] 
+                ]
                 : [
                     parsedWord,
                     `${parsedWord} ne demek`,
@@ -66,8 +66,8 @@ export async function generateMetadata(
                     'Türkçe kelime dağarcığı'
                 ],
             openGraph: {
-                title: isEnglish 
-                    ? `${parsedWord} | Turkish Dictionary` 
+                title: isEnglish
+                    ? `${parsedWord} | Turkish Dictionary`
                     : `${parsedWord} | Türkçe Sözlük`,
                 description: description,
                 type: 'website',
@@ -77,8 +77,8 @@ export async function generateMetadata(
             },
             twitter: {
                 card: 'summary_large_image',
-                title: isEnglish 
-                    ? `${parsedWord} | Turkish Dictionary` 
+                title: isEnglish
+                    ? `${parsedWord} | Turkish Dictionary`
                     : `${parsedWord} | Türkçe Sözlük`,
                 description: description,
             },
@@ -92,16 +92,16 @@ export async function generateMetadata(
         };
     }
     const notFoundTitle = isEnglish ? "Word Not Found" : "Kelime Bulunamadı";
-    const notFoundDescription = isEnglish 
-        ? "The word you searched for does not exist in our dictionary." 
+    const notFoundDescription = isEnglish
+        ? "The word you searched for does not exist in our dictionary."
         : "Aranan kelime sözlüğümüzde bulunamadı.";
-    
+
     return {
         title: notFoundTitle,
         description: notFoundDescription,
         openGraph: {
-            title: isEnglish 
-                ? 'Word Not Found | Turkish Dictionary' 
+            title: isEnglish
+                ? 'Word Not Found | Turkish Dictionary'
                 : 'Kelime Bulunamadı | Türkçe Sözlük',
             description: notFoundDescription,
             type: 'website',
@@ -111,8 +111,8 @@ export async function generateMetadata(
         },
         twitter: {
             card: 'summary_large_image',
-            title: isEnglish 
-                ? 'Word Not Found | Turkish Dictionary' 
+            title: isEnglish
+                ? 'Word Not Found | Turkish Dictionary'
                 : 'Kelime Bulunamadı | Türkçe Sözlük',
             description: notFoundDescription
         },

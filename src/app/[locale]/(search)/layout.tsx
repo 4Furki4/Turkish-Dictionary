@@ -15,9 +15,9 @@ export default async function SearchLayout({
   const { locale } = await params
   setRequestLocale(locale as string)
   const t = await getTranslations("Home");
-  void api.word.getPopularWords.prefetch({ period: "allTime", limit: 6 })
-  void api.word.getPopularWords.prefetch({ period: "last7Days", limit: 6 })
-  void api.word.getPopularWords.prefetch({ period: "last30Days", limit: 6 })
+  void api.word.getPopularWords.prefetch({ period: "allTime", limit: 10 })
+  void api.word.getPopularWords.prefetch({ period: "last7Days", limit: 10 })
+  void api.word.getPopularWords.prefetch({ period: "last30Days", limit: 10 })
   return (
     <HydrateClient>
       <Hero>

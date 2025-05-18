@@ -20,7 +20,7 @@ export default function TrendingSearches({ period = '7days' }: TrendingSearchesP
     const t = useTranslations('Components.TrendingSearches');
 
     const [trendingWords] = api.word.getPopularWords.useSuspenseQuery({
-        limit: 6,
+        limit: 10,
         period: period === '7days' ? 'last7Days' : 'last30Days'
     });
 
@@ -34,15 +34,15 @@ export default function TrendingSearches({ period = '7days' }: TrendingSearchesP
             </div>
             <div className="flex flex-wrap gap-2">
                 {trendingWords.map((word: TrendingWord) => (
-                    <Link 
+                    <Link
                         href={{
                             pathname: "/search/[word]",
                             params: { word: encodeURIComponent(word.name) }
-                        }} 
+                        }}
                         key={word.id}
                         className="block"
                     >
-                        <Chip 
+                        <Chip
                             className="rounded-sm
                                 bg-background/80 dark:bg-background/60
                                 backdrop-blur-xs

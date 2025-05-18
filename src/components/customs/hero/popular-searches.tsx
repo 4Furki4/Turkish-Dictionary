@@ -15,7 +15,7 @@ interface PopularWord {
 export default function PopularSearches() {
     const t = useTranslations('Components.PopularSearches');
     const [popularWords] = api.word.getPopularWords.useSuspenseQuery(
-        { limit: 6, period: 'allTime' }
+        { limit: 10, period: 'allTime' }
     );
 
     if (!popularWords || popularWords.length === 0) {
@@ -41,7 +41,7 @@ export default function PopularSearches() {
                         }}
                         className="block"
                     >
-                        <Chip 
+                        <Chip
                             className="rounded-sm
                                 bg-background/80 dark:bg-background/60
                                 backdrop-blur-xs
