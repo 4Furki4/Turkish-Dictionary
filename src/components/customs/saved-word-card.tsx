@@ -28,7 +28,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
   const { isOpen, onOpenChange } = useDisclosure();
 
   const { data: details, isLoading: loadingDetails } = api.word.getWord.useQuery(
-    wordData.word_name,
+    { name: wordData.word_name, skipLogging: true },
     { enabled: isOpen }
   );
 
@@ -67,7 +67,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
           {loadingDetails ? (
             <Loading />
           ) : fullData ? (
-            <WordCard word={fullData} session={session} locale={locale} isSavedWord />
+            <WordCard word={fullData} session={session} locale={locale} />
           ) : null}
         </ModalContent>
       </Modal>

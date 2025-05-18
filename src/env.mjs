@@ -17,6 +17,7 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    CRON_SECRET: z.string(),
     DATABASE_HOST: z.string(),
     DATABASE_PORT: z.string(),
     DATABASE_USERNAME: z.string(),
@@ -44,6 +45,7 @@ export const env = createEnv({
     AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    CRON_SECRET: process.env.CRON_SECRET,
     DATABASE_HOST: process.env.DATABASE_HOST,
     DATABASE_PORT: process.env.DATABASE_PORT,
     DATABASE_USERNAME: process.env.DATABASE_USERNAME,

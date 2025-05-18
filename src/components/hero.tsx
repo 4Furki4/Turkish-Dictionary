@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import { api } from "@/src/trpc/react";
 import { useDebounce } from "@uidotdev/usehooks";
+import PopularSearches from "./customs/hero/popular-searches";
+import TrendingSearchesContainer from "./customs/hero/trending-searches-container";
 
 export default function Hero({ children }: {
   children: React.ReactNode;
@@ -209,39 +211,10 @@ export default function Hero({ children }: {
           </div>
 
           {/* Popular Searches */}
-          <div className="mt-6">
-            <h3 className="text-sm">
-              {t("hero.popularSearches")}
-            </h3>
-            <div className="mt-3 flex flex-wrap justify-center gap-2">
-              {["There", "Will", "Be", "Popular", "Searches", "Here"].map((term) => (
-                <button
-                  key={term}
-                  onClick={() => {
-                    setWordInput(term);
-                    router.push({
-                      pathname: "/search/[word]",
-                      params: { word: term },
-                    });
-                  }}
-                  className="
-                    rounded-sm 
-                    bg-background/80 dark:bg-background/60
-                    backdrop-blur-xs
-                    px-4 py-2 
-                    text-sm font-medium 
-                    text-foreground
-                    shadow-sm 
-                    ring-1 ring-border/50
-                    hover:bg-background dark:hover:bg-background/80
-                    transition-colors
-                  "
-                >
-                  {term}
-                </button>
-              ))}
-            </div>
-          </div>
+          <PopularSearches />
+
+          {/* Trending Searches */}
+          <TrendingSearchesContainer />
         </div>
       </div>
 

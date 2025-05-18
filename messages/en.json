@@ -65,6 +65,8 @@
     "NoRelatedWordsFound": "No related words found",
     "NoRelatedPhrasesFound": "No related phrases found",
     "obsolete": "absolete meaning",
+    "turkish_equivalent": "turkish equivalent",
+    "see_also": "see also",
     "NoMeaningsFound": "The word exists but no meaning found."
   },
   "Dashboard": {
@@ -309,6 +311,27 @@
   "AnErrorOccuredPleaseTryAgain": "An error occured, please try again.",
   "AuthorAddedSuccessfully": "Author added successfully",
   "EnterAuthor": "Enter Author",
+
+  "Components": {
+    "TrendingSearches": {
+      "title7Days": "Trending (7 days)",
+      "title30Days": "Trending (30 days)",
+      "title": "Trending Searches"
+    },
+    "PopularSearches": {
+      "title": "Popular Searches"
+    }
+  },
+  "SearchHistory": {
+    "title": "Search History",
+    "emptyHistory": "Your search history is empty.",
+    "loading": "Loading your search history...",
+    "error": "Failed to load search history. Please try again.",
+    "searchedOn": "Searched on",
+    "refresh": "Refresh search history",
+    "item": "item",
+    "items": "items"
+  },
   "Forms": {
     "Attributes": {
       "Required": "Attribute is required, please enter an attribute.",

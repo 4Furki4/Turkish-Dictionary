@@ -65,6 +65,8 @@
     "NoRelatedWordsFound": "İlgili kelime bulunamadı",
     "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
     "obsolete": "eskimiş anlam",
+    "turkish_equivalent": "türkçe karşılığı",
+    "see_also": "bakınız",
     "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı."
   },
   "Dashboard": {
@@ -309,6 +311,17 @@
   "AttributeAddedSuccessfully": "Özellik başarıyla eklendi",
   "AnErrorOccuredPleaseTryAgain": "Bir hata oluştu, lütfen tekrar deneyin.",
   "AuthorAddedSuccessfully": "Yazar başarıyla eklendi",
+
+  "SearchHistory": {
+    "title": "Arama Geçmişi",
+    "emptyHistory": "Arama geçmişiniz boş.",
+    "loading": "Arama geçmişiniz yükleniyor...",
+    "error": "Arama geçmişi yüklenemedi. Lütfen tekrar deneyin.",
+    "searchedOn": "Arama tarihi",
+    "refresh": "Arama geçmişini yenile",
+    "item": "kelime",
+    "items": "kelime"
+  },
   "EnterAuthor": "Yazar Giriniz",
   "Forms": {
     "Attributes": {
@@ -345,6 +358,16 @@
     },
     "Language": {
       "Description": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
+    }
+  },
+  "Components": {
+    "TrendingSearches": {
+      "title7Days": "Trendler (7 gün)",
+      "title30Days": "Trendler (30 gün)",
+      "title": "Trend Aramalar"
+    },
+    "PopularSearches": {
+      "title": "Popüler Aramalar"
     }
   }
 }

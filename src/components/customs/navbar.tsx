@@ -50,7 +50,7 @@ export default function Navbar({
     <NextuiNavbar
       className="bg-background-foreground/100 border-b border-border"
       shouldHideOnScroll
-      maxWidth="xl"
+      maxWidth="2xl"
       classNames={{
         item: [
           "relative",

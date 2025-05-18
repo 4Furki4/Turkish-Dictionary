@@ -1,18 +1,9 @@
-import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Params } from "next/dist/server/request/params";
 import React from "react";
 import Hero from "@/src/components/hero";
-
-export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
-  const { locale } = await params
-  return {
-    title: {
-      template: `${locale === "en" ? "%s | Turkish Meaning - Turkish Dictionary" : "%s | Anlamı - Türkçe Sözlük"}`,
-      default: locale === "en" ? "Turkish Dictionary - Words, Definitions and Examples" : "Türkçe Sözlük - Kelimeler, Anlamları ve Örnek Cümleler",
-    },
-  };
-}
+import { api } from "@/src/trpc/server";
+import { HydrateClient } from "@/src/trpc/server";
 
 export default async function SearchLayout({
   children,
@@ -24,9 +15,14 @@ export default async function SearchLayout({
   const { locale } = await params
   setRequestLocale(locale as string)
   const t = await getTranslations("Home");
+  void api.word.getPopularWords.prefetch({ period: "allTime", limit: 10 })
+  void api.word.getPopularWords.prefetch({ period: "last7Days", limit: 10 })
+  void api.word.getPopularWords.prefetch({ period: "last30Days", limit: 10 })
   return (
-    <Hero>
-      {children}
-    </Hero>
+    <HydrateClient>
+      <Hero>
+        {children}
+      </Hero>
+    </HydrateClient>
   );
 }
