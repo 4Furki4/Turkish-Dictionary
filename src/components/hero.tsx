@@ -9,7 +9,7 @@ import { Card, CardBody, CardHeader } from "@heroui/react";
 import { api } from "@/src/trpc/react";
 import { useDebounce } from "@uidotdev/usehooks";
 import PopularSearches from "./customs/hero/popular-searches";
-import TrendingSearches from "./customs/hero/trending-searches";
+import TrendingSearchesContainer from "./customs/hero/trending-searches-container";
 
 export default function Hero({ children }: {
   children: React.ReactNode;
@@ -214,7 +214,7 @@ export default function Hero({ children }: {
           <PopularSearches />
 
           {/* Trending Searches */}
-          <TrendingSearches />
+          <TrendingSearchesContainer />
         </div>
       </div>
 

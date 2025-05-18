@@ -311,6 +311,7 @@
   "AttributeAddedSuccessfully": "Özellik başarıyla eklendi",
   "AnErrorOccuredPleaseTryAgain": "Bir hata oluştu, lütfen tekrar deneyin.",
   "AuthorAddedSuccessfully": "Yazar başarıyla eklendi",
+
   "SearchHistory": {
     "title": "Arama Geçmişi",
     "emptyHistory": "Arama geçmişiniz boş.",
@@ -360,11 +361,13 @@
     }
   },
   "Components": {
+    "TrendingSearches": {
+      "title7Days": "Trendler (7 gün)",
+      "title30Days": "Trendler (30 gün)",
+      "title": "Trend Aramalar"
+    },
     "PopularSearches": {
       "title": "Popüler Aramalar"
-    },
-    "TrendingSearches": {
-      "title": "Trend Aramalar"
     }
   }
 }

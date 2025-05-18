@@ -311,6 +311,17 @@
   "AnErrorOccuredPleaseTryAgain": "An error occured, please try again.",
   "AuthorAddedSuccessfully": "Author added successfully",
   "EnterAuthor": "Enter Author",
+
+  "Components": {
+    "TrendingSearches": {
+      "title7Days": "Trending (7 days)",
+      "title30Days": "Trending (30 days)",
+      "title": "Trending Searches"
+    },
+    "PopularSearches": {
+      "title": "Popular Searches"
+    }
+  },
   "SearchHistory": {
     "title": "Search History",
     "emptyHistory": "Your search history is empty.",
@@ -351,14 +362,6 @@
     "Root": {
       "InputError": "Root is required when language specified",
       "LanguageInputError": "Language is required when root specified"
-    }
-  },
-  "Components": {
-    "PopularSearches": {
-      "title": "Popular Searches"
-    },
-    "TrendingSearches": {
-      "title": "Trending Searches"
     }
   }
 }
