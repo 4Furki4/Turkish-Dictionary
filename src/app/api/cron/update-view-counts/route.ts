@@ -1,7 +1,6 @@
 // src/app/api/cron/update-view-counts/route.ts
 import { runUpdateViewCounts } from "@/src/lib/cron/update-view-counts";
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { env } from "@/src/env.mjs";
 
 export async function GET(request: Request) {
