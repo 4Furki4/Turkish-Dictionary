@@ -5,8 +5,9 @@ import { api } from '@/src/trpc/react';
 import { Card, CardBody, CardHeader, Alert, Button } from '@heroui/react';
 import { Skeleton } from '@heroui/skeleton';
 import { Clock, AlertTriangle, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
+
 import { format } from 'date-fns';
+import { Link } from '@/src/i18n/routing';
 
 interface SearchHistoryProps {
   userId: string;
@@ -124,7 +125,12 @@ export default function SearchHistory({ userId }: SearchHistoryProps) {
               >
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                   <Link
-                    href={`/search/${encodeURIComponent(item.wordName)}`}
+                    href={{
+                      pathname: '/search/[word]',
+                      params: {
+                        word: item.wordName
+                      }
+                    }}
                     className="text-primary hover:underline font-medium text-base"
                   >
                     {String(item.wordName)}
