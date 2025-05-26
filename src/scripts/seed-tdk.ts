@@ -14,6 +14,7 @@ import { relatedWords } from '@/db/schema/related_words';
 import { meaningAttributes, meaningsAttributes } from '@/db/schema/meaning_attributes';
 import { wordAttributes, wordsAttributes } from '@/db/schema/word_attributes';
 import pMap from 'p-map'
+import fs from 'fs/promises';
 
 // Create a phrase cache to prevent duplicate phrase words
 const phraseCache = new Map<string, number>();
@@ -92,29 +93,50 @@ async function getOrCreateWordAttribute(tx: any, attribute: string): Promise<num
 
 async function seedDatabase() {
     const startTime = Date.now();
-    console.log('Fetching word lists...');
-    const [autoRes, sapkaRes] = await Promise.all([
-        fetch(AUTOCOMPLETE_URL),
-        fetch(SAPKA_URL)
-    ]);
-    const autoList = (await autoRes.json()) as { madde: string }[];
-    const sapkaList = (await sapkaRes.json()) as Record<string, string>[];
+    let wordsToProcess: string[];
 
-    const sapkaMap = new Map<string, string>();
-    sapkaList.forEach(obj => {
-        const [key, val] = Object.entries(obj)[0];
-        sapkaMap.set(key, val);
-    });
-    const nonHatted = new Set(sapkaMap.keys());
+    // Check for a command-line argument for a specific word list file. 
+    // If provided, it will only process those words instead of the entire TDK list.
+    const wordListFile = process.argv[2];
 
-    const finalSet = new Set<string>();
-    autoList.forEach(item => {
-        const w = item.madde;
-        if (!nonHatted.has(w)) finalSet.add(w);
-    });
-    sapkaMap.forEach(h => finalSet.add(h));
-    const wordsToProcess = Array.from(finalSet);
-    console.log(`Total unique words: ${wordsToProcess.length}`);
+    if (wordListFile) {
+        console.log(`Loading words from ${wordListFile}...`);
+        try {
+            const fileContent = await fs.readFile(wordListFile, 'utf-8');
+            wordsToProcess = JSON.parse(fileContent);
+            if (!Array.isArray(wordsToProcess) || wordsToProcess.some(w => typeof w !== 'string')) {
+                throw new Error('Invalid word list file: Must be a JSON array of strings.');
+            }
+            console.log(`Loaded ${wordsToProcess.length} words from ${wordListFile}.`);
+        } catch (error) {
+            console.error(`Error reading or parsing word list file: ${error}`);
+            process.exit(1);
+        }
+    } else {
+        console.log('Fetching word lists from TDK autocomplete...');
+        const [autoRes, sapkaRes] = await Promise.all([
+            fetch(AUTOCOMPLETE_URL),
+            fetch(SAPKA_URL)
+        ]);
+        const autoList = (await autoRes.json()) as { madde: string }[];
+        const sapkaList = (await sapkaRes.json()) as Record<string, string>[];
+
+        const sapkaMap = new Map<string, string>();
+        sapkaList.forEach(obj => {
+            const [key, val] = Object.entries(obj)[0];
+            sapkaMap.set(key, val);
+        });
+        const nonHatted = new Set(sapkaMap.keys());
+
+        const finalSet = new Set<string>();
+        autoList.forEach(item => {
+            const w = item.madde;
+            if (!nonHatted.has(w)) finalSet.add(w);
+        });
+        sapkaMap.forEach(h => finalSet.add(h));
+        wordsToProcess = Array.from(finalSet);
+        console.log(`Total unique words: ${wordsToProcess.length}`);
+    }
 
     // process words in parallel with concurrency limit
     await pMap(wordsToProcess, async (word, i) => {
@@ -127,10 +149,28 @@ async function seedDatabase() {
             const existingMeanings = await db.select()
                 .from(meanings)
                 .where(eq(meanings.wordId, existingWord[0].id));
+
             if (existingMeanings.length) {
-                console.log(`Skipping "${word}", already seeded.`);
+                console.log(`Skipping "${word}", already seeded with meanings.`);
                 return;
             }
+
+            // Check if it's a navigation word (has related_words entries)
+            const existingRelatedWord = await db.select()
+                .from(relatedWords)
+                .where(and(
+                    eq(relatedWords.wordId, existingWord[0].id),
+                    // OR condition for related_word_id if a word can be a target without being a source
+                    // For now, assuming wordId is sufficient for navigation words
+                ));
+
+            if (existingRelatedWord.length) {
+                console.log(`Skipping "${word}", it's a navigation word without meanings.`);
+                return;
+            }
+
+            console.log(`Reprocessing "${word}", found existing word without meanings and not a navigation word.`);
+            // Do not return, continue to re-process the word
         }
         try {
             const res = await fetch(DETAIL_URL(word));
@@ -439,15 +479,15 @@ async function seedDatabase() {
                             }
                             console.log(`Cached ${phraseCache.size} existing words/phrases`);
                         }
-                        
+
                         // Process each phrase
                         for (const phrase of phrases) {
                             const related = phrase.madde as string;
                             let relatedPhraseId: number;
-                            
+
                             // Check if this phrase already exists in our cache (case-insensitive)
                             const existingId = phraseCache.get(related.toLowerCase());
-                            
+
                             if (existingId) {
                                 // Use existing word
                                 relatedPhraseId = existingId;
@@ -461,7 +501,7 @@ async function seedDatabase() {
                                     })
                                     .returning({ id: words.id });
                                 relatedPhraseId = id;
-                                
+
                                 // Add to our cache to prevent duplicates
                                 phraseCache.set(related.toLowerCase(), id);
                                 console.log(`Created new phrase: "${related}" (ID: ${relatedPhraseId})`);
