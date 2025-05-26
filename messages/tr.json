@@ -20,86 +20,134 @@
     "EnterYourEmail": "E-posta giriniz",
     "MagicLink": "Özel giriş bağlantısı e-postanıza gönderilecektir",
     "EmailSigninLabel": "E-posta ile Giriş",
-    "InvalidEmail": "Geçersiz e-posta formatı, lütfen doğru bir e-posta adresi giriniz."
+    "InvalidEmail": "Lütfen geçerli bir e-posta adresi girin"
   },
   "Home": {
-    "alreadySignedIn": "Zaten giriş yaptınız",
+    "alreadySignedIn": "Zaten giriş yapmışsınız",
     "hero": {
       "title": "Türkçeyi Keşfedin",
-      "description": "Topluluk ile gelişen, açık kaynak ve modern Türkçe sözlüğü.",
-      "searchPlaceholder": "Kelime ara...",
+      "description": "Anlamlar, örnekler ve çevirilerle kapsamlı Türkçe sözlüğünüz. Öğrenenler ve ana dili konuşanlar için mükemmel.",
+      "searchPlaceholder": "Bir kelime arayın...",
       "popularSearches": "Popüler Aramalar",
       "searchError": "Lütfen aramak için bir kelime girin",
       "feature1": {
-        "title": "Katkıda Bulunun",
-        "description": "Yeni kelimeler ve anlamlar ekleyerek sözlüğe katkıda bulunabilirsiniz."
+        "title": "Yeni Kelimeler Ekleyin",
+        "description": "Sözlüğümüzün büyümesine yardımcı olmak için yeni Türkçe kelimeler ve anlamlarını ekleyin. Bilginizi toplulukla paylaşın."
       },
       "feature2": {
-        "title": "Düzenleme Yapın",
-        "description": "Kelimelerin anlamlarını ve özelliklerini düzenleyebilirsiniz."
+        "title": "Düzenleyin ve Geliştirin",
+        "description": "Düzeltmeler ve düzenlemeler önererek mevcut girişleri iyileştirmeye yardımcı olun. Sözlüğümüzü doğru ve güncel tutun."
       },
       "feature3": {
-        "title": "Kelimeleri Kaydedin",
-        "description": "Yeni öğrendiğiniz, önceden duymadığınız veya sevdiğiniz kelimeleri kaydedebilirsiniz."
+        "title": "Daha Sonrası İçin Kaydedin",
+        "description": "Kişisel kelime koleksiyonunuzu oluşturun. İlginç kelimeleri daha sonra incelemek için kaydedin ve öğrenme ilerlemenizi takip edin."
       }
     }
   },
-  "WordCard": {
-    "UnauthSave": "Kaydetmek için giriş yapın",
-    "Saved": "Kelime kaydedildi",
-    "EditWord": "Kelime Düzenle",
-    "Words": "Kelimeler",
-    "Meanings": "Anlamlar",
-    "Close": "Kapat",
-    "You can request an edit if you are signed in": "Giriş yapmışsanız bir düzenleme talebi gönderebilirsiniz",
-    "SignIn": "Giriş Yap",
-    "RequestEdit": "Düzenleme Talep Et",
-    "RelatedWords": "İlgili Kelimeler",
-    "RelatedPhrases": "İlgili Atasözleri ve Deyimler",
-    "NavigationWord": "Yönlendirilen Kelime",
-    "Root": "Köken",
-    "urlCopied": "URL Kopyalandı",
-    "urlCopiedDescription": "Kelime sayfasının bağlantısı panoya kopyalandı",
-    "urlCopyFailed": "Kopyalama Başarısız",
-    "urlCopyFailedDescription": "Kelime sayfasının bağlantısı panoya kopyalanamadı",
-    "NoRelatedWordsFound": "İlgili kelime bulunamadı",
-    "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
-    "obsolete": "eskimiş anlam",
-    "turkish_equivalent": "türkçe karşılığı",
-    "see_also": "bakınız",
-    "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı."
-  },
   "Dashboard": {
-    "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
-    "GoBackToHomepage": "Ana sayfaya dön",
+    "UnauthorizedMessage": "Bu sayfayı görüntüleme yetkiniz yok, bunun bir hata olduğunu düşünüyorsanız lütfen yöneticiyle iletişime geçin",
+    "GoBackToHomepage": "Ana sayfaya geri dön",
     "Columns": {
       "Word": "Kelime",
       "Meaning": "Anlam",
       "Actions": "İşlemler"
     },
-    "CreateWord": "Kelime Ekle",
-    "MustAddMeaning": "Anlam eklemelisiniz!",
-    "MustHaveAMeaning": "Anlam gerekli, lütfen bir anlam giriniz.",
+    "CreateWord": "Kelime Oluştur",
+    "MustAddMeaning": "Bir anlam eklemelisiniz!",
+    "MustHaveAMeaning": "Bir anlama sahip olmalısınız!",
     "WordCreated": "Kelime oluşturuldu!",
     "UploadingImages": "Resimler yükleniyor...",
-    "StartedUploading": "Resimler yüklenmeye başlandı...",
+    "StartedUploading": "Resim yükleme başladı...",
     "ImagesUploaded": "Resimler yüklendi!",
     "Error": "Hata",
     "Append": "Sona Ekle",
-    "Prepend": "Öne Ekle"
+    "Prepend": "Başa Ekle",
+    "Announcements": {
+      "title": "Duyurular",
+      "createNew": "Yeni Duyuru Oluştur",
+      "createDescription": "Web sitesinde görüntülenecek yeni bir duyuru oluşturun",
+      "editAnnouncement": "Duyuruyu Düzenle: {slug}",
+      "editDescription": "Bu duyurunun detaylarını ve içeriğini düzenleyin",
+      "searchPlaceholder": "Duyurularda ara...",
+      "tableAriaLabel": "Duyurular Tablosu",
+      "itemsPerPage": "Sayfa başına öğe",
+      "status": "Durum",
+      "error": "Duyurular yüklenirken bir hata oluştu",
+      "noAnnouncements": "Duyuru bulunamadı",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "cancel": "İptal",
+      "create": "Oluştur",
+      "update": "Güncelle",
+      "deleteModalTitle": "Duyuruyu Sil",
+      "deleteConfirmation": "\"{slug}\" duyurusunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "deleteGenericConfirmation": "Bu duyuruyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "deleteSuccess": "Duyuru başarıyla silindi",
+      "deleteError": "Duyuru silinirken hata oluştu: {error}",
+      "createSuccess": "Duyuru başarıyla oluşturuldu",
+      "createError": "Duyuru oluşturulurken hata oluştu: {error}",
+      "updateSuccess": "Duyuru başarıyla güncellendi",
+      "updateError": "Duyuru güncellenirken hata oluştu: {error}",
+      "announcementNotFound": "Duyuru bulunamadı",
+      "columns": {
+        "slug": "Slug",
+        "status": "Durum",
+        "publishedAt": "Yayınlanma Tarihi",
+        "createdAt": "Oluşturulma Tarihi",
+        "actions": "İşlemler"
+      },
+      "statuses": {
+        "all": "Tümü",
+        "draft": "Taslak",
+        "published": "Yayınlandı",
+        "archived": "Arşivlendi"
+      },
+      "generalInfo": "Genel Bilgiler",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "benzersiz-duyuru-tanımlayıcı",
+        "status": "Durum",
+        "imageUrl": "Resim URL'si",
+        "imageUrlPlaceholder": "https://example.com/image.jpg",
+        "actionUrl": "Eylem URL'si",
+        "actionUrlPlaceholder": "https://example.com/action",
+        "actionTextKey": "Eylem Metin Anahtarı",
+        "actionTextKeyPlaceholder": "Announcements.readMore",
+        "publishedAt": "Yayınlanma Tarihi",
+        "publishedAtPlaceholder": "Bir tarih seçin",
+        "contentTab": "İçerik",
+        "previewTab": "Önizleme",
+        "englishContent": "İngilizce İçerik",
+        "turkishContent": "Türkçe İçerik",
+        "title": "Başlık",
+        "titlePlaceholder": "Başlık girin",
+        "excerpt": "Özet",
+        "excerptPlaceholder": "Duyurunun kısa özeti",
+        "content": "İçerik (Markdown)",
+        "contentPlaceholder": "İçeriği Markdown formatında girin",
+        "preview": "İçerik Önizleme",
+        "noTitle": "Başlık girilmemiş",
+        "noContent": "İçerik girilmemiş"
+      },
+      "languages": {
+        "en": "İngilizce",
+        "tr": "Türkçe"
+      }
+    }
   },
   "LanguageAndRootInput": {
-    "rootInputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
-    "languageInputError": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
+    "rootInputError": "Dil belirtildiğinde kök gereklidir",
+    "languageInputError": "Kök belirtildiğinde dil gereklidir"
   },
   "SearchResults": {
-    "NoResults": "Sonuç bulunamadı",
-    "NoMeaningError": "Kelime bulundu ancak anlamı bulunamadı. Lütfen yöneticiyle iletişime geçin.",
-    "Contact": "İletişime Geçin"
+    "NoResults": "Kelime bulunamadı",
+    "NoMeaningError": "Kelime bulundu ancak anlamı bulunamadı. Lütfen yöneticilerle iletişime geçin!",
+    "Contact": "Yöneticilerle İletişime Geç"
   },
   "WordList": {
-    "title": "Türkçe Sözlük Kelimeleri",
-    "description": "Türkçe Sözlük veritabanında bulunan kelimeleri keşfedin.",
+    "title": "Türkçe Sözlük Kelime Listesi",
+    "description": "Sözlükteki tüm kelimeleri keşfedebileceğiniz Türkçe Sözlük Kelime Listesi",
+    "searchPlaceholder": "Kelime ara",
     "keywords": [
       "Türkçe",
       "Sözlük",
@@ -110,73 +158,28 @@
       "Kelime Listesi",
       "Tüm Türkçe Kelimeler"
     ],
-    "searchPlaceholder": "Kelime ara",
     "wordsPerPage": "Sayfa başına kelime",
     "columns": {
       "word": "Kelime",
       "meaning": "Anlam"
     }
   },
-  "SavedWords": {
-    "Toolbar": {
-      "searchPlaceholder": "Kaydedilen kelimelerde ara...",
-      "filters": "Filtreler",
-      "sort": {
-        "az": "A → Z",
-        "za": "Z → A",
-        "dateAsc": "Eklenme Tarihi ↑",
-        "dateDesc": "Eklenme Tarihi ↓"
-      },
-      "sortPlaceholder": "Sıralama",
-      "pagination": {
-        "wordsPerPage": "Sayfa başına kelime"
-      }
-    },
-    "Table": {
-      "searchPlaceholder": "Kaydedilen kelimelerde ara...",
-      "columns": {
-        "savedAt": "Kaydedilme Tarihi",
-        "name": "Kelime",
-        "actions": "İşlemler"
-      },
-      "actions": {
-        "unsave": "Kaydı Kaldır"
-      },
-      "pagination": {
-        "wordsPerPage": "Sayfa başına kelime"
-      },
-      "emptyMessage": "Kaydedilen kelime bulunamadı"
-    },
-    "Card": {
-      "savedAt": "Kaydedilme Tarihi",
-      "view": "Görüntüle",
-      "unsave": "Kaydı Kaldır"
-    }
-  },
-  "Profile": {
-    "welcome_message": "Türkçe Sözlüğe Hoş Geldiniz!",
-    "profile_completion_message": "Devam etmek için lütfen profilinizi tamamlayın",
-    "username": "Kullanıcı Adı",
-    "name": "İsim",
-    "email": "E-posta",
-    "updating": "Güncelleniyor...",
-    "complete_profile": "Profili Tamamla",
-    "update_profile": "Profili Güncelle",
-    "loading": "Yükleniyor...",
-    "anonymous": "Anonim",
-    "profile_updated": "Profiliniz başarıyla güncellendi",
-    "user_not_found": "Kullanıcı bulunamadı",
-    "user_not_found_description": "Maattessüf aradığınız kullanıcıyı bulamadık.",
-    "back_to_home": "Ana sayfaya dön"
-  },
   "Metadata": {
     "requests": {
       "title": "İsteklerim | Türkçe Sözlük",
-      "description": "Türkçe Sözlüğe yaptığınız katkıları görüntüleyin ve yönetin"
+      "description": "Türkçe Sözlük'e katkılarınızı görüntüleyin ve yönetin"
     },
     "requestDetail": {
       "title": "İstek Detayları | Türkçe Sözlük",
       "description": "Sözlük katkı isteğinizin detaylarını görüntüleyin ve yönetin"
+    },
+    "announcements": {
+      "title": "Duyurular | Türkçe Sözlük",
+      "description": "Türkçe Sözlük ekibinden en son haberler ve güncellemeler"
+    },
+    "announcementDetail": {
+      "title": "{title} | Türkçe Sözlük",
+      "description": "Türkçe Sözlük ekibinden tam duyuruyu okuyun"
     }
   },
   "Requests": {
@@ -190,184 +193,49 @@
       "meanings": "Anlamlar",
       "roots": "Kökler",
       "related_words": "İlgili Kelimeler",
-      "part_of_speechs": "Sözcük Türleri",
+      "part_of_speechs": "Konuşma Bölümleri",
       "examples": "Örnekler",
       "authors": "Yazarlar",
       "word_attributes": "Kelime Özellikleri",
       "meaning_attributes": "Anlam Özellikleri"
     },
     "actions": {
-      "title": "İşlem",
-      "all": "Tüm İşlemler",
-      "create": "Oluşturma",
-      "update": "Güncelleme",
-      "delete": "Silme"
+      "title": "Eylem",
+      "all": "Tüm Eylemler",
+      "create": "Oluştur",
+      "update": "Güncelle",
+      "delete": "Sil"
     },
-    "status": {
+    "statuses": {
       "title": "Durum",
       "all": "Tüm Durumlar",
       "pending": "Beklemede",
       "approved": "Onaylandı",
       "rejected": "Reddedildi"
-    },
-    "tableColumns": {
-      "entityType": "TÜR",
-      "action": "İŞLEM",
-      "status": "DURUM",
-      "date": "İSTEK TARİHİ",
-      "actions": "İŞLEMLER"
-    },
-    "buttons": {
-      "viewDetails": "Detayları Gör",
-      "cancel": "İptal Et",
-      "edit": "İsteği Düzenle",
-      "cancelRequest": "İsteği İptal Et",
-      "cancelEditing": "Düzenlemeyi İptal Et",
-      "saveChanges": "Değişiklikleri Kaydet",
-      "keepRequest": "Hayır, İsteği Koru",
-      "confirmCancel": "Evet, İsteği İptal Et",
-      "updateRequest": "İsteği Güncelle",
-      "back": "Geri",
-      "backToRequests": "İsteklere Geri Dön"
-    },
-    "messages": {
-      "errorLoading": "İstekler yüklenirken hata oluştu",
-      "noRequests": "İstek bulunamadı",
-      "errorLoadingDetail": "İstek detayları yüklenirken hata oluştu",
-      "cancelConfirmation": "Bu isteği iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-      "updateRequest": "İstek detaylarınızı güncelleyin:",
-      "reasonLabel": "Güncelleme Nedeni:",
-      "reasonPlaceholder": "Bu isteği neden güncelliyorsunuz?",
-      "itemsPerPage": "Sayfa başına öğe"
-    },
-    "details": {
-      "requestInfo": "İstek Bilgileri",
-      "entityType": "Tür:",
-      "action": "İşlem:",
-      "status": "Durum:",
-      "reason": "Neden:",
-      "newData": "Yeni Veri",
-      "changes": "Değişiklikler",
-      "currentData": "Mevcut Veri",
-      "sideBySide": "Yan Yana",
-      "noReason": "Neden belirtilmedi",
-      "request": "İstek:",
-      "empty": "Boş",
-      "updateFrom": "Güncellenecek değer"
-    },
-    "RequestedAttributeByYou": "Sizin eklediğiniz özellik",
-    "NoChanges": "Değişiklik tespit edilmedi",
-    "Reason": "Değişiklik Nedeni",
-    "EnterReason": "Lütfen değişiklik nedeni giriniz",
-    "EditRequestSubmittedSuccessfully": "Değişiklik isteği başarıyla gönderildi",
-    "DeleteRequestSubmittedSuccessfully": "Silme isteği başarıyla gönderildi",
-    "FailedToSubmitEditRequest": "Değişiklik isteği gönderirken hata oluştu",
-    "FailedToSubmitDeleteRequest": "Silme isteği gönderirken hata oluştu",
-    "SubmitRequest": "İsteği Gönder",
-    "DeleteMeaningRequest": "Anlam Silme İsteği",
-    "DeleteMeaningRequestSentence": "\"{meaning}\" anlamı için silme isteğini göndermek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
-    "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
-    "ReasonRequired": "Lütfen değişiklik nedeni giriniz"
+    }
   },
-  "Phonetic": "Fonetik",
-  "WordName": "Kelime",
-  "Prefix": "Ön ek",
-  "Suffix": "Son ek",
-  "Language": "Dil",
-  "Root": "Kök",
-  "EnterWordName": "Kelime Giriniz",
-  "EnterPrefix": "Ön ek Giriniz",
-  "EnterSuffix": "Son ek Giriniz",
-  "EnterRoot": "Kök Giriniz",
-  "EnterLanguage": "Dil Giriniz",
-  "EnterPhonetic": "Fonetik Giriniz",
-  "WordAttribute": "Kelime Özelliği",
-  "SelectAttributes": "Özellikleri Seçin",
-  "NewWordAttribute": "Yeni Kelime Özelliği",
-  "EnterWordAttribute": "Kelime Özelliği Giriniz",
-  "AddNewWordAttribute": "Yeni Kelime Özelliği Ekle",
-  "Cancel": "İptal Et",
-  "Meaning": "Anlam",
-  "EnterMeaning": "Anlam Giriniz",
-  "ExampleSentence": "Örnek Cümle",
-  "EnterExampleSentence": "Örnek Cümle Giriniz",
-  "SelectPartOfSpeech": "Sözcük Türü Seçin",
-  "PartOfSpeech": "Sözcük Türü",
-  "Author": "Yazar",
-  "SelectAuthor": "Yazar Seçin",
-  "Attributes": "Özellikler",
-  "SearchWord": "Kelime Ara",
-  "WordsPerPage": "Sayfa başına kelime",
-  "PrefixIsOptional": "Ön ek isteğe bağlı",
-  "SuffixIsOptional": "Son ek isteğe bağlı",
-  "RemoveMeaning": "Anlamı kaldır",
-  "YouCanSelectAnAttributeForThisMeaning": "Bu anlam için özellikler seçebilirsiniz",
-  "MeaningAttributesDescription": "Lütfen bir özellik seçiniz",
-  "AddNewAuthor": "Yeni Yazar Ekle",
-  "ResetAllSelectedValuesButton": "Tüm Seçenekleri Sıfırla",
-  "AddNewMeaningAttribute": "Yeni Anlam Özelliği Ekle",
   "EnterMeaningAttribute": "Anlam Özelliği Giriniz",
   "Submit": "Gönder",
   "AttributeAddedSuccessfully": "Özellik başarıyla eklendi",
   "AnErrorOccuredPleaseTryAgain": "Bir hata oluştu, lütfen tekrar deneyin.",
   "AuthorAddedSuccessfully": "Yazar başarıyla eklendi",
-
-  "SearchHistory": {
-    "title": "Arama Geçmişi",
-    "emptyHistory": "Arama geçmişiniz boş.",
-    "loading": "Arama geçmişiniz yükleniyor...",
-    "error": "Arama geçmişi yüklenemedi. Lütfen tekrar deneyin.",
-    "searchedOn": "Arama tarihi",
-    "refresh": "Arama geçmişini yenile",
-    "item": "kelime",
-    "items": "kelime"
-  },
   "EnterAuthor": "Yazar Giriniz",
-  "Forms": {
-    "Attributes": {
-      "Required": "Özellik gerekli, lütfen bir özellik giriniz.",
-      "MinLength2": "Özellik uzunluğu 2 karakterden uzun olmalıdır."
-    },
-    "Meanings": {
-      "Required": "Anlam gerekli, lütfen bir anlam giriniz."
-    },
-    "PartOfSpeech": {
-      "Description": "Sözcük türü isteğe bağlı.",
-      "Select": "Lütfen bir sözcük türü seçiniz",
-      "Required": "Lütfen bir sözcük türü seçiniz"
-    },
-    "MeaningAttributes": {
-      "Description": "Anlam özellikleri isteğe bağlı",
-      "Select": "Lütfen bir anlam özelliği seçiniz",
-      "Required": "Lütfen bir anlam özelliği seçiniz",
-      "MinLength2": "Anlam özelliği uzunluğu 2 karakterden uzun olmalıdır."
-    },
-    "ExampleSentence": {
-      "Description": "Örnek cümle isteğe bağlı"
-    },
-    "WordName": {
-      "Required": "Kelime adı gerekli, lütfen bir kelime adı giriniz."
-    },
-    "Author": {
-      "NameRequired": "Yazar adı gerekli, lütfen bir yazar adı giriniz.",
-      "MinLength2": "Yazar adı uzunluğu 2 karakterden uzun olmalıdır."
-    },
-    "Root": {
-      "InputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",
-      "LanguageInputError": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
-    },
-    "Language": {
-      "Description": "Köken kelime girildiğinde dil seçmeniz gereklidir!"
-    }
+  "Announcements": {
+    "readMore": "Devamını Oku",
+    "backToAnnouncements": "Duyurulara Geri Dön",
+    "publishedOn": "{date} tarihinde yayınlandı",
+    "noAnnouncements": "Şu anda mevcut duyuru bulunmamaktadır",
+    "latestAnnouncements": "Son Duyurular"
   },
   "Components": {
     "TrendingSearches": {
-      "title7Days": "Trendler (7 gün)",
-      "title30Days": "Trendler (30 gün)",
-      "title": "Trend Aramalar"
+      "title": "Popüler Aramalar",
+      "noTrending": "Popüler arama bulunmamaktadır"
     },
-    "PopularSearches": {
-      "title": "Popüler Aramalar"
+    "RecentSearches": {
+      "title": "Son Aramalar",
+      "noRecent": "Son arama bulunmamaktadır",
+      "clearAll": "Tümünü Temizle"
     }
   }
 }

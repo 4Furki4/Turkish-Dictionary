@@ -86,7 +86,79 @@
     "ImagesUploaded": "Images uploaded!",
     "Error": "Error",
     "Append": "Append",
-    "Prepend": "Prepend"
+    "Prepend": "Prepend",
+    "Announcements": {
+      "title": "Announcements",
+      "createNew": "Create New Announcement",
+      "createDescription": "Create a new announcement to display on the website",
+      "editAnnouncement": "Edit Announcement: {slug}",
+      "editDescription": "Edit the details and content of this announcement",
+      "searchPlaceholder": "Search announcements...",
+      "tableAriaLabel": "Announcements Table",
+      "itemsPerPage": "Items per page",
+      "status": "Status",
+      "error": "An error occurred while loading announcements",
+      "noAnnouncements": "No announcements found",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "create": "Create",
+      "update": "Update",
+      "deleteModalTitle": "Delete Announcement",
+      "deleteConfirmation": "Are you sure you want to delete the announcement \"{slug}\"? This action cannot be undone.",
+      "deleteGenericConfirmation": "Are you sure you want to delete this announcement? This action cannot be undone.",
+      "deleteSuccess": "Announcement deleted successfully",
+      "deleteError": "Failed to delete announcement: {error}",
+      "createSuccess": "Announcement created successfully",
+      "createError": "Failed to create announcement: {error}",
+      "updateSuccess": "Announcement updated successfully",
+      "updateError": "Failed to update announcement: {error}",
+      "announcementNotFound": "Announcement not found",
+      "columns": {
+        "slug": "Slug",
+        "status": "Status",
+        "publishedAt": "Published At",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "status": {
+        "all": "All",
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      },
+      "generalInfo": "General Information",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "unique-announcement-identifier",
+        "status": "Status",
+        "imageUrl": "Image URL",
+        "imageUrlPlaceholder": "https://example.com/image.jpg",
+        "actionUrl": "Action URL",
+        "actionUrlPlaceholder": "https://example.com/action",
+        "actionTextKey": "Action Text Key",
+        "actionTextKeyPlaceholder": "Announcements.readMore",
+        "publishedAt": "Published At",
+        "publishedAtPlaceholder": "Select a date",
+        "contentTab": "Content",
+        "previewTab": "Preview",
+        "englishContent": "English Content",
+        "turkishContent": "Turkish Content",
+        "title": "Title",
+        "titlePlaceholder": "Enter title",
+        "excerpt": "Excerpt",
+        "excerptPlaceholder": "Brief summary of the announcement",
+        "content": "Content (Markdown)",
+        "contentPlaceholder": "Enter the content in Markdown format",
+        "preview": "Content Preview",
+        "noTitle": "No title provided",
+        "noContent": "No content provided"
+      },
+      "languages": {
+        "en": "English",
+        "tr": "Turkish"
+      }
+    }
   },
   "LanguageAndRootInput": {
     "rootInputError": "Root is required when language specified",
@@ -177,6 +249,14 @@
     "requestDetail": {
       "title": "Request Details | Turkish Dictionary",
       "description": "View and manage details of your dictionary contribution request"
+    },
+    "announcements": {
+      "title": "Announcements | Turkish Dictionary",
+      "description": "Latest news and updates from the Turkish Dictionary team"
+    },
+    "announcementDetail": {
+      "title": "{title} | Turkish Dictionary",
+      "description": "Read the full announcement from the Turkish Dictionary team"
     }
   },
   "Requests": {
@@ -203,165 +283,60 @@
       "update": "Update",
       "delete": "Delete"
     },
-    "status": {
+    "statuses": {
       "title": "Status",
       "all": "All Statuses",
       "pending": "Pending",
       "approved": "Approved",
       "rejected": "Rejected"
     },
-    "tableColumns": {
-      "entityType": "ENTITY TYPE",
-      "action": "ACTION",
-      "status": "STATUS",
-      "date": "REQUEST DATE",
-      "actions": "ACTIONS"
+    "table": {
+      "title": "My Requests",
+      "columns": {
+        "id": "ID",
+        "entityType": "Entity Type",
+        "action": "Action",
+        "status": "Status",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View"
+      },
+      "emptyMessage": "No requests found"
     },
-    "buttons": {
-      "viewDetails": "View Details",
-      "cancel": "Cancel",
-      "edit": "Edit Request",
-      "cancelRequest": "Cancel Request",
-      "cancelEditing": "Cancel Editing",
-      "saveChanges": "Save Changes",
-      "keepRequest": "No, Keep Request",
-      "confirmCancel": "Yes, Cancel Request",
-      "updateRequest": "Update Request",
-      "back": "Back",
-      "backToRequests": "Back to Requests"
-    },
-    "messages": {
-      "errorLoading": "Error loading requests",
-      "noRequests": "No requests found",
-      "errorLoadingDetail": "Error loading request details",
-      "cancelConfirmation": "Are you sure you want to cancel this request? This action cannot be undone.",
-      "updateRequest": "Update your request details:",
-      "reasonLabel": "Reason for Update:",
-      "reasonPlaceholder": "Why are you updating this request?",
-      "itemsPerPage": "Items per page"
-    },
-    "details": {
-      "requestInfo": "Request Information",
-      "entityType": "Entity Type:",
-      "action": "Action:",
-      "status": "Status:",
-      "reason": "Reason:",
+    "detail": {
+      "id": "Request ID",
+      "entityType": "Entity Type",
+      "action": "Action",
+      "status": "Status",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "entityId": "Entity ID",
+      "originalData": "Original Data",
       "newData": "New Data",
-      "changes": "Changes",
-      "currentData": "Current Data",
-      "sideBySide": "Side by Side",
-      "noReason": "No reason provided",
-      "request": "Request:",
-      "empty": "Empty",
-      "updateFrom": "Updated from"
-    },
-    "RequestedAttributeByYou": "Requested Attribute by You",
-    "NoChanges": "No changes detected",
-    "EditRequestSubmittedSuccessfully": "Edit request submitted successfully",
-    "Reason": "Reason for Change",
-    "EnterReason": "Please enter your reason for the change",
-    "DeleteRequestSubmittedSuccessfully": "Delete request submitted successfully",
-    "FailedToSubmitEditRequest": "Failed to submit edit request",
-    "FailedToSubmitDeleteRequest": "Failed to submit delete request",
-    "SubmitRequest": "Submit Request",
-    "DeleteMeaningRequest": "Delete Meaning Request",
-    "DeleteMeaningRequestSentence": "Are you sure you want to request deletion of the meaning \"{meaning}\"? Please provide a reason for the deletion.",
-    "AttributeIsRequired": "Attribute is required, please enter an attribute.",
-    "AttributeRequestedSuccessfully": "Attribute requested successfully",
-    "ReasonRequired": "Please enter your reason for the change"
-  },
-  "WordName": "Word Name",
-  "Prefix": "Prefix",
-  "Suffix": "Suffix",
-  "Language": "Language",
-  "Root": "Root",
-  "Phonetic": "Phonetic",
-  "EnterWordName": "Enter Word Name",
-  "EnterPrefix": "Enter Prefix",
-  "EnterSuffix": "Enter Suffix",
-  "EnterRoot": "Enter Root",
-  "EnterLanguage": "Enter Language",
-  "EnterPhonetic": "Enter Phonetic",
-  "SelectAttributes": "Select Attributes",
-  "NewWordAttribute": "New Word Attribute",
-  "EnterWordAttribute": "Enter Word Attribute",
-  "AddNewWordAttribute": "Add New Word Attribute",
-  "Cancel": "Cancel",
-  "Meaning": "Meaning",
-  "EnterMeaning": "Enter Meaning",
-  "ExampleSentence": "Example Sentence",
-  "EnterExampleSentence": "Enter Example Sentence",
-  "Author": "Author",
-  "SelectAuthor": "Select Author",
-  "Attributes": "Attributes",
-  "PartOfSpeech": "Part of Speech",
-  "SearchWord": "Search Word",
-  "WordsPerPage": "Words per page",
-  "PrefixIsOptional": "Prefix is optional",
-  "SuffixIsOptional": "Suffix is optional",
-  "RemoveMeaning": "Remove Meaning",
-  "YouCanSelectAnAttributeForThisMeaning": "You can select attributes for this meaning",
-  "MeaningAttributesDescription": "Please select attributes for this meaning",
-  "AddNewAuthor": "Add New Author",
-  "ResetAllSelectedValuesButton": "Reset All Selected Values",
-  "AddNewMeaningAttribute": "Add New Meaning Attribute",
-  "EnterMeaningAttribute": "Enter Meaning Attribute",
-  "Submit": "Submit",
-  "AttributeAddedSuccessfully": "Attribute added successfully",
-  "AnErrorOccuredPleaseTryAgain": "An error occured, please try again.",
-  "AuthorAddedSuccessfully": "Author added successfully",
-  "EnterAuthor": "Enter Author",
-
-  "Components": {
-    "TrendingSearches": {
-      "title7Days": "Trending (7 days)",
-      "title30Days": "Trending (30 days)",
-      "title": "Trending Searches"
-    },
-    "PopularSearches": {
-      "title": "Popular Searches"
+      "adminComment": "Admin Comment",
+      "noComment": "No comment provided"
     }
   },
-  "SearchHistory": {
-    "title": "Search History",
-    "emptyHistory": "Your search history is empty.",
-    "loading": "Loading your search history...",
-    "error": "Failed to load search history. Please try again.",
-    "searchedOn": "Searched on",
-    "refresh": "Refresh search history",
-    "item": "item",
-    "items": "items"
+  "AuthorAddedSuccessfully": "Author added successfully",
+  "EnterAuthor": "Enter Author",
+  "Announcements": {
+    "readMore": "Read More",
+    "backToAnnouncements": "Back to Announcements",
+    "publishedOn": "Published on {date}",
+    "noAnnouncements": "No announcements available at this time",
+    "latestAnnouncements": "Latest Announcements"
   },
-  "Forms": {
-    "Attributes": {
-      "Required": "Attribute is required, please enter an attribute.",
-      "MinLength2": "Attribute length must be greater than 2 characters."
+  "Components": {
+    "TrendingSearches": {
+      "title": "Trending Searches",
+      "noTrending": "No trending searches available"
     },
-    "Meanings": {
-      "Required": "Meaning is required, please enter a meaning."
-    },
-    "PartOfSpeech": {
-      "Description": "Part of speech is optional",
-      "Select": "Please select a part of speech"
-    },
-    "MeaningAttributes": {
-      "Description": "Attributes are optional",
-      "Select": "Please select an attribute",
-      "Required": "Please select an attribute",
-      "MinLength2": "Attribute length must be greater than 2 characters."
-    },
-    "ExampleSentence": {
-      "Description": "Example sentence is optional"
-    },
-    "WordName": {
-      "Required": "Word name is required, please enter a word name."
-    },
-    "Language": {
-      "Description": "Please select a language"
-    },
-    "Root": {
-      "InputError": "Root is required when language specified",
-      "LanguageInputError": "Language is required when root specified"
+    "RecentSearches": {
+      "title": "Recent Searches",
+      "noRecent": "No recent searches",
+      "clearAll": "Clear All"
     }
   }
 }
