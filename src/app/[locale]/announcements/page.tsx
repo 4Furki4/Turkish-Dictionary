@@ -7,17 +7,18 @@ import { Card, CardBody, CardHeader, Button, Pagination } from "@heroui/react";
 import { formatDate } from "@/src/utils/date";
 
 interface AnnouncementsPageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     page?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params
 }: AnnouncementsPageProps): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Announcements" });
 
   return {
@@ -27,14 +28,16 @@ export async function generateMetadata({
 }
 
 export default async function AnnouncementsPage({
-  params: { locale },
+  params,
   searchParams,
 }: AnnouncementsPageProps) {
+  const { locale } = await params;
+  const { page } = await searchParams;
   const t = await getTranslations({ locale, namespace: "Announcements" });
-  const page = Number(searchParams.page) || 1;
-  
+  const pageNumber = Number(page) || 1;
+
   const { items, meta } = await api.announcements.listPublishedAnnouncements({
-    page,
+    page: pageNumber,
     limit: 10,
     locale: locale as "en" | "tr",
     orderBy: "publishedAt",
@@ -44,7 +47,7 @@ export default async function AnnouncementsPage({
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">{t("title")}</h1>
-      
+
       {items.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-lg text-gray-600">{t("noAnnouncements")}</p>
@@ -59,21 +62,21 @@ export default async function AnnouncementsPage({
                   {formatDate(announcement.publishedAt, locale)}
                 </span>
               </CardHeader>
-              
+
               <CardBody>
                 {announcement.imageUrl && (
                   <div className="mb-4 relative w-full h-48">
-                    <Image 
-                      src={announcement.imageUrl} 
+                    <Image
+                      src={announcement.imageUrl}
                       alt={announcement.title || ""}
                       fill
                       className="object-cover rounded-md"
                     />
                   </div>
                 )}
-                
+
                 <p className="text-gray-700 mb-4">{announcement.excerpt}</p>
-                
+
                 <div className="flex justify-end">
                   <Link href={`/${locale}/announcements/${announcement.slug}`}>
                     <Button color="primary">
@@ -86,12 +89,12 @@ export default async function AnnouncementsPage({
           ))}
         </div>
       )}
-      
+
       {meta.totalPages > 1 && (
         <div className="mt-8 flex justify-center">
           <Pagination
             total={meta.totalPages}
-            initialPage={page}
+            initialPage={pageNumber}
             onChange={(newPage) => {
               window.location.href = `/${locale}/announcements?page=${newPage}`;
             }}

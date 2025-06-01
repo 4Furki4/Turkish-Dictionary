@@ -3,10 +3,11 @@ import AnnouncementForm from "@/src/_pages/dashboard/announcements/announcement-
 import { Metadata } from "next";
 
 export async function generateMetadata(
-  { params: { locale } }: { params: { locale: string } }
+  { params }: { params: Promise<{ locale: string }> }
 ): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Dashboard.Announcements" });
-  
+
   return {
     title: t("createNew"),
     description: t("createDescription"),

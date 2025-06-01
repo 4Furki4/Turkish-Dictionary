@@ -11,17 +11,13 @@ import {
   useDisclosure,
   Spinner,
   Button,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
   Chip,
   Pagination,
   Select,
   SelectItem,
   Input,
 } from "@heroui/react";
-import { Edit3, MoreVertical, Plus, Trash2, Search } from "lucide-react";
+import { Edit3, Plus, Trash2, Search } from "lucide-react";
 import { api } from "@/src/trpc/react";
 import { Link } from "@/src/i18n/routing";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -50,7 +46,6 @@ export default function AnnouncementsList() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Get query params with defaults
   const page = Number(searchParams.get("page") || "1");
   const limit = Number(searchParams.get("limit") || "10");
   const status = (searchParams.get("status") || "all") as "all" | "draft" | "published" | "archived";
@@ -135,6 +130,89 @@ export default function AnnouncementsList() {
     return format(new Date(date), "MMM dd, yyyy");
   };
 
+  // Define columns for the table
+  const columns = [
+    { key: "slug", label: t("columns.slug") },
+    { key: "status", label: t("columns.status") },
+    { key: "publishedAt", label: t("columns.publishedAt") },
+    { key: "createdAt", label: t("columns.createdAt") },
+    { key: "actions", label: t("columns.actions") },
+  ];
+
+  // Transform data for the table
+  const rows = data?.items.map((announcement) => ({
+    key: announcement.id.toString(),
+    id: announcement.id,
+    slug: announcement.slug,
+    status: announcement.status,
+    publishedAt: announcement.publishedAt,
+    createdAt: announcement.createdAt,
+  })) || [];
+
+  // Calculate total pages
+  const totalPageNumber = data?.meta.totalPages || 1;
+
+  // Render cell content based on column key
+  const renderCell = (item: any, columnKey: React.Key) => {
+    switch (columnKey) {
+      case "slug":
+        return (
+          <Link
+            href={{
+              pathname: "/dashboard/announcements/[id]/edit",
+              params: { id: item.id.toString() }
+            }}
+            className="text-primary hover:underline"
+          >
+            {item.slug}
+          </Link>
+        );
+      case "status":
+        return (
+          <Chip
+            color={getStatusColor(item.status) as any}
+            size="sm"
+          >
+            {t(`statuses.${item.status}`)}
+          </Chip>
+        );
+      case "publishedAt":
+        return formatDate(item.publishedAt);
+      case "createdAt":
+        return formatDate(item.createdAt);
+      case "actions":
+        return (
+          <div className="flex justify-center gap-2">
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              as={Link}
+              href={{
+                pathname: "/dashboard/announcements/[id]/edit",
+                params: { id: item.id.toString() }
+              } as any}
+              aria-label={t("edit")}
+            >
+              <Edit3 size={16} />
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              color="danger"
+              onPress={() => handleDeleteClick({ id: item.id, slug: item.slug })}
+              aria-label={t("delete")}
+            >
+              <Trash2 size={16} />
+            </Button>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -149,122 +227,91 @@ export default function AnnouncementsList() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="w-full md:w-72">
-          <Input
-            placeholder={t("searchPlaceholder")}
-            value={searchQuery}
-            onChange={handleSearchChange}
-            startContent={<Search size={16} />}
-            clearable
-          />
-        </div>
-        <div className="flex gap-2">
-          <Select
-            label={t("status")}
-            selectedKeys={[status]}
-            onChange={(e) => handleStatusChange(e.target.value)}
-            className="w-32"
-          >
-            {statusOptions.map((option) => (
-              <SelectItem key={option.key} value={option.key}>
-                {t(`statuses.${option.key}`)}
-              </SelectItem>
-            ))}
-          </Select>
-          <Select
-            label={t("itemsPerPage")}
-            selectedKeys={[limit.toString()]}
-            onChange={(e) => handleLimitChange(e.target.value)}
-            className="w-24"
-          >
-            {itemsPerPageOptions.map((option) => (
-              <SelectItem key={option.key} value={option.key}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </Select>
-        </div>
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center p-10">
-          <Spinner />
-        </div>
-      ) : isError ? (
-        <div className="text-center p-10 text-danger">{t("error")}</div>
-      ) : (
-        <>
-          <Table aria-label={t("tableAriaLabel")}>
-            <TableHeader>
-              <TableColumn>{t("columns.slug")}</TableColumn>
-              <TableColumn>{t("columns.status")}</TableColumn>
-              <TableColumn>{t("columns.publishedAt")}</TableColumn>
-              <TableColumn>{t("columns.createdAt")}</TableColumn>
-              <TableColumn align="center">{t("columns.actions")}</TableColumn>
-            </TableHeader>
-            <TableBody emptyContent={t("noAnnouncements")}>
-              {data?.items.map((announcement) => (
-                <TableRow key={announcement.id}>
-                  <TableCell>
-                    <Link
-                      href={`/dashboard/announcements/${announcement.id}/edit`}
-                      className="text-primary hover:underline"
-                    >
-                      {announcement.slug}
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      color={getStatusColor(announcement.status) as any}
-                      size="sm"
-                    >
-                      {t(`statuses.${announcement.status}`)}
-                    </Chip>
-                  </TableCell>
-                  <TableCell>{formatDate(announcement.publishedAt)}</TableCell>
-                  <TableCell>{formatDate(announcement.createdAt)}</TableCell>
-                  <TableCell>
-                    <div className="flex justify-center gap-2">
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        as={Link}
-                        href={`/dashboard/announcements/${announcement.id}/edit`}
-                        aria-label={t("edit")}
-                      >
-                        <Edit3 size={16} />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="danger"
-                        onPress={() => handleDeleteClick({ id: announcement.id, slug: announcement.slug })}
-                        aria-label={t("delete")}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="w-full md:w-72">
+            <Input
+              placeholder={t("searchPlaceholder")}
+              value={searchQuery}
+              onChange={handleSearchChange}
+              startContent={<Search size={16} />}
+            />
+          </div>
+          <div className="flex gap-2">
+            <Select
+              label={t("status")}
+              selectedKeys={[status]}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              className="w-32"
+            >
+              {statusOptions.map((option) => (
+                <SelectItem key={option.key}>
+                  {t(`statuses.${option.key}`)}
+                </SelectItem>
               ))}
-            </TableBody>
-          </Table>
+            </Select>
+            <Select
+              label={t("itemsPerPage")}
+              selectedKeys={[limit.toString()]}
+              onChange={(e) => handleLimitChange(e.target.value)}
+              className="w-24"
+            >
+              {itemsPerPageOptions.map((option) => (
+                <SelectItem key={option.key}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+        </div>
 
-          {data && data.meta.totalPages > 1 && (
-            <div className="flex justify-center mt-6">
-              <Pagination
-                total={data.meta.totalPages}
-                initialPage={page}
-                page={page}
-                onChange={handlePageChange}
-              />
-            </div>
-          )}
-        </>
-      )}
+        <Table
+          aria-label={t("tableAriaLabel")}
+          isStriped
+          classNames={{
+            base: "min-h-[300px]",
+          }}
+          bottomContent={
+            <Pagination
+              isDisabled={totalPageNumber === undefined}
+              classNames={{
+                wrapper: "mx-auto",
+              }}
+              isCompact
+              showControls
+              total={totalPageNumber}
+              initialPage={1}
+              page={page}
+              onChange={handlePageChange}
+            />
+          }
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn
+                key={column.key}
+                align={column.key === "actions" ? "center" : "start"}
+              >
+                {column.label}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody
+            items={rows}
+            loadingContent={<Spinner />}
+            loadingState={isLoading ? "loading" : "idle"}
+            emptyContent={isError ? <div className="text-danger">{t("error")}</div> : t("noAnnouncements")}
+          >
+            {(item) => (
+              <TableRow key={item.key}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       {/* Delete Confirmation Modal */}
       <DeleteAnnouncementModal

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import AnnouncementForm from "../../announcement-form";
 import { useTranslations } from "next-intl";
 import { api } from "@/src/trpc/react";
@@ -13,15 +13,19 @@ export default function EditAnnouncementPage() {
   const router = useRouter();
   const id = Number(params.id);
   
-  const { data, isLoading, isError } = api.admin.announcements.getAnnouncementForEdit.useQuery(
+  const { data, isLoading, isError, error } = api.admin.announcements.getAnnouncementForEdit.useQuery(
     { id },
     {
       enabled: !isNaN(id),
-      onError: () => {
-        router.push("/dashboard/announcements");
-      },
     }
   );
+
+  // Handle error with useEffect instead of onError callback
+  useEffect(() => {
+    if (isError) {
+      router.push("/dashboard/announcements");
+    }
+  }, [isError, router]);
 
   if (isLoading) {
     return (
@@ -39,6 +43,18 @@ export default function EditAnnouncementPage() {
     );
   }
 
+  // Transform the Date object to the expected format
+  const formattedData = {
+    ...data,
+    publishedAt: data.publishedAt
+      ? {
+          year: data.publishedAt.getFullYear(),
+          month: data.publishedAt.getMonth() + 1, // JavaScript months are 0-indexed
+          day: data.publishedAt.getDate(),
+        }
+      : null,
+  };
+
   return (
     <div className="container mx-auto py-6">
       <div className="mb-6">
@@ -48,7 +64,7 @@ export default function EditAnnouncementPage() {
         <p className="text-gray-500 mt-1">{t("editDescription")}</p>
       </div>
       
-      <AnnouncementForm initialData={data} />
+      <AnnouncementForm initialData={formattedData} />
     </div>
   );
 }

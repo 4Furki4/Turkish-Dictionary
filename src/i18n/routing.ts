@@ -111,6 +111,18 @@ export const routing = defineRouting({
       "en": "/announcements/[slug]",
       "tr": "/duyurular/[slug]",
     },
+    "/dashboard/announcements": {
+      "en": "/dashboard/announcements",
+      "tr": "/dashboard/duyurular",
+    },
+    "/dashboard/announcements/new": {
+      "en": "/dashboard/announcements/new",
+      "tr": "/dashboard/duyurular/yeni",
+    },
+    "/dashboard/announcements/[id]/edit": {
+      "en": "/dashboard/announcements/[id]/edit",
+      "tr": "/dashboard/duyurular/[id]/duzenle",
+    },
     // Dynamic params are supported via square brackets
   }
 

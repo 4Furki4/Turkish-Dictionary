@@ -9,15 +9,16 @@ import { MarkdownRenderer } from "@/src/components/markdown-renderer";
 import { notFound } from "next/navigation";
 
 interface AnnouncementDetailPageProps {
-  params: {
+  params: Promise<{
     locale: string;
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
-  params: { locale, slug },
+  params
 }: AnnouncementDetailPageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
   try {
     const announcement = await api.announcements.getAnnouncementBySlug({
       slug,
@@ -48,8 +49,9 @@ export async function generateMetadata({
 }
 
 export default async function AnnouncementDetailPage({
-  params: { locale, slug },
+  params
 }: AnnouncementDetailPageProps) {
+  const { locale, slug } = await params;
   const t = await getTranslations({ locale, namespace: "Announcements" });
 
   try {
