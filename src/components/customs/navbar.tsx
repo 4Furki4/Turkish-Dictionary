@@ -23,7 +23,7 @@ import Image from "next/image";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl", string>;
+} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl", string>;
 
 export default function Navbar({
   session,
@@ -36,6 +36,7 @@ export default function Navbar({
   MyRequestsIntl,
   SearchHistoryIntl,
   LogoutIntl,
+  AnnouncementsIntl,
   setIsSidebarOpen
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
@@ -96,6 +97,11 @@ export default function Navbar({
             <span className={`text-nowrap`}>{WordListIntl}</span>
           </NextIntlLink>
         </NavbarItem>
+        <NavbarItem className="hidden sm:flex">
+          <NextIntlLink href="/announcements" as={Link as any} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+            <span className={`text-nowrap`}>{AnnouncementsIntl}</span>
+          </NextIntlLink>
+        </NavbarItem>
         <NavbarItem>
           <Dropdown classNames={{
             content: ["rounded-sm"],
@@ -116,7 +122,8 @@ export default function Navbar({
                       query: searchParams.toString(),
                       params: {
                         word: params.word as any,
-                        id: params.id as any
+                        id: params.id as any,
+                        slug: params.slug as any,
                       },
                     }}
                     locale="tr"

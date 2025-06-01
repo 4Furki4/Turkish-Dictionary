@@ -9,7 +9,8 @@
     "SavedWords": "Kaydedilen Kelimeler",
     "MyRequests": "İsteklerim",
     "SearchHistory": "Arama Geçmişi",
-    "Dashboard": "Paneli"
+    "Dashboard": "Paneli",
+    "Announcements": "Duyurular"
   },
   "SigninForm": {
     "Sign in with Google": "Google ile Giriş Yap",
@@ -112,7 +113,7 @@
         "actionUrl": "Eylem URL'si",
         "actionUrlPlaceholder": "https://example.com/action",
         "actionTextKey": "Eylem Metin Anahtarı",
-        "actionTextKeyPlaceholder": "Announcements.readMore",
+        "actionTextKeyPlaceholder": "Devamını Oku",
         "publishedAt": "Yayınlanma Tarihi",
         "publishedAtPlaceholder": "Bir tarih seçin",
         "contentTab": "İçerik",
@@ -163,6 +164,22 @@
       "word": "Kelime",
       "meaning": "Anlam"
     }
+  },
+  "Announcements": {
+    "meta": {
+      "title": "Duyurular",
+      "description": "Türkçe Sözlük'ten en son duyurular ve güncellemeler",
+      "notFound": "Duyuru Bulunamadı",
+      "notFoundDescription": "Aradığınız duyuru bulunamadı"
+    },
+    "title": "Duyurular",
+    "noAnnouncements": "Şu anda mevcut duyuru bulunmamaktadır",
+    "readMore": "Devamını Oku",
+    "learnMore": "Daha Fazla Bilgi",
+    "backToAnnouncements": "Duyurulara Geri Dön",
+    "noContent": "Bu duyuru için içerik bulunmamaktadır",
+    "publishedOn": "{date} tarihinde yayınlandı",
+    "latestAnnouncements": "Son Duyurular"
   },
   "Metadata": {
     "requests": {
@@ -220,22 +237,15 @@
   "AnErrorOccuredPleaseTryAgain": "Bir hata oluştu, lütfen tekrar deneyin.",
   "AuthorAddedSuccessfully": "Yazar başarıyla eklendi",
   "EnterAuthor": "Yazar Giriniz",
-  "Announcements": {
-    "readMore": "Devamını Oku",
-    "backToAnnouncements": "Duyurulara Geri Dön",
-    "publishedOn": "{date} tarihinde yayınlandı",
-    "noAnnouncements": "Şu anda mevcut duyuru bulunmamaktadır",
-    "latestAnnouncements": "Son Duyurular"
-  },
   "Components": {
-    "TrendingSearches": {
+    "PopularSearches": {
       "title": "Popüler Aramalar",
-      "noTrending": "Popüler arama bulunmamaktadır"
+      "noPopular": "Popüler arama bulunmamaktadır"
     },
-    "RecentSearches": {
-      "title": "Son Aramalar",
-      "noRecent": "Son arama bulunmamaktadır",
-      "clearAll": "Tümünü Temizle"
+    "TrendingSearches": {
+      "title7Days": "Popüler Aramalar (7 Gün)",
+      "title30Days": "Popüler Aramalar (30 Gün)",
+      "noTrending": "Popüler arama bulunmamaktadır"
     }
   }
 }

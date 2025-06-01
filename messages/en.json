@@ -9,7 +9,8 @@
     "SavedWords": "Saved Words",
     "MyRequests": "My Requests",
     "SearchHistory": "Search History",
-    "Dashboard": "Dashboard"
+    "Dashboard": "Dashboard",
+    "Announcements": "Announcements"
   },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
@@ -121,7 +122,7 @@
         "createdAt": "Created At",
         "actions": "Actions"
       },
-      "status": {
+      "statuses": {
         "all": "All",
         "draft": "Draft",
         "published": "Published",
@@ -137,7 +138,7 @@
         "actionUrl": "Action URL",
         "actionUrlPlaceholder": "https://example.com/action",
         "actionTextKey": "Action Text Key",
-        "actionTextKeyPlaceholder": "Announcements.readMore",
+        "actionTextKeyPlaceholder": "Read More",
         "publishedAt": "Published At",
         "publishedAtPlaceholder": "Select a date",
         "contentTab": "Content",
@@ -189,7 +190,23 @@
       "meaning": "Meaning"
     }
   },
-  "SavedWords": {
+  "Announcements": {
+    "meta": {
+      "title": "Announcements",
+      "description": "Latest announcements and updates from Turkish Dictionary",
+      "notFound": "Announcement Not Found",
+      "notFoundDescription": "The announcement you are looking for could not be found"
+    },
+    "title": "Announcements",
+    "noAnnouncements": "No announcements available at this time",
+    "readMore": "Read More",
+    "learnMore": "Learn More",
+    "backToAnnouncements": "Back to Announcements",
+    "noContent": "No content available for this announcement",
+    "publishedOn": "Published on {date}",
+    "latestAnnouncements": "Latest Announcements"
+  },
+  "SavedWordsSection": {
     "Toolbar": {
       "searchPlaceholder": "Search saved words...",
       "filters": "Filters",
@@ -321,22 +338,15 @@
   },
   "AuthorAddedSuccessfully": "Author added successfully",
   "EnterAuthor": "Enter Author",
-  "Announcements": {
-    "readMore": "Read More",
-    "backToAnnouncements": "Back to Announcements",
-    "publishedOn": "Published on {date}",
-    "noAnnouncements": "No announcements available at this time",
-    "latestAnnouncements": "Latest Announcements"
-  },
   "Components": {
-    "TrendingSearches": {
-      "title": "Trending Searches",
-      "noTrending": "No trending searches available"
+    "PopularSearches": {
+      "title": "Popular Searches",
+      "noPopular": "No popular searches available"
     },
-    "RecentSearches": {
-      "title": "Recent Searches",
-      "noRecent": "No recent searches",
-      "clearAll": "Clear All"
+    "TrendingSearches": {
+      "title7Days": "Trending Searches (7 Days)",
+      "title30Days": "Trending Searches (30 Days)",
+      "noTrending": "No trending searches available"
     }
   }
 }

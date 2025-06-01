@@ -103,6 +103,14 @@ export const routing = defineRouting({
       "en": "/search-history",
       "tr": "/arama-gecmisi",
     },
+    "/announcements": {
+      "en": "/announcements",
+      "tr": "/duyurular",
+    },
+    "/announcements/[slug]": {
+      "en": "/announcements/[slug]",
+      "tr": "/duyurular/[slug]",
+    },
     // Dynamic params are supported via square brackets
   }
 

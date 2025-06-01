@@ -1,22 +1,19 @@
 "use client";
-
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import * as z from "zod";
 import {
+  Button,
   Card,
-  CardHeader,
   CardBody,
-  CardFooter,
+  CardHeader,
   Input,
-  Textarea,
   Select,
   SelectItem,
-  Button,
   Tabs,
   Tab,
-  Divider,
+  Textarea,
   DatePicker,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
@@ -24,7 +21,6 @@ import { api } from "@/src/trpc/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { MarkdownRenderer } from "@/src/components/markdown-renderer";
-
 // Schema for form validation
 const announcementFormSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -32,7 +28,7 @@ const announcementFormSchema = z.object({
   imageUrl: z.string().url().optional().nullable(),
   actionUrl: z.string().url().optional().nullable(),
   actionTextKey: z.string().optional().nullable(),
-  publishedAt: z.date().optional().nullable(),
+  publishedAt: z.any().optional().nullable(),
   translations: z.object({
     en: z.object({
       title: z.string().min(1, "Title is required"),
@@ -57,7 +53,7 @@ interface AnnouncementFormProps {
     imageUrl: string | null;
     actionUrl: string | null;
     actionTextKey: string | null;
-    publishedAt: Date | null;
+    publishedAt: { year: number; month: number; day: number } | null;
     translations: {
       en: {
         title: string;
@@ -77,7 +73,6 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
   const t = useTranslations("Dashboard.Announcements");
   const router = useRouter();
   const [previewTab, setPreviewTab] = React.useState<"en" | "tr">("en");
-  
   // Default values for the form
   const defaultValues: AnnouncementFormValues = {
     slug: initialData?.slug || "",
@@ -139,15 +134,69 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
 
   // Form submission handler
   const onSubmit = (data: AnnouncementFormValues) => {
+    // Create a copy of the data to avoid modifying the original
+    const submissionData = { ...data };
+    
+    // Ensure translations object is properly structured
+    if (!submissionData.translations) {
+      submissionData.translations = {
+        en: { title: "", content: null, excerpt: null },
+        tr: { title: "", content: null, excerpt: null }
+      };
+    }
+
+    // Ensure English translation is properly handled
+    if (!submissionData.translations.en) {
+      submissionData.translations.en = { title: "", content: null, excerpt: null };
+    } else {
+      submissionData.translations.en = {
+        ...submissionData.translations.en,
+        title: submissionData.translations.en.title || "",
+        content: submissionData.translations.en.content === null ? null : submissionData.translations.en.content,
+        excerpt: submissionData.translations.en.excerpt === null ? null : submissionData.translations.en.excerpt
+      };
+    }
+
+    // Ensure Turkish translation is properly handled
+    if (!submissionData.translations.tr) {
+      submissionData.translations.tr = { title: "", content: null, excerpt: null };
+    } else {
+      submissionData.translations.tr = {
+        ...submissionData.translations.tr,
+        title: submissionData.translations.tr.title || "",
+        content: submissionData.translations.tr.content === null ? null : submissionData.translations.tr.content,
+        excerpt: submissionData.translations.tr.excerpt === null ? null : submissionData.translations.tr.excerpt
+      };
+    }
+
+    // Handle publishedAt date conversion if needed
+    if (submissionData.publishedAt && typeof submissionData.publishedAt === 'object' && 'toDate' in submissionData.publishedAt) {
+      try {
+        // If it's a DateValue with toDate method, convert it to a JavaScript Date
+        const dateValue = submissionData.publishedAt as any;
+        if (typeof dateValue.toDate === 'function') {
+          submissionData.publishedAt = dateValue.toDate();
+        }
+      } catch (e) {
+        console.error("Error converting date:", e);
+        // Keep the original value if conversion fails
+      }
+    }
+
+    // Log the data being sent (remove in production)
+    console.log('Submitting announcement data:', JSON.stringify(submissionData, null, 2));
+
     if (initialData) {
       // Update existing announcement
       updateAnnouncement({
         id: initialData.id,
-        ...data,
-      });
+        ...submissionData,
+      } as any);
+      // Success and error handling is done in the mutation hooks
     } else {
       // Create new announcement
-      createAnnouncement(data);
+      createAnnouncement(submissionData as any);
+      // Success and error handling is done in the mutation hooks
     }
   };
 
@@ -182,14 +231,14 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
                 errorMessage={errors.status?.message}
                 isInvalid={!!errors.status}
               >
-                <SelectItem key="draft" value="draft">
-                  {t("status.draft")}
+                <SelectItem key="draft">
+                  {t("statuses.draft")}
                 </SelectItem>
-                <SelectItem key="published" value="published">
-                  {t("status.published")}
+                <SelectItem key="published">
+                  {t("statuses.published")}
                 </SelectItem>
-                <SelectItem key="archived" value="archived">
-                  {t("status.archived")}
+                <SelectItem key="archived">
+                  {t("statuses.archived")}
                 </SelectItem>
               </Select>
             )}
@@ -249,10 +298,10 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
             render={({ field }) => (
               <DatePicker
                 label={t("form.publishedAt")}
-                placeholder={t("form.publishedAtPlaceholder")}
-                value={field.value}
-                onChange={field.onChange}
-                errorMessage={errors.publishedAt?.message}
+                onChange={(value) => {
+                  field.onChange(value);
+                }}
+                errorMessage={errors.publishedAt?.message ? String(errors.publishedAt.message) : undefined}
                 isInvalid={!!errors.publishedAt}
               />
             )}
@@ -315,7 +364,7 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
               />
             </CardBody>
 
-            <Divider />
+            <hr className="my-4 border-t border-gray-200" />
 
             <CardHeader>
               <h2 className="text-xl font-bold">{t("form.turkishContent")}</h2>
@@ -376,8 +425,8 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
             <CardHeader>
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">{t("form.preview")}</h2>
-                <Tabs 
-                  aria-label="Preview Language" 
+                <Tabs
+                  aria-label="Preview Language"
                   selectedKey={previewTab}
                   onSelectionChange={(key) => setPreviewTab(key as "en" | "tr")}
                   size="sm"
