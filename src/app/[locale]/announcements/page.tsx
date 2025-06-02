@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { api } from "@/src/trpc/server";
-import Link from "next/link";
+import { Link } from "@/src/i18n/routing";
 import Image from "next/image";
 import { Card, CardBody, CardHeader, Button, Pagination } from "@heroui/react";
 import { formatDate } from "@/src/utils/date";
@@ -78,7 +78,7 @@ export default async function AnnouncementsPage({
                 <p className="text-gray-700 mb-4">{announcement.excerpt}</p>
 
                 <div className="flex justify-end">
-                  <Link href={`/${locale}/announcements/${announcement.slug}`}>
+                  <Link href={{ pathname: "/announcements/[slug]", params: { slug: announcement.slug } }}>
                     <Button color="primary">
                       {t("readMore")}
                     </Button>

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { api } from "@/src/trpc/server";
-import Link from "next/link";
+import { Link } from "@/src/i18n/routing";
 import Image from "next/image";
 import { Button, Card, CardBody, CardHeader } from "@heroui/react";
 import { formatDate } from "@/src/utils/date";
@@ -22,14 +22,14 @@ export async function generateStaticParams() {
     const { db } = await import('@/db');
     const { announcements } = await import('@/db/schema/announcements');
     const { eq } = await import('drizzle-orm');
-    
+
     // Query published announcements directly from the database
     const publishedAnnouncements = await db
       .select({ slug: announcements.slug })
       .from(announcements)
       .where(eq(announcements.status, 'published'))
       .limit(100);
-    
+
     // Generate params for each announcement in both languages
     return publishedAnnouncements.flatMap((announcement) => [
       { locale: "en", slug: announcement.slug },
@@ -95,7 +95,7 @@ export default async function AnnouncementDetailPage({
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="mb-6">
-          <Link href={`/${locale}/announcements`}>
+          <Link href={{ pathname: "/announcements" }}>
             <Button variant="ghost" className="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

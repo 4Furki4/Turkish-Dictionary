@@ -46,7 +46,6 @@ export const announcementsRouter = createTRPCRouter({
           .where(
             and(
               eq(announcements.status, "published"),
-              gte(announcements.publishedAt, new Date()) // Only show announcements that are published
             )
           )
           .orderBy(
@@ -56,7 +55,6 @@ export const announcementsRouter = createTRPCRouter({
           )
           .limit(limit)
           .offset(offset);
-
         // Count total published announcements for pagination
         const countResult = await db
           .select({ count: sql<number>`count(*)` })
@@ -142,7 +140,7 @@ export const announcementsRouter = createTRPCRouter({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         console.error("Error fetching announcement:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
