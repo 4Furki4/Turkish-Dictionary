@@ -14,9 +14,11 @@ import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
 import { AddWordSchema, EditWordSchema } from "../schemas/admin";
 import { addWordWithTransaction } from "../controllers/admin/create";
 import { dynamicParametersRouter } from "./admin/dynamic-parameters";
+import { wordRelationsAdminRouter } from "./admin/word-relations";
 
 export const adminRouter = createTRPCRouter({
   dynamicParameters: dynamicParametersRouter,
+  wordRelations: wordRelationsAdminRouter,
   deleteWord: adminProcedure
     .input(
       z.object({
