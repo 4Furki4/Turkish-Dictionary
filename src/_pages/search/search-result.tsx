@@ -4,7 +4,7 @@ import { auth } from "@/src/server/auth/auth";
 import WordCardWrapper from "@/src/components/customs/word-card-wrapper";
 
 export default async function SearchResult({ word, locale }: { word: string, locale: "en" | "tr" }) {
-  void api.word.getWord.prefetch({ name: word })
+  void api.word.getWord.prefetch({ name: word, skipLogging: true })
   const session = await auth()
 
   return (
