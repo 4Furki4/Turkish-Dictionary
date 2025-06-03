@@ -18,29 +18,34 @@ import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import clsx from "clsx";
 import Image from "next/image";
+import { useRef } from "react";
+import { captureElementScreenshot } from "../../utils/screenshot";
+import { copyPageUrl } from "../../utils/clipboard";
 
 export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
   const t = useTranslations("WordCard");
   const pathname = usePathname();
-  // Function to copy the current page URL to clipboard
-  const copyPageUrl = () => {
-    if (typeof window !== "undefined") {
-      const baseUrl = window.location.origin;
-      const fullUrl = `${baseUrl}${pathname}`;
-
-      navigator.clipboard.writeText(fullUrl)
-        .then(() => {
-          toast.success(t("urlCopiedDescription"));
-        })
-        .catch((error) => {
-          console.error("Failed to copy URL:", error);
-          toast.error(t("urlCopyFailedDescription"));
-        });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const handleCameraPress = async () => {
+    if (cardRef.current) {
+      await captureElementScreenshot(cardRef.current, {
+        processingMessage: t("screenshotProcessing") || "Creating screenshot...",
+        successMessage: t("screenshotCopied") || "Screenshot copied to clipboard!",
+        failureMessage: t("screenshotFailed") || "Failed to create screenshot.",
+        fileName: `${word_data.word_name}.png`
+      });
     }
+  };
+  // Handler for the share button to copy the current page URL
+  const handleSharePress = () => {
+    copyPageUrl({
+      successMessage: t("urlCopiedDescription") || "URL copied to clipboard!"
+    });
   };
   return (
     <Card
+      ref={cardRef}
       as={"article"}
       aria-label="word card"
       role="article"
@@ -56,14 +61,12 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
             <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
           <SaveWord word_data={word_data} isSavedWord={!session ? false : undefined} />
-          <Button disabled disableRipple isIconOnly className="bg-transparent" isDisabled
-            onPress={(e) => {
-              // TODO: generate image of word card
-            }}
-          >
+          <Button disableRipple isIconOnly className="bg-transparent" onPress={(e) => {
+            handleCameraPress();
+          }}>
             <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
-          <Button disableRipple isIconOnly className="bg-transparent" onPress={copyPageUrl}>
+          <Button disableRipple isIconOnly className="bg-transparent" onPress={() => handleSharePress()}>
             <Share2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
 
@@ -142,18 +145,20 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                 <ul className="grid gap-2">
                   {word_data.meanings.map((meaning, index) => (
                     <li key={meaning.meaning_id} className="grid gap-1">
-                      <div className="flex gap-2" >
-                        <Divider orientation="vertical" className="w-[2px] bg-primary" />
-                        <p>
-                          {meaning.part_of_speech}
-                          {meaning.attributes && meaning.attributes.length > 0 && (
-                            <>
-                              {meaning.part_of_speech ? ", " : ""}
-                              {meaning.attributes.map(attr => attr.attribute).join(", ")}
-                            </>
-                          )}
-                        </p>
-                      </div>
+                      {(meaning.part_of_speech || (meaning.attributes && meaning.attributes.length > 0)) && (
+                        <div className="flex gap-2 items-center">
+                          <Divider orientation="vertical" className="w-[2px] bg-primary h-5" />
+                          <p className="my-auto">
+                            {meaning.part_of_speech}
+                            {meaning.attributes && meaning.attributes.length > 0 && (
+                              <>
+                                {meaning.part_of_speech ? ", " : ""}
+                                {meaning.attributes.map(attr => attr.attribute).join(", ")}
+                              </>
+                            )}
+                          </p>
+                        </div>
+                      )}
                       <></>
                       <div className='flex flex-col md:flex-row gap-4'>
                         <div className={clsx('w-full', {

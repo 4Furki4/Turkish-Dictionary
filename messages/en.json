@@ -62,6 +62,11 @@
     "urlCopiedDescription": "Word page URL has been copied to clipboard",
     "urlCopyFailed": "Copy Failed",
     "urlCopyFailedDescription": "Failed to copy URL to clipboard",
+    "screenshotCopied": "Screenshot Copied",
+    "screenshotCopiedDescription": "Screenshot copied to clipboard",
+    "screenshotFailed": "Screenshot Failed",
+    "screenshotFailedDescription": "Failed to copy screenshot to clipboard",
+    "screenshotProcessing": "Creating screenshot...",
     "NoRelatedWordsFound": "No related words found",
     "NoRelatedPhrasesFound": "No related phrases found",
     "obsolete": "absolete meaning",
@@ -311,7 +316,6 @@
   "AnErrorOccuredPleaseTryAgain": "An error occured, please try again.",
   "AuthorAddedSuccessfully": "Author added successfully",
   "EnterAuthor": "Enter Author",
-
   "Components": {
     "TrendingSearches": {
       "title7Days": "Trending (7 days)",
