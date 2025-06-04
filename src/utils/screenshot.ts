@@ -9,7 +9,19 @@ interface ScreenshotOptions {
 }
 
 /**
- * Takes a screenshot of a DOM element and copies it to the clipboard
+ * Detects if the current device is a mobile device
+ * @returns boolean indicating if the device is mobile
+ */
+const isMobileDevice = (): boolean => {
+  if (typeof window === "undefined") return false;
+  
+  // Check for common mobile user agent patterns
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+  return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase()));
+};
+
+/**
+ * Takes a screenshot of a DOM element and copies it to clipboard or downloads it
  * @param element The DOM element to capture
  * @param options Messages for toast notifications and optional filename for download
  * @returns Promise that resolves when the screenshot is taken
@@ -23,38 +35,38 @@ export const captureElementScreenshot = async (
   // Create a notification that screenshot is being taken
   const pendingToast = toast.loading(options.processingMessage);
   
-  // Use setTimeout to give the UI a chance to update and show the loading toast
-  setTimeout(async () => {
-    try {
-
+  try {
+    // Check if we're on a mobile device
+    const isMobile = isMobileDevice();
+    
     // Prepare the element for screenshot by adding data attributes
     const prepareForScreenshot = () => {
       // Add a reference attribute to the element itself for styling
       element.setAttribute("data-ref", "card");
-
+      
       // Add data attributes to buttons and dividers for targeting
       const buttons = element.querySelectorAll("button");
       buttons?.forEach((btn, i) => btn.setAttribute("data-screenshot-btn", `btn-${i}`));
-
+      
       // Add attributes to dividers
       const dividers = element.querySelectorAll("hr");
       dividers?.forEach((div, i) => div.setAttribute("data-screenshot-divider", `div-${i}`));
-
+      
       // Add attributes to SVG icons
       const svgs = element.querySelectorAll("svg");
       svgs?.forEach((svg, i) => svg.setAttribute("data-screenshot-svg", `svg-${i}`));
     };
-
+    
     // Run preparation
     prepareForScreenshot();
-
+    
     // Determine if the user is in light or dark mode
     const isLightMode = document.documentElement.classList.contains("light");
-
+    
     // Set a solid background color based on theme
     // Using a darker black (#000000) for dark mode
     const solidBgColor = isLightMode ? "#ffffff" : "#000000";
-
+    
     // Create a new style element to inject into the clone
     const styleElement = document.createElement("style");
     styleElement.textContent = `
@@ -63,20 +75,20 @@ export const captureElementScreenshot = async (
         background-color: #000000 !important; /* Pure black background for dark mode */
         color: #ffffff !important;
       }
-
-      /* For light theme if needed */
+      
+      /* Light mode styles */
       .light [data-ref="card"] {
         background-color: #ffffff !important;
         color: #18181b !important;
       }
       
-      /* Fix vertical alignment of part of speech with divider */
+      /* Fix alignment of part of speech and attributes with vertical divider */
       .flex.gap-2 {
         align-items: center !important;
         display: flex !important;
       }
       
-      /* Ensure vertical divider has consistent height and position */
+      /* Fix vertical divider styling */
       [orientation="vertical"].bg-primary {
         height: 16px !important;
         width: 2px !important;
@@ -89,7 +101,7 @@ export const captureElementScreenshot = async (
         top: 1px !important;
       }
       
-      /* Ensure text is properly aligned with divider */
+      /* Fix text alignment */
       .flex.gap-2 p {
         margin: auto 0 !important;
         display: flex !important;
@@ -97,26 +109,7 @@ export const captureElementScreenshot = async (
         line-height: 16px !important;
       }
       
-      /* Fix the header buttons container */
-      .flex.w-full.items-center.gap-4 {
-        display: flex !important;
-        width: 100% !important;
-        align-items: center !important;
-      }
-      
-      /* Fix the first button (volume) */
-      .flex.w-full.items-center.gap-4 > button:first-of-type {
-        margin-right: auto !important;
-      }
-      
-      /* Fix all buttons in the header */
-      .flex.w-full.items-center.gap-4 > button {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        background-color: transparent !important;
-      }
-      
+      /* Fix horizontal dividers */
       [data-screenshot-divider] {
         display: block !important;
         width: 100% !important;
@@ -126,6 +119,7 @@ export const captureElementScreenshot = async (
         opacity: 1 !important;
       }
       
+      /* Fix button positioning */
       [data-screenshot-btn] {
         display: flex !important;
         align-items: center !important;
@@ -133,12 +127,14 @@ export const captureElementScreenshot = async (
         position: relative !important;
       }
       
+      /* Fix SVG icon display */
       [data-screenshot-svg] {
         display: block !important;
         width: 20px !important;
         height: 20px !important;
       }
       
+      /* Fix header layout */
       .card-header {
         display: flex !important;
         justify-content: space-between !important;
@@ -146,24 +142,70 @@ export const captureElementScreenshot = async (
         width: 100% !important;
       }
       
+      /* Fix header buttons container */
       .card-header-buttons {
         display: flex !important;
         gap: 0.5rem !important;
       }
     `;
-
-    // Capture with specific settings to preserve layout
+    
+    // Simplified approach for mobile devices
+    if (isMobile) {
+      // For mobile, use minimal options to improve performance
+      const canvas = await html2canvas(element, {
+        useCORS: true,
+        logging: false,
+        backgroundColor: solidBgColor,
+        scale: 1, // Lower scale for better performance on mobile
+        allowTaint: true,
+        imageTimeout: 0,
+        onclone: (clonedDoc) => {
+          // Add our custom styles to the cloned document
+          clonedDoc.head.appendChild(styleElement);
+        }
+      });
+      
+      // For mobile, skip clipboard and go straight to download
+      try {
+        // Create download link
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png", 0.8);
+        link.download = options.fileName || "screenshot.png";
+        link.click();
+        
+        // Clean up
+        setTimeout(() => URL.revokeObjectURL(link.href), 100);
+        toast.success(options.successMessage);
+      } catch (err) {
+        console.error("Failed to download screenshot:", err);
+        toast.error(options.failureMessage);
+      }
+      
+      // Clean up and dismiss toast
+      element.removeAttribute("data-ref");
+      const buttons = element.querySelectorAll("[data-screenshot-btn]");
+      buttons?.forEach((btn) => btn.removeAttribute("data-screenshot-btn"));
+      const dividers = element.querySelectorAll("[data-screenshot-divider]");
+      dividers?.forEach((div) => div.removeAttribute("data-screenshot-divider"));
+      const svgs = element.querySelectorAll("[data-screenshot-svg]");
+      svgs?.forEach((svg) => svg.removeAttribute("data-screenshot-svg"));
+      
+      toast.dismiss(pendingToast);
+      return;
+    }
+    
+    // Desktop approach with full styling and clipboard support
     const canvas = await html2canvas(element, {
       useCORS: true,
       logging: false,
-      backgroundColor: solidBgColor, // Use a solid background color with no transparency
-      scale: window.devicePixelRatio * 2, // Higher scale for better quality
+      backgroundColor: solidBgColor,
+      scale: window.devicePixelRatio * 2, // Higher scale for better quality on desktop
       allowTaint: true,
-      imageTimeout: 0, // No timeout for images
+      imageTimeout: 0,
       onclone: (clonedDoc, clonedElement) => {
         // Add our custom styles to the cloned document
         clonedDoc.head.appendChild(styleElement);
-
+        
         // Force all dividers to be visible
         const dividers = clonedElement.querySelectorAll("[data-screenshot-divider]");
         dividers.forEach((div) => {
@@ -176,7 +218,7 @@ export const captureElementScreenshot = async (
             div.style.opacity = "1";
           }
         });
-
+        
         // Force all buttons to be positioned correctly
         const buttons = clonedElement.querySelectorAll("[data-screenshot-btn]");
         buttons.forEach((btn) => {
@@ -187,7 +229,7 @@ export const captureElementScreenshot = async (
             btn.style.position = "relative";
           }
         });
-
+        
         // Force all SVG icons to be visible
         const svgs = clonedElement.querySelectorAll("[data-screenshot-svg]");
         svgs.forEach((svg) => {
@@ -197,167 +239,79 @@ export const captureElementScreenshot = async (
             svg.style.height = "20px";
           }
         });
-        
-        // Fix the header buttons container specifically
-        const headerButtonsContainer = clonedElement.querySelector(".flex.w-full.items-center.gap-4");
-        if (headerButtonsContainer instanceof HTMLElement) {
-          headerButtonsContainer.style.display = "flex";
-          headerButtonsContainer.style.width = "100%";
-          headerButtonsContainer.style.alignItems = "center";
-          
-          // Fix each button in the header
-          const headerButtons = headerButtonsContainer.querySelectorAll("button");
-          headerButtons.forEach((btn, index) => {
-            if (btn instanceof HTMLElement) {
-              btn.style.display = "inline-flex";
-              btn.style.alignItems = "center";
-              btn.style.justifyContent = "center";
-              btn.style.backgroundColor = "transparent";
-              
-              // First button (volume) should have margin-right: auto
-              if (index === 0) {
-                btn.style.marginRight = "auto";
-              }
-            }
-          });
-        }
-
-        // Add missing dividers between meanings
-        const listItems = clonedElement.querySelectorAll("li");
-        listItems.forEach((item, index, array) => {
-          if (index < array.length - 1) {
-            // Check if there's already a divider at the end of this item
-            const existingDivider = item.querySelector("hr");
-            if (!existingDivider) {
-              // Create and add a divider
-              const divider = document.createElement("hr");
-              divider.setAttribute("data-screenshot-divider", `added-div-${index}`);
-              divider.style.display = "block";
-              divider.style.width = "100%";
-              divider.style.borderTop = "1px solid rgba(127, 127, 127, 0.5)";
-              divider.style.margin = "0.5rem 0";
-              divider.style.height = "1px";
-              divider.style.opacity = "1";
-              item.appendChild(divider);
-            }
-          }
-        });
-      },
+      }
     });
-
-    // Remove the data attributes we added
-    const cleanupScreenshotAttributes = () => {
-      const buttons = element.querySelectorAll("[data-screenshot-btn]");
-      buttons?.forEach((btn) => btn.removeAttribute("data-screenshot-btn"));
-
-      const dividers = element.querySelectorAll("[data-screenshot-divider]");
-      dividers?.forEach((div) => div.removeAttribute("data-screenshot-divider"));
-
-      const svgs = element.querySelectorAll("[data-screenshot-svg]");
-      svgs?.forEach((svg) => svg.removeAttribute("data-screenshot-svg"));
-      
-      // Remove the data-ref attribute
-      element.removeAttribute("data-ref");
-    };
-
-    // Clean up
-    cleanupScreenshotAttributes();
     
-    // Note: We'll dismiss the loading toast after the clipboard operation completes
-    // to prevent the loading state from getting stuck
-
-    // Create a new canvas with solid background to avoid transparency issues
-    const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = canvas.width;
-    finalCanvas.height = canvas.height;
-    const ctx = finalCanvas.getContext("2d");
-
-    if (ctx) {
-      // Fill with solid background color first
-      ctx.fillStyle = solidBgColor;
-      ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-      // Draw the original canvas on top
-      ctx.drawImage(canvas, 0, 0);
-
-      // Convert to blob with no transparency
-      finalCanvas.toBlob(
-        async (blob) => {
-          if (blob) {
-            try {
-              // Check if the Clipboard API is fully supported
-              if (navigator.clipboard && navigator.clipboard.write) {
+    // Remove the data attributes we added
+    element.removeAttribute("data-ref");
+    const buttons = element.querySelectorAll("[data-screenshot-btn]");
+    buttons?.forEach((btn) => btn.removeAttribute("data-screenshot-btn"));
+    const dividers = element.querySelectorAll("[data-screenshot-divider]");
+    dividers?.forEach((div) => div.removeAttribute("data-screenshot-divider"));
+    const svgs = element.querySelectorAll("[data-screenshot-svg]");
+    svgs?.forEach((svg) => svg.removeAttribute("data-screenshot-svg"));
+    
+    // Try to copy to clipboard (desktop only)
+    try {
+      // Check if the Clipboard API is fully supported
+      if (navigator.clipboard && navigator.clipboard.write) {
+        canvas.toBlob(
+          async (blob) => {
+            if (blob) {
+              try {
                 await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
                 toast.success(options.successMessage);
-              } else {
-                // For browsers that don't support clipboard.write (like mobile browsers)
-                throw new Error("Clipboard API not fully supported");
+              } catch (err) {
+                console.error("Failed to copy to clipboard:", err);
+                
+                // Fall back to download if clipboard fails
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = options.fileName || "screenshot.png";
+                link.click();
+                
+                // Clean up
+                setTimeout(() => URL.revokeObjectURL(link.href), 100);
+                toast.success(options.successMessage);
               }
-            } catch (err) {
-              console.error("Failed to copy image to clipboard:", err);
-              
-              // Don't show error toast, just download the image on mobile
-              // This provides a better user experience
+            } else {
+              toast.error(options.failureMessage);
+            }
+            toast.dismiss(pendingToast);
+          },
+          "image/png",
+          1.0
+        );
+      } else {
+        // Fall back to download if clipboard API not available
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
               const link = document.createElement("a");
-              link.href = finalCanvas.toDataURL("image/png");
+              link.href = URL.createObjectURL(blob);
               link.download = options.fileName || "screenshot.png";
               link.click();
               
-              // Show success message for the download instead of error
+              // Clean up
+              setTimeout(() => URL.revokeObjectURL(link.href), 100);
               toast.success(options.successMessage);
+            } else {
+              toast.error(options.failureMessage);
             }
-          } else {
-            toast.error(options.failureMessage);
-          }
-          
-          // Always dismiss the loading toast to prevent it from getting stuck
-          toast.dismiss(pendingToast);
-        },
-        "image/png",
-        1.0
-      ); // Use highest quality
-    } else {
-      // Fallback to original canvas if context creation fails
-      canvas.toBlob(
-        async (blob) => {
-          if (blob) {
-            try {
-              // Check if the Clipboard API is fully supported
-              if (navigator.clipboard && navigator.clipboard.write) {
-                await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-                toast.success(options.successMessage);
-              } else {
-                // For browsers that don't support clipboard.write (like mobile browsers)
-                throw new Error("Clipboard API not fully supported");
-              }
-            } catch (err) {
-              console.error("Failed to copy image to clipboard:", err);
-              
-              // Don't show error toast, just download the image on mobile
-              // This provides a better user experience
-              const link = document.createElement("a");
-              link.href = canvas.toDataURL("image/png");
-              link.download = options.fileName || "screenshot.png";
-              link.click();
-              
-              // Show success message for the download instead of error
-              toast.success(options.successMessage);
-            }
-          } else {
-            toast.error(options.failureMessage);
-          }
-          
-          // Always dismiss the loading toast to prevent it from getting stuck
-          toast.dismiss(pendingToast);
-        },
-        "image/png",
-        1.0
-      );
-    }
+            toast.dismiss(pendingToast);
+          },
+          "image/png",
+          1.0
+        );
+      }
     } catch (error) {
-      console.error("Error generating screenshot:", error);
+      console.error("Error handling screenshot:", error);
       toast.error(options.failureMessage);
       toast.dismiss(pendingToast);
     }
-  }, 100); // Small delay to allow UI to update
+  } catch (error) {
+    console.error("Error generating screenshot:", error);
+    toast.error(options.failureMessage);
+    toast.dismiss(pendingToast);
+  }
 };
