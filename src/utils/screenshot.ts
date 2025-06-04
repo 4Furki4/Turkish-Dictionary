@@ -1,6 +1,16 @@
 import html2canvas from "html2canvas-pro";
 import { toast } from "sonner";
 
+/**
+ * Detects if the current device is a mobile device
+ * @returns boolean indicating if the device is mobile
+ */
+const isMobileDevice = (): boolean => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+};
+
 interface ScreenshotOptions {
   successMessage: string;
   failureMessage: string;
@@ -277,22 +287,33 @@ export const captureElementScreenshot = async (
       // Draw the original canvas on top
       ctx.drawImage(canvas, 0, 0);
 
+      
       // Convert to blob with no transparency
       finalCanvas.toBlob(
         async (blob) => {
           if (blob) {
-            try {
-              await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-              toast.success(options.successMessage);
-            } catch (err) {
-              console.error("Failed to copy image to clipboard:", err);
-              toast.error(options.failureMessage);
-
-              // Fallback: offer download if clipboard write fails
+            // On mobile devices, download directly instead of trying to copy to clipboard
+            if (isMobileDevice()) {
               const link = document.createElement("a");
               link.href = finalCanvas.toDataURL("image/png");
               link.download = options.fileName || "screenshot.png";
               link.click();
+              toast.success(options.successMessage);
+            } else {
+              // On desktop, try to copy to clipboard first
+              try {
+                await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                toast.success(options.successMessage);
+              } catch (err) {
+                console.error("Failed to copy image to clipboard:", err);
+                toast.error(options.failureMessage);
+
+                // Fallback: offer download if clipboard write fails
+                const link = document.createElement("a");
+                link.href = finalCanvas.toDataURL("image/png");
+                link.download = options.fileName || "screenshot.png";
+                link.click();
+              }
             }
           } else {
             toast.error(options.failureMessage);
@@ -306,18 +327,28 @@ export const captureElementScreenshot = async (
       canvas.toBlob(
         async (blob) => {
           if (blob) {
-            try {
-              await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-              toast.success(options.successMessage);
-            } catch (err) {
-              console.error("Failed to copy image to clipboard:", err);
-              toast.error(options.failureMessage);
-
-              // Fallback: offer download if clipboard write fails
+            // On mobile devices, download directly instead of trying to copy to clipboard
+            if (isMobileDevice()) {
               const link = document.createElement("a");
               link.href = canvas.toDataURL("image/png");
               link.download = options.fileName || "screenshot.png";
               link.click();
+              toast.success(options.successMessage);
+            } else {
+              // On desktop, try to copy to clipboard first
+              try {
+                await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                toast.success(options.successMessage);
+              } catch (err) {
+                console.error("Failed to copy image to clipboard:", err);
+                toast.error(options.failureMessage);
+
+                // Fallback: offer download if clipboard write fails
+                const link = document.createElement("a");
+                link.href = canvas.toDataURL("image/png");
+                link.download = options.fileName || "screenshot.png";
+                link.click();
+              }
             }
           } else {
             toast.error(options.failureMessage);
