@@ -259,9 +259,9 @@ export const captureElementScreenshot = async (
 
     // Clean up
     cleanupScreenshotAttributes();
-
-    // Dismiss the loading toast
-    toast.dismiss(pendingToast);
+    
+    // Note: We'll dismiss the loading toast after the clipboard operation completes
+    // to prevent the loading state from getting stuck
 
     // Create a new canvas with solid background to avoid transparency issues
     const finalCanvas = document.createElement("canvas");
@@ -282,21 +282,33 @@ export const captureElementScreenshot = async (
         async (blob) => {
           if (blob) {
             try {
-              await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-              toast.success(options.successMessage);
+              // Check if the Clipboard API is fully supported
+              if (navigator.clipboard && navigator.clipboard.write) {
+                await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                toast.success(options.successMessage);
+              } else {
+                // For browsers that don't support clipboard.write (like mobile browsers)
+                throw new Error("Clipboard API not fully supported");
+              }
             } catch (err) {
               console.error("Failed to copy image to clipboard:", err);
-              toast.error(options.failureMessage);
-
-              // Fallback: offer download if clipboard write fails
+              
+              // Don't show error toast, just download the image on mobile
+              // This provides a better user experience
               const link = document.createElement("a");
               link.href = finalCanvas.toDataURL("image/png");
               link.download = options.fileName || "screenshot.png";
               link.click();
+              
+              // Show success message for the download instead of error
+              toast.success(options.successMessage);
             }
           } else {
             toast.error(options.failureMessage);
           }
+          
+          // Always dismiss the loading toast to prevent it from getting stuck
+          toast.dismiss(pendingToast);
         },
         "image/png",
         1.0
@@ -307,21 +319,33 @@ export const captureElementScreenshot = async (
         async (blob) => {
           if (blob) {
             try {
-              await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-              toast.success(options.successMessage);
+              // Check if the Clipboard API is fully supported
+              if (navigator.clipboard && navigator.clipboard.write) {
+                await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                toast.success(options.successMessage);
+              } else {
+                // For browsers that don't support clipboard.write (like mobile browsers)
+                throw new Error("Clipboard API not fully supported");
+              }
             } catch (err) {
               console.error("Failed to copy image to clipboard:", err);
-              toast.error(options.failureMessage);
-
-              // Fallback: offer download if clipboard write fails
+              
+              // Don't show error toast, just download the image on mobile
+              // This provides a better user experience
               const link = document.createElement("a");
               link.href = canvas.toDataURL("image/png");
               link.download = options.fileName || "screenshot.png";
               link.click();
+              
+              // Show success message for the download instead of error
+              toast.success(options.successMessage);
             }
           } else {
             toast.error(options.failureMessage);
           }
+          
+          // Always dismiss the loading toast to prevent it from getting stuck
+          toast.dismiss(pendingToast);
         },
         "image/png",
         1.0
