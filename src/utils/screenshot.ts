@@ -11,6 +11,14 @@ const isMobileDevice = (): boolean => {
   );
 };
 
+/**
+ * Detects if the current device is running iOS
+ * @returns boolean indicating if the device is iOS
+ */
+const isIOSDevice = (): boolean => {
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+};
+
 interface ScreenshotOptions {
   successMessage: string;
   failureMessage: string;
@@ -294,11 +302,46 @@ export const captureElementScreenshot = async (
           if (blob) {
             // On mobile devices, download directly instead of trying to copy to clipboard
             if (isMobileDevice()) {
-              const link = document.createElement("a");
-              link.href = finalCanvas.toDataURL("image/png");
-              link.download = options.fileName || "screenshot.png";
-              link.click();
-              toast.success(options.successMessage);
+              try {
+                if (isIOSDevice()) {
+                  // iOS Safari requires a different approach
+                  // Convert blob to base64 data URL
+                  const reader = new FileReader();
+                  reader.onload = function() {
+                    const dataUrl = reader.result as string;
+                    
+                    // Create a temporary link for iOS
+                    const link = document.createElement("a");
+                    link.href = dataUrl;
+                    link.download = options.fileName || "screenshot.png";
+                    link.target = "_blank"; // Important for iOS
+                    link.rel = "noopener noreferrer";
+                    
+                    // Append to body and trigger
+                    document.body.appendChild(link);
+                    link.click();
+                    
+                    // Clean up
+                    setTimeout(() => {
+                      document.body.removeChild(link);
+                      toast.success(options.successMessage);
+                    }, 100);
+                  };
+                  reader.readAsDataURL(blob);
+                } else {
+                  // Android approach
+                  const link = document.createElement("a");
+                  link.href = URL.createObjectURL(blob);
+                  link.download = options.fileName || "screenshot.png";
+                  link.click();
+                  toast.success(options.successMessage);
+                  // Clean up the object URL
+                  URL.revokeObjectURL(link.href);
+                }
+              } catch (err) {
+                console.error("Error during mobile download:", err);
+                toast.error(options.failureMessage);
+              }
             } else {
               // On desktop, try to copy to clipboard first
               try {
@@ -329,11 +372,46 @@ export const captureElementScreenshot = async (
           if (blob) {
             // On mobile devices, download directly instead of trying to copy to clipboard
             if (isMobileDevice()) {
-              const link = document.createElement("a");
-              link.href = canvas.toDataURL("image/png");
-              link.download = options.fileName || "screenshot.png";
-              link.click();
-              toast.success(options.successMessage);
+              try {
+                if (isIOSDevice()) {
+                  // iOS Safari requires a different approach
+                  // Convert blob to base64 data URL
+                  const reader = new FileReader();
+                  reader.onload = function() {
+                    const dataUrl = reader.result as string;
+                    
+                    // Create a temporary link for iOS
+                    const link = document.createElement("a");
+                    link.href = dataUrl;
+                    link.download = options.fileName || "screenshot.png";
+                    link.target = "_blank"; // Important for iOS
+                    link.rel = "noopener noreferrer";
+                    
+                    // Append to body and trigger
+                    document.body.appendChild(link);
+                    link.click();
+                    
+                    // Clean up
+                    setTimeout(() => {
+                      document.body.removeChild(link);
+                      toast.success(options.successMessage);
+                    }, 100);
+                  };
+                  reader.readAsDataURL(blob);
+                } else {
+                  // Android approach
+                  const link = document.createElement("a");
+                  link.href = URL.createObjectURL(blob);
+                  link.download = options.fileName || "screenshot.png";
+                  link.click();
+                  toast.success(options.successMessage);
+                  // Clean up the object URL
+                  URL.revokeObjectURL(link.href);
+                }
+              } catch (err) {
+                console.error("Error during mobile download:", err);
+                toast.error(options.failureMessage);
+              }
             } else {
               // On desktop, try to copy to clipboard first
               try {
