@@ -20,9 +20,12 @@ export const captureElementScreenshot = async (
 ): Promise<void> => {
   if (!element) return;
 
-  try {
-    // Create a notification that screenshot is being taken
-    const pendingToast = toast.loading(options.processingMessage);
+  // Create a notification that screenshot is being taken
+  const pendingToast = toast.loading(options.processingMessage);
+  
+  // Use setTimeout to give the UI a chance to update and show the loading toast
+  setTimeout(async () => {
+    try {
 
     // Prepare the element for screenshot by adding data attributes
     const prepareForScreenshot = () => {
@@ -351,8 +354,10 @@ export const captureElementScreenshot = async (
         1.0
       );
     }
-  } catch (error) {
-    console.error("Error generating screenshot:", error);
-    toast.error(options.failureMessage);
-  }
+    } catch (error) {
+      console.error("Error generating screenshot:", error);
+      toast.error(options.failureMessage);
+      toast.dismiss(pendingToast);
+    }
+  }, 100); // Small delay to allow UI to update
 };
