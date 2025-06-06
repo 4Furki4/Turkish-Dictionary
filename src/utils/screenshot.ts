@@ -304,39 +304,76 @@ export const captureElementScreenshot = async (
             if (isMobileDevice()) {
               try {
                 if (isIOSDevice()) {
-                  // iOS Safari requires a different approach
-                  // Convert blob to base64 data URL
+                  console.log("iOS: Detected. Preparing FileReader.");
                   const reader = new FileReader();
                   reader.onload = function() {
+                    console.log("iOS: FileReader onload triggered.");
                     const dataUrl = reader.result as string;
-                    
-                    // Create a temporary link for iOS
-                    const link = document.createElement("a");
-                    link.href = dataUrl;
-                    link.download = options.fileName || "screenshot.png";
-                    link.target = "_blank"; // Important for iOS
-                    link.rel = "noopener noreferrer";
-                    
-                    // Append to body and trigger
-                    document.body.appendChild(link);
-                    link.click();
-                    
-                    // Clean up
-                    setTimeout(() => {
-                      document.body.removeChild(link);
-                      toast.success(options.successMessage);
-                    }, 100);
+                    if (!dataUrl) {
+                      console.error("iOS: FileReader result is null or empty.");
+                      toast.error(options.failureMessage + " (FR_EMPTY)");
+                      return;
+                    }
+                    console.log("iOS: Data URL created, length:", dataUrl.length);
+
+                    try {
+                      const link = document.createElement("a");
+                      link.href = dataUrl;
+                      link.download = options.fileName || "screenshot.png";
+                      // link.target = "_blank"; // Retained, often helpful for iOS
+                      // link.rel = "noopener noreferrer"; // Retained for security
+
+                      console.log("iOS: Download link created. Href starts with:", dataUrl.substring(0, 100));
+                      document.body.appendChild(link);
+                      console.log("iOS: Link appended to body.");
+                      link.click();
+                      console.log("iOS: link.click() called.");
+
+                      setTimeout(() => {
+                        if (document.body.contains(link)) {
+                          document.body.removeChild(link);
+                          console.log("iOS: Link removed from body.");
+                        }
+                        // Assuming success if no immediate error, though download might still be pending/failed silently
+                        toast.success(options.successMessage);
+                      }, 300); // Increased timeout
+
+                    } catch (e) {
+                      console.error("iOS: Error during link creation/click:", e);
+                      toast.error(options.failureMessage + " (LNK_ERR)");
+                      // Fallback attempt: window.open
+                      console.log("iOS: Attempting fallback with window.open()");
+                      try {
+                          const newWindow = window.open(dataUrl, '_blank');
+                          if (newWindow) {
+                              console.log("iOS: window.open() succeeded.");
+                              toast.success(options.successMessage + " (Opened)");
+                          } else {
+                              console.error("iOS: window.open() failed (blocked or error).");
+                              toast.error(options.failureMessage + " (WO_FAIL)");
+                          }
+                      } catch (openError) {
+                          console.error("iOS: Error during window.open() fallback:", openError);
+                          toast.error(options.failureMessage + " (WO_ERR)");
+                      }
+                    }
                   };
+                  reader.onerror = function() {
+                    console.error("iOS: FileReader error.");
+                    toast.error(options.failureMessage + " (FR_ERR)");
+                  };
+                  console.log("iOS: Calling reader.readAsDataURL(blob).");
                   reader.readAsDataURL(blob);
                 } else {
                   // Android approach
+                  console.log("Android: Detected. Using URL.createObjectURL.");
                   const link = document.createElement("a");
                   link.href = URL.createObjectURL(blob);
                   link.download = options.fileName || "screenshot.png";
                   link.click();
                   toast.success(options.successMessage);
-                  // Clean up the object URL
-                  URL.revokeObjectURL(link.href);
+                  URL.revokeObjectURL(link.href); // Clean up
+                  console.log("Android: Download initiated and object URL revoked.");
                 }
               } catch (err) {
                 console.error("Error during mobile download:", err);
@@ -374,39 +411,76 @@ export const captureElementScreenshot = async (
             if (isMobileDevice()) {
               try {
                 if (isIOSDevice()) {
-                  // iOS Safari requires a different approach
-                  // Convert blob to base64 data URL
+                  console.log("iOS: Detected. Preparing FileReader.");
                   const reader = new FileReader();
                   reader.onload = function() {
+                    console.log("iOS: FileReader onload triggered.");
                     const dataUrl = reader.result as string;
-                    
-                    // Create a temporary link for iOS
-                    const link = document.createElement("a");
-                    link.href = dataUrl;
-                    link.download = options.fileName || "screenshot.png";
-                    link.target = "_blank"; // Important for iOS
-                    link.rel = "noopener noreferrer";
-                    
-                    // Append to body and trigger
-                    document.body.appendChild(link);
-                    link.click();
-                    
-                    // Clean up
-                    setTimeout(() => {
-                      document.body.removeChild(link);
-                      toast.success(options.successMessage);
-                    }, 100);
+                    if (!dataUrl) {
+                      console.error("iOS: FileReader result is null or empty.");
+                      toast.error(options.failureMessage + " (FR_EMPTY)");
+                      return;
+                    }
+                    console.log("iOS: Data URL created, length:", dataUrl.length);
+
+                    try {
+                      const link = document.createElement("a");
+                      link.href = dataUrl;
+                      link.download = options.fileName || "screenshot.png";
+                      // link.target = "_blank"; // Retained, often helpful for iOS
+                      // link.rel = "noopener noreferrer"; // Retained for security
+
+                      console.log("iOS: Download link created. Href starts with:", dataUrl.substring(0, 100));
+                      document.body.appendChild(link);
+                      console.log("iOS: Link appended to body.");
+                      link.click();
+                      console.log("iOS: link.click() called.");
+
+                      setTimeout(() => {
+                        if (document.body.contains(link)) {
+                          document.body.removeChild(link);
+                          console.log("iOS: Link removed from body.");
+                        }
+                        // Assuming success if no immediate error, though download might still be pending/failed silently
+                        toast.success(options.successMessage);
+                      }, 300); // Increased timeout
+
+                    } catch (e) {
+                      console.error("iOS: Error during link creation/click:", e);
+                      toast.error(options.failureMessage + " (LNK_ERR)");
+                      // Fallback attempt: window.open
+                      console.log("iOS: Attempting fallback with window.open()");
+                      try {
+                          const newWindow = window.open(dataUrl, '_blank');
+                          if (newWindow) {
+                              console.log("iOS: window.open() succeeded.");
+                              toast.success(options.successMessage + " (Opened)");
+                          } else {
+                              console.error("iOS: window.open() failed (blocked or error).");
+                              toast.error(options.failureMessage + " (WO_FAIL)");
+                          }
+                      } catch (openError) {
+                          console.error("iOS: Error during window.open() fallback:", openError);
+                          toast.error(options.failureMessage + " (WO_ERR)");
+                      }
+                    }
                   };
+                  reader.onerror = function() {
+                    console.error("iOS: FileReader error.");
+                    toast.error(options.failureMessage + " (FR_ERR)");
+                  };
+                  console.log("iOS: Calling reader.readAsDataURL(blob).");
                   reader.readAsDataURL(blob);
                 } else {
                   // Android approach
+                  console.log("Android: Detected. Using URL.createObjectURL.");
                   const link = document.createElement("a");
                   link.href = URL.createObjectURL(blob);
                   link.download = options.fileName || "screenshot.png";
                   link.click();
                   toast.success(options.successMessage);
-                  // Clean up the object URL
-                  URL.revokeObjectURL(link.href);
+                  URL.revokeObjectURL(link.href); // Clean up
+                  console.log("Android: Download initiated and object URL revoked.");
                 }
               } catch (err) {
                 console.error("Error during mobile download:", err);
