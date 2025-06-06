@@ -15,12 +15,11 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/routing";
 import { Camera, Share2, Volume2 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { toast } from "sonner";
-import clsx from "clsx";
 import Image from "next/image";
 import { useRef } from "react";
 import { captureElementScreenshot } from "../../utils/screenshot";
 import { copyPageUrl } from "../../utils/clipboard";
+import clsx from "clsx";
 
 export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
   const { isOpen, onOpenChange } = useDisclosure()
@@ -32,7 +31,8 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
       await captureElementScreenshot(cardRef.current, {
         processingMessage: t("screenshotProcessing") || "Creating screenshot...",
         successMessage: t("screenshotCopied") || "Screenshot copied to clipboard!",
-        failureMessage: t("screenshotFailed") || "Failed to create screenshot.",
+        failureMessage: t("screenshotFailed") || "Failed to create screenshot.", // General failure
+        clipboardCopyFailureMessage: t("screenshotDownloadFallback") || "Screenshot copy to clipboard failed. Downloading image instead.", // Specific for clipboard fail + download
         fileName: `${word_data.word_name}.png`
       });
     }

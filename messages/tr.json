@@ -66,6 +66,7 @@
     "screenshotCopiedDescription": "Ekran görüntüsü panonunuza kopyalandı",
     "screenshotFailed": "Ekran Görüntüsü Başarısız",
     "screenshotFailedDescription": "Ekran görüntüsü kopyalanamadı",
+    "screenshotDownloadFallback": "Resim panoya kopyalanamadı ama indiriliyor.",
     "screenshotProcessing": "Ekran görüntüsü oluşturuluyor...",
     "NoRelatedWordsFound": "İlgili kelime bulunamadı",
     "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
