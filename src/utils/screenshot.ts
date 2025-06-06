@@ -2,9 +2,10 @@ import html2canvas from "html2canvas-pro";
 import { toast } from "sonner";
 
 interface ScreenshotOptions {
-  successMessage: string;
-  failureMessage: string;
+  successMessage: string; // For successful clipboard copy
+  failureMessage: string; // For general screenshot creation failure (e.g., blob is null, html2canvas error)
   processingMessage: string;
+  clipboardCopyFailureMessage: string; // For when clipboard.write fails and fallback to download occurs
   fileName?: string;
 }
 
@@ -55,99 +56,99 @@ export const captureElementScreenshot = async (
     // Create a new style element to inject into the clone
     const styleElement = document.createElement("style");
     styleElement.textContent = `
-      /* Ensure the card has a solid background with no transparency */
-      [data-ref="card"] {
-        background-color: #000000 !important; /* Pure black background for dark mode */
-        color: #ffffff !important;
-      }
+        /* Ensure the card has a solid background with no transparency */
+        [data-ref="card"] {
+          background-color: #000000 !important; /* Pure black background for dark mode */
+          color: #ffffff !important;
+        }
 
-      /* For light theme if needed */
-      .light [data-ref="card"] {
-        background-color: #ffffff !important;
-        color: #18181b !important;
-      }
-      
-      /* Fix vertical alignment of part of speech with divider */
-      .flex.gap-2 {
-        align-items: center !important;
-        display: flex !important;
-      }
-      
-      /* Ensure vertical divider has consistent height and position */
-      [orientation="vertical"].bg-primary {
-        height: 16px !important;
-        width: 2px !important;
-        align-self: center !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        display: block !important;
-        background-color: #ef4444 !important;
-        position: relative !important;
-        top: 1px !important;
-      }
-      
-      /* Ensure text is properly aligned with divider */
-      .flex.gap-2 p {
-        margin: auto 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        line-height: 16px !important;
-      }
-      
-      /* Fix the header buttons container */
-      .flex.w-full.items-center.gap-4 {
-        display: flex !important;
-        width: 100% !important;
-        align-items: center !important;
-      }
-      
-      /* Fix the first button (volume) */
-      .flex.w-full.items-center.gap-4 > button:first-of-type {
-        margin-right: auto !important;
-      }
-      
-      /* Fix all buttons in the header */
-      .flex.w-full.items-center.gap-4 > button {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        background-color: transparent !important;
-      }
-      
-      [data-screenshot-divider] {
-        display: block !important;
-        width: 100% !important;
-        border-top: 1px solid rgba(127, 127, 127, 0.5) !important;
-        margin: 0.5rem 0 !important;
-        height: 1px !important;
-        opacity: 1 !important;
-      }
-      
-      [data-screenshot-btn] {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        position: relative !important;
-      }
-      
-      [data-screenshot-svg] {
-        display: block !important;
-        width: 20px !important;
-        height: 20px !important;
-      }
-      
-      .card-header {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        width: 100% !important;
-      }
-      
-      .card-header-buttons {
-        display: flex !important;
-        gap: 0.5rem !important;
-      }
-    `;
+        /* For light theme if needed */
+        .light [data-ref="card"] {
+          background-color: #ffffff !important;
+          color: #18181b !important;
+        }
+        
+        /* Fix vertical alignment of part of speech with divider */
+        .flex.gap-2 {
+          align-items: center !important;
+          display: flex !important;
+        }
+        
+        /* Ensure vertical divider has consistent height and position */
+        [orientation="vertical"].bg-primary {
+          height: 16px !important;
+          width: 2px !important;
+          align-self: center !important;
+          margin-top: 0 !important;
+          margin-bottom: 0 !important;
+          display: block !important;
+          background-color: #ef4444 !important;
+          position: relative !important;
+          top: 1px !important;
+        }
+        
+        /* Ensure text is properly aligned with divider */
+        .flex.gap-2 p {
+          margin: auto 0 !important;
+          display: flex !important;
+          align-items: center !important;
+          line-height: 16px !important;
+        }
+        
+        /* Fix the header buttons container */
+        .flex.w-full.items-center.gap-4 {
+          display: flex !important;
+          width: 100% !important;
+          align-items: center !important;
+        }
+        
+        /* Fix the first button (volume) */
+        .flex.w-full.items-center.gap-4 > button:first-of-type {
+          margin-right: auto !important;
+        }
+        
+        /* Fix all buttons in the header */
+        .flex.w-full.items-center.gap-4 > button {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          background-color: transparent !important;
+        }
+        
+        [data-screenshot-divider] {
+          display: block !important;
+          width: 100% !important;
+          border-top: 1px solid rgba(127, 127, 127, 0.5) !important;
+          margin: 0.5rem 0 !important;
+          height: 1px !important;
+          opacity: 1 !important;
+        }
+        
+        [data-screenshot-btn] {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          position: relative !important;
+        }
+        
+        [data-screenshot-svg] {
+          display: block !important;
+          width: 20px !important;
+          height: 20px !important;
+        }
+        
+        .card-header {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          width: 100% !important;
+        }
+        
+        .card-header-buttons {
+          display: flex !important;
+          gap: 0.5rem !important;
+        }
+      `;
 
     // Capture with specific settings to preserve layout
     const canvas = await html2canvas(element, {
@@ -157,6 +158,9 @@ export const captureElementScreenshot = async (
       scale: window.devicePixelRatio * 2, // Higher scale for better quality
       allowTaint: true,
       imageTimeout: 0, // No timeout for images
+      ignoreElements: (el) =>
+        el.nodeName.toLowerCase() === 'canvas' ||
+        el.getAttribute('loading') === 'lazy',
       onclone: (clonedDoc, clonedElement) => {
         // Add our custom styles to the cloned document
         clonedDoc.head.appendChild(styleElement);
@@ -194,14 +198,14 @@ export const captureElementScreenshot = async (
             svg.style.height = "20px";
           }
         });
-        
+
         // Fix the header buttons container specifically
         const headerButtonsContainer = clonedElement.querySelector(".flex.w-full.items-center.gap-4");
         if (headerButtonsContainer instanceof HTMLElement) {
           headerButtonsContainer.style.display = "flex";
           headerButtonsContainer.style.width = "100%";
           headerButtonsContainer.style.alignItems = "center";
-          
+
           // Fix each button in the header
           const headerButtons = headerButtonsContainer.querySelectorAll("button");
           headerButtons.forEach((btn, index) => {
@@ -210,7 +214,7 @@ export const captureElementScreenshot = async (
               btn.style.alignItems = "center";
               btn.style.justifyContent = "center";
               btn.style.backgroundColor = "transparent";
-              
+
               // First button (volume) should have margin-right: auto
               if (index === 0) {
                 btn.style.marginRight = "auto";
@@ -252,7 +256,7 @@ export const captureElementScreenshot = async (
 
       const svgs = element.querySelectorAll("[data-screenshot-svg]");
       svgs?.forEach((svg) => svg.removeAttribute("data-screenshot-svg"));
-      
+
       // Remove the data-ref attribute
       element.removeAttribute("data-ref");
     };
@@ -286,7 +290,7 @@ export const captureElementScreenshot = async (
               toast.success(options.successMessage);
             } catch (err) {
               console.error("Failed to copy image to clipboard:", err);
-              toast.error(options.failureMessage);
+              toast.info(options.clipboardCopyFailureMessage);
 
               // Fallback: offer download if clipboard write fails
               const link = document.createElement("a");
@@ -311,7 +315,7 @@ export const captureElementScreenshot = async (
               toast.success(options.successMessage);
             } catch (err) {
               console.error("Failed to copy image to clipboard:", err);
-              toast.error(options.failureMessage);
+              toast.info(options.clipboardCopyFailureMessage);
 
               // Fallback: offer download if clipboard write fails
               const link = document.createElement("a");
