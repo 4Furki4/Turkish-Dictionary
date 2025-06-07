@@ -124,6 +124,12 @@
       "addRelatedPhrase": "İlgili Deyim/Atasöz Ekle",
       "searchPhrase": "Deyim/Atasöz Ara",
       "noRelatedPhrases": "Bu kelime için ilgili deyim veya atasöz bulunamadı.",
+      "toast": {
+        "relationAddedSuccess": "İlişki başarıyla eklendi!",
+        "relationAddedError": "İlişki eklenirken hata oluştu: {error}",
+        "relationRemovedSuccess": "İlişki başarıyla kaldırıldı!",
+        "relationRemovedError": "İlişki kaldırılırken hata oluştu: {error}"
+      },
       "relationTypes": {
         "relatedWord": "İlgili Kelime",
         "antonym": "Zıt Anlam",

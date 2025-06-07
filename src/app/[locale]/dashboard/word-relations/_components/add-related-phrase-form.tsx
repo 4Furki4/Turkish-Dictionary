@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { api } from "@/src/trpc/react";
 import { useDebounce } from "@/src/hooks/use-debounce";
 import { Button, Card, CardBody, Input, Spinner } from "@heroui/react";
+import { toast } from "sonner";
 
 export interface AddRelatedPhraseFormProps {
   wordId: number;
@@ -37,8 +38,12 @@ export default function AddRelatedPhraseForm({
   const addRelatedPhraseMutation = api.admin.wordRelations.addRelatedPhrase.useMutation({
     onSuccess: () => {
       onSuccess();
+      toast.success(t("toast.relationAddedSuccess"));
       setSearchQuery("");
       setSelectedPhraseId(null);
+    },
+    onError: (error) => {
+      toast.error(t("toast.relationAddedError", { error: error.message }));
     },
   });
 

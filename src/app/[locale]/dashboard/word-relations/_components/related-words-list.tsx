@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { api } from "@/src/trpc/react";
 import { Button, Card, CardBody, Spinner } from "@heroui/react";
+import { toast } from "sonner";
 
 interface RelatedWord {
   id: number;
@@ -31,6 +32,11 @@ export default function RelatedWordsList({
   const removeRelatedWordMutation = api.admin.wordRelations.removeRelatedWord.useMutation({
     onSuccess: () => {
       onRelationRemoved();
+      toast.success(t("toast.relationRemovedSuccess"));
+      setRemovingId(null);
+    },
+    onError: (error) => {
+      toast.error(t("toast.relationRemovedError", { error: error.message }));
       setRemovingId(null);
     },
   });

@@ -124,6 +124,12 @@
       "addRelatedPhrase": "Add Related Phrase",
       "searchPhrase": "Search Phrase",
       "noRelatedPhrases": "No related phrases found for this word.",
+      "toast": {
+        "relationAddedSuccess": "Relation added successfully!",
+        "relationAddedError": "Error adding relation: {error}",
+        "relationRemovedSuccess": "Relation removed successfully!",
+        "relationRemovedError": "Error removing relation: {error}"
+      },
       "relationTypes": {
         "relatedWord": "Related Word",
         "antonym": "Antonym",
