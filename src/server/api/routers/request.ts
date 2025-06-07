@@ -30,7 +30,7 @@ export const requestRouter = createTRPCRouter({
 
             // Build the where clause based on filters
             let whereClause: SQL<unknown> | undefined = eq(requests.userId, user.id);
-            
+
             if (entityType) {
                 whereClause = and(whereClause, eq(requests.entityType, entityType));
             }
@@ -153,7 +153,7 @@ export const requestRouter = createTRPCRouter({
 
             return { success: true };
         }),
-        
+
     updateRequest: protectedProcedure
         .input(z.object({
             requestId: z.number(),
@@ -208,7 +208,7 @@ export const requestRouter = createTRPCRouter({
                 eq(requests.action, "create"),
                 eq(requests.status, "pending")
             ));
-        console.log("pendingRequests", pendingRequests)
+
         // Combine and return both sets
         const pendingRequestsWithIds = pendingRequests.map(req => ({
             id: -req.id, // Use negative IDs for pending items to avoid conflicts

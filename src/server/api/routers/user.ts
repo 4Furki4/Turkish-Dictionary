@@ -20,7 +20,7 @@ export const userRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx: { db, session } }) => {
       const userId = session.user.id;
-      
+
       try {
         // Query user search history with word details
         const history = await db.select({
@@ -28,12 +28,12 @@ export const userRouter = createTRPCRouter({
           wordName: words.name,
           searchedAt: userSearchHistory.searchedAt
         })
-        .from(userSearchHistory)
-        .innerJoin(words, eq(userSearchHistory.wordId, words.id))
-        .where(eq(userSearchHistory.userId, userId))
-        .orderBy(desc(userSearchHistory.searchedAt))
-        .limit(input.limit);
-        
+          .from(userSearchHistory)
+          .innerJoin(words, eq(userSearchHistory.wordId, words.id))
+          .where(eq(userSearchHistory.userId, userId))
+          .orderBy(desc(userSearchHistory.searchedAt))
+          .limit(input.limit);
+
         return history;
       } catch (error) {
         console.error("Error fetching user search history:", error);
@@ -51,7 +51,6 @@ export const userRouter = createTRPCRouter({
     take: z.number().optional().default(10),
     skip: z.number().optional().default(0),
   })).query(async ({ ctx: { session, db }, input: { search, sortAlphabet, sortDate, sortBy, take, skip } }) => {
-    console.log('sordDate', sortDate);
     const alphabetOrder =
       sortAlphabet === "az"
         ? sql`w.name ASC`
@@ -117,7 +116,7 @@ export const userRouter = createTRPCRouter({
     LIMIT ${take}
     OFFSET ${skip};
     `)) as SavedWordsResult[];
-    console.log('userWithSavedWords', userWithSavedWords)
+
     return userWithSavedWords.length > 0 ? userWithSavedWords : [];
   }),
   getSavedWordCount: protectedProcedure.input(z.object({

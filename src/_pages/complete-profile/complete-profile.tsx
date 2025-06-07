@@ -40,7 +40,6 @@ export default function CompleteProfile({ session }: { session: Session | null }
     });
 
     const onSubmit = (data: CompleteProfileForm) => {
-        console.log('data', data);
         updateProfile.mutate(data);
     };
 
