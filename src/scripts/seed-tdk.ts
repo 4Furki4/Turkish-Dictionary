@@ -124,16 +124,21 @@ async function seedDatabase() {
         const sapkaMap = new Map<string, string>();
         sapkaList.forEach(obj => {
             const [key, val] = Object.entries(obj)[0];
-            sapkaMap.set(key, val);
+            sapkaMap.set(key.trim(), val.trim()); // Trim key and value
         });
-        const nonHatted = new Set(sapkaMap.keys());
+        // Keys in sapkaMap are now trimmed.
+        const nonHatted = new Set(Array.from(sapkaMap.keys())); // Create Set from trimmed keys
 
         const finalSet = new Set<string>();
         autoList.forEach(item => {
-            const w = item.madde;
-            if (!nonHatted.has(w)) finalSet.add(w);
+            const w = item.madde.trim(); // Trim word from autolist
+            if (!nonHatted.has(w)) { // Compare trimmed w with trimmed keys in nonHatted
+                finalSet.add(w);
+            }
         });
-        sapkaMap.forEach(h => finalSet.add(h));
+        sapkaMap.forEach((trimmedValue, _trimmedKey) => { // Values in sapkaMap are already trimmed
+            finalSet.add(trimmedValue);
+        });
         wordsToProcess = Array.from(finalSet);
         console.log(`Total unique words: ${wordsToProcess.length}`);
     }
@@ -182,7 +187,12 @@ async function seedDatabase() {
             if (!Array.isArray(details) || !details.length) return;
             // Process all variants of the word
             for (const detail of details) {
-                if (detail.madde !== word) continue; // Skip if not matching our search word
+                const trimmedDetailMadde = detail.madde.trim();
+                // `word` is already trimmed from wordsToProcess (due to earlier changes)
+                if (trimmedDetailMadde !== word) {
+                    // console.log(`Skipping detail item "${trimmedDetailMadde}" (from API) as it doesn't match main word "${word}" (from list) after trimming.`);
+                    continue; 
+                }
 
                 await db.transaction(async tx => {
                     // parse lisan
@@ -204,7 +214,7 @@ async function seedDatabase() {
                         .from(words)
                         .where(
                             and(
-                                eq(words.name, detail.madde),
+                                eq(words.name, trimmedDetailMadde),
                                 eq(words.variant, variantNum)
                             )
                         );
@@ -222,7 +232,7 @@ async function seedDatabase() {
                     } else {
                         const [{ id }] = await tx.insert(words)
                             .values({
-                                name: detail.madde,
+                                name: trimmedDetailMadde,
                                 phonetic: detail.telaffuz || null,
                                 prefix: prefixVal,
                                 suffix: suffixVal,
