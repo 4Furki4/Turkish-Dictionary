@@ -229,8 +229,9 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
             control={control}
             render={({ field }) => (
               <Select
-                {...field}
                 label={t("form.status")}
+                selectedKeys={[field.value]}
+                onChange={(e) => field.onChange(e.target.value)}
                 errorMessage={errors.status?.message}
                 isInvalid={!!errors.status}
               >
