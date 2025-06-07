@@ -81,8 +81,14 @@
     "Columns": {
       "Word": "Kelime",
       "Meaning": "Anlam",
-      "Actions": "İşlemler"
+      "Actions": "İşlemler",
+      "Id": "ID"
     },
+    "Actions": {
+      "Delete": "Sil",
+      "Edit": "Düzenle"
+    },
+    "NavigationWordLink": "Yönlendirme Kelimesi",
     "CreateWord": "Kelime Ekle",
     "MustAddMeaning": "Anlam eklemelisiniz!",
     "MustHaveAMeaning": "Anlam gerekli, lütfen bir anlam giriniz.",

@@ -81,8 +81,14 @@
     "Columns": {
       "Word": "Word",
       "Meaning": "Meaning",
-      "Actions": "Actions"
+      "Actions": "Actions",
+      "Id": "ID"
     },
+    "Actions": {
+      "Delete": "Delete",
+      "Edit": "Edit"
+    },
+    "NavigationWordLink": "Navigation Word",
     "CreateWord": "Create Word",
     "MustAddMeaning": "You must add a meaning!",
     "MustHaveAMeaning": "You must have a meaning!",
