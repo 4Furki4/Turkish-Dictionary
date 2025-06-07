@@ -254,7 +254,7 @@ export default function AnnouncementsList() {
               label={t("itemsPerPage")}
               selectedKeys={[limit.toString()]}
               onChange={(e) => handleLimitChange(e.target.value)}
-              className="w-24"
+              className="w-36"
             >
               {itemsPerPageOptions.map((option) => (
                 <SelectItem key={option.key}>
