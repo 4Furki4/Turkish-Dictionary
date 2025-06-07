@@ -21,6 +21,7 @@ import { api } from "@/src/trpc/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { MarkdownRenderer } from "@/src/components/markdown-renderer";
+import { CalendarDate } from "@internationalized/date";
 // Schema for form validation
 const announcementFormSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -28,7 +29,7 @@ const announcementFormSchema = z.object({
   imageUrl: z.string().url().optional().nullable(),
   actionUrl: z.string().url().optional().nullable(),
   actionTextKey: z.string().optional().nullable(),
-  publishedAt: z.any().optional().nullable(),
+  publishedAt: z.instanceof(CalendarDate).optional().nullable(),
   translations: z.object({
     en: z.object({
       title: z.string().min(1, "Title is required"),
@@ -80,7 +81,9 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
     imageUrl: initialData?.imageUrl || null,
     actionUrl: initialData?.actionUrl || null,
     actionTextKey: initialData?.actionTextKey || null,
-    publishedAt: initialData?.publishedAt || null,
+    publishedAt: initialData?.publishedAt
+      ? new CalendarDate(initialData.publishedAt.year, initialData.publishedAt.month, initialData.publishedAt.day)
+      : null,
     translations: {
       en: {
         title: initialData?.translations?.en?.title || "",
@@ -298,6 +301,7 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
             render={({ field }) => (
               <DatePicker
                 label={t("form.publishedAt")}
+                value={field.value}
                 onChange={(value) => {
                   field.onChange(value);
                 }}
