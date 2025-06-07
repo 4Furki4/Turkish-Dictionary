@@ -293,10 +293,12 @@ export const captureElementScreenshot = async (
               toast.info(options.clipboardCopyFailureMessage);
 
               // Fallback: offer download if clipboard write fails
+              const objectUrl = URL.createObjectURL(blob);
               const link = document.createElement("a");
-              link.href = finalCanvas.toDataURL("image/png");
+              link.href = objectUrl;
               link.download = options.fileName || "screenshot.png";
               link.click();
+              URL.revokeObjectURL(objectUrl); // Clean up the object URL
             }
           } else {
             toast.error(options.failureMessage);
@@ -318,10 +320,12 @@ export const captureElementScreenshot = async (
               toast.info(options.clipboardCopyFailureMessage);
 
               // Fallback: offer download if clipboard write fails
+              const objectUrl = URL.createObjectURL(blob);
               const link = document.createElement("a");
-              link.href = canvas.toDataURL("image/png");
+              link.href = objectUrl;
               link.download = options.fileName || "screenshot.png";
               link.click();
+              URL.revokeObjectURL(objectUrl); // Clean up the object URL
             }
           } else {
             toast.error(options.failureMessage);
