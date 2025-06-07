@@ -62,6 +62,12 @@
     "urlCopiedDescription": "Word page URL has been copied to clipboard",
     "urlCopyFailed": "Copy Failed",
     "urlCopyFailedDescription": "Failed to copy URL to clipboard",
+    "screenshotCopied": "Screenshot Copied",
+    "screenshotCopiedDescription": "Screenshot copied to clipboard",
+    "screenshotFailed": "Screenshot Failed",
+    "screenshotFailedDescription": "Failed to copy screenshot to clipboard",
+    "screenshotDownloadFallback": "Screenshot copy to clipboard failed, downloading instead.",
+    "screenshotProcessing": "Creating screenshot...",
     "NoRelatedWordsFound": "No related words found",
     "NoRelatedPhrasesFound": "No related phrases found",
     "obsolete": "absolete meaning",
@@ -75,8 +81,14 @@
     "Columns": {
       "Word": "Word",
       "Meaning": "Meaning",
-      "Actions": "Actions"
+      "Actions": "Actions",
+      "Id": "ID"
     },
+    "Actions": {
+      "Delete": "Delete",
+      "Edit": "Edit"
+    },
+    "NavigationWordLink": "Navigation Word",
     "CreateWord": "Create Word",
     "MustAddMeaning": "You must add a meaning!",
     "MustHaveAMeaning": "You must have a meaning!",

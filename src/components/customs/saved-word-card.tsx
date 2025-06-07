@@ -10,6 +10,8 @@ import WordCard from "./word-card";
 import { Session } from "next-auth";
 import { formatDistanceToNow } from "date-fns";
 import { tr } from "date-fns/locale";
+import { Link as NextIntlLink } from "@/src/i18n/routing";
+import { Link } from "@heroui/react";
 interface SavedWordCardProps {
   wordData: {
     word_id: number;
@@ -36,8 +38,12 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
 
   return (
     <Card className="shadow-xs">
-      <CardHeader>
-        <h3 className="text-lg font-medium">{wordData.word_name}</h3>
+      <CardHeader className="flex items-center gap-2">
+        <h3 className="text-lg font-medium">
+          <Link as={NextIntlLink} href={`/search/${wordData.word_name}`}>
+            {wordData.word_name}
+          </Link>
+        </h3>
         {wordData.root?.root && (
           <p className="text-sm text-gray-500">
             {wordData.root.root} ({wordData.root.language})
@@ -62,7 +68,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
         </Button>
       </CardFooter>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl" backdrop="blur">
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl" backdrop="blur" scrollBehavior="inside">
         <ModalContent>
           {loadingDetails ? (
             <Loading />

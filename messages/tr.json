@@ -59,9 +59,15 @@
     "NavigationWord": "Yönlendirilen Kelime",
     "Root": "Köken",
     "urlCopied": "URL Kopyalandı",
-    "urlCopiedDescription": "Kelime sayfasının bağlantısı panoya kopyalandı",
-    "urlCopyFailed": "Kopyalama Başarısız",
-    "urlCopyFailedDescription": "Kelime sayfasının bağlantısı panoya kopyalanamadı",
+    "urlCopiedDescription": "Kelimenin bağlantısı panonunuza kopyalandı",
+    "urlCopyFailed": "URL Kopyalama Başarısız",
+    "urlCopyFailedDescription": "Kelimenin bağlantısı panonunuza kopyalanamadı",
+    "screenshotCopied": "Ekran görüntüsü panonunuza kopyalandı",
+    "screenshotCopiedDescription": "Ekran görüntüsü panonunuza kopyalandı",
+    "screenshotFailed": "Ekran Görüntüsü Başarısız",
+    "screenshotFailedDescription": "Ekran görüntüsü kopyalanamadı",
+    "screenshotDownloadFallback": "Resim panoya kopyalanamadı ama indiriliyor.",
+    "screenshotProcessing": "Ekran görüntüsü oluşturuluyor...",
     "NoRelatedWordsFound": "İlgili kelime bulunamadı",
     "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
     "obsolete": "eskimiş anlam",
@@ -75,8 +81,14 @@
     "Columns": {
       "Word": "Kelime",
       "Meaning": "Anlam",
-      "Actions": "İşlemler"
+      "Actions": "İşlemler",
+      "Id": "ID"
     },
+    "Actions": {
+      "Delete": "Sil",
+      "Edit": "Düzenle"
+    },
+    "NavigationWordLink": "Yönlendirme Kelimesi",
     "CreateWord": "Kelime Ekle",
     "MustAddMeaning": "Anlam eklemelisiniz!",
     "MustHaveAMeaning": "Anlam gerekli, lütfen bir anlam giriniz.",

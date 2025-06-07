@@ -133,7 +133,7 @@ type SavedWordsResult = {
 type DashboardWordList = {
   word_id: number;
   name: string;
-  meaning: string;
+  meaning: string | null;
 }
 
 type EditMeaningForm = {

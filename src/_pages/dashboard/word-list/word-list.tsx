@@ -133,12 +133,17 @@ export default function WordList() {
   type Row = (typeof rows)[0];
   const rows = wordsQuery.data?.map((word, idx) => {
     return {
+      id: word.word_id, // Added word_id for the new ID column
       name: word.name,
       key: word.word_id,
       meaning: word.meaning,
     };
   }) || []
   const columns = [
+    {
+      key: "id",
+      label: t("Dashboard.Columns.Id"), // New ID column
+    },
     {
       key: "name",
       label: t("Dashboard.Columns.Word"),
@@ -181,31 +186,44 @@ export default function WordList() {
                 }
               }}
             >
-              <DropdownSection title={"Actions"}>
+              <DropdownSection title={t("Dashboard.Columns.Actions")}>
                 <DropdownItem
                   key={"Delete"}
                   startContent={<Trash2 />}
                   color={"danger"}
                 >
-                  Delete
+                  {t("Dashboard.Actions.Delete")}
                 </DropdownItem>
                 <DropdownItem key={'Edit'} startContent={<Edit3 />} color={"warning"}>
-                  Edit
+                  {t("Dashboard.Actions.Edit")}
                 </DropdownItem>
               </DropdownSection>
             </DropdownMenu>
           </Dropdown>
         );
+      case "id":
+        return (
+          <span>{item.id}</span>
+        );
+      case "meaning":
+        if (item.meaning) {
+          return <span>{item.meaning}</span>;
+        }
+        return (
+          <NextUILink target='_blank' as={Link} href={`/arama/${item.name}`}>
+            {t("Dashboard.NavigationWordLink")}
+          </NextUILink>
+        );
       case "name":
         return (
-          <NextUILink target='_blank' as={Link} href={`/search/${item.name}`}>
+          <NextUILink target='_blank' as={Link} href={`/arama/${item.name}`}>
             {cellValue}
           </NextUILink>
         );
       default:
         return cellValue;
     }
-  }, []);
+  }, [onDeleteModalOpen, onEditModalOpen, t, setSelectedWord]);
   return (
     <section>
       <Table topContent={

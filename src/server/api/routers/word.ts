@@ -23,21 +23,57 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx: { db } }) => {
-      const purifiedInput = purifyObject(input)
-      const searchCondition = purifiedInput.search
-        ? sql`AND w.name ILIKE ${`%${purifiedInput.search}%`}`
-        : sql``;
+      const purifiedInput = purifyObject(input);
+      let query;
 
-      const wordsWithMeanings = await db.execute(
-        sql
-          `
+      if (purifiedInput.search && purifiedInput.search.trim() !== "") {
+        const searchTerm = purifiedInput.search.trim();
+        query = sql`
+        WITH RankedWords AS (
+          SELECT
+            w.id AS word_id,
+            w.name AS name,
+            CASE
+              WHEN w.name ILIKE ${searchTerm} THEN 1
+              WHEN w.name ILIKE ${`${searchTerm}%`} THEN 2
+              ELSE 3
+            END AS match_rank,
+            LENGTH(w.name) AS name_length
+          FROM words w
+          WHERE w.name ILIKE ${`%${searchTerm}%`}
+        )
+        SELECT
+            rw.word_id,
+            rw.name,
+            m.meaning
+        FROM
+            RankedWords rw
+            LEFT JOIN (
+                SELECT DISTINCT ON (word_id)
+                    id,
+                    word_id,
+                    meaning
+                FROM
+                    meanings
+                ORDER BY
+                    word_id,
+                    id -- Assuming this is the desired order for the first meaning
+            ) m ON rw.word_id = m.word_id
+        ORDER BY
+            rw.match_rank,
+            rw.name_length,
+            rw.name -- Added for deterministic ordering
+        LIMIT ${purifiedInput.take} OFFSET ${purifiedInput.skip};
+      `;
+      } else {
+        query = sql`
         SELECT
             w.id AS word_id,
             w.name AS name,
-            m.meaning AS meaning
+            m.meaning
         FROM
             words w
-            JOIN (
+            LEFT JOIN (
                 SELECT DISTINCT ON (word_id)
                     id,
                     word_id,
@@ -48,13 +84,14 @@ export const wordRouter = createTRPCRouter({
                     word_id,
                     id
             ) m ON w.id = m.word_id
-        WHERE 1=1 ${searchCondition}
         ORDER BY
-            w.id
+            w.name -- Default order by name if no search term
         LIMIT ${purifiedInput.take} OFFSET ${purifiedInput.skip};
-        `
-      ) as DashboardWordList[]
-      return wordsWithMeanings
+      `;
+      }
+
+      const wordsWithMeanings = await db.execute(query) as DashboardWordList[];
+      return wordsWithMeanings;
     }),
   /**
    * Get a word by name quering the database
@@ -180,7 +217,7 @@ export const wordRouter = createTRPCRouter({
             // Insert into general search logs (existing functionality)
             await db.insert(searchLogs).values(newLog);
             console.log(`Logged search for wordId: ${wordData.word_id}, userId: ${userId}`);
-            
+
             // Additionally log to user_search_history if user is logged in
             if (userId) {
               const userHistoryLog: InsertUserSearchHistory = {
@@ -188,7 +225,7 @@ export const wordRouter = createTRPCRouter({
                 wordId: wordData.word_id,
                 // searchedAt is handled by DB default
               };
-              
+
               // Use fire-and-forget pattern (don't await) to avoid slowing down the response
               db.insert(userSearchHistory).values(userHistoryLog)
                 .then(() => console.log(`Logged user search history for userId: ${userId}, wordId: ${wordData.word_id}`))
