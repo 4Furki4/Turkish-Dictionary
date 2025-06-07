@@ -98,7 +98,49 @@
     "ImagesUploaded": "Resimler yüklendi!",
     "Error": "Hata",
     "Append": "Sona Ekle",
-    "Prepend": "Öne Ekle"
+    "Prepend": "Öne Ekle",
+    "WordRelations": {
+      "title": "Kelime İlişkileri Yönetimi",
+      "description": "Bir kelime seçerek ilgili kelimeleri ekleyebilir veya kaldırabilirsiniz.",
+      "searchWord": "Kelime Ara",
+      "searchWordDescription": "İlişkilerini yönetmek için bir kelime arayın.",
+      "searchPlaceholder": "Aramak için yazmaya başlayın...",
+      "searchResults": "Arama Sonuçları",
+      "selectedWord": "Seçilen Kelime",
+      "selectedPhrase": "Seçilen Deyim/Atasöz",
+      "wordId": "ID",
+      "selectDifferentWord": "Farklı Kelime Seç",
+      "addRelatedWord": "İlgili Kelime Ekle",
+      "relatedWords": "İlgili Kelimeler",
+      "noResultsFound": "Sonuç bulunamadı",
+      "noRelatedWords": "Bu kelime için ilgili kelime bulunamadı.",
+      "relationType": "İlişki Türü",
+      "addRelation": "İlişki Ekle",
+      "adding": "Ekleniyor...",
+      "removing": "Kaldırılıyor...",
+      "remove": "Kaldır",
+      "errorAddingRelation": "İlişki eklenirken hata oluştu. Lütfen tekrar deneyin.",
+      "relatedPhrases": "İlgili Deyimler ve Atasözleri",
+      "addRelatedPhrase": "İlgili Deyim/Atasöz Ekle",
+      "searchPhrase": "Deyim/Atasöz Ara",
+      "noRelatedPhrases": "Bu kelime için ilgili deyim veya atasöz bulunamadı.",
+      "toast": {
+        "relationAddedSuccess": "İlişki başarıyla eklendi!",
+        "relationAddedError": "İlişki eklenirken hata oluştu: {error}",
+        "relationRemovedSuccess": "İlişki başarıyla kaldırıldı!",
+        "relationRemovedError": "İlişki kaldırılırken hata oluştu: {error}"
+      },
+      "relationTypes": {
+        "relatedWord": "İlgili Kelime",
+        "antonym": "Zıt Anlam",
+        "synonym": "Eş Anlam",
+        "correction": "Düzeltme",
+        "compound": "Bileşik",
+        "seeAlso": "Ayrıca Bakınız",
+        "turkishEquivalent": "Türkçe Karşılığı",
+        "obsolete": "Eskimiş"
+      }
+    }
   },
   "LanguageAndRootInput": {
     "rootInputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",

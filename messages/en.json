@@ -98,7 +98,49 @@
     "ImagesUploaded": "Images uploaded!",
     "Error": "Error",
     "Append": "Append",
-    "Prepend": "Prepend"
+    "Prepend": "Prepend",
+    "WordRelations": {
+      "title": "Word Relations Management",
+      "description": "Select a word to add or remove related words.",
+      "searchWord": "Search Word",
+      "searchWordDescription": "Search for a word to manage its relations.",
+      "searchPlaceholder": "Start typing to search...",
+      "searchResults": "Search Results",
+      "selectedWord": "Selected Word",
+      "selectedPhrase": "Selected Phrase",
+      "wordId": "ID",
+      "selectDifferentWord": "Select Different Word",
+      "addRelatedWord": "Add Related Word",
+      "relatedWords": "Related Words",
+      "noResultsFound": "No results found",
+      "noRelatedWords": "No related words found for this word.",
+      "relationType": "Relation Type",
+      "addRelation": "Add Relation",
+      "adding": "Adding...",
+      "removing": "Removing...",
+      "remove": "Remove",
+      "errorAddingRelation": "Error adding relation. Please try again.",
+      "relatedPhrases": "Related Phrases",
+      "addRelatedPhrase": "Add Related Phrase",
+      "searchPhrase": "Search Phrase",
+      "noRelatedPhrases": "No related phrases found for this word.",
+      "toast": {
+        "relationAddedSuccess": "Relation added successfully!",
+        "relationAddedError": "Error adding relation: {error}",
+        "relationRemovedSuccess": "Relation removed successfully!",
+        "relationRemovedError": "Error removing relation: {error}"
+      },
+      "relationTypes": {
+        "relatedWord": "Related Word",
+        "antonym": "Antonym",
+        "synonym": "Synonym",
+        "correction": "Correction",
+        "compound": "Compound",
+        "seeAlso": "See Also",
+        "turkishEquivalent": "Turkish Equivalent",
+        "obsolete": "Obsolete"
+      }
+    }
   },
   "LanguageAndRootInput": {
     "rootInputError": "Root is required when language specified",
