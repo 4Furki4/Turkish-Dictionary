@@ -99,6 +99,10 @@ export const routing = defineRouting({
       "en": "/dashboard/requests/[id]",
       "tr": "/panel/istekler/[id]",
     },
+    "/dashboard/word-relations": {
+      "en": "/dashboard/word-relations",
+      "tr": "/panel/kelime-ilişkileri",
+    },
     "/search-history": {
       "en": "/search-history",
       "tr": "/arama-gecmisi",
