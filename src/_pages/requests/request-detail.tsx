@@ -530,8 +530,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                                 {value === null || value === undefined
                                   ? t("details.empty")
                                   : typeof value === "object"
-                                  ? JSON.stringify(value)
-                                  : String(value)}
+                                    ? JSON.stringify(value)
+                                    : String(value)}
                               </span>
                             </div>
                           </div>
@@ -574,8 +574,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                               {value === null || value === undefined
                                 ? t("details.empty")
                                 : typeof value === "object"
-                                ? JSON.stringify(value)
-                                : String(value)}
+                                  ? JSON.stringify(value)
+                                  : String(value)}
                             </span>
                           </div>
                         </div>
@@ -629,8 +629,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                                   {newValue === null || newValue === undefined
                                     ? t("details.empty")
                                     : typeof newValue === "object"
-                                    ? JSON.stringify(newValue)
-                                    : String(newValue)}
+                                      ? JSON.stringify(newValue)
+                                      : String(newValue)}
                                 </span>
                                 {isUpdate && (
                                   <div className="mt-1">
@@ -640,8 +640,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                                         currentValue === null || currentValue === undefined
                                           ? t("details.empty")
                                           : typeof currentValue === "object"
-                                          ? JSON.stringify(currentValue)
-                                          : String(currentValue)
+                                            ? JSON.stringify(currentValue)
+                                            : String(currentValue)
                                       ) : ''}
                                     </span>
                                   </div>
@@ -677,37 +677,37 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
 
                       return (
                         <div key={key} className="border-b border-default py-3 last:border-0">
-                        <div className="flex flex-col">
-                          <div className="flex justify-between">
-                            <span className="font-medium capitalize">
-                              {key.replace(/_/g, " ")}:
-                            </span>
-                            <div className="flex flex-col items-end">
-                              <span className="text-success-600 font-medium">
-                                {newValue === null || newValue === undefined
-                                  ? t("details.empty")
-                                  : typeof newValue === "object"
-                                  ? JSON.stringify(newValue)
-                                  : String(newValue)}
+                          <div className="flex flex-col">
+                            <div className="flex justify-between">
+                              <span className="font-medium capitalize">
+                                {key.replace(/_/g, " ")}:
                               </span>
-                              {isUpdate && (
-                                <div className="mt-1">
-                                  <span className="flex items-center gap-1 text-xs text-default-500">
-                                    <ArrowUp className="h-3 w-3" />
-                                    {t("details.updateFrom")}: {entityData && key in entityData ? (
-                                      currentValue === null || currentValue === undefined
-                                        ? t("details.empty")
-                                        : typeof currentValue === "object"
-                                        ? JSON.stringify(currentValue)
-                                        : String(currentValue)
-                                    ) : ''}
-                                  </span>
-                                </div>
-                              )}
+                              <div className="flex flex-col items-end">
+                                <span className="text-success-600 font-medium">
+                                  {newValue === null || newValue === undefined
+                                    ? t("details.empty")
+                                    : typeof newValue === "object"
+                                      ? JSON.stringify(newValue)
+                                      : String(newValue)}
+                                </span>
+                                {isUpdate && (
+                                  <div className="mt-1">
+                                    <span className="flex items-center gap-1 text-xs text-default-500">
+                                      <ArrowUp className="h-3 w-3" />
+                                      {t("details.updateFrom")}: {entityData && key in entityData ? (
+                                        currentValue === null || currentValue === undefined
+                                          ? t("details.empty")
+                                          : typeof currentValue === "object"
+                                            ? JSON.stringify(currentValue)
+                                            : String(currentValue)
+                                      ) : ''}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                       );
                     })}
                   </div>

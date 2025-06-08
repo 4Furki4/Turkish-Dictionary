@@ -59,6 +59,7 @@
     "RelatedPhrases": "İlgili Atasözleri ve Deyimler",
     "NavigationWord": "Yönlendirilen Kelime",
     "Root": "Köken",
+    "WordAttribute": "Kelime Özelliği",
     "urlCopied": "URL Kopyalandı",
     "urlCopiedDescription": "Kelimenin bağlantısı panonunuza kopyalandı",
     "urlCopyFailed": "URL Kopyalama Başarısız",
@@ -74,14 +75,19 @@
     "turkish_equivalent": "türkçe karşılığı",
     "see_also": "bakınız",
     "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı.",
-    "relatedWord": "İlgili Kelime",
     "compoundWord": "Bileşik Kelime",
     "antonym": "Zıt Anlam",
     "synonym": "Eş Anlam",
     "correction": "Düzeltme",
     "seeAlso": "Ayrıca Bakınız",
     "turkishEquivalent": "Türkçe Karşılığı",
-    "obsolete": "Eskimiş"
+    "obsolete": "Eskimiş",
+    "SuggestEditForRelatedWord": "{relatedWordName} için düzenleme öner",
+    "SuggestDeletionForRelatedWord": "{relatedWordName} için silme öner",
+    "SuggestEditForRelatedWordHeader": "Düzenleme Öner: {relatedWordName}",
+    "SuggestDeletionForRelatedWordHeader": "Silme Öner: {relatedWordName}",
+    "SubmitRequest": "İstek Gönder",
+    "RequestDeletion": "Silme Talep Et"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
@@ -345,8 +351,18 @@
     "publishedOn": "{date} tarihinde yayınlandı",
     "latestAnnouncements": "Son Duyurular"
   },
+  "RelationTypes": {
+    "relatedWord": "İlgili Kelime",
+    "synonym": "Eş Anlam",
+    "antonym": "Zıt Anlam",
+    "seeAlso": "Ayrıca Bakınız",
+    "compoundWord": "Bileşik Kelime",
+    "turkishEquivalent": "Türkçe Karşılığı"
+  },
   "Requests": {
     "myRequests": "İsteklerim",
+    "SuggestEditForRelatedWord": "İlgili kelime için düzenleme öner: {relatedWordName}",
+    "SuggestDeletionForRelatedWord": "İlgili kelime için silme öner: {relatedWordName}",
     "requestDetails": "İstek Detayları",
     "backToAllRequests": "Tüm İsteklere Dön",
     "entityTypes": {
@@ -433,7 +449,16 @@
     "DeleteMeaningRequest": "Anlam Silme İsteği",
     "DeleteMeaningRequestSentence": "\"{meaning}\" anlamı için silme isteğini göndermek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
     "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
-    "ReasonRequired": "Lütfen değişiklik nedeni giriniz"
+    "ReasonRequired": "Lütfen değişiklik için gerekçenizi girin",
+    "ConfirmDeleteRelatedWord": "'{relatedWordName}' kelimesi ile olan '{relationType}' ilişkisinin silinmesini talep etmek istediğinizden emin misiniz?",
+    "ReasonOptional": "Gerekçe (İsteğe Bağlı)",
+    "ReasonPlaceholderDeleteRelated": "örneğin, Bu ilişki yanlış çünkü...",
+    "CurrentRelationTypeIs": "Mevcut ilişki türü: {relationType}",
+    "EditRelationTypeLabel": "Yeni İlişki Türü",
+    "SelectRelationTypePlaceholder": "Yeni bir ilişki türü seçin",
+    "ReasonPlaceholderEditRelated": "Düzenleme talebiniz için bir neden girin (isteğe bağlı)",
+    "RelatedWordsTabTitle": "İlgili Kelimeler",
+    "RelatedPhrasesTabTitle": "İlgili Deyimler"
   },
   "Phonetic": "Fonetik",
   "WordName": "Kelime",
@@ -498,8 +523,8 @@
     },
     "PartOfSpeech": {
       "Description": "Sözcük türü isteğe bağlı.",
-      "Select": "Lütfen bir sözcük türü seçiniz",
-      "Required": "Lütfen bir sözcük türü seçiniz"
+      "Select": "Lütfen bir sözcük türü seçin",
+      "Required": "Sözcük türü gereklidir."
     },
     "MeaningAttributes": {
       "Description": "Anlam özellikleri isteğe bağlı",
@@ -534,5 +559,12 @@
     "PopularSearches": {
       "title": "Popüler Aramalar"
     }
+  },
+  "Common": {
+    "unknownRelation": "bilinmeyen ilişki"
+  },
+  "Errors": {
+    "MustBeLoggedIn": "Bu işlemi gerçekleştirmek için giriş yapmış olmanız gerekir.",
+    "OriginalRelationTypeMissing": "Orijinal ilişki türü eksik. Düzenleme isteği gönderilemiyor."
   }
 }

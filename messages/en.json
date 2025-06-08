@@ -81,7 +81,13 @@
     "correction": "correction",
     "seeAlso": "see also",
     "turkishEquivalent": "Türkçe Karşılığı",
-    "NoMeaningsFound": "The word exists but no meaning found."
+    "NoMeaningsFound": "The word exists but no meaning found.",
+    "SuggestEditForRelatedWord": "Suggest edit for {relatedWordName}",
+    "SuggestDeletionForRelatedWord": "Suggest deletion for {relatedWordName}",
+    "SuggestEditForRelatedWordHeader": "Suggest Edit for: {relatedWordName}",
+    "SuggestDeletionForRelatedWordHeader": "Suggest Deletion for: {relatedWordName}",
+    "SubmitRequest": "Submit Request",
+    "RequestDeletion": "Request Deletion"
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",
@@ -199,10 +205,10 @@
       "adding": "Adding...",
       "removing": "Removing...",
       "remove": "Remove",
-    "editButton": "Edit",
-    "saveButton": "Save",
-    "cancelButton": "Cancel",
-    "editingButton": "Saving...",
+      "editButton": "Edit",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "editingButton": "Saving...",
       "errorAddingRelation": "Error adding relation. Please try again.",
       "relatedPhrases": "Related Phrases",
       "addRelatedPhrase": "Add Related Phrase",
@@ -344,8 +350,20 @@
     "publishedOn": "Published on {date}",
     "latestAnnouncements": "Latest Announcements"
   },
+  "RelationTypes": {
+    "relatedWord": "Related Word",
+    "synonym": "Synonym",
+    "antonym": "Antonym",
+    "seeAlso": "See Also",
+    "compoundWord": "Compound Word",
+    "turkishEquivalent": "Turkish Equivalent"
+  },
   "Requests": {
     "myRequests": "My Requests",
+    "EditRequestTitle": "Edit Request for: {word}",
+    "SuggestEditForRelatedWord": "Suggest an edit for related word: {relatedWordName}",
+    "SuggestDeletionForRelatedWord": "Suggest deletion for related word: {relatedWordName}",
+    "Cancel": "Cancel",
     "requestDetails": "Request Details",
     "backToAllRequests": "Back to All Requests",
     "entityTypes": {
@@ -395,14 +413,14 @@
       "back": "Back",
       "backToRequests": "Back to Requests"
     },
+    "errorLoading": "Error loading requests",
+    "errorLoadingDetail": "Error loading request details",
+    "cancelConfirmation": "Are you sure you want to cancel this request? This action cannot be undone.",
+    "updateRequest": "Update your request details:",
+    "reasonLabel": "Reason for Update:",
+    "reasonPlaceholder": "Why are you updating this request?",
     "messages": {
-      "errorLoading": "Error loading requests",
       "noRequests": "No requests found",
-      "errorLoadingDetail": "Error loading request details",
-      "cancelConfirmation": "Are you sure you want to cancel this request? This action cannot be undone.",
-      "updateRequest": "Update your request details:",
-      "reasonLabel": "Reason for Update:",
-      "reasonPlaceholder": "Why are you updating this request?",
       "itemsPerPage": "Items per page"
     },
     "details": {
@@ -433,8 +451,18 @@
     "DeleteMeaningRequestSentence": "Are you sure you want to request deletion of the meaning \"{meaning}\"? Please provide a reason for the deletion.",
     "AttributeIsRequired": "Attribute is required, please enter an attribute.",
     "AttributeRequestedSuccessfully": "Attribute requested successfully",
-    "ReasonRequired": "Please enter your reason for the change"
+    "ReasonRequired": "Please enter your reason for the change",
+    "ConfirmDeleteRelatedWord": "Are you sure you want to request the deletion of the relation '{relationType}' to the word '{relatedWordName}'?",
+    "ReasonOptional": "Reason (Optional)",
+    "ReasonPlaceholderDeleteRelated": "e.g., This relation is incorrect because...",
+    "CurrentRelationTypeIs": "Current relation type: {relationType}",
+    "EditRelationTypeLabel": "New Relation Type",
+    "SelectRelationTypePlaceholder": "Select a new relation type",
+    "ReasonPlaceholderEditRelated": "Enter a reason for your edit request (optional)",
+    "RelatedWordsTabTitle": "Related Words",
+    "RelatedPhrasesTabTitle": "Related Phrases"
   },
+  "WordAttribute": "Word Attribute",
   "WordName": "Word Name",
   "Prefix": "Prefix",
   "Suffix": "Suffix",
@@ -506,7 +534,8 @@
     },
     "PartOfSpeech": {
       "Description": "Part of speech is optional",
-      "Select": "Please select a part of speech"
+      "Select": "Please select a part of speech",
+      "Required": "Part of speech is required."
     },
     "MeaningAttributes": {
       "Description": "Attributes are optional",
@@ -527,5 +556,12 @@
       "InputError": "Root is required when language specified",
       "LanguageInputError": "Language is required when root specified"
     }
+  },
+  "Common": {
+    "unknownRelation": "unknown relation"
+  },
+  "Errors": {
+    "MustBeLoggedIn": "You must be logged in to perform this action.",
+    "OriginalRelationTypeMissing": "Original relation type is missing. Cannot submit edit request."
   }
 }

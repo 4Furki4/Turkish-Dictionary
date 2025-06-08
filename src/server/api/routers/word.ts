@@ -259,6 +259,40 @@ export const wordRouter = createTRPCRouter({
     }),
 
   /**
+   * Get a word's name by its ID.
+   */
+  getWordNameById: publicProcedure
+    .input(
+      z.object({
+        wordId: z.number(),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      const result = await db.execute(sql`
+        SELECT name
+        FROM words
+        WHERE id = ${input.wordId}
+        LIMIT 1;
+      `);
+      
+      // Ensure result is an array and has at least one element
+      if (Array.isArray(result) && result.length > 0 && result[0] && typeof result[0].name === 'string') {
+        return { name: result[0].name as string };
+      }
+      // Check if the structure is { rows: [...] } which some drivers might return
+      // For 'pg' driver with 'drizzle-orm', it directly returns an array of objects.
+      // This explicit check is more for robustness if the driver behavior was different.
+      // However, given the current setup, the first branch should suffice.
+      // If rows property exists and is an array
+      // @ts-expect-error - result might not have rows property
+      if (result && Array.isArray(result.rows) && result.rows.length > 0 && result.rows[0] && typeof result.rows[0].name === 'string') {
+         // @ts-expect-error - result.rows[0] might not have name property
+        return { name: result.rows[0].name as string };
+      }
+      return null; // Or throw an error if a word should always be found
+    }),
+
+  /**
    * Get popular words based on search logs
    */
   getPopularWords: publicProcedure

@@ -7,6 +7,7 @@ import { wordAttributes } from "@/db/schema/word_attributes";
 import { users } from "@/db/schema/users";
 import { words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
+import { relatedWords } from "@/db/schema/related_words";
 import { getHandler } from "../handlers/request-handlers/registry";
 import { TRPCError } from "@trpc/server";
 
@@ -189,6 +190,102 @@ export const requestRouter = createTRPCRouter({
 
             return { success: true };
         }),
+
+    requestEditRelatedWord: protectedProcedure
+        .input(z.object({
+            wordId: z.number(), // The ID of the main word
+            relatedWordId: z.number(), // The ID of the word it's related to
+            originalRelationType: z.string().min(1),
+            newRelationType: z.string().min(1),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordId, relatedWordId, originalRelationType, newRelationType, reason } = input;
+
+            // Check if the original related word entry exists
+            const existingRelation = await db.query.relatedWords.findFirst({
+                where: and(
+                    eq(relatedWords.wordId, wordId),
+                    eq(relatedWords.relatedWordId, relatedWordId)
+                ),
+                columns: { // Ensure relationType is available for checking
+                    relationType: true
+                }
+            });
+
+            if (!existingRelation) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Original related word entry not found."
+                });
+            }
+
+            // Verify the original relation type matches what the user saw
+            if (existingRelation.relationType !== originalRelationType) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "The relation type of this word has changed. Please refresh the page and try again."
+                });
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_words",
+                entityId: wordId, // Storing the main wordId as the entityId
+                action: "update",
+                newData: {
+                    relatedWordId: relatedWordId,
+                    originalRelationType: originalRelationType,
+                    newRelationType: newRelationType
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related word edit request submitted." };
+        }),
+
+    requestDeleteRelatedWord: protectedProcedure
+        .input(z.object({
+            wordId: z.number(),
+            relatedWordId: z.number(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordId, relatedWordId, reason } = input;
+
+            const existingRelation = await db.query.relatedWords.findFirst({
+                where: and(
+                    eq(relatedWords.wordId, wordId),
+                    eq(relatedWords.relatedWordId, relatedWordId)
+                )
+            });
+
+            if (!existingRelation) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Related word entry not found, cannot request deletion."
+                });
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_words",
+                entityId: wordId, // Storing the main wordId as the entityId
+                action: "delete",
+                newData: { 
+                    relatedWordId: relatedWordId,
+                    originalRelationType: existingRelation.relationType // Store original details for admin context
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related word deletion request submitted." };
+        }),
+
     // In src/server/api/routers/params.ts
     getWordAttributesWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
         // Get approved attributes from the main table
