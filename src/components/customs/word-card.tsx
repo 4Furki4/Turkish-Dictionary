@@ -258,6 +258,11 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                             href={`/search/${related_word.related_word_name}`}
                           >
                             {related_word.related_word_name}
+                            {related_word.relation_type === 'compoundWord' && (
+                              <span className="ml-1 text-xs text-muted-foreground">
+                                ({t('compoundWord')})
+                              </span>
+                            )}
                           </NextUILink>
                         </CardBody>
                       </Card>
