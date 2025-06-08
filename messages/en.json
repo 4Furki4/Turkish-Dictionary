@@ -181,6 +181,7 @@
     "WordRelations": {
       "title": "Word Relations Management",
       "description": "Select a word to add or remove related words.",
+      "pageTitle": "Word Relations Management",
       "searchWord": "Search Word",
       "searchWordDescription": "Search for a word to manage its relations.",
       "searchPlaceholder": "Start typing to search...",

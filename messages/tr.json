@@ -181,7 +181,8 @@
     },
     "WordRelations": {
       "title": "Kelime İlişkileri Yönetimi",
-      "description": "Bir kelime seçerek ilgili kelimeleri ekleyebilir veya kaldırabilirsiniz.",
+      "description": "Kelimeler arasındaki eş anlamlı, zıt anlamlı, ilgili kelimeler gibi ilişkileri yönetin.",
+      "pageTitle": "Kelime İlişkileri Yönetimi",
       "searchWord": "Kelime Ara",
       "searchWordDescription": "İlişkilerini yönetmek için bir kelime arayın.",
       "searchPlaceholder": "Aramak için yazmaya başlayın...",
