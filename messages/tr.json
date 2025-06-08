@@ -306,6 +306,22 @@
       "description": "Sözlük katkı isteğinizin detaylarını görüntüleyin ve yönetin"
     }
   },
+  "Announcements": {
+    "meta": {
+      "title": "Duyurular",
+      "description": "Türkçe Sözlük'ten en son duyurular ve güncellemeler",
+      "notFound": "Duyuru Bulunamadı",
+      "notFoundDescription": "Aradığınız duyuru bulunamadı"
+    },
+    "title": "Duyurular",
+    "noAnnouncements": "Şu anda mevcut duyuru bulunmamaktadır",
+    "readMore": "Devamını Oku",
+    "learnMore": "Daha Fazla Bilgi",
+    "backToAnnouncements": "Duyurulara Geri Dön",
+    "noContent": "Bu duyuru için içerik bulunmamaktadır",
+    "publishedOn": "{date} tarihinde yayınlandı",
+    "latestAnnouncements": "Son Duyurular"
+  },
   "Requests": {
     "myRequests": "İsteklerim",
     "requestDetails": "İstek Detayları",

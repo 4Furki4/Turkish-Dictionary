@@ -111,7 +111,6 @@
       "itemsPerPage": "Items per page",
       "status": "Status",
       "error": "An error occurred while loading announcements",
-      "noAnnouncements": "No announcements found",
       "edit": "Edit",
       "delete": "Delete",
       "cancel": "Cancel",
@@ -305,6 +304,22 @@
       "title": "Request Details | Turkish Dictionary",
       "description": "View and manage details of your dictionary contribution request"
     }
+  },
+  "Announcements": {
+    "meta": {
+      "title": "Announcements",
+      "description": "Latest announcements and updates from Turkish Dictionary",
+      "notFound": "Announcement Not Found",
+      "notFoundDescription": "The announcement you are looking for could not be found"
+    },
+    "title": "Announcements",
+    "noAnnouncements": "No announcements available at this time",
+    "readMore": "Read More",
+    "learnMore": "Learn More",
+    "backToAnnouncements": "Back to Announcements",
+    "noContent": "No content available for this announcement",
+    "publishedOn": "Published on {date}",
+    "latestAnnouncements": "Latest Announcements"
   },
   "Requests": {
     "myRequests": "My Requests",
