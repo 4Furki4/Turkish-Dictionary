@@ -9,7 +9,8 @@
     "SavedWords": "Kaydedilen Kelimeler",
     "MyRequests": "İsteklerim",
     "SearchHistory": "Arama Geçmişi",
-    "Dashboard": "Paneli"
+    "Dashboard": "Panel",
+    "Announcements": "Duyurular"
   },
   "SigninForm": {
     "Sign in with Google": "Google ile Giriş Yap",
@@ -70,10 +71,17 @@
     "screenshotProcessing": "Ekran görüntüsü oluşturuluyor...",
     "NoRelatedWordsFound": "İlgili kelime bulunamadı",
     "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
-    "obsolete": "eskimiş anlam",
     "turkish_equivalent": "türkçe karşılığı",
     "see_also": "bakınız",
-    "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı."
+    "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı.",
+    "relatedWord": "İlgili Kelime",
+    "compoundWord": "Bileşik Kelime",
+    "antonym": "Zıt Anlam",
+    "synonym": "Eş Anlam",
+    "correction": "Düzeltme",
+    "seeAlso": "Ayrıca Bakınız",
+    "turkishEquivalent": "Türkçe Karşılığı",
+    "obsolete": "Eskimiş"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
@@ -99,9 +107,82 @@
     "Error": "Hata",
     "Append": "Sona Ekle",
     "Prepend": "Öne Ekle",
+    "Announcements": {
+      "title": "Duyurular",
+      "createNew": "Yeni Duyuru Oluştur",
+      "createDescription": "Web sitesinde görüntülenecek yeni bir duyuru oluşturun",
+      "editAnnouncement": "Duyuruyu Düzenle: {slug}",
+      "editDescription": "Bu duyurunun detaylarını ve içeriğini düzenleyin",
+      "searchPlaceholder": "Duyurularda ara...",
+      "tableAriaLabel": "Duyurular Tablosu",
+      "itemsPerPage": "Sayfa başına öğe",
+      "status": "Durum",
+      "error": "Duyurular yüklenirken bir hata oluştu",
+      "noAnnouncements": "Duyuru bulunamadı",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "cancel": "İptal",
+      "create": "Oluştur",
+      "update": "Güncelle",
+      "deleteModalTitle": "Duyuruyu Sil",
+      "deleteConfirmation": "\"{slug}\" duyurusunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "deleteGenericConfirmation": "Bu duyuruyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "deleteSuccess": "Duyuru başarıyla silindi",
+      "deleteError": "Duyuru silinirken hata oluştu: {error}",
+      "createSuccess": "Duyuru başarıyla oluşturuldu",
+      "createError": "Duyuru oluşturulurken hata oluştu: {error}",
+      "updateSuccess": "Duyuru başarıyla güncellendi",
+      "updateError": "Duyuru güncellenirken hata oluştu: {error}",
+      "announcementNotFound": "Duyuru bulunamadı",
+      "columns": {
+        "slug": "Slug",
+        "status": "Durum",
+        "publishedAt": "Yayınlanma Tarihi",
+        "createdAt": "Oluşturulma Tarihi",
+        "actions": "İşlemler"
+      },
+      "statuses": {
+        "all": "Tümü",
+        "draft": "Taslak",
+        "published": "Yayınlandı",
+        "archived": "Arşivlendi"
+      },
+      "generalInfo": "Genel Bilgiler",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "benzersiz-duyuru-tanımlayıcı",
+        "status": "Durum",
+        "imageUrl": "Resim URL'si",
+        "imageUrlPlaceholder": "https://example.com/image.jpg",
+        "actionUrl": "Eylem URL'si",
+        "actionUrlPlaceholder": "https://example.com/action",
+        "actionTextKey": "Eylem Metin Anahtarı",
+        "actionTextKeyPlaceholder": "Devamını Oku",
+        "publishedAt": "Yayınlanma Tarihi",
+        "publishedAtPlaceholder": "Bir tarih seçin",
+        "contentTab": "İçerik",
+        "previewTab": "Önizleme",
+        "englishContent": "İngilizce İçerik",
+        "turkishContent": "Türkçe İçerik",
+        "title": "Başlık",
+        "titlePlaceholder": "Başlık girin",
+        "excerpt": "Özet",
+        "excerptPlaceholder": "Duyurunun kısa özeti",
+        "content": "İçerik (Markdown)",
+        "contentPlaceholder": "İçeriği Markdown formatında girin",
+        "preview": "İçerik Önizleme",
+        "noTitle": "Başlık girilmemiş",
+        "noContent": "İçerik girilmemiş"
+      },
+      "languages": {
+        "en": "İngilizce",
+        "tr": "Türkçe"
+      }
+    },
     "WordRelations": {
       "title": "Kelime İlişkileri Yönetimi",
-      "description": "Bir kelime seçerek ilgili kelimeleri ekleyebilir veya kaldırabilirsiniz.",
+      "description": "Kelimeler arasındaki eş anlamlı, zıt anlamlı, ilgili kelimeler gibi ilişkileri yönetin.",
+      "pageTitle": "Kelime İlişkileri Yönetimi",
       "searchWord": "Kelime Ara",
       "searchWordDescription": "İlişkilerini yönetmek için bir kelime arayın.",
       "searchPlaceholder": "Aramak için yazmaya başlayın...",
@@ -119,6 +200,10 @@
       "adding": "Ekleniyor...",
       "removing": "Kaldırılıyor...",
       "remove": "Kaldır",
+      "editButton": "Düzenle",
+      "saveButton": "Kaydet",
+      "cancelButton": "İptal",
+      "editingButton": "Kaydediliyor...",
       "errorAddingRelation": "İlişki eklenirken hata oluştu. Lütfen tekrar deneyin.",
       "relatedPhrases": "İlgili Deyimler ve Atasözleri",
       "addRelatedPhrase": "İlgili Deyim/Atasöz Ekle",
@@ -128,7 +213,10 @@
         "relationAddedSuccess": "İlişki başarıyla eklendi!",
         "relationAddedError": "İlişki eklenirken hata oluştu: {error}",
         "relationRemovedSuccess": "İlişki başarıyla kaldırıldı!",
-        "relationRemovedError": "İlişki kaldırılırken hata oluştu: {error}"
+        "relationRemovedError": "İlişki kaldırılamadı: {error}",
+        "relationTypeUpdateSuccess": "İlişki türü başarıyla güncellendi.",
+        "relationTypeUpdateError": "İlişki türü güncellenemedi: {error}",
+        "selectRelationType": "Lütfen bir ilişki türü seçin."
       },
       "relationTypes": {
         "relatedWord": "İlgili Kelime",
@@ -138,7 +226,15 @@
         "compound": "Bileşik",
         "seeAlso": "Ayrıca Bakınız",
         "turkishEquivalent": "Türkçe Karşılığı",
-        "obsolete": "Eskimiş"
+        "obsolete": "Eskimiş",
+        "selectLabel": "İlişki türü seçin",
+        "placeholder": "Bir ilişki seçin"
+      },
+      "deleteModal": {
+        "title": "Silmeyi Onayla",
+        "confirmationText": "{wordName} ({relationType}) ile olan ilişkiyi kaldırmak istediğinizden emin misiniz?",
+        "confirmButton": "Sil",
+        "cancelButton": "İptal"
       }
     }
   },
@@ -232,6 +328,22 @@
       "title": "İstek Detayları | Türkçe Sözlük",
       "description": "Sözlük katkı isteğinizin detaylarını görüntüleyin ve yönetin"
     }
+  },
+  "Announcements": {
+    "meta": {
+      "title": "Duyurular",
+      "description": "Türkçe Sözlük'ten en son duyurular ve güncellemeler",
+      "notFound": "Duyuru Bulunamadı",
+      "notFoundDescription": "Aradığınız duyuru bulunamadı"
+    },
+    "title": "Duyurular",
+    "noAnnouncements": "Şu anda mevcut duyuru bulunmamaktadır",
+    "readMore": "Devamını Oku",
+    "learnMore": "Daha Fazla Bilgi",
+    "backToAnnouncements": "Duyurulara Geri Dön",
+    "noContent": "Bu duyuru için içerik bulunmamaktadır",
+    "publishedOn": "{date} tarihinde yayınlandı",
+    "latestAnnouncements": "Son Duyurular"
   },
   "Requests": {
     "myRequests": "İsteklerim",

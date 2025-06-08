@@ -13,9 +13,10 @@ export async function generateMetadata({
   params
 }: PageProps): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Dashboard.WordRelations" });
 
   return {
-    title: "Word Relations Management",
+    title: t("pageTitle"),
   };
 }
 

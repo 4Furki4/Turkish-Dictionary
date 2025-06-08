@@ -146,6 +146,38 @@ export const wordRelationsAdminRouter = createTRPCRouter({
     }),
 
   /**
+   * Update a related word's relation type
+   */
+  updateRelatedWordType: adminProcedure
+    .input(
+      z.object({
+        wordId: z.number(),
+        relatedWordId: z.number(),
+        newRelationType: z.string(), // Consider using a Zod enum if relation types are fixed
+      })
+    )
+    .mutation(async ({ input, ctx: { db } }) => {
+      const { wordId, relatedWordId, newRelationType } = input;
+
+      const result = await db
+        .update(relatedWords)
+        .set({ relationType: newRelationType, updatedAt: new Date().toISOString().split('T')[0] })
+        .where(
+          and(
+            eq(relatedWords.wordId, wordId),
+            eq(relatedWords.relatedWordId, relatedWordId)
+          )
+        )
+        .returning(); 
+
+      if (result.length === 0) {
+        return { success: false, message: "Relation not found or not updated." };
+      }
+
+      return { success: true, updatedRelation: result[0] };
+    }),
+
+  /**
    * Get all related phrases for a specific word
    */
   getRelatedPhrases: adminProcedure

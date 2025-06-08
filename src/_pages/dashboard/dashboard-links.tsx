@@ -19,6 +19,10 @@ const getLinks: (locale: string) => { href: string; label: string; icon?: React.
     label: locale === "en" ? "Word Relations" : "Kelime İlişkileri",
   },
   {
+    href: "/dashboard/announcements",
+    label: locale === "en" ? "Announcements" : "Duyurular",
+  },
+  {
     href: "/dashboard/dynamic-parameters",
     label: locale === "en" ? "Dynamic Parameters" : "Dinamik Parametreler",
     icon: <Settings className="w-5 h-5" />,
