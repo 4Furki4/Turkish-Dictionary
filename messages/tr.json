@@ -199,6 +199,10 @@
       "adding": "Ekleniyor...",
       "removing": "Kaldırılıyor...",
       "remove": "Kaldır",
+    "editButton": "Düzenle",
+    "saveButton": "Kaydet",
+    "cancelButton": "İptal",
+    "editingButton": "Kaydediliyor...",
       "errorAddingRelation": "İlişki eklenirken hata oluştu. Lütfen tekrar deneyin.",
       "relatedPhrases": "İlgili Deyimler ve Atasözleri",
       "addRelatedPhrase": "İlgili Deyim/Atasöz Ekle",
@@ -208,7 +212,10 @@
         "relationAddedSuccess": "İlişki başarıyla eklendi!",
         "relationAddedError": "İlişki eklenirken hata oluştu: {error}",
         "relationRemovedSuccess": "İlişki başarıyla kaldırıldı!",
-        "relationRemovedError": "İlişki kaldırılırken hata oluştu: {error}"
+        "relationRemovedError": "İlişki kaldırılamadı: {error}",
+        "relationTypeUpdateSuccess": "İlişki türü başarıyla güncellendi.",
+        "relationTypeUpdateError": "İlişki türü güncellenemedi: {error}",
+        "selectRelationType": "Lütfen bir ilişki türü seçin."
       },
       "relationTypes": {
         "relatedWord": "İlgili Kelime",
@@ -218,7 +225,9 @@
         "compound": "Bileşik",
         "seeAlso": "Ayrıca Bakınız",
         "turkishEquivalent": "Türkçe Karşılığı",
-        "obsolete": "Eskimiş"
+        "obsolete": "Eskimiş",
+        "selectLabel": "İlişki türü seçin",
+        "placeholder": "Bir ilişki seçin"
       }
     }
   },

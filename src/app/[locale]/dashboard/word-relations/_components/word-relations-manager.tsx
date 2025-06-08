@@ -106,6 +106,7 @@ export default function WordRelationsManager() {
                       relatedWords={relatedWordsQuery.data || []}
                       isLoading={relatedWordsQuery.isLoading}
                       onRelationRemoved={() => relatedWordsQuery.refetch()}
+                      onRelationUpdated={() => relatedWordsQuery.refetch()} // Added this line
                     />
                   </div>
                 </CardBody>

@@ -198,6 +198,10 @@
       "adding": "Adding...",
       "removing": "Removing...",
       "remove": "Remove",
+    "editButton": "Edit",
+    "saveButton": "Save",
+    "cancelButton": "Cancel",
+    "editingButton": "Saving...",
       "errorAddingRelation": "Error adding relation. Please try again.",
       "relatedPhrases": "Related Phrases",
       "addRelatedPhrase": "Add Related Phrase",
@@ -207,7 +211,10 @@
         "relationAddedSuccess": "Relation added successfully!",
         "relationAddedError": "Error adding relation: {error}",
         "relationRemovedSuccess": "Relation removed successfully!",
-        "relationRemovedError": "Error removing relation: {error}"
+        "relationRemovedError": "Failed to remove relation: {error}",
+        "relationTypeUpdateSuccess": "Relation type updated successfully.",
+        "relationTypeUpdateError": "Failed to update relation type: {error}",
+        "selectRelationType": "Please select a relation type."
       },
       "relationTypes": {
         "relatedWord": "Related Word",
@@ -217,7 +224,9 @@
         "compound": "Compound",
         "seeAlso": "See Also",
         "turkishEquivalent": "Turkish Equivalent",
-        "obsolete": "Obsolete"
+        "obsolete": "Obsolete",
+        "selectLabel": "Select relation type",
+        "placeholder": "Choose a relation"
       }
     }
   },
