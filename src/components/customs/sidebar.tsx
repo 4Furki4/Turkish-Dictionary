@@ -1,5 +1,5 @@
 "use client"
-import { HomeIcon, LayoutDashboard, ListTree, StarIcon } from 'lucide-react'
+import { BellIcon, HistoryIcon, HomeIcon, LayoutDashboard, ListTree, StarIcon, UserIcon } from 'lucide-react'
 import React from 'react'
 import { Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from 'next-auth';
@@ -46,17 +46,32 @@ export default function Sidebar(
                                     <ListTree className="h-6 w-6" /> <span className={`text-nowrap`}>{t("Navbar.Word List")}</span>
                                 </NextIntlLink>
                             </li>
+                            <li>
+                                <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={'/announcements'}>
+                                    <BellIcon className="h-6 w-6" /> <span className={`text-nowrap`}>{t("Navbar.Announcements")}</span>
+                                </NextIntlLink>
+                            </li>
                             <Separator />
+                            {session?.user?.id ? (
+                                <li>
+                                    <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={{
+                                        pathname: "/profile/[id]",
+                                        params: { id: session?.user?.id },
+                                    }}>
+                                        <UserIcon className="h-6 w-6" /> <span className={`text-nowrap`}>{t("Navbar.Profile")}</span>
+                                    </NextIntlLink>
+                                </li>
+                            ) : null}
                             <li className='flex'>
                                 <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={'/saved-words'}>
                                     <StarIcon className="h-6 w-6" /> <span className={`text-nowrap`}>{t("Navbar.SavedWords")}</span>
                                 </NextIntlLink>
                             </li>
-                            {/* <li>
-                                <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={'/saved-words'}>
-                                    <HistoryIcon className="h-6 w-6" /> <span className={`text-nowrap`}>Search History</span>
+                            <li>
+                                <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={'/search-history'}>
+                                    <HistoryIcon className="h-6 w-6" /> <span className={`text-nowrap`}>{t("Navbar.SearchHistory")}</span>
                                 </NextIntlLink>
-                            </li> */}
+                            </li>
                             {session?.user?.role === "admin" ? (
                                 <li>
                                     <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
