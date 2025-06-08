@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { api } from "@/src/trpc/react";
-import { Button, Card, CardBody, Spinner, Select, SelectItem } from "@heroui/react"; // Added Select and SelectItem
+import { Button, Card, CardBody, Spinner, Select, SelectItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react"; // Added Select and SelectItem, Modal components
 import { toast } from "sonner";
 
 interface RelatedWord {
@@ -31,6 +31,8 @@ export default function RelatedWordsList({
   const [removingId, setRemovingId] = useState<number | null>(null);
   const [editingRelationId, setEditingRelationId] = useState<number | null>(null);
   const [newRelationTypeForEdit, setNewRelationTypeForEdit] = useState<string>("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [relationToDelete, setRelationToDelete] = useState<RelatedWord | null>(null);
 
   // Mutation to remove a related word
   const removeRelatedWordMutation = api.admin.wordRelations.removeRelatedWord.useMutation({
@@ -62,15 +64,24 @@ export default function RelatedWordsList({
   // Check if update mutation is in progress for a specific ID
   const isUpdateMutationInProgress = (id: number) => updateRelatedWordMutation.status === "pending" && editingRelationId === id;
 
-  // Handle removing a related word
-  const handleRemoveRelation = (relatedWordId: number) => {
-    if (editingRelationId === relatedWordId) setEditingRelationId(null); // Cancel edit if removing same item
-    setRemovingId(relatedWordId);
-    setRemovingId(relatedWordId);
-    removeRelatedWordMutation.mutate({
-      wordId,
-      relatedWordId,
-    });
+  // Handle opening the delete confirmation modal
+  const handleOpenDeleteModal = (relatedItem: RelatedWord) => {
+    if (editingRelationId === relatedItem.id) setEditingRelationId(null);
+    setRelationToDelete(relatedItem);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Handle confirming the removal of a related word
+  const confirmRemoveRelation = () => {
+    if (relationToDelete) {
+      setRemovingId(relationToDelete.id);
+      removeRelatedWordMutation.mutate({
+        wordId,
+        relatedWordId: relationToDelete.id,
+      });
+      setIsDeleteModalOpen(false);
+      setRelationToDelete(null);
+    }
   };
 
   // Get relation type display name
@@ -169,7 +180,7 @@ export default function RelatedWordsList({
     );
   }
 
-  return (
+  return (<>
     <Card>
       <CardBody className="p-0">
         <div className="divide-y">
@@ -240,7 +251,7 @@ export default function RelatedWordsList({
                       {t("editButton", { defaultMessage: "Edit"})}
                     </Button>
                     <Button
-                      onPress={() => handleRemoveRelation(relatedItem.id)}
+                      onPress={() => handleOpenDeleteModal(relatedItem)}
                       isDisabled={isRemoveMutationInProgress(relatedItem.id) || !!editingRelationId} // Disable if any item is being edited
                       color="danger"
                       variant="light"
@@ -260,5 +271,35 @@ export default function RelatedWordsList({
         </div>
       </CardBody>
     </Card>
+      {isDeleteModalOpen && relationToDelete && (
+        <Modal isOpen={isDeleteModalOpen} onOpenChange={() => { setIsDeleteModalOpen(false); setRelationToDelete(null); }}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {t("deleteModal.title")}
+                </ModalHeader>
+                <ModalBody>
+                  <p>
+                    {t("deleteModal.confirmationText", {
+                      wordName: relationToDelete!.name,
+                      relationType: getRelationTypeDisplay(relationToDelete!.relationType),
+                    })}
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="default" variant="light" onPress={() => { setIsDeleteModalOpen(false); setRelationToDelete(null); }}>
+                    {t("deleteModal.cancelButton")}
+                  </Button>
+                  <Button color="danger" onPress={confirmRemoveRelation} isLoading={removeRelatedWordMutation.status === 'pending' && removingId === relationToDelete!.id}>
+                    {t("deleteModal.confirmButton")}
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
+    </>
   );
 }

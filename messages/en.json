@@ -228,6 +228,12 @@
         "obsolete": "Obsolete",
         "selectLabel": "Select relation type",
         "placeholder": "Choose a relation"
+      },
+      "deleteModal": {
+        "title": "Confirm Deletion",
+        "confirmationText": "Are you sure you want to remove the relationship with {wordName} ({relationType})?",
+        "confirmButton": "Delete",
+        "cancelButton": "Cancel"
       }
     }
   },

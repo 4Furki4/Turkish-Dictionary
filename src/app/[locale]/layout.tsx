@@ -91,7 +91,7 @@ export default async function RootLayout({
           /> */}
           <NextIntlClientProvider messages={messages}>
             <Providers>
-              <Wrapper 
+              <Wrapper
                 TitleIntl={t("Title")}
                 HomeIntl={t("Home")}
                 session={session}

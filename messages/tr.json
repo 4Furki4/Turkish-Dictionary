@@ -200,10 +200,10 @@
       "adding": "Ekleniyor...",
       "removing": "Kaldırılıyor...",
       "remove": "Kaldır",
-    "editButton": "Düzenle",
-    "saveButton": "Kaydet",
-    "cancelButton": "İptal",
-    "editingButton": "Kaydediliyor...",
+      "editButton": "Düzenle",
+      "saveButton": "Kaydet",
+      "cancelButton": "İptal",
+      "editingButton": "Kaydediliyor...",
       "errorAddingRelation": "İlişki eklenirken hata oluştu. Lütfen tekrar deneyin.",
       "relatedPhrases": "İlgili Deyimler ve Atasözleri",
       "addRelatedPhrase": "İlgili Deyim/Atasöz Ekle",
@@ -229,6 +229,12 @@
         "obsolete": "Eskimiş",
         "selectLabel": "İlişki türü seçin",
         "placeholder": "Bir ilişki seçin"
+      },
+      "deleteModal": {
+        "title": "Silmeyi Onayla",
+        "confirmationText": "{wordName} ({relationType}) ile olan ilişkiyi kaldırmak istediğinizden emin misiniz?",
+        "confirmButton": "Sil",
+        "cancelButton": "İptal"
       }
     }
   },
