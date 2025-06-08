@@ -74,6 +74,13 @@
     "obsolete": "absolete meaning",
     "turkish_equivalent": "turkish equivalent",
     "see_also": "see also",
+    "relatedWord": "related word",
+    "compoundWord": "compound word",
+    "antonym": "antonym",
+    "synonym": "synonym",
+    "correction": "correction",
+    "seeAlso": "see also",
+    "turkishEquivalent": "Türkçe Karşılığı",
     "NoMeaningsFound": "The word exists but no meaning found."
   },
   "Dashboard": {

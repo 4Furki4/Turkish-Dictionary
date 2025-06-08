@@ -191,7 +191,7 @@ async function seedDatabase() {
                 // `word` is already trimmed from wordsToProcess (due to earlier changes)
                 if (trimmedDetailMadde !== word) {
                     // console.log(`Skipping detail item "${trimmedDetailMadde}" (from API) as it doesn't match main word "${word}" (from list) after trimming.`);
-                    continue; 
+                    continue;
                 }
 
                 await db.transaction(async tx => {
@@ -555,7 +555,7 @@ async function seedDatabase() {
                             compId = id;
                         }
                         await tx.insert(relatedWords)
-                            .values({ wordId, relatedWordId: compId })
+                            .values({ wordId, relatedWordId: compId, relationType: "compoundWord" })
                             .onConflictDoNothing();
                     }
                 });

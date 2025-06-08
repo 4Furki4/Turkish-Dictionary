@@ -43,6 +43,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
       successMessage: t("urlCopiedDescription") || "URL copied to clipboard!"
     });
   };
+  console.log('word_data.relatedWords', word_data.relatedWords)
   return (
     <Card
       ref={cardRef}
@@ -219,7 +220,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                     <div className="space-y-4">
                       <p className="text-fs-1">{t("NavigationWord")}</p>
                       <div className="flex flex-wrap gap-2">
-                        {word_data.relatedWords.map((related) => (
+                        {word_data.relatedWords.filter((related) => related.relation_type !== "relatedWord" && related.relation_type !== "compoundWord").map((related) => (
                           <NextUILink
                             key={related.related_word_id}
                             as={Link}

@@ -71,10 +71,17 @@
     "screenshotProcessing": "Ekran görüntüsü oluşturuluyor...",
     "NoRelatedWordsFound": "İlgili kelime bulunamadı",
     "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
-    "obsolete": "eskimiş anlam",
     "turkish_equivalent": "türkçe karşılığı",
     "see_also": "bakınız",
-    "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı."
+    "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı.",
+    "relatedWord": "İlgili Kelime",
+    "compoundWord": "Bileşik Kelime",
+    "antonym": "Zıt Anlam",
+    "synonym": "Eş Anlam",
+    "correction": "Düzeltme",
+    "seeAlso": "Ayrıca Bakınız",
+    "turkishEquivalent": "Türkçe Karşılığı",
+    "obsolete": "Eskimiş"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
