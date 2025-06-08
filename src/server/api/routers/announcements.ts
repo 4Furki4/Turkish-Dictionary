@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
-import { and, asc, desc, eq, gte, ilike, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, ilike, sql } from "drizzle-orm";
 import { announcements } from "@/db/schema/announcements";
 import { announcementTranslations } from "@/db/schema/announcement_translations";
 
@@ -123,7 +123,7 @@ export const announcementsRouter = createTRPCRouter({
             and(
               eq(announcements.slug, slug),
               eq(announcements.status, "published"),
-              gte(announcements.publishedAt, new Date())
+              lte(announcements.publishedAt, new Date()) // Changed gte to lte here
             )
           )
           .limit(1);

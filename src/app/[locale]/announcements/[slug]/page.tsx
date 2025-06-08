@@ -1,6 +1,9 @@
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { api } from "@/src/trpc/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { appRouter } from "@/src/server/api/root";
+import superjson from "superjson";
+import { db } from "@/db";
 import { Link } from "@/src/i18n/routing";
 import Image from "next/image";
 import { Button, Card, CardBody, CardHeader } from "@heroui/react";
@@ -49,8 +52,16 @@ export async function generateMetadata({
   params
 }: AnnouncementDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
+  setRequestLocale(locale);
+
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: { db, session: null, headers: new Headers() }, // Provide static context with dummy headers
+    transformer: superjson,
+  });
+
   try {
-    const announcement = await api.announcements.getAnnouncementBySlug({
+    const announcement = await helpers.announcements.getAnnouncementBySlug.fetch({
       slug,
       locale: locale as "en" | "tr",
     });
@@ -84,13 +95,22 @@ export default async function AnnouncementDetailPage({
   params
 }: AnnouncementDetailPageProps) {
   const { locale, slug } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Announcements" });
 
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: { db, session: null, headers: new Headers() }, // Provide static context with dummy headers
+    transformer: superjson,
+  });
+
   try {
-    const announcement = await api.announcements.getAnnouncementBySlug({
+    const announcement = await helpers.announcements.getAnnouncementBySlug.fetch({
       slug,
       locale: locale as "en" | "tr",
     });
+    console.log('announcement', announcement)
+    if (!announcement) return notFound(); // Ensure notFound is called if fetch returns null/undefined
 
     return (
       <div className="container mx-auto py-8 px-4">
@@ -165,6 +185,7 @@ export default async function AnnouncementDetailPage({
       </div>
     );
   } catch (error) {
+    console.log('error', error)
     notFound();
   }
 }
