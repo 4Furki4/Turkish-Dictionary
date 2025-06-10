@@ -22,6 +22,8 @@ import {
 import { EntityTypes, Actions, Status } from "@/db/schema/requests";
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import RelatedWordDisplay from "@/src/components/shared/RelatedWordDisplay";
+import DisplayWordBeingModified from "@/src/components/shared/DisplayWordBeingModified";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslations } from "next-intl";
 import {
@@ -35,6 +37,7 @@ import {
   AlertTriangle,
   Clock
 } from "lucide-react";
+import { getDisplayLabelForAction, getDisplayLabelForEntityType, getDisplayLabelForStatus } from "@/src/utils/getDisplayLabels";
 
 export interface RequestDetailProps {
   requestId: number;
@@ -43,7 +46,13 @@ export interface RequestDetailProps {
 type EntityData = Record<string, any>;
 
 export default function RequestDetail({ requestId }: RequestDetailProps) {
+  console.log('[RequestDetail] Props:', requestId);
   const t = useTranslations("Requests");
+  const tDbFieldLabels = useTranslations("DbFieldLabels");
+  const tRelationTypes = useTranslations("RelationTypes"); // Ensuring this is still here from previous steps
+  const tRequestActions = useTranslations("RequestActions");
+  const tEntityTypes = useTranslations("EntityTypes");
+  const tRequestStatuses = useTranslations("RequestStatuses");
   const router = useRouter();
   const [reason, setReason] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -86,6 +95,18 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
     approved: "success",
     rejected: "danger",
   }), []);
+
+  const getDisplayLabelForKey = (key: string): string => {
+    const labelFromDb = tDbFieldLabels(key);
+    // next-intl returns the key if no translation is found for the current locale.
+    // It returns an empty string if the key is missing from the namespace entirely.
+    if (labelFromDb !== key && labelFromDb !== "") {
+      return labelFromDb;
+    }
+    // Default fallback: format the key (e.g., 'view_count' -> 'View count')
+    const formattedKey = key.replace(/_/g, " ");
+    return formattedKey.charAt(0).toUpperCase() + formattedKey.slice(1);
+  };
 
   // Fetch request data
   const { data, isLoading, isError } = api.request.getUserRequest.useQuery({ requestId });
@@ -148,6 +169,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
   }
 
   const request = data.request;
+  console.log('[RequestDetail] Full request object:', request);
   let newData: Record<string, any> = {};
 
   // Extract new data from request
@@ -163,16 +185,17 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
 
   // Get entity data from the API response
   const entityData = data.entityData as EntityData | null;
+  console.log('[RequestDetail] Memoized entityData:', entityData, 'Memoized newData:', newData);
 
   const isPending = request.status === "pending";
-  const isCreateRequest = request.action === "create";
+  const isCreateRequest = data.request.action === "create";
 
   // Helper function to render entity data based on entity type
   const renderEntityData = (data: EntityData) => {
     if (!data) return null;
 
     // Special rendering for word entity type
-    if (request.entityType === "words") {
+    if (data.request.entityType === "words") {
       return (
         <div className="space-y-4">
           <div className="flex flex-col items-start gap-2 mb-4">
@@ -186,7 +209,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
             ) : null}
             {data.rootId ? (
               <Chip color="primary" size="sm" className="mt-1">
-                Root ID: {String(data.rootId)}
+                {getDisplayLabelForKey("rootId")}: {String(data.rootId)}
               </Chip>
             ) : null}
           </div>
@@ -197,7 +220,13 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
             .filter(([key]) => !["id", "name", "phonetic", "rootId", "prefix", "suffix", "created_at", "updated_at"].includes(key))
             .map(([key, value]) => (
               <div key={key} className="py-2">
-                <div className="text-sm text-default-500 capitalize">{key.replace(/_/g, ' ')}</div>
+                <div className="text-sm text-default-500 capitalize">{
+                  key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                    key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                      key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                        key === "reason" ? t("details.reason") :
+                          getDisplayLabelForKey(key)
+                }</div>
                 <div className="font-medium">{String(value)}</div>
               </div>
             ))}
@@ -206,7 +235,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
     }
 
     // Special rendering for meaning entity type
-    if (request.entityType === "meanings") {
+    if (data.request.entityType === "meanings") {
       return (
         <div className="space-y-4">
           <div className="flex flex-col gap-2">
@@ -215,7 +244,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               <div>
                 {data.partOfSpeechId && (
                   <Chip size="sm" color="secondary" className="mb-2">
-                    Part of Speech ID: {data.partOfSpeechId}
+                    {getDisplayLabelForKey("partOfSpeechId")}: {data.partOfSpeechId}
                   </Chip>
                 )}
                 <p className="text-lg font-medium">{data.meaning}</p>
@@ -223,7 +252,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
             </div>
             {data.imageUrl && (
               <div className="mt-2">
-                <div className="text-sm text-default-500">Image URL</div>
+                <div className="text-sm text-default-500">{getDisplayLabelForKey("imageUrl")}</div>
                 <div className="font-medium text-primary">{data.imageUrl}</div>
               </div>
             )}
@@ -233,12 +262,34 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
 
           {Object.entries(data)
             .filter(([key]) => !["id", "meaning", "partOfSpeechId", "imageUrl", "wordId"].includes(key))
-            .map(([key, value]) => (
-              <div key={key} className="py-2">
-                <div className="text-sm text-default-500 capitalize">{key.replace(/_/g, ' ')}</div>
-                <div className="font-medium">{String(value)}</div>
-              </div>
-            ))}
+            .map(([key, value]) => {
+              console.log('[renderEntityData - meanings] Processing key:', key, 'Value:', value, 'Is relatedWordId?', key === 'relatedWordId');
+              return (
+                <div key={key} className="py-2">
+                  <div className="text-sm text-default-500 capitalize">{
+                    key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                      key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                        key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                          key === "reason" ? t("details.reason") :
+                            getDisplayLabelForKey(key)
+                  }</div>
+                  <div className="font-medium">{
+                    key === "relatedWordId" && value !== null && value !== undefined ? (
+                      <RelatedWordDisplay relatedWordId={String(value)} />
+                    ) : (key === "newRelationType" || key === "originalRelationType") && value !== null && value !== undefined ? (
+                      tRelationTypes(String(value))
+                    ) : value === null || value === undefined ? (
+                      t("details.empty")
+                    ) : typeof value === "object" ? (
+                      JSON.stringify(value, null, 2)
+                    ) : (
+                      String(value)
+                    )
+                  }</div>
+                </div>
+              )
+            })
+          }
         </div>
       );
     }
@@ -249,7 +300,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
         {Object.entries(data)
           .filter(([key]) => !["id", "created_at", "updated_at"].includes(key))
           .map(([key, value]) => {
-            const hasChanged = request.action === "update" && newData && newData[key] !== undefined;
+            console.log('[renderEntityData - default] Processing key:', key, 'Value:', value, 'Is relatedWordId?', key === 'relatedWordId');
+            const hasChanged = data.request.action === "update" && newData && newData[key] !== undefined;
             return (
               <div
                 key={key}
@@ -258,12 +310,26 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                   : 'border-l-4 border-default'
                   }`}
               >
-                <div className="text-sm text-default-500 capitalize">{key.replace(/_/g, ' ')}</div>
-                <div className="font-medium">
-                  {typeof value === "object"
-                    ? JSON.stringify(value, null, 2)
-                    : String(value)}
-                </div>
+                <div className="text-sm text-default-500 capitalize">{
+                  key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                    key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                      key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                        key === "reason" ? t("details.reason") :
+                          getDisplayLabelForKey(key)
+                }</div>
+                <div className="font-medium">{
+                  key === "relatedWordId" && value !== null && value !== undefined ? (
+                    <RelatedWordDisplay relatedWordId={String(value)} />
+                  ) : (key === "newRelationType" || key === "originalRelationType") && value !== null && value !== undefined ? (
+                    tRelationTypes(String(value))
+                  ) : value === null || value === undefined ? (
+                    t("details.empty")
+                  ) : typeof value === "object" ? (
+                    JSON.stringify(value, null, 2)
+                  ) : (
+                    String(value)
+                  )
+                }</div>
                 {hasChanged && (
                   <div className="mt-2 pt-2 border-t border-dashed border-warning-400 dark:border-warning-700">
                     <div className="flex items-center gap-2">
@@ -284,7 +350,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
     if (!data || Object.keys(data).length === 0) return null;
 
     // Special rendering for word entity type
-    if (request.entityType === "words") {
+    if (data.request.entityType === "words") {
       return (
         <div className="space-y-4">
           <div className="flex flex-col items-start gap-2 mb-4">
@@ -298,7 +364,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
             ) : null}
             {data.rootId ? (
               <Chip color="primary" size="sm" className="mt-1">
-                Root ID: {String(data.rootId)}
+                {getDisplayLabelForKey("rootId")}: {String(data.rootId)}
               </Chip>
             ) : null}
           </div>
@@ -311,8 +377,26 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               const isUpdate = !isCreateRequest && entityData && key in entityData;
               return (
                 <div key={key} className="py-2">
-                  <div className="text-sm text-default-500 capitalize">{key.replace(/_/g, ' ')}</div>
-                  <div className="font-medium">{value ? String(value) : <em className="text-default-500">{t("details.empty")}</em>}</div>
+                  <div className="text-sm text-default-500 capitalize">{
+                    key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                      key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                        key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                          key === "reason" ? t("details.reason") :
+                            getDisplayLabelForKey(key)
+                  }</div>
+                  <div className="font-medium">{
+                    key === "relatedWordId" && value !== null && value !== undefined ? (
+                      <RelatedWordDisplay relatedWordId={String(value)} />
+                    ) : (key === "newRelationType" || key === "originalRelationType") && value !== null && value !== undefined ? (
+                      tRelationTypes(String(value))
+                    ) : value === null || value === undefined ? (
+                      <em className="text-default-500">{t("details.empty")}</em>
+                    ) : typeof value === "object" ? (
+                      JSON.stringify(value, null, 2)
+                    ) : (
+                      String(value)
+                    )
+                  }</div>
                   {isUpdate && (
                     <div className="mt-1">
                       <span className="flex items-center gap-1 text-xs text-default-500">
@@ -329,7 +413,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
     }
 
     // Special rendering for meaning entity type
-    if (request.entityType === "meanings") {
+    if (data.request.entityType === "meanings") {
       return (
         <div className="space-y-4">
           <div className="flex flex-col gap-2">
@@ -338,7 +422,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               <div>
                 {data.partOfSpeechId && (
                   <Chip size="sm" color="success" className="mb-2">
-                    Part of Speech ID: {data.partOfSpeechId}
+                    {getDisplayLabelForKey("partOfSpeechId")}: {data.partOfSpeechId}
                   </Chip>
                 )}
                 <p className="text-lg font-medium">{data.meaning}</p>
@@ -346,7 +430,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
             </div>
             {data.imageUrl && (
               <div className="mt-2">
-                <div className="text-sm text-default-500">Image URL</div>
+                <div className="text-sm text-default-500">{getDisplayLabelForKey("imageUrl")}</div>
                 <div className="font-medium text-success">{data.imageUrl}</div>
               </div>
             )}
@@ -360,8 +444,26 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               const isUpdate = !isCreateRequest && entityData && key in entityData;
               return (
                 <div key={key} className="py-2">
-                  <div className="text-sm text-default-500 capitalize">{key.replace(/_/g, ' ')}</div>
-                  <div className="font-medium">{value ? String(value) : <em className="text-default-500">{t("details.empty")}</em>}</div>
+                  <div className="text-sm text-default-500 capitalize">{
+                    key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                      key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                        key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                          key === "reason" ? t("details.reason") :
+                            getDisplayLabelForKey(key)
+                  }</div>
+                  <div className="font-medium">{
+                    key === "relatedWordId" && value !== null && value !== undefined ? (
+                      <RelatedWordDisplay relatedWordId={String(value)} />
+                    ) : (key === "newRelationType" || key === "originalRelationType") && value !== null && value !== undefined ? (
+                      tRelationTypes(String(value))
+                    ) : value === null || value === undefined ? (
+                      <em className="text-default-500">{t("details.empty")}</em>
+                    ) : typeof value === "object" ? (
+                      JSON.stringify(value, null, 2)
+                    ) : (
+                      String(value)
+                    )
+                  }</div>
                   {isUpdate && (
                     <div className="mt-1">
                       <span className="flex items-center gap-1 text-xs text-default-500">
@@ -389,7 +491,13 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                 ? 'border-success bg-success-100'
                 : 'border-success bg-success-100'}`}
             >
-              <div className="text-sm text-default-500 capitalize">{key.replace(/_/g, ' ')}</div>
+              <div className="text-sm text-default-500 capitalize">{
+                key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                  key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                    key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                      key === "reason" ? t("details.reason") :
+                        getDisplayLabelForKey(key)
+              }</div>
               <div className="font-medium">
                 {value ? String(value) : <em className="text-default-500">{t("details.empty")}</em>}
               </div>
@@ -426,16 +534,23 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <h2 className="text-2xl font-semibold text-foreground">
-                {entityTypeLabels[request.entityType]} {t("details.request")}
-                {request.entityId ? ` #${request.entityId}` : ""}
+                {t("request")}{` #${request.id}: ${getDisplayLabelForEntityType(request.entityType, tEntityTypes)} - ${getDisplayLabelForAction(request.action, tRequestActions)}`}
               </h2>
-              <div className="text-sm text-default-500 flex items-center gap-1">
+              {request.entityType === "words" && (request.action === "update" || request.action === "delete") && request.entityId && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-sm text-default-600">{t("details.modifyingWordLabel")}:</span>
+                  <DisplayWordBeingModified wordId={request.entityId} />
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="text-default-500 flex items-center gap-1">
                 <Clock className="h-4 w-4" />
                 {request.requestDate
                   ? formatDistanceToNow(new Date(request.requestDate), {
                     addSuffix: true,
                   })
-                  : "Unknown"}
+                  : t("details.unknownDate")}
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Chip
@@ -446,7 +561,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                     content: "font-medium"
                   }}
                 >
-                  {statusLabels[request.status]}
+                  {getDisplayLabelForStatus(request.status, tRequestStatuses)}
                 </Chip>
                 <Chip
                   color={actionColors[request.action]}
@@ -456,7 +571,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                     content: "font-medium"
                   }}
                 >
-                  {actionLabels[request.action]}
+                  {getDisplayLabelForAction(request.action, tRequestActions)}
                 </Chip>
               </div>
             </div>
@@ -473,8 +588,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
           )}
 
           {/* Main Content */}
-          {request.action === "delete" ? (
-            <div className="rounded-lg border border-danger p-5 bg-danger-100">
+          {data.request.action === "delete" ? (
+            <div className="rounded-lg border border-danger bg-danger-100 p-5">
               <div className="mb-3 flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 text-danger" />
                 <h3 className="text-lg font-medium text-danger">{t("details.deletionRequest")}</h3>
@@ -482,8 +597,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               <p className="text-danger mb-4">{t("details.deletionWarning")}</p>
 
               {entityData && (
-                <div className="mt-4 p-4 border border-dashed border-danger rounded-lg">
-                  <h4 className="text-md font-medium mb-3 text-danger">Data to be deleted:</h4>
+                <div className="mt-4 rounded-lg border border-dashed border-danger p-4">
+                  <h4 className="text-md mb-3 font-medium text-danger">{t("details.dataToBeDeleted")}</h4>
                   {renderEntityData(entityData)}
                 </div>
               )}
@@ -496,6 +611,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               color="primary"
               variant="light"
             >
+              {/* Current Data Tab */}
               {!isCreateRequest && entityData && (
                 <Tab
                   key="current"
@@ -506,85 +622,136 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                     </div>
                   }
                 >
-                  <div className="mt-6 p-4 border border-default rounded-lg bg-default-100">
-                    {Object.entries(entityData).map(([key, value]) => {
-                      // Skip these fields
-                      if (
-                        ["id", "createdAt", "updatedAt", "userId"].includes(key)
-                      ) {
-                        return null;
-                      }
-
-                      // Check if this field will be changed
-                      const hasChanged =
-                        newData && key in newData && newData[key] !== value;
-
-                      return (
-                        <div key={key} className="border-b border-default py-3 last:border-0">
-                          <div className="flex flex-col">
-                            <div className="flex justify-between">
-                              <span className="font-medium capitalize">
-                                {key.replace(/_/g, " ")}:
-                              </span>
-                              <span>
-                                {value === null || value === undefined
-                                  ? t("details.empty")
-                                  : typeof value === "object"
-                                    ? JSON.stringify(value)
-                                    : String(value)}
-                              </span>
+                  <div className="mt-6 rounded-lg border border-default bg-default-100 p-4">
+                    {Object.entries(entityData)
+                      .filter(([key]) => !["id", "createdAt", "updatedAt", "userId"].includes(key))
+                      .map(([key, value]) => {
+                        const hasChanged = newData && key in newData && newData[key] !== value;
+                        return (
+                          <div
+                            key={`current-${key}`}
+                            className={`border-b border-default py-3 last:border-0 ${hasChanged ? "bg-warning-50" : ""
+                              }`}
+                          >
+                            <div className="flex flex-col">
+                              <div className="flex justify-between">
+                                <span className="font-medium">
+                                  {getDisplayLabelForKey(key)}:
+                                </span>
+                                <span>
+                                  {value === null || value === undefined
+                                    ? t("details.empty")
+                                    : typeof value === "object"
+                                      ? JSON.stringify(value)
+                                      : String(value)}
+                                </span>
+                              </div>
+                              {hasChanged && newData && (
+                                <div className="mt-1 text-xs text-warning-600">
+                                  {t("details.willChangeTo")}:{" "}
+                                  {newData[key] === null || newData[key] === undefined
+                                    ? t("details.empty")
+                                    : typeof newData[key] === "object"
+                                      ? JSON.stringify(newData[key])
+                                      : String(newData[key])}
+                                </div>
+                              )}
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </Tab>
               )}
 
+              {/* New Data / Changes Tab */}
               <Tab
                 key="changes"
                 title={
                   <div className="flex items-center gap-2">
-                    {isCreateRequest ? <Plus className="h-4 w-4" /> : <PenSquare className="h-4 w-4" />}
-                    <span>{isCreateRequest ? t("details.newData") : t("details.changes")}</span>
+                    {isCreateRequest ? (
+                      <Plus className="h-4 w-4" />
+                    ) : (
+                      <PenSquare className="h-4 w-4" />
+                    )}
+                    <span>
+                      {isCreateRequest
+                        ? t("details.newData")
+                        : t("details.changes")}
+                    </span>
                   </div>
                 }
               >
-                <div className={`mt-6 p-4 border rounded-lg border-success bg-success-100`}>
-                  {Object.entries(newData).map(([key, value]) => {
-                    // Skip these fields
-                    if (
-                      ["id", "createdAt", "updatedAt", "userId"].includes(key)
-                    ) {
-                      return null;
-                    }
-
-                    const isUpdate =
-                      entityData && key in entityData && entityData[key] !== value;
-
-                    return (
-                      <div key={key} className="border-b border-default py-3 last:border-0">
-                        <div className="flex flex-col">
-                          <div className="flex justify-between">
-                            <span className="font-medium capitalize">
-                              {key.replace(/_/g, " ")}:
-                            </span>
-                            <span className="text-success-600 font-medium">
-                              {value === null || value === undefined
-                                ? t("details.empty")
-                                : typeof value === "object"
-                                  ? JSON.stringify(value)
-                                  : String(value)}
-                            </span>
+                <div
+                  className={`mt-6 rounded-lg border p-4 ${isCreateRequest
+                    ? "border-success bg-success-100"
+                    : "border-warning bg-warning-100"
+                    }`}
+                >
+                  {Object.entries(newData)
+                    .filter(([key]) => !["id", "createdAt", "updatedAt", "userId"].includes(key))
+                    .map(([key, value]) => {
+                      const isUpdate =
+                        !isCreateRequest &&
+                        entityData &&
+                        key in entityData &&
+                        entityData[key] !== value;
+                      return (
+                        <div
+                          key={`changes-${key}`}
+                          className="border-b border-default py-3 last:border-0"
+                        >
+                          <div className="flex flex-col">
+                            <div className="flex justify-between">
+                              <span className="font-medium">
+                                {
+                                  key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                                  key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                                  key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                                  key === "reason" ? t("details.reason") :
+                                  getDisplayLabelForKey(key)
+                                }:
+                              </span>
+                              <span
+                                className={`${isCreateRequest ? "text-success-700" : "text-warning-700"} font-medium`}
+                              >
+                                {
+                                  key === "relatedWordId" && value !== null && value !== undefined ? (
+                                    <RelatedWordDisplay relatedWordId={String(value)} />
+                                  ) : (key === "newRelationType" || key === "originalRelationType") && value !== null && value !== undefined ? (
+                                    tRelationTypes(String(value))
+                                  ) : value === null || value === undefined ? (
+                                    t("details.empty")
+                                  ) : typeof value === "object" ? (
+                                    JSON.stringify(value, null, 2)
+                                  ) : (
+                                    String(value)
+                                  )
+                                }
+                              </span>
+                            </div>
+                            {isUpdate && entityData && (
+                              <div className="mt-1 text-xs text-default-500">
+                                <span className="flex items-center gap-1">
+                                  <ArrowUp className="h-3 w-3" />
+                                  {t("details.updateFrom")}:{" "}
+                                  {entityData[key] === null ||
+                                    entityData[key] === undefined
+                                    ? t("details.empty")
+                                    : typeof entityData[key] === "object"
+                                      ? JSON.stringify(entityData[key])
+                                      : String(entityData[key])}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </Tab>
 
+              {/* Side-by-Side Comparison Tab */}
               <Tab
                 key="comparison"
                 title={
@@ -595,121 +762,75 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                 }
                 isDisabled={isCreateRequest || !entityData}
               >
-                <div className="mt-6 grid gap-4 md:grid-cols-2">
-                  <div className="p-4 border border-default rounded-lg bg-default-100">
-                    <h3 className="text-lg font-medium mb-4 border-b pb-2">{t("details.currentData")}</h3>
-                    {Object.keys({ ...entityData, ...newData }).map((key) => {
-                      // Skip these fields
-                      if (
-                        ["id", "createdAt", "updatedAt", "userId"].includes(key)
-                      ) {
-                        return null;
-                      }
-
-                      const currentValue = entityData && key in entityData ? entityData[key] : undefined;
-                      const newValue = key in newData ? newData[key] : undefined;
-                      const isUpdate = entityData && key in entityData && key in newData && currentValue !== newValue;
-                      const isNew = !(entityData && key in entityData) && key in newData;
-                      const isDeleted = entityData && key in entityData && !(key in newData);
-
-                      // Skip if no change
-                      if (currentValue === newValue && !isNew && !isDeleted) {
-                        return null;
-                      }
-
-                      return (
-                        <div key={key} className="border-b border-default py-3 last:border-0">
-                          <div className="flex flex-col">
-                            <div className="flex justify-between">
-                              <span className="font-medium capitalize">
-                                {key.replace(/_/g, " ")}:
-                              </span>
-                              <div className="flex flex-col items-end">
-                                <span className="text-success-600 font-medium">
-                                  {newValue === null || newValue === undefined
-                                    ? t("details.empty")
-                                    : typeof newValue === "object"
-                                      ? JSON.stringify(newValue)
-                                      : String(newValue)}
-                                </span>
-                                {isUpdate && (
-                                  <div className="mt-1">
-                                    <span className="flex items-center gap-1 text-xs text-default-500">
-                                      <ArrowUp className="h-3 w-3" />
-                                      {t("details.updateFrom")}: {entityData && key in entityData ? (
-                                        currentValue === null || currentValue === undefined
-                                          ? t("details.empty")
-                                          : typeof currentValue === "object"
-                                            ? JSON.stringify(currentValue)
-                                            : String(currentValue)
-                                      ) : ''}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                <div className="mt-6 grid gap-6 md:grid-cols-2">
+                  {/* Current Data Side */}
+                  <div className="rounded-lg border border-default bg-default-100 p-4">
+                    <h3 className="mb-4 border-b border-default pb-2 text-lg font-medium">
+                      {t("details.currentData")}
+                    </h3>
+                    <div className="space-y-3">
+                      {entityData && Object.entries(entityData)
+                        .filter(([key]) => !["id", "createdAt", "updatedAt", "userId"].includes(key))
+                        .map(([key, value]) => (
+                          <div key={`comparison-current-${key}`} className="flex flex-col">
+                            <span className="text-sm font-semibold text-default-700">
+                              {key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                                key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                                  key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                                    key === "reason" ? t("details.reason") :
+                                      getDisplayLabelForKey(key)}:
+                            </span>
+                            <span className="text-default-600">
+                              {key === "relatedWordId" && value !== null && value !== undefined ? (
+                                <RelatedWordDisplay relatedWordId={String(value)} />
+                              ) : (key === "newRelationType" || key === "originalRelationType") && value !== null && value !== undefined ? (
+                                tRelationTypes(String(value))
+                              ) : value === null || value === undefined ? (
+                                t("details.empty")
+                              ) : typeof value === "object" ? (
+                                JSON.stringify(value)
+                              ) : (
+                                String(value)
+                              )}
+                            </span>
                           </div>
-                        </div>
-                      );
-                    })}
+                        ))}
+                    </div>
                   </div>
 
-                  <div className="p-4 border rounded-lg border-success bg-success-100">
-                    <h3 className="text-lg font-medium mb-4 border-b pb-2">{t("details.changes")}</h3>
-                    {Object.keys({ ...entityData, ...newData }).map((key) => {
-                      // Skip these fields
-                      if (
-                        ["id", "createdAt", "updatedAt", "userId"].includes(key)
-                      ) {
-                        return null;
-                      }
-
-                      const currentValue = entityData && key in entityData ? entityData[key] : undefined;
-                      const newValue = key in newData ? newData[key] : undefined;
-                      const isUpdate = entityData && key in entityData && key in newData && currentValue !== newValue;
-                      const isNew = !(entityData && key in entityData) && key in newData;
-                      const isDeleted = entityData && key in entityData && !(key in newData);
-
-                      // Skip if no change
-                      if (currentValue === newValue && !isNew && !isDeleted) {
-                        return null;
-                      }
-
-                      return (
-                        <div key={key} className="border-b border-default py-3 last:border-0">
-                          <div className="flex flex-col">
-                            <div className="flex justify-between">
-                              <span className="font-medium capitalize">
-                                {key.replace(/_/g, " ")}:
-                              </span>
-                              <div className="flex flex-col items-end">
-                                <span className="text-success-600 font-medium">
-                                  {newValue === null || newValue === undefined
-                                    ? t("details.empty")
-                                    : typeof newValue === "object"
-                                      ? JSON.stringify(newValue)
-                                      : String(newValue)}
-                                </span>
-                                {isUpdate && (
-                                  <div className="mt-1">
-                                    <span className="flex items-center gap-1 text-xs text-default-500">
-                                      <ArrowUp className="h-3 w-3" />
-                                      {t("details.updateFrom")}: {entityData && key in entityData ? (
-                                        currentValue === null || currentValue === undefined
-                                          ? t("details.empty")
-                                          : typeof currentValue === "object"
-                                            ? JSON.stringify(currentValue)
-                                            : String(currentValue)
-                                      ) : ''}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                  {/* New Data Side */}
+                  <div className={`rounded-lg border p-4 ${isCreateRequest ? "border-success bg-success-100" : "border-warning bg-warning-100"}`}>
+                    <h3 className={`mb-4 border-b pb-2 text-lg font-medium ${isCreateRequest ? "border-success text-success-700" : "border-warning text-warning-700"}`}>
+                      {isCreateRequest ? t("details.newData") : t("details.proposedChanges")}
+                    </h3>
+                    <div className="space-y-3">
+                      {Object.entries(newData)
+                        .filter(([key]) => !["id", "createdAt", "updatedAt", "userId"].includes(key))
+                        .map(([key, value]) => (
+                          <div key={`comparison-new-${key}`} className="flex flex-col">
+                            <span className={`text-sm font-semibold ${isCreateRequest ? "text-success-700" : "text-warning-700"}`}>
+                              {key === "relatedWordId" ? t("details.relatedWordIdLabel") :
+                                key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                                  key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                                    key === "reason" ? t("details.reason") :
+                                      getDisplayLabelForKey(key)}:
+                            </span>
+                            <span className={`${isCreateRequest ? "text-success-600" : "text-warning-600"}`}>
+                              {key === "relatedWordId" && value !== null && value !== undefined ? (
+                                <RelatedWordDisplay relatedWordId={String(value)} />
+                              ) : (key === "newRelationType" || key === "originalRelationType") && value !== null && value !== undefined ? (
+                                tRelationTypes(String(value))
+                              ) : value === null || value === undefined ? (
+                                t("details.empty")
+                              ) : typeof value === "object" ? (
+                                JSON.stringify(value)
+                              ) : (
+                                String(value)
+                              )}
+                            </span>
                           </div>
-                        </div>
-                      );
-                    })}
+                        ))}
+                    </div>
                   </div>
                 </div>
               </Tab>
@@ -732,7 +853,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                   </Button>
                   <Button
                     color="danger"
-                    onPress={onOpen}
+                    onPress={onOpen} // Opens modal for cancel confirmation
                   >
                     {t("buttons.cancelRequest")}
                   </Button>
@@ -748,7 +869,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                   </Button>
                   <Button
                     color="primary"
-                    onPress={onOpen}
+                    onPress={onOpen} // Opens modal for save changes confirmation
                   >
                     {t("buttons.saveChanges")}
                   </Button>
@@ -762,65 +883,47 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
       {/* Modal for cancel confirmation or edit updates */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            {isEditing ? t("buttons.updateRequest") : t("buttons.cancelRequest")}
-          </ModalHeader>
-          <ModalBody>
-            {isEditing ? (
-              <div className="space-y-4">
-                <p>{t("messages.updateRequest")}</p>
-
-                {/* This is a simplified version. In a real app, you'd create 
-                    different form fields based on entity type and action */}
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {Object.entries(newData).map(([key, value]) => (
-                    <div key={key} className="space-y-2">
-                      <label htmlFor={key} className="block text-sm font-medium">
-                        {key}:
-                      </label>
-                      <input
-                        id={key}
-                        type="text"
-                        className="w-full rounded-md border border-default p-2 focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary bg-content1"
-                        value={editedData[key] !== undefined
-                          ? String(editedData[key])
-                          : String(value)}
-                        onChange={(e) => handleEditData(key, e.target.value)}
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="reason" className="block text-sm font-medium">
-                    {t("messages.reasonLabel")}
-                  </label>
-                  <Textarea
-                    id="reason"
-                    value={reason || data?.request.reason || ""}
-                    onChange={(e) => setReason(e.target.value)}
-                    placeholder={t("messages.reasonPlaceholder")}
-                    className="w-full rounded-md focus:border-primary"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="border border-danger rounded-lg p-4 bg-danger-100">
-                <p className="text-danger">{t("messages.cancelConfirmation")}</p>
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="default" variant="flat" onPress={onClose}>
-              {isEditing ? t("buttons.cancel") : t("buttons.keepRequest")}
-            </Button>
-            <Button
-              color={isEditing ? "primary" : "danger"}
-              onPress={isEditing ? handleUpdateRequest : handleCancelRequest}
-            >
-              {isEditing ? t("buttons.updateRequest") : t("buttons.confirmCancel")}
-            </Button>
-          </ModalFooter>
+          {(modalClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {isEditing ? t("details.updateRequestModalTitle") : t("details.cancelRequestModalTitle")}
+              </ModalHeader>
+              <ModalBody>
+                {isEditing ? (
+                  <>
+                    <p>{t("prompts.confirmUpdateRequest")}</p>
+                    <Textarea
+                      label={t("inputs.reasonForChangeLabel")}
+                      placeholder={t("inputs.reasonForChangePlaceholder")}
+                      value={reason}
+                      onValueChange={setReason}
+                      className="mt-4"
+                    />
+                  </>
+                ) : (
+                  <p>{t("prompts.confirmCancelRequest")}</p>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button color="default" variant="flat" onPress={modalClose}>
+                  {t("buttons.close")}
+                </Button>
+                <Button
+                  color={isEditing ? "primary" : "danger"}
+                  onPress={() => {
+                    if (isEditing) {
+                      handleUpdateRequest();
+                    } else {
+                      handleCancelRequest();
+                    }
+                    modalClose(); // Close modal after action
+                  }}
+                >
+                  {isEditing ? t("buttons.confirmUpdate") : t("buttons.confirmCancel")}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
         </ModalContent>
       </Modal>
     </div>

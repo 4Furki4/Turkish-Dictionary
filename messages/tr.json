@@ -75,7 +75,6 @@
     "turkish_equivalent": "türkçe karşılığı",
     "see_also": "bakınız",
     "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı.",
-    "compoundWord": "Bileşik Kelime",
     "antonym": "Zıt Anlam",
     "synonym": "Eş Anlam",
     "correction": "Düzeltme",
@@ -360,6 +359,7 @@
     "turkishEquivalent": "Türkçe Karşılığı"
   },
   "Requests": {
+    "request": "İstek",
     "myRequests": "İsteklerim",
     "SuggestEditForRelatedWord": "İlgili kelime için düzenleme öner: {relatedWordName}",
     "SuggestDeletionForRelatedWord": "İlgili kelime için silme öner: {relatedWordName}",
@@ -423,6 +423,8 @@
       "itemsPerPage": "Sayfa başına öğe"
     },
     "details": {
+      "modifyingWordLabel": "Değiştirilen Kelime",
+      "proposedChanges": "İstenilen değişiklikler",
       "requestInfo": "İstek Bilgileri",
       "entityType": "Tür:",
       "action": "İşlem:",
@@ -435,7 +437,15 @@
       "noReason": "Neden belirtilmedi",
       "request": "İstek:",
       "empty": "Boş",
-      "updateFrom": "Güncellenecek değer"
+      "updateFrom": "Güncellenecek değer",
+      "unknownDate": "Bilinmeyen tarih",
+      "relatedWordIdLabel": "İlgili Kelime ID",
+      "newRelationTypeLabel": "Yeni İlişki Türü",
+      "originalRelationTypeLabel": "Orijinal İlişki Türü",
+      "loadingWordName": "Kelime yükleniyor...",
+      "errorLoadingWordName": "Kelime yüklenirken hata oluştu",
+      "wordNameNotFound": "Kelime bulunamadı",
+      "willChangeTo": "Bununla değişecek"
     },
     "RequestedAttributeByYou": "Sizin eklediğiniz özellik",
     "NoChanges": "Değişiklik tespit edilmedi",
@@ -566,5 +576,57 @@
   "Errors": {
     "MustBeLoggedIn": "Bu işlemi gerçekleştirmek için giriş yapmış olmanız gerekir.",
     "OriginalRelationTypeMissing": "Orijinal ilişki türü eksik. Düzenleme isteği gönderilemiyor."
+  },
+  "DbFieldLabels": {
+    "reason": "Değişiklik Nedeni",
+    "name": "Ad",
+    "phonetic": "Fonetik",
+    "rootId": "Kök ID",
+    "createdAt": "Oluşturulma Tarihi",
+    "updatedAt": "Güncellenme Tarihi",
+    "prefix": "Önek",
+    "suffix": "Sonek",
+    "viewCount": "Görülme Sayısı",
+    "variant": "Varyant",
+    "requestType": "İstek Türü",
+    "attribute": "Nitelik",
+    "value": "Değer",
+    "language": "Dil",
+    "partOfSpeech": "Kelime Türü",
+    "meaning": "Anlam",
+    "example": "Örnek",
+    "author": "Yazar",
+    "relatedWordId": "İlgili Kelime",
+    "newRelationType": "Yeni İlişki Türü",
+    "originalRelationType": "Orijinal İlişki Türü",
+    "description": "Açıklama",
+    "wordId": "Kelime ID",
+    "meaningId": "Anlam ID",
+    "exampleId": "Örnek ID",
+    "attributeId": "Nitelik ID",
+    "type": "Tür",
+    "partOfSpeechId": "Kelime Türü ID",
+    "imageUrl": "Resim URL"
+  },
+  "RequestActions": {
+    "create": "Oluştur",
+    "update": "Güncelle",
+    "delete": "Sil"
+  },
+  "EntityTypes": {
+    "words": "Kelime",
+    "meanings": "Anlam",
+    "roots": "Köken",
+    "related_words": "İlgili Kelime",
+    "part_of_speechs": "Kelime Türü",
+    "examples": "Örnek",
+    "authors": "Yazar",
+    "word_attributes": "Kelime Özelliği",
+    "meaning_attributes": "Anlam Özelliği"
+  },
+  "RequestStatuses": {
+    "pending": "Beklemede",
+    "approved": "Onaylandı",
+    "rejected": "Reddedildi"
   }
 }

@@ -74,8 +74,6 @@
     "obsolete": "absolete meaning",
     "turkish_equivalent": "turkish equivalent",
     "see_also": "see also",
-    "relatedWord": "related word",
-    "compoundWord": "compound word",
     "antonym": "antonym",
     "synonym": "synonym",
     "correction": "correction",
@@ -359,6 +357,7 @@
     "turkishEquivalent": "Turkish Equivalent"
   },
   "Requests": {
+    "request": "Request",
     "myRequests": "My Requests",
     "EditRequestTitle": "Edit Request for: {word}",
     "SuggestEditForRelatedWord": "Suggest an edit for related word: {relatedWordName}",
@@ -424,6 +423,8 @@
       "itemsPerPage": "Items per page"
     },
     "details": {
+      "modifyingWordLabel": "Modifying Word Name",
+      "proposedChanges": "Proposed Changes",
       "requestInfo": "Request Information",
       "entityType": "Entity Type:",
       "action": "Action:",
@@ -436,7 +437,15 @@
       "noReason": "No reason provided",
       "request": "Request:",
       "empty": "Empty",
-      "updateFrom": "Updated from"
+      "updateFrom": "Updated from",
+      "unknownDate": "Unknown date",
+      "relatedWordIdLabel": "Related Word ID",
+      "newRelationTypeLabel": "New Relation Type",
+      "originalRelationTypeLabel": "Original Relation Type",
+      "loadingWordName": "Loading Word Name...",
+      "errorLoadingWordName": "Error loading word name",
+      "wordNameNotFound": "Word not found",
+      "willChangeTo": "Will change to"
     },
     "RequestedAttributeByYou": "Requested Attribute by You",
     "NoChanges": "No changes detected",
@@ -563,5 +572,57 @@
   "Errors": {
     "MustBeLoggedIn": "You must be logged in to perform this action.",
     "OriginalRelationTypeMissing": "Original relation type is missing. Cannot submit edit request."
+  },
+  "DbFieldLabels": {
+    "reason": "Reason",
+    "name": "Name",
+    "phonetic": "Phonetic",
+    "rootId": "Root ID",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "prefix": "Prefix",
+    "suffix": "Suffix",
+    "viewCount": "View Count",
+    "variant": "Variant",
+    "requestType": "Request Type",
+    "attribute": "Attribute",
+    "value": "Value",
+    "language": "Language",
+    "partOfSpeech": "Part of Speech",
+    "meaning": "Meaning",
+    "example": "Example",
+    "author": "Author",
+    "relatedWordId": "Related Word",
+    "newRelationType": "New Relation Type",
+    "originalRelationType": "Original Relation Type",
+    "description": "Description",
+    "wordId": "Word ID",
+    "meaningId": "Meaning ID",
+    "exampleId": "Example ID",
+    "attributeId": "Attribute ID",
+    "type": "Type",
+    "partOfSpeechId": "Part of Speech ID",
+    "imageUrl": "Image URL"
+  },
+  "RequestActions": {
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete"
+  },
+  "EntityTypes": {
+    "words": "Word",
+    "meanings": "Meaning",
+    "roots": "Root",
+    "related_words": "Related Word",
+    "part_of_speechs": "Part of Speech",
+    "examples": "Example",
+    "authors": "Author",
+    "word_attributes": "Word Attribute",
+    "meaning_attributes": "Meaning Attribute"
+  },
+  "RequestStatuses": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
   }
 }
