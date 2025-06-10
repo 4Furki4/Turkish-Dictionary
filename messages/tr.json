@@ -534,5 +534,44 @@
     "PopularSearches": {
       "title": "Popüler Aramalar"
     }
+  },
+  "Common": {
+    "anonymousUser": "Anonim Kullanıcı"
+  },
+  "ProfilePage": {
+    "loadingProfileError": "Profil yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "myProfileTitle": "Profilim",
+    "userProfileTitle": "{name} Kişisinin Profili",
+    "usernameLabel": "Kullanıcı Adı",
+    "nameLabel": "Ad Soyad",
+    "emailLabel": "E-posta",
+    "accountDetailsTitle": "Hesap Detayları",
+    "memberSinceLabel": "Üyelik Tarihi",
+    "unknownDate": "Bilinmiyor",
+    "unknownWord": "Bilinmeyen Kelime",
+    "contributionStatsTitle": "Katkı İstatistikleri",
+    "approvedContributionsLabel": "Onaylanan",
+    "pendingContributionsLabel": "Bekleyen",
+    "rejectedContributionsLabel": "Reddedilen",
+    "totalContributionsLabel": "Toplam Onaylanmış Katkı",
+    "savedWordsTitle": "Kaydedilen Kelimeler",
+    "noSavedWords": "Henüz kaydedilmiş kelime yok.",
+    "savedOnLabel": "Kaydedilme Tarihi",
+    "recentContributionsTitle": "Son Katkılar",
+    "noContributions": "Henüz katkı yapılmamış.",
+    "editProfileButton": "Profili Düzenle",
+    "editProfileModal": {
+      "title": "Profili Düzenle",
+      "nameLabel": "Ad Soyad",
+      "namePlaceholder": "Adınızı girin",
+      "usernameLabel": "Kullanıcı Adı",
+      "usernamePlaceholder": "Kullanıcı adınızı girin",
+      "cancel": "İptal",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "updateSuccess": "Profil başarıyla güncellendi.",
+      "updateError": "Profil güncellenirken bir hata oluştu."
+    },
+    "onDateLabel": "Tarihinde",
+    "notSet": "Belirtilmemiş"
   }
 }

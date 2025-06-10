@@ -527,5 +527,44 @@
       "InputError": "Root is required when language specified",
       "LanguageInputError": "Language is required when root specified"
     }
+  },
+  "Common": {
+    "anonymousUser": "Anonymous User"
+  },
+  "ProfilePage": {
+    "loadingProfileError": "Could not load profile. Please try again later.",
+    "myProfileTitle": "My Profile",
+    "userProfileTitle": "{name}'s Profile",
+    "usernameLabel": "Username",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "accountDetailsTitle": "Account Details",
+    "memberSinceLabel": "Member Since",
+    "unknownDate": "Unknown",
+    "unknownWord": "Unknown Word",
+    "contributionStatsTitle": "Contribution Stats",
+    "approvedContributionsLabel": "Approved",
+    "pendingContributionsLabel": "Pending",
+    "rejectedContributionsLabel": "Rejected",
+    "totalContributionsLabel": "Total Approved Contributions",
+    "savedWordsTitle": "Saved Words",
+    "noSavedWords": "No words saved yet.",
+    "savedOnLabel": "Saved on",
+    "recentContributionsTitle": "Recent Contributions",
+    "noContributions": "No contributions yet.",
+    "onDateLabel": "On",
+    "notSet": "Not set",
+    "editProfileButton": "Edit Profile",
+    "editProfileModal": {
+      "title": "Edit Profile",
+      "nameLabel": "Name",
+      "namePlaceholder": "Enter your name",
+      "usernameLabel": "Username",
+      "usernamePlaceholder": "Enter your username",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "updateSuccess": "Profile updated successfully.",
+      "updateError": "Failed to update profile."
+    }
   }
 }

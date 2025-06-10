@@ -7,6 +7,10 @@ import { rolesEnum, users } from "@/db/schema/users";
 import { TRPCError } from "@trpc/server";
 import { userSearchHistory } from "@/db/schema/user_search_history";
 import { words } from "@/db/schema/words";
+import { and, asc } from "drizzle-orm";
+import { meanings } from "@/db/schema/meanings";
+import { examples } from "@/db/schema/examples";
+import { requests as requestsTable, type EntityTypes } from "@/db/schema/requests";
 
 export const userRouter = createTRPCRouter({
   /**
@@ -270,6 +274,150 @@ export const userRouter = createTRPCRouter({
       }
 
       return user;
+    }),
+
+  getPublicProfileData: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    // .output(PublicProfileDataOutput) // Output schema can be added once fully defined and tested
+    .query(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      const { userId: targetUserId } = input;
+      const currentUserId = session?.user?.id;
+      const isOwnProfile = currentUserId === targetUserId;
+
+      // 1. Fetch User Basic Info
+      const userResult = await db
+        .select({
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          image: users.image,
+          ...(isOwnProfile && { email: users.email }),
+        })
+        .from(users)
+        .where(eq(users.id, targetUserId))
+        .limit(1);
+
+      const userProfile = userResult[0];
+
+      if (!userProfile) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+
+      // 2. Fetch Contribution Statistics
+      const approvedRequestsStatsRaw = await db
+        .select({
+          entityType: requestsTable.entityType,
+          count: count(requestsTable.id),
+        })
+        .from(requestsTable)
+        .where(and(eq(requestsTable.userId, targetUserId), eq(requestsTable.status, "approved")))
+        .groupBy(requestsTable.entityType);
+
+      const totalApprovedContributions = approvedRequestsStatsRaw.reduce((sum, stat) => sum + stat.count, 0);
+      const contributionsByType = approvedRequestsStatsRaw.reduce((acc, stat) => {
+        acc[stat.entityType] = stat.count;
+        return acc;
+      }, {} as Record<EntityTypes, number>);
+
+      // 3. Fetch Recent Contributions (last 10 approved)
+      const recentContributionsRaw = await db
+        .select({
+          id: requestsTable.id,
+          entityType: requestsTable.entityType,
+          entityId: requestsTable.entityId,
+          action: requestsTable.action,
+          requestDate: requestsTable.requestDate,
+          newData: requestsTable.newData,
+        })
+        .from(requestsTable)
+        .where(and(eq(requestsTable.userId, targetUserId), eq(requestsTable.status, "approved")))
+        .orderBy(desc(requestsTable.requestDate))
+        .limit(10);
+
+      const recentContributions = await Promise.all(
+        recentContributionsRaw.map(async (req) => {
+          let wordName: string | null = null;
+          if (req.entityId) {
+            if (req.entityType === "words") {
+              const wordData = await db.select({ name: words.name }).from(words).where(eq(words.id, req.entityId)).limit(1);
+              wordName = wordData[0]?.name ?? null;
+            } else if (req.entityType === "related_words") {
+              // Assuming entityId for related_words is the ID of the *source* word of the relation
+              const wordData = await db.select({ name: words.name }).from(words).where(eq(words.id, req.entityId)).limit(1);
+              wordName = wordData[0]?.name ?? null;
+            } else if (req.entityType === "meanings") {
+              const meaningWithWord = await db.select({ wordId: meanings.wordId }).from(meanings).where(eq(meanings.id, req.entityId)).limit(1);
+              if (meaningWithWord[0]?.wordId) {
+                const wordData = await db.select({ name: words.name }).from(words).where(eq(words.id, meaningWithWord[0].wordId)).limit(1);
+                wordName = wordData[0]?.name ?? null;
+              }
+            } else if (req.entityType === "examples") {
+              const exampleWithMeaning = await db.select({ meaningId: examples.meaningId }).from(examples).where(eq(examples.id, req.entityId)).limit(1);
+              if (exampleWithMeaning[0]?.meaningId) {
+                const meaningWithWord = await db.select({ wordId: meanings.wordId }).from(meanings).where(eq(meanings.id, exampleWithMeaning[0].meaningId)).limit(1);
+                if (meaningWithWord[0]?.wordId) {
+                  const wordData = await db.select({ name: words.name }).from(words).where(eq(words.id, meaningWithWord[0].wordId)).limit(1);
+                  wordName = wordData[0]?.name ?? null;
+                }
+              }
+            }
+          }
+          return {
+            ...req,
+            wordName,
+          };
+        })
+      );
+
+      // 4. Fetch Saved Words (Conditional)
+      let userSavedWordsData: any[] = [];
+      if (isOwnProfile) {
+        const savedWordsRaw = await db
+          .select({
+            wordId: savedWords.wordId,
+            wordName: words.name,
+            savedAt: savedWords.createdAt,
+          })
+          .from(savedWords)
+          .innerJoin(words, eq(savedWords.wordId, words.id))
+          .where(eq(savedWords.userId, targetUserId))
+          .orderBy(desc(savedWords.createdAt))
+          .limit(20);
+
+        userSavedWordsData = await Promise.all(
+          savedWordsRaw.map(async (sw) => {
+            const firstMeaningResult = await db
+              .select({ meaning: meanings.meaning })
+              .from(meanings)
+              .where(eq(meanings.wordId, sw.wordId))
+              .orderBy(asc(meanings.order))
+              .limit(1);
+            return {
+              wordId: sw.wordId,
+              wordName: sw.wordName,
+              savedAt: sw.savedAt,
+              firstMeaning: firstMeaningResult[0]?.meaning ?? null,
+            };
+          })
+        );
+      }
+
+      return {
+        ...userProfile,
+        // createdAt from user table is not available in schema, returning null as placeholder
+        createdAt: null, 
+        contributionStats: {
+          totalApproved: totalApprovedContributions,
+          byType: contributionsByType,
+        },
+        recentContributions,
+        savedWords: isOwnProfile ? userSavedWordsData : undefined,
+      };
     }),
 
   updateProfile: protectedProcedure
