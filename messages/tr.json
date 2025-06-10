@@ -569,7 +569,14 @@
       "cancel": "İptal",
       "saveChanges": "Değişiklikleri Kaydet",
       "updateSuccess": "Profil başarıyla güncellendi.",
-      "updateError": "Profil güncellenirken bir hata oluştu."
+      "updateError": "Profil güncellenirken bir hata oluştu.",
+      "fileTooLarge": "Dosya boyutu çok büyük (max {size}MB).",
+      "invalidFileType": "Geçersiz dosya tipi. Lütfen JPG, PNG, GIF veya WEBP resim seçin.",
+      "uploadErrorGeneric": "Resim yüklenemedi. Lütfen tekrar deneyin.",
+      "changePictureButton": "Resmi Değiştir",
+      "removePreviewButton": "Önizlemeyi kaldır",
+      "uploadingButton": "Yükleniyor...",
+      "profilePictureAlt": "Profil resmi önizlemesi"
     },
     "onDateLabel": "Tarihinde",
     "notSet": "Belirtilmemiş"

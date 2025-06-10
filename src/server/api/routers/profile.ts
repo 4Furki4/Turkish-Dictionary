@@ -10,13 +10,14 @@ export const profileRouter = createTRPCRouter({
       z.object({
         name: z.string().min(2, "Name must be at least 2 characters long.").optional(),
         username: z.string().min(3, "Username must be at least 3 characters long.").regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores.").optional(),
+        image: z.string().url("Invalid URL format for image.").optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { name, username } = input;
+      const { name, username, image } = input;
       const userId = ctx.session.user.id;
 
-      if (!name && !username) {
+      if (!name && !username && !image) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "At least one field (name or username) must be provided to update.",
@@ -41,7 +42,7 @@ export const profileRouter = createTRPCRouter({
       }
 
       // Prepare the data for update
-      const updateData: { name?: string; username?: string, updatedAt: Date } = {
+      const updateData: { name?: string; username?: string; image?: string; updatedAt: Date } = {
         updatedAt: new Date(),
       };
       if (name) {
@@ -49,6 +50,9 @@ export const profileRouter = createTRPCRouter({
       }
       if (username) {
         updateData.username = username;
+      }
+      if (image) {
+        updateData.image = image;
       }
 
       // Perform the update

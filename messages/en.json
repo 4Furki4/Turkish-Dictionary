@@ -199,10 +199,10 @@
       "adding": "Adding...",
       "removing": "Removing...",
       "remove": "Remove",
-    "editButton": "Edit",
-    "saveButton": "Save",
-    "cancelButton": "Cancel",
-    "editingButton": "Saving...",
+      "editButton": "Edit",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "editingButton": "Saving...",
       "errorAddingRelation": "Error adding relation. Please try again.",
       "relatedPhrases": "Related Phrases",
       "addRelatedPhrase": "Add Related Phrase",
@@ -564,7 +564,14 @@
       "cancel": "Cancel",
       "saveChanges": "Save Changes",
       "updateSuccess": "Profile updated successfully.",
-      "updateError": "Failed to update profile."
+      "updateError": "Failed to update profile.",
+      "fileTooLarge": "File is too large (max {size}MB).",
+      "invalidFileType": "Invalid file type. Please select a JPG, PNG, GIF, or WEBP image.",
+      "uploadErrorGeneric": "Image upload failed. Please try again.",
+      "changePictureButton": "Change Picture",
+      "removePreviewButton": "Remove Preview",
+      "uploadingButton": "Uploading...",
+      "profilePictureAlt": "Profile picture preview"
     }
   }
 }
