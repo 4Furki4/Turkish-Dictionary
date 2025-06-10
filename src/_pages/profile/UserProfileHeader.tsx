@@ -35,6 +35,7 @@ export function UserProfileHeader({ profileData, locale, isOwnProfile, user }: U
           alt={`${displayName}'s profile picture`}
           isBordered
           size="lg"
+          className="w-24 h-24 flex-shrink-0"
           fallback={<Image src="/images/default-avatar.png" alt="Default Avatar" width={96} height={96} />}
         />
         <div className="flex-grow text-center sm:text-left">
