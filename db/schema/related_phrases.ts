@@ -1,30 +1,35 @@
-import {
-  integer,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { date, integer, pgTable } from "drizzle-orm/pg-core";
 import { words } from "./words";
-import { relations, InferSelectModel, InferInsertModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 
 export const relatedPhrases = pgTable("related_phrases", {
-  id: serial("id").primaryKey(),
-  wordId: integer("word_id")
+  wordId: integer("phrase_id")
     .notNull()
-    .references(() => words.id, { onDelete: "cascade" }),
-  phrase: text("phrase").notNull(),
-  description: text("description"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at"),
+    .references(() => words.id, {
+      onDelete: "cascade",
+    }),
+  relatedPhraseId: integer("related_phrase_id")
+    .notNull()
+    .references(() => words.id, {
+      onDelete: "cascade",
+    }),
+  createdAt: date("created_at").defaultNow(),
+  updatedAt: date("updated_at"),
 });
+export const relatedWordsToWordsRelations = relations(
+  relatedPhrases,
+  ({ one }) => ({
+    word: one(words, {
+      fields: [relatedPhrases.wordId],
+      references: [words.id],
+    }),
+    relatedPhrase: one(words, {
+      fields: [relatedPhrases.relatedPhraseId],
+      references: [words.id],
+    }),
+  })
+);
 
-export const relatedPhrasesRelations = relations(relatedPhrases, ({ one }) => ({
-  word: one(words, {
-    fields: [relatedPhrases.wordId],
-    references: [words.id],
-  }),
-}));
+export type SelectRelatedPhrase = InferSelectModel<typeof relatedPhrases>;
 
-export type RelatedPhrase = InferSelectModel<typeof relatedPhrases>;
-export type NewRelatedPhrase = InferInsertModel<typeof relatedPhrases>;
+export type InsertRelatedPhrase = InferInsertModel<typeof relatedPhrases>;
