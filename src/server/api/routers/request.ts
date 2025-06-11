@@ -10,6 +10,7 @@ import { meanings } from "@/db/schema/meanings";
 import { relatedWords } from "@/db/schema/related_words";
 import { getHandler } from "../handlers/request-handlers/registry";
 import { TRPCError } from "@trpc/server";
+import { relatedPhrases } from "@/db/schema/related_phrases";
 
 export const requestRouter = createTRPCRouter({
     // User request management endpoints
@@ -284,6 +285,107 @@ export const requestRouter = createTRPCRouter({
             });
 
             return { success: true, message: "Related word deletion request submitted." };
+        }),
+
+    requestCreateRelatedWord: protectedProcedure
+        .input(z.object({
+            wordId: z.number(),
+            relatedWordId: z.number(),
+            relationType: z.string(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordId, relatedWordId, relationType, reason } = input;
+
+            const existingRelation = await db.query.relatedWords.findFirst({
+                where: and(
+                    eq(relatedWords.wordId, wordId),
+                    eq(relatedWords.relatedWordId, relatedWordId)
+                )
+            });
+
+            if (existingRelation) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "This related word entry already exists."
+                });
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_words",
+                entityId: wordId,
+                action: "create",
+                newData: {
+                    relatedWordId: relatedWordId,
+                    newRelationType: relationType
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related word creation request submitted." };
+        }),
+
+    requestCreateRelatedPhrase: protectedProcedure
+        .input(z.object({
+            wordId: z.number(),
+            phrase: z.string().min(3),
+            description: z.string().optional(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input: { wordId, phrase, description, reason }, ctx: { db, session: { user } } }) => {
+            const existingPhrase = await db.query.relatedPhrases.findFirst({
+                where: and(
+                    eq(relatedPhrases.wordId, wordId),
+                    eq(relatedPhrases.phrase, phrase)
+                )
+            });
+
+            if (existingPhrase) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "This related phrase already exists for this word."
+                });
+            }
+            
+            const existingRequest = await db.query.requests.findFirst({
+                where: and(
+                    eq(requests.entityType, "related_phrases"),
+                    eq(requests.action, "create"),
+                    eq(requests.status, "pending"),
+                    eq(requests.entityId, wordId),
+                    sql`"newData"->>'phrase' = ${phrase}`
+                )
+            });
+
+            if (existingRequest) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "A request for this related phrase already exists and is pending."
+                });
+            }
+
+            const dataToStore: { phrase: string; description?: string } = {
+                phrase: phrase,
+            };
+            if (description) {
+                dataToStore.description = description;
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_phrases",
+                entityId: wordId,
+                action: "create",
+                newData: dataToStore,
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related phrase creation request submitted." };
         }),
 
     // In src/server/api/routers/params.ts

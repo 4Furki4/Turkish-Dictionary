@@ -7,7 +7,11 @@ export const createWordSchema = z.object({
     audio: z.string().optional(),
     prefix: z.string().optional(),
     suffix: z.string().optional(),
-    relatedWords: z.array(z.string()).optional(),
+    relatedWords: z.array(z.object({
+      related_word_id: z.number(),
+      related_word_name: z.string(),
+      relation_type: z.string().optional(),
+    })).optional(),
     relatedPhrases: z.array(z.string()).optional(),
     phonetics: z.string().optional(),
     meanings: z.array(

@@ -29,16 +29,17 @@ type RelatedWordItemType = NonNullable<WordSearchResult['word_data']['relatedWor
 
 export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
   const { isOpen: isEditRelOpen, onOpen: onEditRelOpen, onClose: onEditRelClose, onOpenChange: onEditRelOpenChange } = useDisclosure();
+  const { isOpen: isCreateRelOpen, onOpen: onCreateRelOpen, onClose: onCreateRelClose, onOpenChange: onCreateRelOpenChange } = useDisclosure();
   const { isOpen: isDeleteRelOpen, onOpen: onDeleteRelOpen, onClose: onDeleteRelClose, onOpenChange: onDeleteRelOpenChange } = useDisclosure();
-  const [selectedRelatedWord, setSelectedRelatedWord] = useState<RelatedWordItemType | null>(null);
+  const [selectedRelatedWord, setSelectedRelatedWord] = useState<{ id: number; related_word_id: number; related_word_name: string; relation_type?: string | undefined; } | null>(null);
 
   const handleEditRelatedWord = (relatedWord: RelatedWordItemType) => {
-    setSelectedRelatedWord(relatedWord);
+    setSelectedRelatedWord({ id: relatedWord.related_word_id, ...relatedWord });
     onEditRelOpen();
   };
 
   const handleDeleteRelatedWord = (relatedWord: RelatedWordItemType) => {
-    setSelectedRelatedWord(relatedWord);
+    setSelectedRelatedWord({ id: relatedWord.related_word_id, ...relatedWord });
     onDeleteRelOpen();
   };
   const { isOpen, onOpenChange } = useDisclosure()
@@ -369,15 +370,45 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                     </Tab>
                     <Tab value={"related_words"} title={tRequests("RelatedWordsTabTitle")}>
                       <RelatedWordsEditTabContent
-                        relatedWords={word_data.relatedWords || []}
-                        onSelectRelatedWord={setSelectedRelatedWord}
-                        onOpenEditModal={onEditRelOpen}
-                        onOpenDeleteModal={onDeleteRelOpen}
+                        relatedWords={word_data.relatedWords?.map(rw => ({
+                          id: rw.related_word_id, 
+                          related_word: {
+                            id: rw.related_word_id,
+                            word: rw.related_word_name,
+                          },
+                          relation_type: rw.relation_type || '',
+                        })) || []}
+                        onOpenEditModal={(relatedWordId, relationType) => {
+                          const wordToEdit = word_data.relatedWords?.find(rw => rw.related_word_id === relatedWordId);
+                          if (wordToEdit) {
+                            setSelectedRelatedWord({
+                              id: wordToEdit.related_word_id,
+                              related_word_id: wordToEdit.related_word_id,
+                              related_word_name: wordToEdit.related_word_name,
+                              relation_type: relationType,
+                            });
+                            onEditRelOpen();
+                          }
+                        }}
+                        onOpenDeleteModal={(relationshipId, relatedWordName) => {
+                          const wordToDelete = word_data.relatedWords?.find(rw => rw.related_word_id === relationshipId);
+                          if (wordToDelete) {
+                            setSelectedRelatedWord({
+                              id: relationshipId,
+                              related_word_id: wordToDelete.related_word_id,
+                              related_word_name: relatedWordName,
+                              relation_type: wordToDelete.relation_type,
+                            });
+                            onDeleteRelOpen();
+                          }
+                        }}
+                        currentWordId={word_data.word_id}
                         session={session}
                       />
                     </Tab>
                     <Tab value={"related_phrases"} title={tRequests("RelatedPhrasesTabTitle")}>
                       <RelatedPhrasesEditTabContent
+                        currentWordId={word_data.word_id}
                         relatedPhrases={word_data.relatedPhrases || []}
                         session={session}
                       // Pass phrase edit/delete handlers when ready

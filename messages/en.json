@@ -69,7 +69,7 @@
     "screenshotFailedDescription": "Failed to copy screenshot to clipboard",
     "screenshotDownloadFallback": "Screenshot copy to clipboard failed, downloading instead.",
     "screenshotProcessing": "Creating screenshot...",
-    "NoRelatedWordsFound": "No related words found",
+    "noRelatedWordsFound": "No related words found",
     "NoRelatedPhrasesFound": "No related phrases found",
     "obsolete": "absolete meaning",
     "turkish_equivalent": "turkish equivalent",
@@ -84,8 +84,21 @@
     "SuggestDeletionForRelatedWord": "Suggest deletion for {relatedWordName}",
     "SuggestEditForRelatedWordHeader": "Suggest Edit for: {relatedWordName}",
     "SuggestDeletionForRelatedWordHeader": "Suggest Deletion for: {relatedWordName}",
+    "SuggestNew": "Suggest New",
+    "SuggestNewPhrase": "Suggest New Phrase",
+    "SuggestNewWord": "Suggest New Word",
     "SubmitRequest": "Submit Request",
-    "RequestDeletion": "Request Deletion"
+    "RequestDeletion": "Request Deletion",
+    "CreateRelatedWordRequestTitle": "Create Related Word Request",
+    "CreateRelatedPhraseRequestTitle": "Suggest New Related Phrase",
+    "SignInToSuggestChanges": "Please sign in to suggest changes.",
+    "RequestSubmittedSuccessfully": "Request submitted successfully!",
+    "RequestSubmissionFailed": "Request submission failed: {error}",
+    "UserNotAuthenticated": "User not authenticated. Please sign in."
+  },
+  "Actions": {
+    "SuggestNewWord": "Suggest New Word",
+    "Cancel": "Cancel"
   },
   "Dashboard": {
     "UnauthorizedMessage": "You are not authorized to view this page, please contact the administrator if you think this is a mistake",
@@ -97,6 +110,7 @@
       "Id": "ID"
     },
     "Actions": {
+    "AddNew": "Add New",
       "Delete": "Delete",
       "Edit": "Edit"
     },
@@ -130,28 +144,24 @@
       "deleteModalTitle": "Delete Announcement",
       "deleteConfirmation": "Are you sure you want to delete the announcement \"{slug}\"? This action cannot be undone.",
       "deleteGenericConfirmation": "Are you sure you want to delete this announcement? This action cannot be undone.",
-      "deleteSuccess": "Announcement deleted successfully",
-      "deleteError": "Failed to delete announcement: {error}",
-      "createSuccess": "Announcement created successfully",
-      "createError": "Failed to create announcement: {error}",
-      "updateSuccess": "Announcement updated successfully",
-      "updateError": "Failed to update announcement: {error}",
-      "announcementNotFound": "Announcement not found",
-      "columns": {
+      "table": {
         "slug": "Slug",
         "status": "Status",
-        "publishedAt": "Published At",
         "createdAt": "Created At",
-        "actions": "Actions"
-      },
-      "statuses": {
-        "all": "All",
-        "draft": "Draft",
+        "actions": "Actions",
         "published": "Published",
+        "draft": "Draft",
         "archived": "Archived"
       },
       "generalInfo": "General Information",
       "form": {
+        "relatedWordLabel": "Related Word",
+        "searchWordPlaceholder": "Search and select a word...",
+        "relationTypeLabel": "Relation Type",
+        "selectRelationTypePlaceholder": "Select relation type...",
+        "reasonLabelOptional": "Reason (Optional)",
+        "reasonPlaceholder": "Enter reason for this request...",
+        "requiredField": "This field is required.",
         "slug": "Slug",
         "slugPlaceholder": "unique-announcement-identifier",
         "status": "Status",
@@ -182,6 +192,7 @@
         "tr": "Turkish"
       }
     },
+
     "WordRelations": {
       "title": "Word Relations Management",
       "description": "Select a word to add or remove related words.",
@@ -356,13 +367,52 @@
     "compoundWord": "Compound Word",
     "turkishEquivalent": "Turkish Equivalent"
   },
+  "Form": {
+    "noWordsFound": "No words found matching your search.",
+    "relatedWordLabel": "Related Word",
+    "searchWordPlaceholder": "Search for a word...",
+    "relationTypeLabel": "Relation Type",
+    "selectRelationTypePlaceholder": "Select relation type...",
+    "reasonLabelOptional": "Reason (Optional)",
+    "reasonPlaceholder": "Enter a reason for this suggestion...",
+    "requiredField": "This field is required.",
+    "slug": "Slug",
+    "slugPlaceholder": "unique-announcement-identifier",
+    "status": "Status",
+    "title": "Title",
+    "titlePlaceholder": "Announcement Title",
+    "content": "Content",
+    "contentPlaceholder": "Announcement Content",
+    "language": "Language",
+    "image": "Image",
+    "uploadImage": "Upload Image",
+    "currentImage": "Current Image",
+    "saveChanges": "Save Changes",
+    "delete": "Delete",
+    "create": "Create",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "confirmDelete": "Are you sure you want to delete this announcement?",
+    "confirmChanges": "Are you sure you want to save these changes?",
+    "successDelete": "Announcement deleted successfully",
+    "successUpdate": "Announcement updated successfully",
+    "successCreate": "Announcement created successfully",
+    "errorDelete": "Error deleting announcement",
+    "errorUpdate": "Error updating announcement",
+    "errorCreate": "Error creating announcement",
+    "errorFetch": "Error fetching announcement",
+    "errorUpload": "Error uploading image",
+    "noAnnouncements": "No announcements found",
+    "selectLanguage": "Select Language"
+  },
   "Requests": {
-    "request": "Request",
+    "title": "Requests",
     "myRequests": "My Requests",
     "EditRequestTitle": "Edit Request for: {word}",
     "SuggestEditForRelatedWord": "Suggest an edit for related word: {relatedWordName}",
+    "CreateRelatedWordRequestTitle": "Suggest New Related Word",
+    "submitRequest": "Submit Request",
     "SuggestDeletionForRelatedWord": "Suggest deletion for related word: {relatedWordName}",
-    "Cancel": "Cancel",
     "requestDetails": "Request Details",
     "backToAllRequests": "Back to All Requests",
     "entityTypes": {
@@ -415,9 +465,9 @@
     "errorLoading": "Error loading requests",
     "errorLoadingDetail": "Error loading request details",
     "cancelConfirmation": "Are you sure you want to cancel this request? This action cannot be undone.",
-    "updateRequest": "Update your request details:",
+    "updateRequestTitle": "Update your request details:",
     "reasonLabel": "Reason for Update:",
-    "reasonPlaceholder": "Why are you updating this request?",
+    "reasonPlaceholderForUpdate": "Why are you updating this request?",
     "messages": {
       "noRequests": "No requests found",
       "itemsPerPage": "Items per page"
@@ -449,7 +499,9 @@
     },
     "RequestedAttributeByYou": "Requested Attribute by You",
     "NoChanges": "No changes detected",
-    "EditRequestSubmittedSuccessfully": "Edit request submitted successfully",
+    "RequestSubmittedSuccessfully": "Request submitted successfully!",
+    "RequestSubmissionFailed": "Request submission failed: {error}",
+    "UserNotAuthenticated": "User not authenticated. Please sign in.",
     "Reason": "Reason for Change",
     "EnterReason": "Please enter your reason for the change",
     "DeleteRequestSubmittedSuccessfully": "Delete request submitted successfully",
