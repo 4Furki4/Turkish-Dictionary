@@ -389,9 +389,6 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                   <Button color="danger" variant="light" onPress={onClose}>
                     {t('Close')}
                   </Button>
-                  <Button color="primary" onPress={() => {/* TODO: handle submit */ onClose(); }}>
-                    {t('SubmitRequest')}
-                  </Button>
                 </ModalFooter>
               </>
             )}
