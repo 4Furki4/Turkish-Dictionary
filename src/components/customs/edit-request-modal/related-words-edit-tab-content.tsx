@@ -86,8 +86,8 @@ const RelatedWordsEditTabContent: React.FC<RelatedWordsEditTabContentProps> = ({
             ))}
           </div>
         ) : (
-          <div className="text-center py-4">
-            <p>{tWordCard('noRelatedWordsFound')}</p>
+          <div className="text-center text-gray-500">
+            <p>{tWordCard('NoRelatedWordsFound')}</p>
           </div>
         )}
       </div>

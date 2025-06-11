@@ -13,6 +13,28 @@ import { searchLogs, type NewSearchLog } from "@/db/schema/search_logs";
 import { userSearchHistory, type InsertUserSearchHistory } from "@/db/schema/user_search_history";
 
 export const wordRouter = createTRPCRouter({
+  searchWordsSimple: publicProcedure
+    .input(
+      z.object({
+        query: z.string(),
+        limit: z.number().optional().default(10),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      if (input.query.trim() === "") {
+        return { words: [] };
+      }
+      const searchResults = await db
+        .select({
+          id: words.id,
+          word: words.name, // Ensure 'name' is aliased to 'word' for consistency if needed, or use 'name'
+        })
+        .from(words)
+        .where(sql`unaccent(${words.name}) ILIKE unaccent(${`%${input.query}%`})`)
+        .limit(input.limit)
+        .orderBy(words.name);
+      return { words: searchResults };
+    }),
   /**
    * Get all words from database with pagination
    */

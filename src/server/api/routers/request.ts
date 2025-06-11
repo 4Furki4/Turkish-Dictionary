@@ -20,6 +20,7 @@ export const requestRouter = createTRPCRouter({
             limit: z.number().default(10),
             entityType: z.enum([
                 "words", "meanings", "roots", "related_words",
+                "related_phrases",
                 "part_of_speechs", "examples", "authors",
                 "word_attributes", "meaning_attributes"
             ]).optional(),
@@ -275,7 +276,7 @@ export const requestRouter = createTRPCRouter({
                 entityType: "related_words",
                 entityId: wordId, // Storing the main wordId as the entityId
                 action: "delete",
-                newData: { 
+                newData: {
                     relatedWordId: relatedWordId,
                     originalRelationType: existingRelation.relationType // Store original details for admin context
                 },
@@ -331,15 +332,15 @@ export const requestRouter = createTRPCRouter({
     requestCreateRelatedPhrase: protectedProcedure
         .input(z.object({
             wordId: z.number(),
-            phrase: z.string().min(3),
+            phraseId: z.number(),
             description: z.string().optional(),
             reason: z.string().optional(),
         }))
-        .mutation(async ({ input: { wordId, phrase, description, reason }, ctx: { db, session: { user } } }) => {
+        .mutation(async ({ input: { wordId, phraseId, description, reason }, ctx: { db, session: { user } } }) => {
             const existingPhrase = await db.query.relatedPhrases.findFirst({
                 where: and(
                     eq(relatedPhrases.wordId, wordId),
-                    eq(relatedPhrases.phrase, phrase)
+                    eq(relatedPhrases.relatedPhraseId, phraseId)
                 )
             });
 
@@ -349,14 +350,14 @@ export const requestRouter = createTRPCRouter({
                     message: "This related phrase already exists for this word."
                 });
             }
-            
+
             const existingRequest = await db.query.requests.findFirst({
                 where: and(
                     eq(requests.entityType, "related_phrases"),
                     eq(requests.action, "create"),
                     eq(requests.status, "pending"),
                     eq(requests.entityId, wordId),
-                    sql`"newData"->>'phrase' = ${phrase}`
+                    sql`"newData"->>'phraseId' = ${phraseId}`
                 )
             });
 
@@ -367,8 +368,8 @@ export const requestRouter = createTRPCRouter({
                 });
             }
 
-            const dataToStore: { phrase: string; description?: string } = {
-                phrase: phrase,
+            const dataToStore: { phraseId: number; description?: string } = {
+                phraseId: phraseId,
             };
             if (description) {
                 dataToStore.description = description;
@@ -510,6 +511,7 @@ export const requestRouter = createTRPCRouter({
             limit: z.number().default(10),
             entityType: z.enum([
                 "words", "meanings", "roots", "related_words",
+                "related_phrases",
                 "part_of_speechs", "examples", "authors",
                 "word_attributes", "meaning_attributes"
             ]).optional(),

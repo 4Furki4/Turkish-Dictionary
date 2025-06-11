@@ -371,7 +371,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                     <Tab value={"related_words"} title={tRequests("RelatedWordsTabTitle")}>
                       <RelatedWordsEditTabContent
                         relatedWords={word_data.relatedWords?.map(rw => ({
-                          id: rw.related_word_id, 
+                          id: rw.related_word_id,
                           related_word: {
                             id: rw.related_word_id,
                             word: rw.related_word_name,

@@ -1,5 +1,6 @@
-import React from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Textarea } from '@heroui/react';
+import React, { useState } from 'react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Textarea, Autocomplete, AutocompleteItem } from '@heroui/react';
+import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { Session } from 'next-auth';
 import { useForm, Controller } from 'react-hook-form';
@@ -7,6 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { api } from '@/src/trpc/react';
 import { toast } from 'sonner';
+
+interface SimpleWord {
+  id: number;
+  word: string;
+}
 
 interface RelatedPhraseCreateRequestModalProps {
   isOpen: boolean;
@@ -16,7 +22,7 @@ interface RelatedPhraseCreateRequestModalProps {
 }
 
 const createRelatedPhraseSchema = z.object({
-  phrase: z.string().min(3, 'Phrase must be at least 3 characters long.'),
+  relatedPhraseId: z.number({ required_error: 'This field is required.' }), // Will replace with tForm('requiredField') later
   description: z.string().optional(),
   reason: z.string().optional(),
 });
@@ -36,7 +42,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
   const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateRelatedPhraseFormValues>({
     resolver: zodResolver(createRelatedPhraseSchema),
     defaultValues: {
-      phrase: '',
+      // relatedPhraseId will be undefined by default, which is fine for a required field
       description: '',
       reason: '',
     },
@@ -53,10 +59,22 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
     },
   });
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  const { data: searchResults, isLoading: isLoadingSearch } = api.word.searchWordsSimple.useQuery(
+    { query: debouncedSearchQuery, limit: 10 },
+    { enabled: debouncedSearchQuery.length > 1 }
+  );
+
+  const wordOptions: SimpleWord[] = searchResults?.words.map((word: SimpleWord) => ({ id: word.id, word: word.word })) || [];
+
   const onSubmit = (data: CreateRelatedPhraseFormValues) => {
     createRequestMutation.mutate({
-      ...data,
       wordId: wordId,
+      phraseId: data.relatedPhraseId, // Correctly pass relatedPhraseId as phraseId
+      description: data.description,
+      reason: data.reason,
     });
   };
 
@@ -70,17 +88,28 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
             <ModalHeader>{t('CreateRelatedPhraseRequestTitle')}</ModalHeader>
             <ModalBody className="space-y-4">
               <Controller
-                name="phrase"
+                name="relatedPhraseId"
                 control={control}
                 render={({ field }) => (
-                  <Textarea
-                    {...field}
-                    label={tForm('phraseLabel')}
-                    placeholder={tForm('phrasePlaceholder')}
-                    isInvalid={!!errors.phrase}
-                    errorMessage={errors.phrase?.message}
-                    minRows={2}
-                  />
+                  <Autocomplete
+                    label={tForm('relatedPhraseWordLabel')} // Placeholder for new translation key
+                    placeholder={tForm('relatedPhraseWordPlaceholder')} // Placeholder for new translation key
+                    items={wordOptions} // wordOptions is already an array of SimpleWord {id, word}
+                    selectedKey={field.value ? String(field.value) : null}
+                    onSelectionChange={(key) => field.onChange(key ? Number(key) : null)}
+                    onInputChange={setSearchQuery}
+                    isLoading={isLoadingSearch}
+                    isInvalid={!!errors.relatedPhraseId}
+                    errorMessage={errors.relatedPhraseId?.message}
+                    allowsCustomValue={false}
+                    // emptyContent prop removed as it's likely not supported or needed; Autocomplete might handle this internally
+                  >
+                    {(item: SimpleWord) => (
+                      <AutocompleteItem key={item.id} textValue={item.word}>
+                        {item.word}
+                      </AutocompleteItem>
+                    )}
+                  </Autocomplete>
                 )}
               />
               <Controller

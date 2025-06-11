@@ -37,7 +37,7 @@ import {
   AlertTriangle,
   Clock
 } from "lucide-react";
-import { getDisplayLabelForAction, getDisplayLabelForEntityType, getDisplayLabelForStatus } from "@/src/utils/getDisplayLabels";
+
 
 export interface RequestDetailProps {
   requestId: number;
@@ -49,10 +49,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
   console.log('[RequestDetail] Props:', requestId);
   const t = useTranslations("Requests");
   const tDbFieldLabels = useTranslations("DbFieldLabels");
-  const tRelationTypes = useTranslations("RelationTypes"); // Ensuring this is still here from previous steps
-  const tRequestActions = useTranslations("RequestActions");
-  const tEntityTypes = useTranslations("EntityTypes");
-  const tRequestStatuses = useTranslations("RequestStatuses");
+  const tRelationTypes = useTranslations("RelationTypes");
   const router = useRouter();
   const [reason, setReason] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -70,6 +67,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
     authors: t("entityTypes.authors"),
     word_attributes: t("entityTypes.word_attributes"),
     meaning_attributes: t("entityTypes.meaning_attributes"),
+    related_phrases: t("entityTypes.related_phrases"),
   }), [t]);
 
   const actionLabels = useMemo<Record<Actions, string>>(() => ({
@@ -534,7 +532,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <h2 className="text-2xl font-semibold text-foreground">
-                {t("request")}{` #${request.id}: ${getDisplayLabelForEntityType(request.entityType, tEntityTypes)} - ${getDisplayLabelForAction(request.action, tRequestActions)}`}
+                {t("request")}{` #${request.id}: ${entityTypeLabels[request.entityType]} - ${actionLabels[request.action]}`}
               </h2>
               {request.entityType === "words" && (request.action === "update" || request.action === "delete") && request.entityId && (
                 <div className="mt-1 flex items-center gap-2">
@@ -555,13 +553,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               <div className="flex flex-wrap items-center gap-3">
                 <Chip
                   color={statusColors[request.status]}
-                  variant="flat"
-                  classNames={{
-                    base: "px-3 py-1",
-                    content: "font-medium"
-                  }}
                 >
-                  {getDisplayLabelForStatus(request.status, tRequestStatuses)}
+                  {statusLabels[request.status]}
                 </Chip>
                 <Chip
                   color={actionColors[request.action]}
@@ -571,7 +564,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                     content: "font-medium"
                   }}
                 >
-                  {getDisplayLabelForAction(request.action, tRequestActions)}
+                  {actionLabels[request.action]}
                 </Chip>
               </div>
             </div>
@@ -706,10 +699,10 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                               <span className="font-medium">
                                 {
                                   key === "relatedWordId" ? t("details.relatedWordIdLabel") :
-                                  key === "newRelationType" ? t("details.newRelationTypeLabel") :
-                                  key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
-                                  key === "reason" ? t("details.reason") :
-                                  getDisplayLabelForKey(key)
+                                    key === "newRelationType" ? t("details.newRelationTypeLabel") :
+                                      key === "originalRelationType" ? t("details.originalRelationTypeLabel") :
+                                        key === "reason" ? t("details.reason") :
+                                          getDisplayLabelForKey(key)
                                 }:
                               </span>
                               <span

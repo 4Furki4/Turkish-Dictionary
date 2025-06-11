@@ -69,7 +69,7 @@
     "screenshotFailedDescription": "Failed to copy screenshot to clipboard",
     "screenshotDownloadFallback": "Screenshot copy to clipboard failed, downloading instead.",
     "screenshotProcessing": "Creating screenshot...",
-    "noRelatedWordsFound": "No related words found",
+    "NoRelatedWordsFound": "No related words found",
     "NoRelatedPhrasesFound": "No related phrases found",
     "obsolete": "absolete meaning",
     "turkish_equivalent": "turkish equivalent",
@@ -98,6 +98,7 @@
   },
   "Actions": {
     "SuggestNewWord": "Suggest New Word",
+    "SuggestNewPhrase": "Suggest New Phrase",
     "Cancel": "Cancel"
   },
   "Dashboard": {
@@ -110,7 +111,7 @@
       "Id": "ID"
     },
     "Actions": {
-    "AddNew": "Add New",
+      "AddNew": "Add New",
       "Delete": "Delete",
       "Edit": "Edit"
     },
@@ -192,7 +193,6 @@
         "tr": "Turkish"
       }
     },
-
     "WordRelations": {
       "title": "Word Relations Management",
       "description": "Select a word to add or remove related words.",
@@ -365,7 +365,9 @@
     "antonym": "Antonym",
     "seeAlso": "See Also",
     "compoundWord": "Compound Word",
-    "turkishEquivalent": "Turkish Equivalent"
+    "turkishEquivalent": "Turkish Equivalent",
+    "correction": "Correction",
+    "obsolete": "Obsolete"
   },
   "Form": {
     "noWordsFound": "No words found matching your search.",
@@ -375,6 +377,12 @@
     "selectRelationTypePlaceholder": "Select relation type...",
     "reasonLabelOptional": "Reason (Optional)",
     "reasonPlaceholder": "Enter a reason for this suggestion...",
+    "relatedPhraseWordLabel": "Related Phrase (Select a Word)",
+    "relatedPhraseWordPlaceholder": "Search for a word to use as the related phrase...",
+    "phraseLabel": "Phrase",
+    "phrasePlaceholder": "Enter the phrase...",
+    "descriptionLabelOptional": "Description (Optional)",
+    "descriptionPlaceholder": "Enter a description for this phrase...",
     "requiredField": "This field is required.",
     "slug": "Slug",
     "slugPlaceholder": "unique-announcement-identifier",
@@ -411,6 +419,7 @@
     "EditRequestTitle": "Edit Request for: {word}",
     "SuggestEditForRelatedWord": "Suggest an edit for related word: {relatedWordName}",
     "CreateRelatedWordRequestTitle": "Suggest New Related Word",
+    "CreateRelatedPhraseRequestTitle": "Suggest New Related Phrase",
     "submitRequest": "Submit Request",
     "SuggestDeletionForRelatedWord": "Suggest deletion for related word: {relatedWordName}",
     "requestDetails": "Request Details",
@@ -422,6 +431,7 @@
       "meanings": "Meanings",
       "roots": "Roots",
       "related_words": "Related Words",
+      "related_phrases": "Related Phrases",
       "part_of_speechs": "Parts of Speech",
       "examples": "Examples",
       "authors": "Authors",

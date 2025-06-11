@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 interface RelatedWordCreateRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  wordId: number; 
+  wordId: number;
   session: Session | null;
 }
 
@@ -22,11 +22,7 @@ const relationTypes = [
   { id: 'relatedWord', name: 'Related Word' },
   { id: 'seeAlso', name: 'See Also' },
   { id: 'compoundWord', name: 'Compound Word' },
-  { id: 'derivedFrom', name: 'Derived From' },
-  { id: 'etymologicalOrigin', name: 'Etymological Origin' },
-  { id: 'variant', name: 'Variant' },
-  { id: 'homonym', name: 'Homonym' },
-  { id: 'turkish_equivalent', name: 'Turkish Equivalent' },
+  { id: 'turkishEquivalent', name: 'Turkish Equivalent' },
   // Add other relevant types
 ];
 
@@ -136,7 +132,7 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
                   }}
                   onBlur={field.onBlur} // Important for RHF validation trigger
                   name={field.name} // Important for RHF
-                  // TODO: Consider if `inputProps={{ ref: field.ref }}` is needed or if RHF handles ref correctly with Autocomplete
+                // TODO: Consider if `inputProps={{ ref: field.ref }}` is needed or if RHF handles ref correctly with Autocomplete
                 >
                   {(item) => (
                     <AutocompleteItem key={item.word_id} textValue={item.name}>

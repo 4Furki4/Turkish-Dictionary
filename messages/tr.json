@@ -70,7 +70,7 @@
     "screenshotFailedDescription": "Ekran görüntüsü kopyalanamadı",
     "screenshotDownloadFallback": "Resim panoya kopyalanamadı ama indiriliyor.",
     "screenshotProcessing": "Ekran görüntüsü oluşturuluyor...",
-    "noRelatedWordsFound": "İlgili kelime bulunamadı",
+    "NoRelatedWordsFound": "İlgili kelime bulunamadı",
     "NoRelatedPhrasesFound": "İlgili atasöz bulunamadı",
     "turkish_equivalent": "türkçe karşılığı",
     "see_also": "bakınız",
@@ -93,6 +93,7 @@
   },
   "Actions": {
     "SuggestNewWord": "Yeni Kelime Öner",
+    "SuggestNewPhrase": "Yeni Deyim Öner",
     "Cancel": "İptal"
   },
   "Dashboard": {
@@ -108,7 +109,7 @@
       "AddNew": "Yeni Ekle",
       "SuggestNew": "Yeni Öner",
       "SuggestNewPhrase": "Yeni Deyim Öner",
-    "SuggestNewWord": "Yeni Kelime Öner",
+      "SuggestNewWord": "Yeni Kelime Öner",
       "Delete": "Sil",
       "Edit": "Düzenle"
     },
@@ -374,7 +375,9 @@
     "antonym": "Zıt Anlam",
     "seeAlso": "Ayrıca Bakınız",
     "compoundWord": "Bileşik Kelime",
-    "turkishEquivalent": "Türkçe Karşılığı"
+    "turkishEquivalent": "Türkçe Karşılığı",
+    "correction": "Düzeltme",
+    "obsolete": "Eskimiş"
   },
   "Form": {
     "noWordsFound": "Aramanızla eşleşen kelime bulunamadı.",
@@ -383,7 +386,13 @@
     "relationTypeLabel": "İlişki Türü",
     "selectRelationTypePlaceholder": "İlişki türü seçin...",
     "reasonLabelOptional": "Gerekçe (İsteğe Bağlı)",
-    "reasonPlaceholder": "Bu öneri için bir gerekçe girin..."
+    "reasonPlaceholder": "Bu öneri için bir gerekçe girin...",
+    "relatedPhraseWordLabel": "İlgili Deyim (Bir Kelime Seçin)",
+    "relatedPhraseWordPlaceholder": "İlgili deyim olarak kullanmak için bir kelime arayın...",
+    "phraseLabel": "Deyim",
+    "phrasePlaceholder": "Deyimi girin...",
+    "descriptionLabelOptional": "Açıklama (İsteğe Bağlı)",
+    "descriptionPlaceholder": "Bu deyim için bir açıklama girin..."
   },
   "Requests": {
     "request": "İstek",
@@ -391,6 +400,9 @@
     "SuggestEditForRelatedWord": "{relatedWordName} için düzenleme öner",
     "SuggestDeletionForRelatedWord": "{relatedWordName} için silme öner",
     "CreateRelatedWordRequestTitle": "Yeni İlgili Kelime Öner",
+    "CreateRelatedPhraseRequestTitle": "Yeni İlgili Deyim Öner",
+    "RequestSubmittedSuccessfully": "İstek başarıyla gönderildi",
+    "RequestSubmissionFailed": "İstek gönderirken hata oluştu: {error}",
     "submitRequest": "İstek Gönder",
     "requestDetails": "İstek Detayları",
     "backToAllRequests": "Tüm İsteklere Dön",
@@ -401,6 +413,7 @@
       "meanings": "Anlamlar",
       "roots": "Kökler",
       "related_words": "İlgili Kelimeler",
+      "related_phrases": "İlgili Deyimler",
       "part_of_speechs": "Sözcük Türleri",
       "examples": "Örnekler",
       "authors": "Yazarlar",
@@ -451,7 +464,6 @@
       "noRequests": "İstek bulunamadı",
       "itemsPerPage": "Sayfa başına öğe"
     },
-
     "details": {
       "modifyingWordLabel": "Değiştirilen Kelime",
       "proposedChanges": "İstenilen değişiklikler",
