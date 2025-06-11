@@ -674,5 +674,20 @@
     "pending": "Beklemede",
     "approved": "Onaylandı",
     "rejected": "Reddedildi"
+  },
+  "EditRelatedPhraseModal": {
+    "modalTitle": "İlgili Deyim için Düzenleme Öner",
+    "descriptionLabel": "Açıklama",
+    "descriptionPlaceholder": "Deyim için yeni bir açıklama girin",
+    "editing_phrase_label": "Düzenlenen deyim",
+    "replacingPhraseLabel": "Değiştirilecek deyim",
+    "newPhraseLabel": "Yeni deyim",
+    "newPhrasePlaceholder": "Deyim arayın...",
+    "reasonLabel": "Değişiklik Nedeni",
+    "reasonPlaceholder": "Deyim için yeni bir açıklama girin",
+    "validationRequired": "Açıklama gereklidir.",
+    "validation": {
+      "newPhraseRequired": "Yeni deyim gereklidir."
+    }
   }
 }

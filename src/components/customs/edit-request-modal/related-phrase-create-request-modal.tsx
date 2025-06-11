@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Textarea, Autocomplete, AutocompleteItem } from '@heroui/react';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 
 interface SimpleWord {
   id: number;
-  word: string;
+  name: string;
 }
 
 interface RelatedPhraseCreateRequestModalProps {
@@ -62,12 +62,18 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const { data: searchResults, isLoading: isLoadingSearch } = api.word.searchWordsSimple.useQuery(
+  const { data: wordOptions, isLoading: isLoadingSearch } = api.word.getRecommendations.useQuery(
     { query: debouncedSearchQuery, limit: 10 },
-    { enabled: debouncedSearchQuery.length > 1 }
+    { enabled: debouncedSearchQuery.trim().length > 1 }
   );
 
-  const wordOptions: SimpleWord[] = searchResults?.words.map((word: SimpleWord) => ({ id: word.id, word: word.word })) || [];
+  const [items, setItems] = useState<SimpleWord[]>([]);
+
+  useEffect(() => {
+    if (wordOptions) {
+            setItems(wordOptions.map((word) => ({ id: word.word_id, name: word.name })));
+    }
+  }, [wordOptions]);
 
   const onSubmit = (data: CreateRelatedPhraseFormValues) => {
     createRequestMutation.mutate({
@@ -94,7 +100,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
                   <Autocomplete
                     label={tForm('relatedPhraseWordLabel')} // Placeholder for new translation key
                     placeholder={tForm('relatedPhraseWordPlaceholder')} // Placeholder for new translation key
-                    items={wordOptions} // wordOptions is already an array of SimpleWord {id, word}
+                    items={items}
                     selectedKey={field.value ? String(field.value) : null}
                     onSelectionChange={(key) => field.onChange(key ? Number(key) : null)}
                     onInputChange={setSearchQuery}
@@ -105,8 +111,8 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
                     // emptyContent prop removed as it's likely not supported or needed; Autocomplete might handle this internally
                   >
                     {(item: SimpleWord) => (
-                      <AutocompleteItem key={item.id} textValue={item.word}>
-                        {item.word}
+                      <AutocompleteItem key={item.id} textValue={item.name}>
+                        {item.name}
                       </AutocompleteItem>
                     )}
                   </Autocomplete>

@@ -686,5 +686,16 @@
     "pending": "Pending",
     "approved": "Approved",
     "rejected": "Rejected"
+  },
+  "EditRelatedPhraseModal": {
+    "modalTitle": "Suggest an Edit for Related Phrase",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Enter a new description for the phrase",
+    "validationRequired": "Description is required.",
+    "editing_phrase_label": "Editing phrase",
+    "replacingPhraseLabel": "Replacing phrase",
+    "validation": {
+      "newPhraseRequired": "New phrase is required."
+    }
   }
 }

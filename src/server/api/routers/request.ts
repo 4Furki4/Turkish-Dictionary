@@ -329,6 +329,33 @@ export const requestRouter = createTRPCRouter({
             return { success: true, message: "Related word creation request submitted." };
         }),
 
+    requestEditRelatedPhrase: protectedProcedure
+        .input(z.object({
+            wordId: z.number(), // ID of the main word
+            oldRelatedPhraseId: z.number(), // ID of the word that IS the phrase being replaced
+            newRelatedPhraseId: z.number(), // ID of the new word to become the phrase
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            const { wordId, oldRelatedPhraseId, newRelatedPhraseId, reason } = input;
+
+            await ctx.db.insert(requests).values({
+                userId: ctx.session.user.id,
+                entityType: "related_phrases",
+                entityId: wordId, // The request is for the main word
+                action: "update",
+                newData: {
+                    oldRelatedPhraseId: oldRelatedPhraseId, // The ID of the phrase word being replaced
+                    newRelatedPhraseId: newRelatedPhraseId, // The ID of the new phrase word
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related phrase edit request submitted." };
+        }),
+
     requestCreateRelatedPhrase: protectedProcedure
         .input(z.object({
             wordId: z.number(),

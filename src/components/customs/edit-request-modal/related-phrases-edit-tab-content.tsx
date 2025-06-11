@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, useDisclosure } from "@heroui/react";
 import { Card, CardBody } from "@heroui/card";
 import { Pencil, Plus, Trash2 } from 'lucide-react';
@@ -6,10 +6,12 @@ import { useTranslations } from 'next-intl';
 
 import { Session } from 'next-auth';
 import RelatedPhraseCreateRequestModal from './related-phrase-create-request-modal';
+import RelatedPhraseEditRequestModal, { RelatedPhraseItem as EditableRelatedPhraseItem } from './related-phrase-edit-request-modal';
 
 export type RelatedPhraseItemType = {
   related_phrase_id: number;
   related_phrase: string; // Changed from related_phrase_text
+  description?: string | null; // Added for editing
 };
 
 interface RelatedPhrasesEditTabContentProps {
@@ -30,6 +32,8 @@ const RelatedPhrasesEditTabContent: React.FC<RelatedPhrasesEditTabContentProps> 
   const tWordCard = useTranslations('WordCard');
   const tActions = useTranslations('Actions');
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
+  const { isOpen: isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
+  const [selectedPhrase, setSelectedPhrase] = useState<EditableRelatedPhraseItem | null>(null);
 
   if (!session) {
     return <p>{t('SignInToSuggestChanges')}</p>;
@@ -44,6 +48,15 @@ const RelatedPhrasesEditTabContent: React.FC<RelatedPhrasesEditTabContentProps> 
       </div>
 
       <RelatedPhraseCreateRequestModal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange} wordId={currentWordId} session={session} />
+      {selectedPhrase && (
+        <RelatedPhraseEditRequestModal
+          isOpen={isEditOpen}
+          onOpenChange={onEditOpenChange}
+          wordId={currentWordId}
+          relatedPhrase={selectedPhrase}
+          session={session}
+        />
+      )}
 
       {(!relatedPhrases || relatedPhrases.length === 0) ? (
         <div className="text-center text-gray-500">
@@ -68,9 +81,11 @@ const RelatedPhrasesEditTabContent: React.FC<RelatedPhrasesEditTabContentProps> 
                       size="sm"
                       variant="light"
                       onPress={() => {
-                        // Placeholder: Implement phrase edit functionality
-                        console.log('Edit phrase:', phrase);
-                        // onOpenPhraseEditModal(phrase); // Uncomment when modal is ready
+                        setSelectedPhrase({
+                          ...phrase,
+                          description: phrase.description ?? null,
+                        });
+                        onEditOpen();
                       }}
                       aria-label={`Edit related phrase: ${phrase.related_phrase}`} // Placeholder aria-label
                     >
