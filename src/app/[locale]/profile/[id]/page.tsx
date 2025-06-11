@@ -7,14 +7,14 @@ import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
 interface ProfilePageProps {
-    params: {
+    params: Promise<{
         id: string;
         locale: string;
-    };
+    }>;
 }
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
-    const { id, locale } = params;
+export default async function ProfilePage({ params: paramsPromise }: ProfilePageProps) {
+    const { id, locale } = await paramsPromise;
     setRequestLocale(locale);
 
     const session = await auth();

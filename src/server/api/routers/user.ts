@@ -296,6 +296,7 @@ export const userRouter = createTRPCRouter({
           name: users.name,
           username: users.username,
           image: users.image,
+          createdAt: users.createdAt,
           ...(isOwnProfile && { email: users.email }),
         })
         .from(users)
@@ -407,10 +408,9 @@ export const userRouter = createTRPCRouter({
         );
       }
 
+      // 5. Combine and return all data
       return {
         ...userProfile,
-        // createdAt from user table is not available in schema, returning null as placeholder
-        createdAt: null, 
         contributionStats: {
           totalApproved: totalApprovedContributions,
           byType: contributionsByType,
