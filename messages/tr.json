@@ -560,6 +560,7 @@
     "recentContributionsTitle": "Son Katkılar",
     "noContributions": "Henüz katkı yapılmamış.",
     "editProfileButton": "Profili Düzenle",
+    "seeAllSavedWords": "Tüm kayıtlı kelimeleri gör ({count})",
     "editProfileModal": {
       "title": "Profili Düzenle",
       "nameLabel": "Ad Soyad",

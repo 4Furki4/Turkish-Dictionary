@@ -555,6 +555,7 @@
     "onDateLabel": "On",
     "notSet": "Not set",
     "editProfileButton": "Edit Profile",
+    "seeAllSavedWords": "See all saved words ({count})",
     "editProfileModal": {
       "title": "Edit Profile",
       "nameLabel": "Name",

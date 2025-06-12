@@ -1,11 +1,14 @@
 "use client";
 
 import React from 'react';
+import { Link as NextIntlLink } from '@/src/i18n/routing'
+import { Link as HeroUILink } from '@heroui/react'
 import { useTranslations } from 'next-intl';
 import { type Session } from 'next-auth';
 import { type RouterOutputs } from '@/src/trpc/shared';
 import { UserProfileHeader } from './UserProfileHeader';
-import { Card, CardHeader, CardBody } from '@heroui/react'; 
+import { Card, CardHeader, CardBody } from '@heroui/react';
+import { CheckCheck, Clock, X } from 'lucide-react';
 
 export type ProfileDataUser = RouterOutputs['user']['getPublicProfileData'];
 
@@ -49,7 +52,7 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
     // Safely access contributions and savedWords, defaulting to empty arrays
     const contributionsToRender: ContributionData[] = (profileData as any).contributions || [];
     const savedWordsToRender: SavedWordData[] = (profileData as any).savedWords || [];
-    
+
     // Safely access contributionStats, defaulting counts to 0
     const rawStats = profileData.contributionStats;
     const totalApprovedCount = rawStats?.totalApproved ?? 0;
@@ -82,15 +85,24 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="p-4 bg-background rounded-md shadow-sm text-center border">
                             <p className="text-2xl font-bold">{totalApprovedCount}</p>
-                            <p className="text-sm text-muted-foreground">{t('approvedContributionsLabel')}</p>
+                            <div className="w-full flex items-center justify-center gap-1">
+                                <p className=" text-muted-foreground">{t('approvedContributionsLabel')}</p>
+                                <CheckCheck className="h-5 w-5 text-green-500" />
+                            </div>
                         </div>
                         <div className="p-4 bg-background rounded-md shadow-sm text-center border">
                             <p className="text-2xl font-bold">{totalPendingCount}</p>
-                            <p className="text-sm text-muted-foreground">{t('pendingContributionsLabel')}</p>
+                            <div className="w-full flex items-center justify-center gap-1">
+                                <p className=" text-muted-foreground">{t('pendingContributionsLabel')}</p>
+                                <Clock className="h-5 w-5 text-yellow-500" />
+                            </div>
                         </div>
                         <div className="p-4 bg-background rounded-md shadow-sm text-center border">
                             <p className="text-2xl font-bold">{totalRejectedCount}</p>
-                            <p className="text-sm text-muted-foreground">{t('rejectedContributionsLabel')}</p>
+                            <div className="w-full flex items-center justify-center gap-1">
+                                <p className=" text-muted-foreground">{t('rejectedContributionsLabel')}</p>
+                                <X className="h-5 w-5 text-red-500" />
+                            </div>
                         </div>
                     </div>
                 </CardBody>
@@ -107,7 +119,8 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
                             <ul className="space-y-3">
                                 {savedWordsToRender.map((savedWord) => (
                                     <li key={savedWord.wordId} className="p-3 bg-background rounded-md shadow-sm border">
-                                        <p className="font-medium">{savedWord.wordName || t('unknownWord')}</p>
+                                        <HeroUILink as={NextIntlLink} href={`/${locale}/search/${savedWord.wordName}`}>{savedWord.wordName}</HeroUILink>
+                                        {/* <p className="font-medium">{savedWord.wordName || t('unknownWord')}</p> */}
                                         {savedWord.firstMeaning && <p className="text-sm text-muted-foreground truncate">{savedWord.firstMeaning}</p>}
                                         <p className="text-xs text-muted-foreground">
                                             {t('savedOnLabel')}: {new Date(savedWord.savedAt).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })}
@@ -117,6 +130,21 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
                             </ul>
                         ) : (
                             <p className="text-muted-foreground">{t('noSavedWords')}</p>
+                        )}
+                        {/* Link to all saved words if more than 5 exist */}
+                        {(profileData.totalSavedWordsCount ?? 0) > 5 && (
+                            <div className="mt-4 text-right">
+                                <NextIntlLink href={{
+                                    pathname: '/saved-words',
+                                }}>
+                                    <HeroUILink
+                                        as={'div'}
+                                        className="hover:underline"
+                                    >
+                                        {t('seeAllSavedWords', { count: profileData.totalSavedWordsCount ?? 0 })}
+                                    </HeroUILink>
+                                </NextIntlLink>
+                            </div>
                         )}
                     </CardBody>
                 </Card>

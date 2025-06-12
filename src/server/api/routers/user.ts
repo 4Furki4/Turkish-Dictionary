@@ -377,6 +377,7 @@ export const userRouter = createTRPCRouter({
 
       // 4. Fetch Saved Words (Conditional)
       let userSavedWordsData: any[] = [];
+      let totalSavedWordsCount = 0;
       if (isOwnProfile) {
         const savedWordsRaw = await db
           .select({
@@ -388,7 +389,7 @@ export const userRouter = createTRPCRouter({
           .innerJoin(words, eq(savedWords.wordId, words.id))
           .where(eq(savedWords.userId, targetUserId))
           .orderBy(desc(savedWords.createdAt))
-          .limit(20);
+          .limit(5);
 
         userSavedWordsData = await Promise.all(
           savedWordsRaw.map(async (sw) => {
@@ -406,6 +407,13 @@ export const userRouter = createTRPCRouter({
             };
           })
         );
+
+        // Get total count of saved words
+        const savedWordsCountResult = await db
+          .select({ count: count(savedWords.wordId) })
+          .from(savedWords)
+          .where(eq(savedWords.userId, targetUserId));
+        totalSavedWordsCount = savedWordsCountResult[0]?.count ?? 0;
       }
 
       // 5. Combine and return all data
@@ -417,9 +425,9 @@ export const userRouter = createTRPCRouter({
         },
         recentContributions,
         savedWords: isOwnProfile ? userSavedWordsData : undefined,
+        totalSavedWordsCount: isOwnProfile ? totalSavedWordsCount : undefined,
       };
     }),
-
   updateProfile: protectedProcedure
     .input(z.object({
       username: z.string().min(3),
