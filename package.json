@@ -43,7 +43,7 @@
     "@types/crypto-js": "^4.2.2",
     "@types/eslint": "^8.56.10",
     "@uidotdev/usehooks": "^2.4.1",
-    "@uploadthing/react": "^7.3.0",
+    "@uploadthing/react": "^7.3.1",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "bcrypt": "^5.1.1",
@@ -82,7 +82,7 @@
     "tailwindcss": "4.1.4",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3",
-    "uploadthing": "^7.6.0",
+    "uploadthing": "^7.7.2",
     "zod": "^3.23.3"
   },
   "devDependencies": {

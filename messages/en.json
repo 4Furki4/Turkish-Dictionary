@@ -571,7 +571,7 @@
       "uploadErrorGeneric": "Image upload failed. Please try again.",
       "changePictureButton": "Change Picture",
       "removePreviewButton": "Remove Preview",
-      "uploadingButton": "Uploading...",
+      "uploadingButton": "Uploading the picture...",
       "profilePictureAlt": "Profile picture preview"
     }
   }

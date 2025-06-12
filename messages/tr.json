@@ -576,7 +576,7 @@
       "uploadErrorGeneric": "Resim yüklenemedi. Lütfen tekrar deneyin.",
       "changePictureButton": "Resmi Değiştir",
       "removePreviewButton": "Önizlemeyi kaldır",
-      "uploadingButton": "Yükleniyor...",
+      "uploadingButton": "Fotoğraf yükleniyor...",
       "profilePictureAlt": "Profil resmi önizlemesi"
     },
     "onDateLabel": "Tarihinde",
