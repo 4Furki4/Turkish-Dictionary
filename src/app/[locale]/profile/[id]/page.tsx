@@ -21,7 +21,6 @@ export default async function ProfilePage({ params: paramsPromise }: ProfilePage
 
     try {
         const profileData = await api.user.getPublicProfileData({ userId: id });
-        console.log('profileData', profileData);
         if (!profileData) {
             // This case should ideally be handled by tRPC throwing an error if user not found
             // but as a fallback:
