@@ -120,7 +120,7 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
       router.push("/dashboard/announcements");
     },
     onError: (error) => {
-      toast.error(t("createError", { error: error.message }));
+      toast.error(t("createError", { error: t(error.message) }));
     },
   });
 
@@ -139,7 +139,7 @@ export default function AnnouncementForm({ initialData }: AnnouncementFormProps)
   const onSubmit = (data: AnnouncementFormValues) => {
     // Create a copy of the data to avoid modifying the original
     const submissionData = { ...data };
-    
+
     // Ensure translations object is properly structured
     if (!submissionData.translations) {
       submissionData.translations = {
