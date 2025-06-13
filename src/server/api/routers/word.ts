@@ -1,9 +1,11 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import {
   createTRPCRouter,
   publicProcedure,
 } from "../trpc";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { words } from "@/db/schema/words";
 import type { WordSearchResult, DashboardWordList } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";
@@ -11,6 +13,28 @@ import { searchLogs, type NewSearchLog } from "@/db/schema/search_logs";
 import { userSearchHistory, type InsertUserSearchHistory } from "@/db/schema/user_search_history";
 
 export const wordRouter = createTRPCRouter({
+  searchWordsSimple: publicProcedure
+    .input(
+      z.object({
+        query: z.string(),
+        limit: z.number().optional().default(10),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      if (input.query.trim() === "") {
+        return { words: [] };
+      }
+      const searchResults = await db
+        .select({
+          id: words.id,
+          word: words.name, // Ensure 'name' is aliased to 'word' for consistency if needed, or use 'name'
+        })
+        .from(words)
+        .where(sql`unaccent(${words.name}) ILIKE unaccent(${`%${input.query}%`})`)
+        .limit(input.limit)
+        .orderBy(words.name);
+      return { words: searchResults };
+    }),
   /**
    * Get all words from database with pagination
    */
@@ -255,6 +279,38 @@ export const wordRouter = createTRPCRouter({
         return formattedResult.filter(Boolean) as WordSearchResult[]; // Ensure no nulls are returned
       } else {
         return [];
+      }
+    }),
+
+  /**
+   * Get a word's name by its ID.
+   */
+  getWordById: publicProcedure
+    .input(
+      z.object({
+        id: z.coerce.number(),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      try {
+        const word = await db.query.words.findFirst({
+          where: eq(words.id, input.id),
+          columns: {
+            id: true,
+            name: true,
+            prefix: true,
+            suffix: true,
+          },
+        });
+
+        return word || null;
+      } catch (error) {
+        console.error(`Error in getWordById for id: ${input.id}`, error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred while fetching the word.',
+          cause: error,
+        });
       }
     }),
 

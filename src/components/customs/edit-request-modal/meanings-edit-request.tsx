@@ -372,13 +372,6 @@ function MeaningEditRequestForm({
               >
                 {t("Cancel")}
               </Button>
-              <Button
-                color="secondary"
-                variant="flat"
-                type="submit"
-              >
-                {t("Requests.SubmitRequest")}
-              </Button>
             </div>
           </form>
         ) : (

@@ -10,7 +10,8 @@ import { savedWords } from "./schema/saved_words";
 import { meanings } from "./schema/meanings";
 import { examples } from "./schema/examples";
 import { authors } from "./schema/authors";
-import { wordAttributes } from "./schema/word_attributes";
+import * as wordAttributes from "./schema/word_attributes";
+import * as relatedPhrases from "./schema/related_phrases";
 import { meaningAttributes } from "./schema/meaning_attributes";
 import { partOfSpeechs } from "./schema/part_of_speechs";
 import { requests } from "./schema/requests";
@@ -24,7 +25,8 @@ export const schema = {
   meanings,
   examples,
   authors,
-  wordAttributes,
+  ...wordAttributes,
+  ...relatedPhrases,
   meaningAttributes,
   partOfSpeechs,
   requests,

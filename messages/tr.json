@@ -59,6 +59,7 @@
     "RelatedPhrases": "İlgili Atasözleri ve Deyimler",
     "NavigationWord": "Yönlendirilen Kelime",
     "Root": "Köken",
+    "WordAttribute": "Kelime Özelliği",
     "urlCopied": "URL Kopyalandı",
     "urlCopiedDescription": "Kelimenin bağlantısı panonunuza kopyalandı",
     "urlCopyFailed": "URL Kopyalama Başarısız",
@@ -74,14 +75,26 @@
     "turkish_equivalent": "türkçe karşılığı",
     "see_also": "bakınız",
     "NoMeaningsFound": "Kelime mevcut lakin anlam bulunamadı.",
-    "relatedWord": "İlgili Kelime",
-    "compoundWord": "Bileşik Kelime",
     "antonym": "Zıt Anlam",
     "synonym": "Eş Anlam",
     "correction": "Düzeltme",
     "seeAlso": "Ayrıca Bakınız",
     "turkishEquivalent": "Türkçe Karşılığı",
-    "obsolete": "Eskimiş"
+    "obsolete": "Eskimiş",
+    "SuggestEditForRelatedWord": "{relatedWordName} için düzenleme öner",
+    "SuggestDeletionForRelatedWord": "{relatedWordName} için silme öner",
+    "SuggestEditForRelatedWordHeader": "Düzenleme Öner: {relatedWordName}",
+    "SuggestDeletionForRelatedWordHeader": "Silme Öner: {relatedWordName}",
+    "SubmitRequest": "İstek Gönder",
+    "CreateRelatedWordRequestTitle": "Yeni İlgili Kelime Talebi Oluştur",
+    "CreateRelatedPhraseRequestTitle": "Yeni İlgili Deyim Öner",
+    "SignInToSuggestChanges": "Değişiklik önermek için lütfen giriş yapın.",
+    "RequestDeletion": "Silme Talep Et"
+  },
+  "Actions": {
+    "SuggestNewWord": "Yeni Kelime Öner",
+    "SuggestNewPhrase": "Yeni Deyim Öner",
+    "Cancel": "İptal"
   },
   "Dashboard": {
     "UnauthorizedMessage": "Bu sayfayı görüntülemek için yetkiniz yok, aksini düşünüyorsanız lütfen yönetici ile iletişime geçin.",
@@ -93,6 +106,10 @@
       "Id": "ID"
     },
     "Actions": {
+      "AddNew": "Yeni Ekle",
+      "SuggestNew": "Yeni Öner",
+      "SuggestNewPhrase": "Yeni Deyim Öner",
+      "SuggestNewWord": "Yeni Kelime Öner",
       "Delete": "Sil",
       "Edit": "Düzenle"
     },
@@ -149,6 +166,13 @@
       },
       "generalInfo": "Genel Bilgiler",
       "form": {
+        "relatedWordLabel": "İlgili Kelime",
+        "searchWordPlaceholder": "Kelime ara ve seç...",
+        "relationTypeLabel": "İlişki Türü",
+        "selectRelationTypePlaceholder": "İlişki türü seç...",
+        "reasonLabelOptional": "Gerekçe (İsteğe Bağlı)",
+        "reasonPlaceholder": "Bu istek için gerekçe girin...",
+        "requiredField": "Bu alan zorunludur.",
         "slug": "Slug",
         "slugPlaceholder": "benzersiz-duyuru-tanımlayıcı",
         "status": "Durum",
@@ -345,8 +369,41 @@
     "publishedOn": "{date} tarihinde yayınlandı",
     "latestAnnouncements": "Son Duyurular"
   },
+  "RelationTypes": {
+    "relatedWord": "İlgili Kelime",
+    "synonym": "Eş Anlam",
+    "antonym": "Zıt Anlam",
+    "seeAlso": "Ayrıca Bakınız",
+    "compoundWord": "Bileşik Kelime",
+    "turkishEquivalent": "Türkçe Karşılığı",
+    "correction": "Düzeltme",
+    "obsolete": "Eskimiş"
+  },
+  "Form": {
+    "noWordsFound": "Aramanızla eşleşen kelime bulunamadı.",
+    "relatedWordLabel": "İlgili Kelime",
+    "searchWordPlaceholder": "Kelime ara...",
+    "relationTypeLabel": "İlişki Türü",
+    "selectRelationTypePlaceholder": "İlişki türü seçin...",
+    "reasonLabelOptional": "Gerekçe (İsteğe Bağlı)",
+    "reasonPlaceholder": "Bu öneri için bir gerekçe girin...",
+    "relatedPhraseWordLabel": "İlgili Deyim (Bir Kelime Seçin)",
+    "relatedPhraseWordPlaceholder": "İlgili deyim olarak kullanmak için bir kelime arayın...",
+    "phraseLabel": "Deyim",
+    "phrasePlaceholder": "Deyimi girin...",
+    "descriptionLabelOptional": "Açıklama (İsteğe Bağlı)",
+    "descriptionPlaceholder": "Bu deyim için bir açıklama girin..."
+  },
   "Requests": {
+    "request": "İstek",
     "myRequests": "İsteklerim",
+    "SuggestEditForRelatedWord": "{relatedWordName} için düzenleme öner",
+    "SuggestDeletionForRelatedWord": "{relatedWordName} için silme öner",
+    "CreateRelatedWordRequestTitle": "Yeni İlgili Kelime Öner",
+    "CreateRelatedPhraseRequestTitle": "Yeni İlgili Deyim Öner",
+    "RequestSubmittedSuccessfully": "İstek başarıyla gönderildi",
+    "RequestSubmissionFailed": "İstek gönderirken hata oluştu: {error}",
+    "submitRequest": "İstek Gönder",
     "requestDetails": "İstek Detayları",
     "backToAllRequests": "Tüm İsteklere Dön",
     "entityTypes": {
@@ -356,6 +413,7 @@
       "meanings": "Anlamlar",
       "roots": "Kökler",
       "related_words": "İlgili Kelimeler",
+      "related_phrases": "İlgili Deyimler",
       "part_of_speechs": "Sözcük Türleri",
       "examples": "Örnekler",
       "authors": "Yazarlar",
@@ -377,36 +435,38 @@
       "rejected": "Reddedildi"
     },
     "tableColumns": {
-      "entityType": "TÜR",
+      "entityType": "VARLIK TÜRÜ",
       "action": "İŞLEM",
       "status": "DURUM",
       "date": "İSTEK TARİHİ",
       "actions": "İŞLEMLER"
     },
     "buttons": {
-      "viewDetails": "Detayları Gör",
-      "cancel": "İptal Et",
+      "viewDetails": "Detayları Görüntüle",
+      "cancel": "İptal",
       "edit": "İsteği Düzenle",
       "cancelRequest": "İsteği İptal Et",
       "cancelEditing": "Düzenlemeyi İptal Et",
       "saveChanges": "Değişiklikleri Kaydet",
-      "keepRequest": "Hayır, İsteği Koru",
+      "keepRequest": "Hayır, İsteği Tut",
       "confirmCancel": "Evet, İsteği İptal Et",
       "updateRequest": "İsteği Güncelle",
       "back": "Geri",
       "backToRequests": "İsteklere Geri Dön"
     },
+    "errorLoading": "İstekler yüklenirken hata oluştu",
+    "errorLoadingDetail": "İstek detayları yüklenirken hata oluştu",
+    "cancelConfirmation": "Bu isteği iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "updateRequestTitle": "İstek detaylarınızı güncelleyin:",
+    "reasonLabel": "Güncelleme Nedeni:",
+    "reasonPlaceholderForUpdate": "Bu isteği neden güncelliyorsunuz?",
     "messages": {
-      "errorLoading": "İstekler yüklenirken hata oluştu",
       "noRequests": "İstek bulunamadı",
-      "errorLoadingDetail": "İstek detayları yüklenirken hata oluştu",
-      "cancelConfirmation": "Bu isteği iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-      "updateRequest": "İstek detaylarınızı güncelleyin:",
-      "reasonLabel": "Güncelleme Nedeni:",
-      "reasonPlaceholder": "Bu isteği neden güncelliyorsunuz?",
       "itemsPerPage": "Sayfa başına öğe"
     },
     "details": {
+      "modifyingWordLabel": "Değiştirilen Kelime",
+      "proposedChanges": "İstenilen değişiklikler",
       "requestInfo": "İstek Bilgileri",
       "entityType": "Tür:",
       "action": "İşlem:",
@@ -419,7 +479,15 @@
       "noReason": "Neden belirtilmedi",
       "request": "İstek:",
       "empty": "Boş",
-      "updateFrom": "Güncellenecek değer"
+      "updateFrom": "Güncellenecek değer",
+      "unknownDate": "Bilinmeyen tarih",
+      "relatedWordIdLabel": "İlgili Kelime ID",
+      "newRelationTypeLabel": "Yeni İlişki Türü",
+      "originalRelationTypeLabel": "Orijinal İlişki Türü",
+      "loadingWordName": "Kelime yükleniyor...",
+      "errorLoadingWordName": "Kelime yüklenirken hata oluştu",
+      "wordNameNotFound": "Kelime bulunamadı",
+      "willChangeTo": "Bununla değişecek"
     },
     "RequestedAttributeByYou": "Sizin eklediğiniz özellik",
     "NoChanges": "Değişiklik tespit edilmedi",
@@ -433,7 +501,20 @@
     "DeleteMeaningRequest": "Anlam Silme İsteği",
     "DeleteMeaningRequestSentence": "\"{meaning}\" anlamı için silme isteğini göndermek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
     "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
-    "ReasonRequired": "Lütfen değişiklik nedeni giriniz"
+    "ReasonRequired": "Lütfen değişiklik için gerekçenizi girin",
+    "ConfirmDeleteRelatedWord": "'{relatedWordName}' kelimesi ile olan '{relationType}' ilişkisinin silinmesini talep etmek istediğinizden emin misiniz?",
+    "ReasonOptional": "Gerekçe (İsteğe Bağlı)",
+    "ReasonPlaceholderDeleteRelated": "örneğin, Bu ilişki yanlış çünkü...",
+    "CurrentRelationTypeIs": "Mevcut ilişki türü: {relationType}",
+    "EditRelationTypeLabel": "Yeni İlişki Türü",
+    "SelectRelationTypePlaceholder": "Yeni bir ilişki türü seçin",
+    "ReasonPlaceholderEditRelated": "Düzenleme talebiniz için bir neden girin (isteğe bağlı)",
+    "RelatedWordsTabTitle": "İlgili Kelimeler",
+    "RelatedPhrasesTabTitle": "İlgili Deyimler",
+    "phraseLabel": "Deyim",
+    "phrasePlaceholder": "İlgili deyimi girin",
+    "descriptionLabelOptional": "Açıklama (İsteğe Bağlı)",
+    "descriptionPlaceholder": "Deyim için bir açıklama girin"
   },
   "Phonetic": "Fonetik",
   "WordName": "Kelime",
@@ -498,8 +579,8 @@
     },
     "PartOfSpeech": {
       "Description": "Sözcük türü isteğe bağlı.",
-      "Select": "Lütfen bir sözcük türü seçiniz",
-      "Required": "Lütfen bir sözcük türü seçiniz"
+      "Select": "Lütfen bir sözcük türü seçin",
+      "Required": "Sözcük türü gereklidir."
     },
     "MeaningAttributes": {
       "Description": "Anlam özellikleri isteğe bağlı",
@@ -581,5 +662,79 @@
     },
     "onDateLabel": "Tarihinde",
     "notSet": "Belirtilmemiş"
+  },
+  "Common": {
+    "unknownRelation": "bilinmeyen ilişki"
+  },
+  "Errors": {
+    "MustBeLoggedIn": "Bu işlemi gerçekleştirmek için giriş yapmış olmanız gerekir.",
+    "OriginalRelationTypeMissing": "Orijinal ilişki türü eksik. Düzenleme isteği gönderilemiyor."
+  },
+  "DbFieldLabels": {
+    "reason": "Değişiklik Nedeni",
+    "name": "Ad",
+    "phonetic": "Fonetik",
+    "rootId": "Kök ID",
+    "createdAt": "Oluşturulma Tarihi",
+    "updatedAt": "Güncellenme Tarihi",
+    "prefix": "Önek",
+    "suffix": "Sonek",
+    "viewCount": "Görülme Sayısı",
+    "variant": "Varyant",
+    "requestType": "İstek Türü",
+    "attribute": "Nitelik",
+    "value": "Değer",
+    "language": "Dil",
+    "partOfSpeech": "Kelime Türü",
+    "meaning": "Anlam",
+    "example": "Örnek",
+    "author": "Yazar",
+    "relatedWordId": "İlgili Kelime",
+    "newRelationType": "Yeni İlişki Türü",
+    "originalRelationType": "Orijinal İlişki Türü",
+    "description": "Açıklama",
+    "wordId": "Kelime ID",
+    "meaningId": "Anlam ID",
+    "exampleId": "Örnek ID",
+    "attributeId": "Nitelik ID",
+    "type": "Tür",
+    "partOfSpeechId": "Kelime Türü ID",
+    "imageUrl": "Resim URL"
+  },
+  "RequestActions": {
+    "create": "Oluştur",
+    "update": "Güncelle",
+    "delete": "Sil"
+  },
+  "EntityTypes": {
+    "words": "Kelime",
+    "meanings": "Anlam",
+    "roots": "Köken",
+    "related_words": "İlgili Kelime",
+    "part_of_speechs": "Kelime Türü",
+    "examples": "Örnek",
+    "authors": "Yazar",
+    "word_attributes": "Kelime Özelliği",
+    "meaning_attributes": "Anlam Özelliği"
+  },
+  "RequestStatuses": {
+    "pending": "Beklemede",
+    "approved": "Onaylandı",
+    "rejected": "Reddedildi"
+  },
+  "EditRelatedPhraseModal": {
+    "modalTitle": "İlgili Deyim için Düzenleme Öner",
+    "descriptionLabel": "Açıklama",
+    "descriptionPlaceholder": "Deyim için yeni bir açıklama girin",
+    "editing_phrase_label": "Düzenlenen deyim",
+    "replacingPhraseLabel": "Değiştirilecek deyim",
+    "newPhraseLabel": "Yeni deyim",
+    "newPhrasePlaceholder": "Deyim arayın...",
+    "reasonLabel": "Değişiklik Nedeni",
+    "reasonPlaceholder": "Deyim için yeni bir açıklama girin",
+    "validationRequired": "Açıklama gereklidir.",
+    "validation": {
+      "newPhraseRequired": "Yeni deyim gereklidir."
+    }
   }
 }

@@ -4,6 +4,7 @@ import { RequestHandler } from "./types";
 import { CreateWordAttributeHandler, UpdateWordAttributeHandler } from "./word-attribute-handlers";
 import { UpdateWordHandler } from "./word-handler";
 import { UpdateMeaningHandler, DeleteMeaningHandler } from "./meaning-handler";
+import { UpdateRelatedWordHandler, DeleteRelatedWordHandler } from "./related-words-handler";
 // Import other handlers
 
 type HandlerRegistry = {
@@ -23,6 +24,10 @@ const registry: HandlerRegistry = {
     meanings: {
         update: new UpdateMeaningHandler(),
         delete: new DeleteMeaningHandler(),
+    },
+    related_words: {
+        update: new UpdateRelatedWordHandler(),
+        delete: new DeleteRelatedWordHandler(),
     },
     // Add other entity types and actions...
 };
