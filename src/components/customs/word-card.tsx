@@ -343,7 +343,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                         <p>
                           {t("You can request an edit if you are signed in")}
                         </p>
-                        <button onClick={() => signIn()} className="text-primary underline underline-offset-2">
+                        <button onClick={() => signIn()} className="text-primary underline underline-offset-2 cursor-pointer">
                           {t("SignIn")}
                         </button>
                       </div>
