@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { HeroUIProvider } from "@heroui/react";
-import { type ThemeProviderProps } from 'next-themes/dist/types'
+import { type ThemeProviderProps } from 'next-themes'
 import { ThemeProvider } from "next-themes";
 import { useLocale } from "next-intl";
 export default function Providers({ children, ...props }: ThemeProviderProps) {
