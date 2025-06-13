@@ -25,6 +25,8 @@ export const users = pgTable("users", {
   image: text("image"),
   username: varchar("username", { length: 255 }),
   role: rolesEnum("role").default("user").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull()
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

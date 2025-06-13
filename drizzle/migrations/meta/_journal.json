@@ -169,6 +169,13 @@
       "when": 1747523959648,
       "tag": "0023_acoustic_warstar",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1749596449892,
+      "tag": "0024_worried_scorpion",
+      "breakpoints": true
     }
   ]
 }

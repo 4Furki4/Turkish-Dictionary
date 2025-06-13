@@ -534,5 +534,52 @@
     "PopularSearches": {
       "title": "Popüler Aramalar"
     }
+  },
+  "Common": {
+    "anonymousUser": "Anonim Kullanıcı"
+  },
+  "ProfilePage": {
+    "loadingProfileError": "Profil yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "myProfileTitle": "Profilim",
+    "userProfileTitle": "{name} Kişisinin Profili",
+    "usernameLabel": "Kullanıcı Adı",
+    "nameLabel": "Ad Soyad",
+    "emailLabel": "E-posta",
+    "accountDetailsTitle": "Hesap Detayları",
+    "memberSinceLabel": "Üyelik Tarihi",
+    "unknownDate": "Bilinmiyor",
+    "unknownWord": "Bilinmeyen Kelime",
+    "contributionStatsTitle": "Katkı İstatistikleri",
+    "approvedContributionsLabel": "Onaylanan",
+    "pendingContributionsLabel": "Bekleyen",
+    "rejectedContributionsLabel": "Reddedilen",
+    "totalContributionsLabel": "Toplam Onaylanmış Katkı",
+    "savedWordsTitle": "Kaydedilen Kelimeler",
+    "noSavedWords": "Henüz kaydedilmiş kelime yok.",
+    "savedOnLabel": "Kaydedilme Tarihi",
+    "recentContributionsTitle": "Son Katkılar",
+    "noContributions": "Henüz katkı yapılmamış.",
+    "editProfileButton": "Profili Düzenle",
+    "seeAllSavedWords": "Tüm kayıtlı kelimeleri gör ({count})",
+    "editProfileModal": {
+      "title": "Profili Düzenle",
+      "nameLabel": "Ad Soyad",
+      "namePlaceholder": "Adınızı girin",
+      "usernameLabel": "Kullanıcı Adı",
+      "usernamePlaceholder": "Kullanıcı adınızı girin",
+      "cancel": "İptal",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "updateSuccess": "Profil başarıyla güncellendi.",
+      "updateError": "Profil güncellenirken bir hata oluştu.",
+      "fileTooLarge": "Dosya boyutu çok büyük (max {size}MB).",
+      "invalidFileType": "Geçersiz dosya tipi. Lütfen JPG, PNG, GIF veya WEBP resim seçin.",
+      "uploadErrorGeneric": "Resim yüklenemedi. Lütfen tekrar deneyin.",
+      "changePictureButton": "Resmi Değiştir",
+      "removePreviewButton": "Önizlemeyi kaldır",
+      "uploadingButton": "Fotoğraf yükleniyor...",
+      "profilePictureAlt": "Profil resmi önizlemesi"
+    },
+    "onDateLabel": "Tarihinde",
+    "notSet": "Belirtilmemiş"
   }
 }

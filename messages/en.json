@@ -199,10 +199,10 @@
       "adding": "Adding...",
       "removing": "Removing...",
       "remove": "Remove",
-    "editButton": "Edit",
-    "saveButton": "Save",
-    "cancelButton": "Cancel",
-    "editingButton": "Saving...",
+      "editButton": "Edit",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "editingButton": "Saving...",
       "errorAddingRelation": "Error adding relation. Please try again.",
       "relatedPhrases": "Related Phrases",
       "addRelatedPhrase": "Add Related Phrase",
@@ -526,6 +526,53 @@
     "Root": {
       "InputError": "Root is required when language specified",
       "LanguageInputError": "Language is required when root specified"
+    }
+  },
+  "Common": {
+    "anonymousUser": "Anonymous User"
+  },
+  "ProfilePage": {
+    "loadingProfileError": "Could not load profile. Please try again later.",
+    "myProfileTitle": "My Profile",
+    "userProfileTitle": "{name}'s Profile",
+    "usernameLabel": "Username",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "accountDetailsTitle": "Account Details",
+    "memberSinceLabel": "Member Since",
+    "unknownDate": "Unknown",
+    "unknownWord": "Unknown Word",
+    "contributionStatsTitle": "Contribution Stats",
+    "approvedContributionsLabel": "Approved",
+    "pendingContributionsLabel": "Pending",
+    "rejectedContributionsLabel": "Rejected",
+    "totalContributionsLabel": "Total Approved Contributions",
+    "savedWordsTitle": "Saved Words",
+    "noSavedWords": "No words saved yet.",
+    "savedOnLabel": "Saved on",
+    "recentContributionsTitle": "Recent Contributions",
+    "noContributions": "No contributions yet.",
+    "onDateLabel": "On",
+    "notSet": "Not set",
+    "editProfileButton": "Edit Profile",
+    "seeAllSavedWords": "See all saved words ({count})",
+    "editProfileModal": {
+      "title": "Edit Profile",
+      "nameLabel": "Name",
+      "namePlaceholder": "Enter your name",
+      "usernameLabel": "Username",
+      "usernamePlaceholder": "Enter your username",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "updateSuccess": "Profile updated successfully.",
+      "updateError": "Failed to update profile.",
+      "fileTooLarge": "File is too large (max {size}MB).",
+      "invalidFileType": "Invalid file type. Please select a JPG, PNG, GIF, or WEBP image.",
+      "uploadErrorGeneric": "Image upload failed. Please try again.",
+      "changePictureButton": "Change Picture",
+      "removePreviewButton": "Remove Preview",
+      "uploadingButton": "Uploading the picture...",
+      "profilePictureAlt": "Profile picture preview"
     }
   }
 }
