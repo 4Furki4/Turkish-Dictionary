@@ -50,7 +50,7 @@ export default async function AnnouncementsPage({
 
       {items.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-lg text-gray-600">{t("noAnnouncements")}</p>
+          <p className="text-lg text-gray-400">{t("noAnnouncements")}</p>
         </div>
       ) : (
         <div className="grid gap-6">
@@ -75,7 +75,7 @@ export default async function AnnouncementsPage({
                   </div>
                 )}
 
-                <p className="text-gray-700 mb-4">{announcement.excerpt}</p>
+                <p className="text-gray-400 mb-4">{announcement.excerpt}</p>
 
                 <div className="flex justify-end">
                   <Link href={{ pathname: "/announcements/[slug]", params: { slug: announcement.slug } }}>

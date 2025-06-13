@@ -109,8 +109,7 @@ export default async function AnnouncementDetailPage({
       slug,
       locale: locale as "en" | "tr",
     });
-    console.log('announcement', announcement)
-    if (!announcement) return notFound(); // Ensure notFound is called if fetch returns null/undefined
+    if (!announcement) return notFound();
 
     return (
       <div className="container mx-auto py-8 px-4">

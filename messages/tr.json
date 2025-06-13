@@ -663,9 +663,6 @@
     "onDateLabel": "Tarihinde",
     "notSet": "Belirtilmemiş"
   },
-  "Common": {
-    "unknownRelation": "bilinmeyen ilişki"
-  },
   "Errors": {
     "MustBeLoggedIn": "Bu işlemi gerçekleştirmek için giriş yapmış olmanız gerekir.",
     "OriginalRelationTypeMissing": "Orijinal ilişki türü eksik. Düzenleme isteği gönderilemiyor."

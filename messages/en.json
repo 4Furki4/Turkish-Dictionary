@@ -137,6 +137,7 @@
       "itemsPerPage": "Items per page",
       "status": "Status",
       "error": "An error occurred while loading announcements",
+      "noAnnouncements": "No announcements found",
       "edit": "Edit",
       "delete": "Delete",
       "cancel": "Cancel",
@@ -145,6 +146,26 @@
       "deleteModalTitle": "Delete Announcement",
       "deleteConfirmation": "Are you sure you want to delete the announcement \"{slug}\"? This action cannot be undone.",
       "deleteGenericConfirmation": "Are you sure you want to delete this announcement? This action cannot be undone.",
+      "deleteSuccess": "Announcement deleted successfully",
+      "deleteError": "Error deleting announcement: {error}",
+      "createSuccess": "Announcement created successfully",
+      "createError": "Error creating announcement: {error}",
+      "updateSuccess": "Announcement updated successfully",
+      "updateError": "Error updating announcement: {error}",
+      "announcementNotFound": "Announcement not found",
+      "columns": {
+        "slug": "Slug",
+        "status": "Status",
+        "publishedAt": "Published At",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "all": "All",
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      },
       "table": {
         "slug": "Slug",
         "status": "Status",
@@ -674,9 +695,6 @@
       "uploadingButton": "Uploading the picture...",
       "profilePictureAlt": "Profile picture preview"
     }
-  },
-  "Common": {
-    "unknownRelation": "unknown relation"
   },
   "Errors": {
     "MustBeLoggedIn": "You must be logged in to perform this action.",
