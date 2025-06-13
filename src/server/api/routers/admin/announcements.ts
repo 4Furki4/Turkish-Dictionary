@@ -58,110 +58,85 @@ export const adminAnnouncementsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx: { db, session }, input }) => {
-      const { translations, ...announcementData } = input;
+      const { translations, slug, ...announcementData } = input;
 
-      // Set publishedAt to now if status is published and publishedAt is not provided
+      // ✨ Proactively check if a slug already exists.
+      const existingAnnouncement = await db.query.announcements.findFirst({
+        where: eq(announcements.slug, slug),
+        columns: {
+          id: true,
+        },
+      });
+
+      // If a record is found, throw a conflict error immediately.
+      if (existingAnnouncement) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'ExistingSlugError',
+        });
+      }
+
+      // Auto-set publication date if status is 'published' and no date is provided.
       if (announcementData.status === "published" && !announcementData.publishedAt) {
         announcementData.publishedAt = now();
       }
-      
-      // Ensure publishedAt is a proper Date object if it exists
-      if (announcementData.publishedAt && !(announcementData.publishedAt instanceof Date)) {
-        try {
-          announcementData.publishedAt = new Date(announcementData.publishedAt);
-        } catch (e) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Invalid date format for publishedAt",
-          });
-        }
-      }
 
       try {
-        // Log the input data for debugging (remove in production)
-        console.log('Creating announcement with data:', JSON.stringify({
-          ...announcementData,
-          translations: {
-            en: { ...translations.en },
-            tr: { ...translations.tr }
-          }
-        }, null, 2));
-
+        // Use a database transaction to ensure all or nothing is inserted.
         return await db.transaction(async (tx) => {
-          // Ensure we have a valid user ID
           if (!session?.user?.id) {
             throw new TRPCError({
               code: "UNAUTHORIZED",
-              message: "User must be logged in to create an announcement",
+              message: "UnauthorizedUser",
             });
           }
 
-          // Prepare announcement data
-          const announcementInsertData = {
-            ...announcementData,
-            authorId: session.user.id,
-          };
-
-          // Insert the announcement
+          // Insert the main announcement record.
           const [announcement] = await tx
             .insert(announcements)
-            .values(announcementInsertData)
+            .values({
+              ...announcementData,
+              slug, // Add the slug back here
+              authorId: session.user.id,
+            })
             .returning();
 
           if (!announcement) {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to create announcement record",
+              message: "FailedCreatingAnnouncement",
             });
           }
 
-          // Prepare English translation data
+          // Prepare and insert translations.
           const enTranslationData = {
             announcementId: announcement.id,
-            locale: "en",
+            locale: "en" as const,
             title: translations.en.title,
-            content: translations.en.content === undefined ? null : translations.en.content,
-            excerpt: translations.en.excerpt === undefined ? null : translations.en.excerpt,
+            content: translations.en.content ?? null,
+            excerpt: translations.en.excerpt ?? null,
           };
 
-          // Insert English translation
-          try {
-            await tx.insert(announcementTranslations).values(enTranslationData);
-          } catch (enError) {
-            console.error("Error inserting EN translation:", enError);
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to create English translation",
-            });
-          }
-
-          // Prepare Turkish translation data
           const trTranslationData = {
             announcementId: announcement.id,
-            locale: "tr",
+            locale: "tr" as const,
             title: translations.tr.title,
-            content: translations.tr.content === undefined ? null : translations.tr.content,
-            excerpt: translations.tr.excerpt === undefined ? null : translations.tr.excerpt,
+            content: translations.tr.content ?? null,
+            excerpt: translations.tr.excerpt ?? null,
           };
 
-          // Insert Turkish translation
-          try {
-            await tx.insert(announcementTranslations).values(trTranslationData);
-          } catch (trError) {
-            console.error("Error inserting TR translation:", trError);
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to create Turkish translation",
-            });
-          }
+          await tx.insert(announcementTranslations).values([enTranslationData, trTranslationData]);
 
           return announcement;
         });
       } catch (error) {
-        console.error("Error creating announcement:", error);
+        // For all other errors, log the technical details on the server.
+        console.error("Failed to create announcement:", error);
+
+        // And provide a clean, generic error message to the client.
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Failed to create announcement: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          message: "UnexpectedError",
         });
       }
     }),
@@ -198,7 +173,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
         ) {
           announcementData.publishedAt = now();
         }
-        
+
         // Ensure publishedAt is a proper Date object if it exists
         if (announcementData.publishedAt && !(announcementData.publishedAt instanceof Date)) {
           try {
@@ -206,7 +181,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
           } catch (e) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Invalid date format for publishedAt",
+              message: "InvalidDate",
             });
           }
         }
@@ -235,7 +210,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
                 content: translations.en.content ?? null,
                 excerpt: translations.en.excerpt ?? null,
               };
-              
+
               await tx
                 .insert(announcementTranslations)
                 .values({
@@ -259,7 +234,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
                 content: translations.tr.content ?? null,
                 excerpt: translations.tr.excerpt ?? null,
               };
-              
+
               await tx
                 .insert(announcementTranslations)
                 .values({
@@ -289,7 +264,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
         console.error("Error updating announcement:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to update announcement",
+          message: "FailedUpdatingAnnouncement",
         });
       }
     }),
@@ -307,7 +282,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
         if (!deletedAnnouncement) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Announcement not found",
+            message: "AnnouncementNotFound",
           });
         }
 
@@ -316,11 +291,11 @@ export const adminAnnouncementsRouter = createTRPCRouter({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         console.error("Error deleting announcement:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to delete announcement",
+          message: "FailedDeletingAnnouncement",
         });
       }
     }),
@@ -343,7 +318,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
       try {
         // Build the where clause based on filters
         let whereClause = undefined;
-        
+
         if (status !== "all") {
           whereClause = eq(announcements.status, status);
         }
@@ -367,8 +342,8 @@ export const adminAnnouncementsRouter = createTRPCRouter({
           .from(announcements)
           .where(whereClause)
           .orderBy(
-            orderDirection === "asc" 
-              ? asc(announcements[orderBy]) 
+            orderDirection === "asc"
+              ? asc(announcements[orderBy])
               : desc(announcements[orderBy])
           )
           .limit(limit)
@@ -448,7 +423,7 @@ export const adminAnnouncementsRouter = createTRPCRouter({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         console.error("Error fetching announcement for edit:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

@@ -16,6 +16,8 @@ import { meaningAttributes } from "./schema/meaning_attributes";
 import { partOfSpeechs } from "./schema/part_of_speechs";
 import { requests } from "./schema/requests";
 import { env } from "@/src/env.mjs";
+import { announcements } from "./schema/announcements";
+import { announcementTranslations } from "./schema/announcement_translations";
 export const schema = {
   users,
   words,
@@ -30,6 +32,8 @@ export const schema = {
   meaningAttributes,
   partOfSpeechs,
   requests,
+  announcements,
+  announcementTranslations,
 };
 
 const globalForDb = globalThis as unknown as {

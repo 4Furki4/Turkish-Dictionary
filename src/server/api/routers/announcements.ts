@@ -62,7 +62,7 @@ export const announcementsRouter = createTRPCRouter({
           .where(
             and(
               eq(announcements.status, "published"),
-              gte(announcements.publishedAt, new Date())
+              lte(announcements.publishedAt, new Date())
             )
           );
 
