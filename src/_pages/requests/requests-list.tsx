@@ -28,11 +28,12 @@ import { tr } from "date-fns/locale";
 export default function RequestsList() {
   const t = useTranslations("Requests");
   const locale = useLocale();
-  const entityTypeLabels = useMemo<Record<EntityTypes, string>>(() => ({
+  const entityTypeLabels: Record<typeof entityTypesEnum.enumValues[number], string> = useMemo(() => ({
     words: t("entityTypes.words"),
     meanings: t("entityTypes.meanings"),
     roots: t("entityTypes.roots"),
     related_words: t("entityTypes.related_words"),
+    related_phrases: t("entityTypes.related_phrases"),
     part_of_speechs: t("entityTypes.part_of_speechs"),
     examples: t("entityTypes.examples"),
     authors: t("entityTypes.authors"),

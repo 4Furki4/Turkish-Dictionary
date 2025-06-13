@@ -7,8 +7,10 @@ import { wordAttributes } from "@/db/schema/word_attributes";
 import { users } from "@/db/schema/users";
 import { words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
+import { relatedWords } from "@/db/schema/related_words";
 import { getHandler } from "../handlers/request-handlers/registry";
 import { TRPCError } from "@trpc/server";
+import { relatedPhrases } from "@/db/schema/related_phrases";
 
 export const requestRouter = createTRPCRouter({
     // User request management endpoints
@@ -18,6 +20,7 @@ export const requestRouter = createTRPCRouter({
             limit: z.number().default(10),
             entityType: z.enum([
                 "words", "meanings", "roots", "related_words",
+                "related_phrases",
                 "part_of_speechs", "examples", "authors",
                 "word_attributes", "meaning_attributes"
             ]).optional(),
@@ -189,6 +192,230 @@ export const requestRouter = createTRPCRouter({
 
             return { success: true };
         }),
+
+    requestEditRelatedWord: protectedProcedure
+        .input(z.object({
+            wordId: z.number(), // The ID of the main word
+            relatedWordId: z.number(), // The ID of the word it's related to
+            originalRelationType: z.string().min(1),
+            newRelationType: z.string().min(1),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordId, relatedWordId, originalRelationType, newRelationType, reason } = input;
+
+            // Check if the original related word entry exists
+            const existingRelation = await db.query.relatedWords.findFirst({
+                where: and(
+                    eq(relatedWords.wordId, wordId),
+                    eq(relatedWords.relatedWordId, relatedWordId)
+                ),
+                columns: { // Ensure relationType is available for checking
+                    relationType: true
+                }
+            });
+
+            if (!existingRelation) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Original related word entry not found."
+                });
+            }
+
+            // Verify the original relation type matches what the user saw
+            if (existingRelation.relationType !== originalRelationType) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "The relation type of this word has changed. Please refresh the page and try again."
+                });
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_words",
+                entityId: wordId, // Storing the main wordId as the entityId
+                action: "update",
+                newData: {
+                    relatedWordId: relatedWordId,
+                    originalRelationType: originalRelationType,
+                    newRelationType: newRelationType
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related word edit request submitted." };
+        }),
+
+    requestDeleteRelatedWord: protectedProcedure
+        .input(z.object({
+            wordId: z.number(),
+            relatedWordId: z.number(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordId, relatedWordId, reason } = input;
+
+            const existingRelation = await db.query.relatedWords.findFirst({
+                where: and(
+                    eq(relatedWords.wordId, wordId),
+                    eq(relatedWords.relatedWordId, relatedWordId)
+                )
+            });
+
+            if (!existingRelation) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Related word entry not found, cannot request deletion."
+                });
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_words",
+                entityId: wordId, // Storing the main wordId as the entityId
+                action: "delete",
+                newData: {
+                    relatedWordId: relatedWordId,
+                    originalRelationType: existingRelation.relationType // Store original details for admin context
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related word deletion request submitted." };
+        }),
+
+    requestCreateRelatedWord: protectedProcedure
+        .input(z.object({
+            wordId: z.number(),
+            relatedWordId: z.number(),
+            relationType: z.string(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordId, relatedWordId, relationType, reason } = input;
+
+            const existingRelation = await db.query.relatedWords.findFirst({
+                where: and(
+                    eq(relatedWords.wordId, wordId),
+                    eq(relatedWords.relatedWordId, relatedWordId)
+                )
+            });
+
+            if (existingRelation) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "This related word entry already exists."
+                });
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_words",
+                entityId: wordId,
+                action: "create",
+                newData: {
+                    relatedWordId: relatedWordId,
+                    newRelationType: relationType
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related word creation request submitted." };
+        }),
+
+    requestEditRelatedPhrase: protectedProcedure
+        .input(z.object({
+            wordId: z.number(), // ID of the main word
+            oldRelatedPhraseId: z.number(), // ID of the word that IS the phrase being replaced
+            newRelatedPhraseId: z.number(), // ID of the new word to become the phrase
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            const { wordId, oldRelatedPhraseId, newRelatedPhraseId, reason } = input;
+
+            await ctx.db.insert(requests).values({
+                userId: ctx.session.user.id,
+                entityType: "related_phrases",
+                entityId: wordId, // The request is for the main word
+                action: "update",
+                newData: {
+                    oldRelatedPhraseId: oldRelatedPhraseId, // The ID of the phrase word being replaced
+                    newRelatedPhraseId: newRelatedPhraseId, // The ID of the new phrase word
+                },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related phrase edit request submitted." };
+        }),
+
+    requestCreateRelatedPhrase: protectedProcedure
+        .input(z.object({
+            wordId: z.number(),
+            phraseId: z.number(),
+            description: z.string().optional(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input: { wordId, phraseId, description, reason }, ctx: { db, session: { user } } }) => {
+            const existingPhrase = await db.query.relatedPhrases.findFirst({
+                where: and(
+                    eq(relatedPhrases.wordId, wordId),
+                    eq(relatedPhrases.relatedPhraseId, phraseId)
+                )
+            });
+
+            if (existingPhrase) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "This related phrase already exists for this word."
+                });
+            }
+
+            const existingRequest = await db.query.requests.findFirst({
+                where: and(
+                    eq(requests.entityType, "related_phrases"),
+                    eq(requests.action, "create"),
+                    eq(requests.status, "pending"),
+                    eq(requests.entityId, wordId),
+                    sql`"newData"->>'phraseId' = ${phraseId}`
+                )
+            });
+
+            if (existingRequest) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "A request for this related phrase already exists and is pending."
+                });
+            }
+
+            const dataToStore: { phraseId: number; description?: string } = {
+                phraseId: phraseId,
+            };
+            if (description) {
+                dataToStore.description = description;
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_phrases",
+                entityId: wordId,
+                action: "create",
+                newData: dataToStore,
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related phrase creation request submitted." };
+        }),
+
     // In src/server/api/routers/params.ts
     getWordAttributesWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
         // Get approved attributes from the main table
@@ -311,6 +538,7 @@ export const requestRouter = createTRPCRouter({
             limit: z.number().default(10),
             entityType: z.enum([
                 "words", "meanings", "roots", "related_words",
+                "related_phrases",
                 "part_of_speechs", "examples", "authors",
                 "word_attributes", "meaning_attributes"
             ]).optional(),

@@ -25,6 +25,7 @@ const entityTypeLabels: Record<EntityTypes, string> = {
   meanings: "Meanings",
   roots: "Roots",
   related_words: "Related Words",
+  related_phrases: "Related Phrases",
   part_of_speechs: "Parts of Speech",
   examples: "Examples",
   authors: "Authors",
