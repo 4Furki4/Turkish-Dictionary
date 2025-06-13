@@ -10,7 +10,7 @@ import { Button, Card, CardBody, CardHeader } from "@heroui/react";
 import { formatDate } from "@/src/utils/date";
 import { MarkdownRenderer } from "@/src/components/markdown-renderer";
 import { notFound } from "next/navigation";
-
+import { headers } from "next/headers";
 interface AnnouncementDetailPageProps {
   params: Promise<{
     locale: string;
@@ -56,7 +56,7 @@ export async function generateMetadata({
 
   const helpers = createServerSideHelpers({
     router: appRouter,
-    ctx: { db, session: null, headers: new Headers() }, // Provide static context with dummy headers
+    ctx: { db, session: null, headers: await headers() },
     transformer: superjson,
   });
 
@@ -100,7 +100,7 @@ export default async function AnnouncementDetailPage({
 
   const helpers = createServerSideHelpers({
     router: appRouter,
-    ctx: { db, session: null, headers: new Headers() }, // Provide static context with dummy headers
+    ctx: { db, session: null, headers: await headers() },
     transformer: superjson,
   });
 
