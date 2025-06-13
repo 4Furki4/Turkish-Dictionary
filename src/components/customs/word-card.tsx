@@ -353,7 +353,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
               )
           }
         </>
-        <Modal size="3xl" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal size="3xl" scrollBehavior="inside" backdrop="opaque" isOpen={isOpen} onOpenChange={onOpenChange}>
           <ModalContent>
             {(onClose) => (
               <>

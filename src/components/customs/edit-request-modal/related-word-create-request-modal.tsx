@@ -104,7 +104,7 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
   if (!session) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={() => { reset(); setInputValue(''); setDebouncedInputValue(''); onClose(); }} scrollBehavior="inside" backdrop="blur">
+    <Modal isOpen={isOpen} onClose={() => { reset(); setInputValue(''); setDebouncedInputValue(''); onClose(); }} scrollBehavior="inside" backdrop="opaque">
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader>{t('CreateRelatedWordRequestTitle')}</ModalHeader>

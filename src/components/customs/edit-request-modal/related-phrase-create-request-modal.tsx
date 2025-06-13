@@ -71,7 +71,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
 
   useEffect(() => {
     if (wordOptions) {
-            setItems(wordOptions.map((word) => ({ id: word.word_id, name: word.name })));
+      setItems(wordOptions.map((word) => ({ id: word.word_id, name: word.name })));
     }
   }, [wordOptions]);
 
@@ -87,7 +87,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
   if (!session) return null;
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside" backdrop="blur">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside" backdrop="opaque">
       <ModalContent>
         {(onClose) => (
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -108,7 +108,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
                     isInvalid={!!errors.relatedPhraseId}
                     errorMessage={errors.relatedPhraseId?.message}
                     allowsCustomValue={false}
-                    // emptyContent prop removed as it's likely not supported or needed; Autocomplete might handle this internally
+                  // emptyContent prop removed as it's likely not supported or needed; Autocomplete might handle this internally
                   >
                     {(item: SimpleWord) => (
                       <AutocompleteItem key={item.id} textValue={item.name}>

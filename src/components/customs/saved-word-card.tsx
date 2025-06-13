@@ -68,7 +68,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
         </Button>
       </CardFooter>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl" backdrop="blur" scrollBehavior="inside">
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl" backdrop="opaque" scrollBehavior="inside">
         <ModalContent>
           {loadingDetails ? (
             <Loading />
