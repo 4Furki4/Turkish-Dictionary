@@ -18,6 +18,8 @@ import { requests } from "./schema/requests";
 import { env } from "@/src/env.mjs";
 import { announcements } from "./schema/announcements";
 import { announcementTranslations } from "./schema/announcement_translations";
+import { feedbacks } from "./schema/feedbacks";
+import { feedbackVotes } from "./schema/feedback_votes";
 export const schema = {
   users,
   words,
@@ -34,6 +36,8 @@ export const schema = {
   requests,
   announcements,
   announcementTranslations,
+  feedbacks,
+  feedbackVotes
 };
 
 const globalForDb = globalThis as unknown as {
