@@ -4,7 +4,7 @@ import { TRPCReactProvider } from "@/src/trpc/react";
 import { GeistSans } from "geist/font/sans";
 import Providers from "@/src/components/customs/provider";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { NextIntlClientProvider } from "next-intl";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/src/components/customs/sonner";
 import Footer from "@/src/components/customs/footer";
 import { routing } from "@/src/i18n/routing";
@@ -14,6 +14,10 @@ import { Params } from "next/dist/server/request/params";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
+
+export function generateStaticParams() {
+  return [{ locale: "en" }, { locale: "tr" }];
+}
 
 export async function generateMetadata({
   params,
@@ -67,16 +71,16 @@ export default async function RootLayout({
   params: Promise<Params>
 }) {
   const { locale } = await params;
-  setRequestLocale(locale as string);
   const session = await auth();
-  const t = await getTranslations("Navbar");
-  const messages = await getMessages();
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+  const messages = await getMessages();
+  setRequestLocale(locale);
+  const t = await getTranslations("Navbar");
 
   return (
-    <html suppressHydrationWarning lang={locale as string} className="dark" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <html suppressHydrationWarning lang={locale} className="dark">
       <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
           <NextIntlClientProvider messages={messages}>
