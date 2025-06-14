@@ -20,6 +20,7 @@ import { announcements } from "./schema/announcements";
 import { announcementTranslations } from "./schema/announcement_translations";
 import { feedbacks } from "./schema/feedbacks";
 import { feedbackVotes } from "./schema/feedback_votes";
+
 export const schema = {
   users,
   words,
