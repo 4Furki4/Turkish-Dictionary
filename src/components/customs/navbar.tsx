@@ -50,8 +50,8 @@ export default function Navbar({
   return (
     <NextuiNavbar
       className="bg-background-foreground/100 border-b border-border"
+      maxWidth="xl"
       shouldHideOnScroll
-      maxWidth="2xl"
       classNames={{
         item: [
           "relative",
@@ -71,87 +71,75 @@ export default function Navbar({
         // wrapper: ["sm:px-0"]
       }}
     >
-      <NavbarContent justify="center">
-        <NavbarItem>
-          <NavbarBrand>
-            <NextIntlLink as={Link as any} href="/" className="hidden sm:flex items-center gap-2">
-              <Image src={logo} alt="Turkish Dictionary Logo" className="h-8 w-8" />
-              <span className="text-fs-1 font-bold text-primary">{TitleIntl}</span>
-            </NextIntlLink>
-            <button className="sm:hidden">
-              <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
-            </button>
-          </NavbarBrand>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent justify="end" className="gap-4 sm:gap-8">
+      <NavbarItem>
+        <NavbarBrand>
+          <NextIntlLink as={Link as any} href="/" className="hidden md:flex items-center gap-2">
+            <Image src={logo} alt="Turkish Dictionary Logo" className="h-8 w-8" />
+            <span className="text-fs-1 font-bold text-primary">{TitleIntl}</span>
+          </NextIntlLink>
+          <button className="md:hidden">
+            <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
+          </button>
+        </NavbarBrand>
+      </NavbarItem>
+      <NavbarContent justify="end" className="gap-4 md:gap-8">
         {session?.user.role === "admin" ? (
-          <NavbarItem className="hidden sm:flex">
-            <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+          <NavbarItem className="hidden md:flex" isActive={pathName === "/dashboard"}>
+            <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
               <span className={`text-nowrap`}>Dashboard</span>
             </NextIntlLink>
           </NavbarItem>
         ) : null}
-        <NavbarItem className="hidden sm:flex">
-          <NextIntlLink href={"/word-list"} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+        <NavbarItem className="hidden md:flex" isActive={pathName === "/word-list"}>
+          <NextIntlLink href={"/word-list"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
             <span className={`text-nowrap`}>{WordListIntl}</span>
           </NextIntlLink>
         </NavbarItem>
-        <NavbarItem className="hidden sm:flex">
-          <NextIntlLink href="/announcements" as={Link as any} className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm'>
+        <NavbarItem className="hidden md:flex" isActive={pathName === "/announcements"}>
+          <NextIntlLink href={'/announcements'} as={Link as any} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
             <span className={`text-nowrap`}>{AnnouncementsIntl}</span>
           </NextIntlLink>
         </NavbarItem>
         <NavbarItem>
-          <Dropdown classNames={{
-            content: ["rounded-sm"],
-          }}>
-            <DropdownTrigger>
-              <button className="flex items-center gap-2 rounded-sm">
-                <Languages aria-label="languages icon" className="w-6 h-6" /> {locale.toUpperCase()}
-              </button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              {locale === "en" ? (
-                <DropdownItem key={"tr"} className="rounded-sm">
-                  <NextIntlLink
-                    className="w-full block"
-                    // @ts-ignore
-                    href={{
-                      pathname: pathName,
-                      query: searchParams.toString(),
-                      params: {
-                        word: params.word as any,
-                        id: params.id as any,
-                        slug: params.slug as any,
-                      },
-                    }}
-                    locale="tr"
-                  >
-                    Türkçe
-                  </NextIntlLink>
-                </DropdownItem>
-              ) : (
-                <DropdownItem key={"en"} className="rounded-sm">
-                  <NextIntlLink
-                    className="w-full block"
-                    // @ts-ignore
-                    href={{
-                      pathname: pathName,
-                      query: searchParams.toString(),
-                      params: {
-                        word: params.word as any,
-                        id: params.id as any
-                      },
-                    }}
-                    locale="en"
-                  >
-                    English
-                  </NextIntlLink>
-                </DropdownItem>
-              )}
-            </DropdownMenu>
-          </Dropdown>
+          {locale === "en" ? (
+            <NextIntlLink
+              className="w-full block"
+              // @ts-ignore
+              href={{
+                pathname: pathName,
+                query: searchParams.toString(),
+                params: {
+                  word: params.word as any,
+                  id: params.id as any,
+                  slug: params.slug as any,
+                },
+              }}
+              locale="tr"
+            >
+              <span className="flex items-center gap-2">
+                <Languages aria-label="languages icon" className="w-6 h-6" /> TR
+              </span>
+            </NextIntlLink>
+          ) : (
+            <NextIntlLink
+              className="w-full block"
+              // @ts-ignore
+              href={{
+                pathname: pathName,
+                query: searchParams.toString(),
+                params: {
+                  word: params.word as any,
+                  id: params.id as any,
+                  slug: params.slug as any,
+                },
+              }}
+              locale="en"
+            >
+              <span className="flex items-center gap-2">
+                <Languages aria-label="languages icon" className="w-6 h-6" /> EN
+              </span>
+            </NextIntlLink>
+          )}
         </NavbarItem>
         <NavbarItem>
           {/* theme button */}
@@ -162,16 +150,6 @@ export default function Navbar({
         </NavbarItem>
         {!session?.user ? (
           <NavbarItem>
-            {/* <NextIntlLink
-              className="w-full block"
-              // @ts-ignore
-              href={{
-                pathname: '/signin',
-                query: { callbackUrl: decodeURI(`${getDynamicPathnames(pathName)}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`) },
-                search: pathName === "/signin" ? searchParams.toString() : undefined,
-              }}
-              >
-              </NextIntlLink> */}
             <Button
               onPress={() => signIn()}
               aria-disabled={isAuthPage}
