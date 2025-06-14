@@ -5,13 +5,14 @@ import { FeedbackList } from "@/src/_pages/feedback/feedback-list";
 import { FeedbackModal } from "@/src/components/customs/modals/add-feedback";
 
 interface FeedbackPageProps {
-    params: {
+    params: Promise<{
         locale: string;
-    };
+    }>;
 }
 
 export default async function FeedbackPage({ params }: FeedbackPageProps) {
-    setRequestLocale(params.locale);
+    const { locale } = await params;
+    setRequestLocale(locale);
     const t = await getTranslations("Feedback");
     const session = await auth();
 
