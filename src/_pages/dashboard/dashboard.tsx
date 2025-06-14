@@ -12,7 +12,7 @@ export default function Dashboard({
 }) {
 
   return (
-    <Card className="max-w-7xl w-full mx-auto my-4" radius="sm">
+    <Card className="max-w-7xl w-full mx-auto my-4 max-lg:mx-4 h-max" radius="sm">
       <CardHeader className="gap-2">
         <DashboardLinks />
       </CardHeader>

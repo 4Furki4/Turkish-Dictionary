@@ -38,9 +38,9 @@ export default function DashboardLinks() {
   const pathname = usePathname()
   const locale = useLocale()
   return (
-    <div className='flex gap-2'>
+    <div className='flex gap-4 items-center max-md:overflow-scroll max-md:scroll-y-hidden pr-4'>
       {getLinks(locale).map((link, index) => (
-        <NextUILink as={Link} href={link.href} key={index} underline={pathname === link.href ? "always" : "hover"}>
+        <NextUILink className='whitespace-nowrap' as={Link} href={link.href} key={index} underline={pathname === link.href ? "always" : "hover"}>
           {link.label}
         </NextUILink>
       ))}
