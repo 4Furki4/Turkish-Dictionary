@@ -10,7 +10,28 @@
     "MyRequests": "My Requests",
     "SearchHistory": "Search History",
     "Dashboard": "Dashboard",
-    "Announcements": "Announcements"
+    "Announcements": "Announcements",
+    "ariaAvatar": "Profile Picture Avatar",
+    "ariaMenu": "Menu",
+    "ariaLanguages": "Languages",
+    "ariaSwitchTheme": "Switch Theme"
+  },
+  "Footer": {
+    "copyright": "All rights reserved.",
+    "licenseInfo": "This project is open source, licensed under the GNU GPLv3.",
+    "headings": {
+      "dictionary": "Dictionary",
+      "community": "Community",
+      "legal": "Legal",
+      "social": "Social"
+    },
+    "links": {
+      "wordList": "Word List",
+      "announcements": "Announcements",
+      "seeFeedback": "See Feedback",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
   },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
@@ -769,6 +790,126 @@
     "replacingPhraseLabel": "Replacing phrase",
     "validation": {
       "newPhraseRequired": "New phrase is required."
+    }
+  },
+  "Feedback": {
+    "title": "Feedbacks",
+    "description": "Found a bug or have an idea? Let us know! Vote on existing submissions to help us prioritize what to build next.",
+    "submitFeedback": "Submit Feedback",
+    "mustBeLoggedIn": "You must be logged in to vote.",
+    "voteError": "An error occurred while voting. Please try again.",
+    "upvote": "Upvote",
+    "loadingMore": "Loading...",
+    "loadMore": "Load More",
+    "noMoreFeedback": "You've reached the end!",
+    "noFeedbackYet": "No feedback yet. Be the first to submit!",
+    "types": {
+      "bug": "Bug Report",
+      "feature": "Feature Request",
+      "other": "Other"
+    },
+    "NewForm": {
+      "title": "Submit New Feedback",
+      "description": "Let us know how we can improve. Your feedback is valuable to us.",
+      "typeLabel": "What kind of feedback is this?",
+      "feedbackTitleLabel": "Title",
+      "feedbackTitlePlaceholder": "e.g., Add dark mode",
+      "feedbackDescriptionLabel": "Description",
+      "feedbackDescriptionPlaceholder": "Please provide as much detail as possible...",
+      "submitSuccess": "Feedback submitted successfully. Thank you!",
+      "submitting": "Submitting...",
+      "submitButton": "Submit",
+      "cancel": "Cancel",
+      "authRequiredTitle": "Sign In Required",
+      "authRequiredDescription": "Please sign in to submit feedback.",
+      "types": {
+        "feature": "Feature Request",
+        "bug": "Bug Report",
+        "other": "Other"
+      }
+    }
+  },
+  "Error": {
+    "titleMinLength": "Title must be at least 5 characters long.",
+    "descriptionMinLength": "Description must be at least 10 characters long."
+  },
+  "TermsOfService": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated on {date}",
+    "introduction": "Welcome to Turkish Dictionary! These terms and conditions outline the rules and regulations for the use of our website. By accessing this website, we assume you accept these terms and conditions. Do not continue to use Turkish Dictionary if you do not agree to all of the terms and conditions stated on this page.",
+    "userAccounts": {
+      "title": "User Accounts",
+      "p1": "When you create an account with us, you must provide information that is accurate, complete, and current at all times. You are responsible for safeguarding the password that you use to access the service and for any activities or actions under your password."
+    },
+    "userContent": {
+      "title": "User-Generated Content",
+      "p1": "Our Service allows you to post, link, store, share and otherwise make available certain information, text, graphics, or other material ('Content'), such as in the Feedback section. You are responsible for the Content that you post on or through the Service, including its legality, reliability, and appropriateness.",
+      "p2": "By posting Content on or through the Service, you grant us the right and license to use, modify, publicly perform, publicly display, reproduce, and distribute such Content on and through the Service. You retain any and all of your rights to any Content you submit."
+    },
+    "licenseAndRestrictions": {
+      "title": "License and Restrictions",
+      "p1": "The source code for this website is licensed under the GNU General Public License v3.0. The content provided by the dictionary, unless otherwise stated, is for informational purposes.",
+      "p2": "You are expressly restricted from all of the following: publishing any website material in any media without prior written consent; using this website in any way that is, or may be, damaging to this website; using this website contrary to applicable laws and regulations."
+    },
+    "disclaimers": {
+      "title": "Disclaimers",
+      "p1": "This website is provided 'as is,' with all faults, and we make no express or implied representations or warranties of any kind related to this website or the materials contained on this website."
+    },
+    "limitationOfLiability": {
+      "title": "Limitation of Liability",
+      "p1": "In no event shall Turkish Dictionary, nor any of its officers, directors, and employees, be liable to you for anything arising out of or in any way connected with your use of this website, whether such liability is under contract, tort or otherwise."
+    },
+    "governingLaw": {
+      "title": "Governing Law & Jurisdiction",
+      "p1": "These Terms will be governed by and construed in accordance with the laws of the Republic of Turkey, and you submit to the non-exclusive jurisdiction of the state and federal courts located in Turkey for the resolution of any disputes."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "p1": "If you have any questions about these Terms, please contact us via the feedback form."
+    }
+  },
+  "PrivacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated on {date}",
+    "introduction": "This Privacy Policy explains how Turkish Dictionary collects, uses, and discloses your personal data in compliance with the Turkish Law on the Protection of Personal Data (KVKK) No. 6698.",
+    "dataController": {
+      "title": "Data Controller",
+      "p1": "The data controller for your personal data is Turkish Dictionary. You can contact us via the feedback system on the website."
+    },
+    "dataCollected": {
+      "title": "Data We Collect",
+      "item1": "Account Information: When you sign in using Google, Discord, or email, we collect your name, email address, and profile picture provided by the authentication service.",
+      "item2": "User-Generated Content: We collect the information you provide when you submit feedback or feature requests, including the title, description, and any votes you cast.",
+      "item3": "Usage Data: We may collect information on how the Service is accessed and used (e.g., search logs), which is processed anonymously or in aggregate."
+    },
+    "purposeOfProcessing": {
+      "title": "Purpose of Data Processing",
+      "item1": "To provide and maintain our Service.",
+      "item2": "To manage your account and identify you as a user.",
+      "item3": "To manage and prioritize community feedback.",
+      "item4": "To communicate with you if necessary."
+    },
+    "dataSharing": {
+      "title": "Data Sharing with Third Parties",
+      "p1": "We do not sell or rent your personal data to third parties. Your data is not shared with any third party, except where required by law."
+    },
+    "userRights": {
+      "title": "Your Rights Under KVKK",
+      "intro": "As per Article 11 of the KVKK, you have the following rights regarding your personal data:",
+      "item1": "To learn whether your personal data is processed.",
+      "item2": "To request information if your data has been processed.",
+      "item3": "To learn the purpose of processing and whether they are used appropriately.",
+      "item4": "To request correction of incomplete or inaccurate data.",
+      "item5": "To request the deletion or destruction of your personal data under the conditions set forth in KVKK.",
+      "outro": "You may exercise these rights by contacting us."
+    },
+    "dataSecurity": {
+      "title": "Data Security",
+      "p1": "We take reasonable administrative and technical measures to protect your personal data from loss, unauthorized access, disclosure, alteration, or destruction."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "p1": "If you have any questions about this Privacy Policy, please contact us via the feedback form."
     }
   }
 }

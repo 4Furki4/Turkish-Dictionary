@@ -44,6 +44,7 @@ import { paramsRouter } from "./routers/params";
 import { requestRouter } from "./routers/request";
 import { announcementsRouter } from "./routers/announcements";
 import { profileRouter } from "./routers/profile";
+import { feedbackRouter } from "./routers/feedback";
 
 /**
  * This is the primary router for your server.
@@ -57,7 +58,8 @@ export const appRouter = createTRPCRouter({
   params: paramsRouter,
   request: requestRouter,
   announcements: announcementsRouter,
-  profile: profileRouter
+  profile: profileRouter,
+  feedback: feedbackRouter,
 });
 
 // export type definition of API

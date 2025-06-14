@@ -10,7 +10,28 @@
     "MyRequests": "İsteklerim",
     "SearchHistory": "Arama Geçmişi",
     "Dashboard": "Panel",
-    "Announcements": "Duyurular"
+    "Announcements": "Duyurular",
+    "ariaAvatar": "Profil Resmi Avatarı",
+    "ariaMenu": "Menü Butonu",
+    "ariaLanguages": "Dil Değiştirme Butonu",
+    "ariaSwitchTheme": "Tema Değiştirme Butonu"
+  },
+  "Footer": {
+    "copyright": "Tüm hakları saklıdır.",
+    "licenseInfo": "Bu proje açık kaynaklıdır ve GNU GPLv3 lisansı altındadır.",
+    "headings": {
+      "dictionary": "Sözlük",
+      "community": "Topluluk",
+      "legal": "Yasal",
+      "social": "Sosyal"
+    },
+    "links": {
+      "wordList": "Kelime Listesi",
+      "announcements": "Duyurular",
+      "seeFeedback": "Geri Bildirimler",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Şartları"
+    }
   },
   "SigninForm": {
     "Sign in with Google": "Google ile Giriş Yap",
@@ -740,6 +761,126 @@
     "validationRequired": "Açıklama gereklidir.",
     "validation": {
       "newPhraseRequired": "Yeni deyim gereklidir."
+    }
+  },
+  "Feedback": {
+    "title": "Geri Bildirimler",
+    "description": "Bir hata mı buldunuz veya bir fikriniz mi var? Bize bildirin! Neyi inşa edeceğimizi önceliklendirmemize yardımcı olmak için mevcut gönderilere oy verin.",
+    "submitFeedback": "Geri Bildirimde Bulun",
+    "mustBeLoggedIn": "Oy vermek için giriş yapmalısınız.",
+    "voteError": "Oy verilirken bir hata oluştu. Lütfen tekrar deneyin.",
+    "upvote": "Destekle",
+    "loadingMore": "Yükleniyor...",
+    "loadMore": "Daha Fazla Yükle",
+    "noMoreFeedback": "Listenin sonuna ulaştınız!",
+    "noFeedbackYet": "Henüz geri bildirim yok. İlk gönderen siz olun!",
+    "types": {
+      "bug": "Hata Bildirimi",
+      "feature": "Özellik Talebi",
+      "other": "Diğer"
+    },
+    "NewForm": {
+      "title": "Yeni Geri Bildirim Gönder",
+      "description": "Nasıl geliştirebileceğimizi bize bildirin. Geri bildiriminiz bizim için değerlidir.",
+      "typeLabel": "Bu ne tür bir geri bildirim?",
+      "feedbackTitleLabel": "Başlık",
+      "feedbackTitlePlaceholder": "Örn: Karanlık mod ekleyin",
+      "feedbackDescriptionLabel": "Açıklama",
+      "feedbackDescriptionPlaceholder": "Lütfen mümkün olduğunca fazla ayrıntı sağlayın...",
+      "submitSuccess": "Geri bildirim başarıyla gönderildi. Teşekkür ederiz!",
+      "submitting": "Gönderiliyor...",
+      "submitButton": "Gönder",
+      "cancel": "İptal",
+      "authRequiredTitle": "Giriş Yapılmalı",
+      "authRequiredDescription": "Geri bildirim göndermek için lütfen giriş yapın.",
+      "types": {
+        "feature": "Özellik Talebi",
+        "bug": "Hata Bildirimi",
+        "other": "Diğer"
+      }
+    }
+  },
+  "Error": {
+    "titleMinLength": "Başlık en az 5 karakter uzunluğunda olmalıdır.",
+    "descriptionMinLength": "Açıklama en az 10 karakter uzunluğunda olmalıdır."
+  },
+  "TermsOfService": {
+    "title": "Kullanım Şartları",
+    "lastUpdated": "Son güncelleme: {date}",
+    "introduction": "Türkçe Sözlük'e hoş geldiniz! Bu şartlar ve koşullar, web sitemizin kullanımına ilişkin kuralları ve yönetmelikleri ana hatlarıyla belirtmektedir. Bu web sitesine erişerek, bu şartları ve koşulları kabul ettiğinizi varsayıyoruz. Bu sayfada belirtilen tüm şartları ve koşulları kabul etmiyorsanız, Türkçe Sözlük'ü kullanmaya devam etmeyin.",
+    "userAccounts": {
+      "title": "Kullanıcı Hesapları",
+      "p1": "Bizde bir hesap oluşturduğunuzda, her zaman doğru, eksiksiz ve güncel bilgiler sunmalısınız. Hizmete erişmek için kullandığınız şifreyi korumaktan ve şifreniz altındaki her türlü faaliyet veya eylemden siz sorumlusunuz."
+    },
+    "userContent": {
+      "title": "Kullanıcı Tarafından Oluşturulan İçerik",
+      "p1": "Hizmetimiz, Geri Bildirim bölümü gibi belirli bilgileri, metinleri, grafikleri veya diğer materyalleri ('İçerik') göndermenize, bağlamanıza, saklamanıza, paylaşmanıza ve başka şekillerde kullanıma sunmanıza olanak tanır. Hizmet üzerinde veya aracılığıyla yayınladığınız İçeriğin yasallığı, güvenilirliği ve uygunluğu da dahil olmak üzere sorumluluğu size aittir.",
+      "p2": "Hizmet üzerinde veya aracılığıyla İçerik yayınlayarak, bize bu İçeriği Hizmet üzerinde ve aracılığıyla kullanma, değiştirme, halka açık olarak sergileme, çoğaltma ve dağıtma hakkı ve lisansı vermiş olursunuz. Gönderdiğiniz herhangi bir İçerik üzerindeki tüm haklarınızı saklı tutarsınız."
+    },
+    "licenseAndRestrictions": {
+      "title": "Lisans ve Kısıtlamalar",
+      "p1": "Bu web sitesinin kaynak kodu GNU General Public License v3.0 altında lisanslanmıştır. Sözlük tarafından sağlanan içerik, aksi belirtilmedikçe, bilgilendirme amaçlıdır.",
+      "p2": "Aşağıdakilerin tümünden kesinlikle kısıtlanmış bulunmaktasınız: herhangi bir web sitesi materyalini önceden yazılı izin olmaksızın herhangi bir medyada yayınlamak; bu web sitesini, bu web sitesine zarar verecek veya verebilecek şekilde kullanmak; bu web sitesini yürürlükteki yasalara ve düzenlemelere aykırı olarak kullanmak."
+    },
+    "disclaimers": {
+      "title": "Sorumluluk Reddi Beyanları",
+      "p1": "Bu web sitesi, tüm kusurlarıyla birlikte 'olduğu gibi' sunulmaktadır ve bu web sitesiyle veya bu web sitesinde yer alan materyallerle ilgili herhangi bir türden açık veya zımni hiçbir beyan veya garantide bulunmamaktayız."
+    },
+    "limitationOfLiability": {
+      "title": "Sorumluluğun Sınırlandırılması",
+      "p1": "Hiçbir durumda Türkçe Sözlük veya yöneticileri, direktörleri ve çalışanları, bu web sitesini kullanımınızdan kaynaklanan veya herhangi bir şekilde bağlantılı olan herhangi bir şey için, bu tür bir sorumluluk sözleşme, haksız fiil veya başka bir şekilde olsun, size karşı sorumlu tutulamaz."
+    },
+    "governingLaw": {
+      "title": "Geçerli Hukuk ve Yargı Yetkisi",
+      "p1": "Bu Şartlar, Türkiye Cumhuriyeti yasalarına göre yönetilecek ve yorumlanacaktır ve herhangi bir uyuşmazlığın çözümü için Türkiye'de bulunan devlet ve federal mahkemelerin münhasır olmayan yargı yetkisine tabi olmayı kabul edersiniz."
+    },
+    "contact": {
+      "title": "Bize Ulaşın",
+      "p1": "Bu Şartlar hakkında herhangi bir sorunuz varsa, lütfen geri bildirim formu aracılığıyla bizimle iletişime geçin."
+    }
+  },
+  "PrivacyPolicy": {
+    "title": "Gizlilik Politikası",
+    "lastUpdated": "Son güncelleme: {date}",
+    "introduction": "Bu Gizlilik Politikası, Türkçe Sözlük'ün kişisel verilerinizi 6698 sayılı Kişisel Verilerin Korunması Kanunu'na (KVKK) uygun olarak nasıl topladığını, kullandığını ve ifşa ettiğini açıklamaktadır.",
+    "dataController": {
+      "title": "Veri Sorumlusu",
+      "p1": "Kişisel verileriniz için veri sorumlusu Türkçe Sözlük'tür. Bizimle web sitesindeki geri bildirim sistemi aracılığıyla iletişime geçebilirsiniz."
+    },
+    "dataCollected": {
+      "title": "Topladığımız Veriler",
+      "item1": "Hesap Bilgileri: Google, Discord veya e-posta ile giriş yaptığınızda, kimlik doğrulama hizmeti tarafından sağlanan adınızı, e-posta adresinizi ve profil resminizi toplarız.",
+      "item2": "Kullanıcı Tarafından Oluşturulan İçerik: Geri bildirim veya özellik talepleri gönderdiğinizde başlık, açıklama ve kullandığınız oylar da dahil olmak üzere sağladığınız bilgileri toplarız.",
+      "item3": "Kullanım Verileri: Hizmetin nasıl erişildiği ve kullanıldığına dair bilgileri (ör. arama kayıtları) toplayabiliriz; bu veriler anonim veya toplu olarak işlenir."
+    },
+    "purposeOfProcessing": {
+      "title": "Veri İşleme Amacı",
+      "item1": "Hizmetimizi sağlamak ve sürdürmek.",
+      "item2": "Hesabınızı yönetmek ve sizi bir kullanıcı olarak tanımlamak.",
+      "item3": "Topluluk geri bildirimlerini yönetmek ve önceliklendirmek.",
+      "item4": "Gerekli olması halinde sizinle iletişim kurmak."
+    },
+    "dataSharing": {
+      "title": "Verilerin Üçüncü Taraflarla Paylaşımı",
+      "p1": "Kişisel verilerinizi üçüncü taraflara satmayız veya kiralamayız. Verileriniz, yasaların gerektirdiği durumlar dışında hiçbir üçüncü tarafla paylaşılmaz."
+    },
+    "userRights": {
+      "title": "KVKK Kapsamındaki Haklarınız",
+      "intro": "KVKK'nın 11. maddesi uyarınca, kişisel verilerinizle ilgili aşağıdaki haklara sahipsiniz:",
+      "item1": "Kişisel verilerinizin işlenip işlenmediğini öğrenme.",
+      "item2": "Verileriniz işlenmişse buna ilişkin bilgi talep etme.",
+      "item3": "İşlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme.",
+      "item4": "Eksik veya yanlış verilerin düzeltilmesini isteme.",
+      "item5": "KVKK'da belirtilen şartlar çerçevesinde kişisel verilerinizin silinmesini veya yok edilmesini isteme.",
+      "outro": "Bu haklarınızı kullanmak için bizimle iletişime geçebilirsiniz."
+    },
+    "dataSecurity": {
+      "title": "Veri Güvenliği",
+      "p1": "Kişisel verilerinizi kayıptan, yetkisiz erişimden, ifşadan, değiştirmeden veya yok edilmeden korumak için makul idari ve teknik önlemleri alıyoruz."
+    },
+    "contact": {
+      "title": "Bize Ulaşın",
+      "p1": "Bu Gizlilik Politikası hakkında herhangi bir sorunuz varsa, lütfen geri bildirim formu aracılığıyla bizimle iletişime geçin."
     }
   }
 }

@@ -127,7 +127,22 @@ export const routing = defineRouting({
       "en": "/dashboard/announcements/[id]/edit",
       "tr": "/dashboard/duyurular/[id]/duzenle",
     },
-    // Dynamic params are supported via square brackets
+    "/feedback": {
+      "en": "/feedback",
+      "tr": "/geri-bildirim",
+    },
+    "/feedback/new": {
+      "en": "/feedback/new",
+      "tr": "/geri-bildirim/yeni",
+    },
+    "/terms-of-service": {
+      "en": "/terms-of-service",
+      "tr": "/kullanim-sartlari",
+    },
+    "/privacy-policy": {
+      "en": "/privacy-policy",
+      "tr": "/gizlilik-politikasi",
+    },
   }
 
 })

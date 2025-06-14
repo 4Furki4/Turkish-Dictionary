@@ -4,23 +4,28 @@ import { TRPCReactProvider } from "@/src/trpc/react";
 import { GeistSans } from "geist/font/sans";
 import Providers from "@/src/components/customs/provider";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { NextIntlClientProvider } from "next-intl";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/src/components/customs/sonner";
-import { Wrapper } from "@/src/components/customs/wrapper";
 import Footer from "@/src/components/customs/footer";
 import { routing } from "@/src/i18n/routing";
 import { notFound } from "next/navigation";
 import { auth } from "@/src/server/auth/auth";
 import { Params } from "next/dist/server/request/params";
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
+import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
+
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { locale } = await params;
-  const isEnglish = locale === "en";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isEnglish = locale === 'en';
   return {
     metadataBase: new URL('https://turkce-sozluk.com'),
     title: {
@@ -57,6 +62,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     },
   };
 }
+
 export default async function RootLayout({
   children,
   params
@@ -64,46 +70,48 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<Params>
 }) {
-  const { locale } = await params
-  setRequestLocale(locale as string)
+  const { locale } = await params;
   const session = await auth();
-  const t = await getTranslations("Navbar");
-  const messages = await getMessages();
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+  const messages = await getMessages();
+  setRequestLocale(locale);
+  const t = await getTranslations("Navbar");
+
   return (
-    <html suppressHydrationWarning lang={locale as string} className="dark" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <body className={`${GeistSans.className} relative`} >
+    <html suppressHydrationWarning lang={locale} className="dark">
+      <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
-
-          {/* <NextSSRPlugin
-
-            //   The `extractRouterConfig` will extract **only** the route configs
-            // from the router to prevent additional information from being
-            // leaked to the client. The data passed to the client is the same
-            // as if you were to fetch `/api/uploadthing` directly.
-
-            routerConfig={extractRouterConfig(ourFileRouter)}
-          /> */}
           <NextIntlClientProvider messages={messages}>
             <Providers>
-              <Wrapper
-                TitleIntl={t("Title")}
-                HomeIntl={t("Home")}
-                session={session}
-                SignInIntl={t("Sign In")}
-                WordListIntl={t("Word List")}
-                ProfileIntl={t("Profile")}
-                SavedWordsIntl={t("SavedWords")}
-                MyRequestsIntl={t("MyRequests")}
-                SearchHistoryIntl={t("SearchHistory")}
-                LogoutIntl={t("Logout")}
-                AnnouncementsIntl={t("Announcements")} />
-              {children}
+              <div className="flex flex-col min-h-screen">
+
+                <NavbarAndSidebar
+                  session={session}
+                  HomeIntl={t("Home")}
+                  SignInIntl={t("Sign In")}
+                  WordListIntl={t("Word List")}
+                  TitleIntl={t("Title")}
+                  ProfileIntl={t("Profile")}
+                  SavedWordsIntl={t("SavedWords")}
+                  MyRequestsIntl={t("MyRequests")}
+                  SearchHistoryIntl={t("SearchHistory")}
+                  LogoutIntl={t("Logout")}
+                  AnnouncementsIntl={t("Announcements")}
+                  ariaAvatar={t("ariaAvatar")}
+                  ariaMenu={t("ariaMenu")}
+                  ariaLanguages={t("ariaLanguages")}
+                  ariaSwitchTheme={t("ariaSwitchTheme")}
+                />
+                {/* ✨ Main content area that grows to push the footer down */}
+                <main className="flex-grow w-full flex">
+                  {children}
+                </main>
+                <Footer />
+              </div>
               <SpeedInsights />
               <Analytics />
-              <Footer />
             </Providers>
           </NextIntlClientProvider>
         </TRPCReactProvider>

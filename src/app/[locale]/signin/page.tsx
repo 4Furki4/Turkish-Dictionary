@@ -37,7 +37,9 @@ export default async function page({
   const t = await getTranslations("SigninForm");
   if (session) redirect("/?warning=alreadySignedIn");
   return (
-    <main className="grid place-items-center w-full h-full mt-auto p-2">
+    // This div now grows to fill the available space from the parent layout
+    // and centers the form within it.
+    <div className="max-md:h-lvh w-full flex flex-col items-center justify-center">
       <SigninForm
         SignInWithGoogleIntl={t("Sign in with Google")}
         SignInWithDiscordIntl={t("Sign in with Discord")}
@@ -48,6 +50,6 @@ export default async function page({
         EmailSigninLabelIntl={t("EmailSigninLabel")}
         InvalidEmailIntl={t("InvalidEmail")}
       />
-    </main>
+    </div>
   );
 }
