@@ -10,7 +10,11 @@
     "MyRequests": "İsteklerim",
     "SearchHistory": "Arama Geçmişi",
     "Dashboard": "Panel",
-    "Announcements": "Duyurular"
+    "Announcements": "Duyurular",
+    "ariaAvatar": "Profil Resmi Avatarı",
+    "ariaMenu": "Menü Butonu",
+    "ariaLanguages": "Dil Değiştirme Butonu",
+    "ariaSwitchTheme": "Tema Değiştirme Butonu"
   },
   "Footer": {
     "copyright": "Tüm hakları saklıdır.",

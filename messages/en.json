@@ -10,7 +10,11 @@
     "MyRequests": "My Requests",
     "SearchHistory": "Search History",
     "Dashboard": "Dashboard",
-    "Announcements": "Announcements"
+    "Announcements": "Announcements",
+    "ariaAvatar": "Profile Picture Avatar",
+    "ariaMenu": "Menu",
+    "ariaLanguages": "Languages",
+    "ariaSwitchTheme": "Switch Theme"
   },
   "Footer": {
     "copyright": "All rights reserved.",

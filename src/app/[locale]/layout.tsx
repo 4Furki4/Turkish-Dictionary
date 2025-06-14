@@ -6,7 +6,6 @@ import Providers from "@/src/components/customs/provider";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/src/components/customs/sonner";
-import { Wrapper } from "@/src/components/customs/wrapper";
 import Footer from "@/src/components/customs/footer";
 import { routing } from "@/src/i18n/routing";
 import { notFound } from "next/navigation";
@@ -14,6 +13,7 @@ import { auth } from "@/src/server/auth/auth";
 import { Params } from "next/dist/server/request/params";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
+import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
@@ -88,18 +88,23 @@ export default async function RootLayout({
           /> */}
           <NextIntlClientProvider messages={messages}>
             <Providers>
-              <Wrapper
-                TitleIntl={t("Title")}
-                HomeIntl={t("Home")}
+              <NavbarAndSidebar
                 session={session}
+                HomeIntl={t("Home")}
                 SignInIntl={t("Sign In")}
                 WordListIntl={t("Word List")}
+                TitleIntl={t("Title")}
                 ProfileIntl={t("Profile")}
                 SavedWordsIntl={t("SavedWords")}
                 MyRequestsIntl={t("MyRequests")}
                 SearchHistoryIntl={t("SearchHistory")}
                 LogoutIntl={t("Logout")}
-                AnnouncementsIntl={t("Announcements")} />
+                AnnouncementsIntl={t("Announcements")}
+                ariaAvatar={t("ariaAvatar")}
+                ariaMenu={t("ariaMenu")}
+                ariaLanguages={t("ariaLanguages")}
+                ariaSwitchTheme={t("ariaSwitchTheme")}
+              />
               {children}
               <SpeedInsights />
               <Analytics />

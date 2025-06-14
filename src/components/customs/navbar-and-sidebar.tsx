@@ -15,7 +15,11 @@ export default function NavbarAndSidebar({
     MyRequestsIntl,
     SearchHistoryIntl,
     LogoutIntl,
-    AnnouncementsIntl
+    AnnouncementsIntl,
+    ariaAvatar,
+    ariaMenu,
+    ariaLanguages,
+    ariaSwitchTheme,
 }: {
     session: Session | null
     HomeIntl: string
@@ -28,6 +32,10 @@ export default function NavbarAndSidebar({
     SearchHistoryIntl: string
     LogoutIntl: string
     AnnouncementsIntl: string
+    ariaAvatar: string,
+    ariaMenu: string,
+    ariaLanguages: string,
+    ariaSwitchTheme: string,
 }) {
     // Render children if on client side, otherwise return null
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -46,6 +54,10 @@ export default function NavbarAndSidebar({
                 LogoutIntl={LogoutIntl}
                 AnnouncementsIntl={AnnouncementsIntl}
                 setIsSidebarOpen={setIsSidebarOpen}
+                ariaAvatar={ariaAvatar}
+                ariaMenu={ariaMenu}
+                ariaLanguages={ariaLanguages}
+                ariaSwitchTheme={ariaSwitchTheme}
             />
             <Sidebar session={session} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
         </>

@@ -23,7 +23,7 @@ import Image from "next/image";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl", string>;
+} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl" | "ariaAvatar" | "ariaMenu" | "ariaLanguages" | "ariaSwitchTheme", string>;
 
 export default function Navbar({
   session,
@@ -37,7 +37,11 @@ export default function Navbar({
   SearchHistoryIntl,
   LogoutIntl,
   AnnouncementsIntl,
-  setIsSidebarOpen
+  ariaAvatar,
+  setIsSidebarOpen,
+  ariaMenu,
+  ariaLanguages,
+  ariaSwitchTheme,
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
   const pathName = usePathname();
@@ -78,7 +82,7 @@ export default function Navbar({
             <span className="text-fs-1 font-bold text-primary">{TitleIntl}</span>
           </NextIntlLink>
           <button className="md:hidden">
-            <Menu aria-label="menu icon" className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
+            <Menu aria-label={ariaMenu} className="h-7 w-7" onClick={() => setIsSidebarOpen(true)} />
           </button>
         </NavbarBrand>
       </NavbarItem>
@@ -136,14 +140,14 @@ export default function Navbar({
               locale="en"
             >
               <span className="flex items-center gap-2">
-                <Languages aria-label="languages icon" className="w-6 h-6" /> EN
+                <Languages aria-label={ariaLanguages} className="w-6 h-6" /> EN
               </span>
             </NextIntlLink>
           )}
         </NavbarItem>
         <NavbarItem>
           {/* theme button */}
-          <Button aria-label="Switch theme" variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
+          <Button aria-label={ariaSwitchTheme} variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           </Button>
@@ -163,59 +167,62 @@ export default function Navbar({
           </NavbarItem>
         ) : (
           <>
-            <NavbarItem className="cursor-pointer">
-              <Dropdown classNames={{
-                content: ["rounded-sm"],
-              }}>
-                <DropdownTrigger>
-                  <button className="rounded-sm">
-                    <Avatar
-                      showFallback
-                      src={session.user.image ?? "https://images.unsplash.com/broken"}
-                      size="sm"
-                    />
-                  </button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  onAction={(key) => {
-                    switch (key) {
-                      case "sign-out":
-                        signOut();
-                        break;
-                    }
-                  }}
+            {/* <NavbarItem className="cursor-pointer"> */}
+            <Dropdown classNames={{
+              content: ["rounded-sm"],
+            }}>
+              <DropdownTrigger>
+                <Button isIconOnly disableAnimation disableRipple
+                  className="bg-transparent"
+                  aria-label={ariaAvatar}
                 >
-                  <DropdownItem key={"profile"} className="rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
-                      {ProfileIntl}
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key={"saved-words"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
-                      {SavedWordsIntl}
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key={"requests"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/requests">
-                      {MyRequestsIntl}
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key={"search-history"} className="text-center rounded-sm">
-                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
-                      {SearchHistoryIntl}
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem
-                    className="rounded-sm text-destructive"
-                    key={"sign-out"}
-                    color="danger"
-                    onPress={() => signOut()}
-                  >
-                    {LogoutIntl}
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </NavbarItem>
+                  <Avatar
+                    showFallback
+                    src={session.user.image ?? "https://images.unsplash.com/broken"}
+                    size="sm"
+                  />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                onAction={(key) => {
+                  switch (key) {
+                    case "sign-out":
+                      signOut();
+                      break;
+                  }
+                }}
+              >
+                <DropdownItem key={"profile"} className="rounded-sm">
+                  <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
+                    {ProfileIntl}
+                  </Link>
+                </DropdownItem>
+                <DropdownItem key={"saved-words"} className="text-center rounded-sm">
+                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
+                    {SavedWordsIntl}
+                  </Link>
+                </DropdownItem>
+                <DropdownItem key={"requests"} className="text-center rounded-sm">
+                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/requests">
+                    {MyRequestsIntl}
+                  </Link>
+                </DropdownItem>
+                <DropdownItem key={"search-history"} className="text-center rounded-sm">
+                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
+                    {SearchHistoryIntl}
+                  </Link>
+                </DropdownItem>
+                <DropdownItem
+                  className="rounded-sm text-destructive"
+                  key={"sign-out"}
+                  color="danger"
+                  onPress={() => signOut()}
+                >
+                  {LogoutIntl}
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+            {/* </NavbarItem> */}
           </>
         )}
       </NavbarContent>

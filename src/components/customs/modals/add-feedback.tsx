@@ -20,7 +20,6 @@ import {
     Popover,
     PopoverTrigger,
     PopoverContent,
-    Link,
 } from "@heroui/react";
 import { feedbackTypeEnum } from "@/db/schema/feedbacks"; // Corrected import path
 import { type Session } from "next-auth";
