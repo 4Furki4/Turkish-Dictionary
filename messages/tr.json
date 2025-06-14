@@ -12,6 +12,23 @@
     "Dashboard": "Panel",
     "Announcements": "Duyurular"
   },
+  "Footer": {
+    "copyright": "Tüm hakları saklıdır.",
+    "licenseInfo": "Bu proje açık kaynaklıdır ve GNU GPLv3 lisansı altındadır.",
+    "headings": {
+      "dictionary": "Sözlük",
+      "community": "Topluluk",
+      "legal": "Yasal",
+      "social": "Sosyal"
+    },
+    "links": {
+      "wordList": "Kelime Listesi",
+      "announcements": "Duyurular",
+      "seeFeedback": "Geri Bildirimler",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Şartları"
+    }
+  },
   "SigninForm": {
     "Sign in with Google": "Google ile Giriş Yap",
     "Sign in with GitHub": "GitHub ile Giriş Yap",
@@ -741,5 +758,42 @@
     "validation": {
       "newPhraseRequired": "Yeni deyim gereklidir."
     }
+  },
+  "Feedback": {
+    "title": "Geri Bildirimler",
+    "description": "Bir hata mı buldunuz veya bir fikriniz mi var? Bize bildirin! Neyi inşa edeceğimizi önceliklendirmemize yardımcı olmak için mevcut gönderilere oy verin.",
+    "submitFeedback": "Geri Bildirimde Bulun",
+    "mustBeLoggedIn": "Oy vermek için giriş yapmalısınız.",
+    "voteError": "Oy verilirken bir hata oluştu. Lütfen tekrar deneyin.",
+    "upvote": "Destekle",
+    "loadingMore": "Yükleniyor...",
+    "loadMore": "Daha Fazla Yükle",
+    "noMoreFeedback": "Listenin sonuna ulaştınız!",
+    "noFeedbackYet": "Henüz geri bildirim yok. İlk gönderen siz olun!",
+    "types": {
+      "bug": "Hata Bildirimi",
+      "feature": "Özellik Talebi"
+    },
+    "NewForm": {
+      "title": "Yeni Geri Bildirim Gönder",
+      "description": "Nasıl geliştirebileceğimizi bize bildirin. Geri bildiriminiz bizim için değerlidir.",
+      "typeLabel": "Bu ne tür bir geri bildirim?",
+      "feedbackTitleLabel": "Başlık",
+      "feedbackTitlePlaceholder": "Örn: Karanlık mod ekleyin",
+      "feedbackDescriptionLabel": "Açıklama",
+      "feedbackDescriptionPlaceholder": "Lütfen mümkün olduğunca fazla ayrıntı sağlayın...",
+      "submitSuccess": "Geri bildirim başarıyla gönderildi. Teşekkür ederiz!",
+      "submitting": "Gönderiliyor...",
+      "submitButton": "Gönder",
+      "cancel": "İptal",
+      "types": {
+        "feature": "Özellik Talebi",
+        "bug": "Hata Bildirimi"
+      }
+    }
+  },
+  "Error": {
+    "titleMinLength": "Başlık en az 5 karakter uzunluğunda olmalıdır.",
+    "descriptionMinLength": "Açıklama en az 10 karakter uzunluğunda olmalıdır."
   }
 }

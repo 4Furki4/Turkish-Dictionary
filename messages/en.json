@@ -12,6 +12,23 @@
     "Dashboard": "Dashboard",
     "Announcements": "Announcements"
   },
+  "Footer": {
+    "copyright": "All rights reserved.",
+    "licenseInfo": "This project is open source, licensed under the GNU GPLv3.",
+    "headings": {
+      "dictionary": "Dictionary",
+      "community": "Community",
+      "legal": "Legal",
+      "social": "Social"
+    },
+    "links": {
+      "wordList": "Word List",
+      "announcements": "Announcements",
+      "seeFeedback": "See Feedback",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
   "SigninForm": {
     "Sign in with Google": "Sign in with Google",
     "Sign in with GitHub": "Sign in with GitHub",
@@ -770,5 +787,42 @@
     "validation": {
       "newPhraseRequired": "New phrase is required."
     }
+  },
+  "Feedback": {
+    "title": "Feedbacks",
+    "description": "Found a bug or have an idea? Let us know! Vote on existing submissions to help us prioritize what to build next.",
+    "submitFeedback": "Submit Feedback",
+    "mustBeLoggedIn": "You must be logged in to vote.",
+    "voteError": "An error occurred while voting. Please try again.",
+    "upvote": "Upvote",
+    "loadingMore": "Loading...",
+    "loadMore": "Load More",
+    "noMoreFeedback": "You've reached the end!",
+    "noFeedbackYet": "No feedback yet. Be the first to submit!",
+    "types": {
+      "bug": "Bug Report",
+      "feature": "Feature Request"
+    },
+    "NewForm": {
+      "title": "Submit New Feedback",
+      "description": "Let us know how we can improve. Your feedback is valuable to us.",
+      "typeLabel": "What kind of feedback is this?",
+      "feedbackTitleLabel": "Title",
+      "feedbackTitlePlaceholder": "e.g., Add dark mode",
+      "feedbackDescriptionLabel": "Description",
+      "feedbackDescriptionPlaceholder": "Please provide as much detail as possible...",
+      "submitSuccess": "Feedback submitted successfully. Thank you!",
+      "submitting": "Submitting...",
+      "submitButton": "Submit",
+      "cancel": "Cancel",
+      "types": {
+        "feature": "Feature Request",
+        "bug": "Bug Report"
+      }
+    }
+  },
+  "Error": {
+    "titleMinLength": "Title must be at least 5 characters long.",
+    "descriptionMinLength": "Description must be at least 10 characters long."
   }
 }

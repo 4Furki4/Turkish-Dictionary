@@ -127,6 +127,14 @@ export const routing = defineRouting({
       "en": "/dashboard/announcements/[id]/edit",
       "tr": "/dashboard/duyurular/[id]/duzenle",
     },
+    "/feedback": {
+      "en": "/feedback",
+      "tr": "/geri-bildirim",
+    },
+    "/feedback/new": {
+      "en": "/feedback/new",
+      "tr": "/geri-bildirim/yeni",
+    },
     // Dynamic params are supported via square brackets
   }
 
