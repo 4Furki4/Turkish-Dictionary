@@ -20,9 +20,11 @@ export default async function SearchLayout({
   void api.word.getPopularWords.prefetch({ period: "last30Days", limit: 10 })
   return (
     <HydrateClient>
-      <Hero>
-        {children}
-      </Hero>
+      <div className="w-full">
+        <Hero>
+          {children}
+        </Hero>
+      </div>
     </HydrateClient>
   );
 }
