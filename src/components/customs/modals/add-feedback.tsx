@@ -17,9 +17,14 @@ import {
     RadioGroup,
     Radio,
     Textarea,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
     Link,
 } from "@heroui/react";
-import { feedbackTypeEnum } from "@/db/schema/feedbacks";
+import { feedbackTypeEnum } from "@/db/schema/feedbacks"; // Corrected import path
+import { type Session } from "next-auth";
+import { signIn } from "next-auth/react";
 
 // Zod schema for form validation
 const feedbackSchema = z.object({
@@ -30,18 +35,20 @@ const feedbackSchema = z.object({
 
 type FeedbackFormValues = z.infer<typeof feedbackSchema>;
 
+// The complete modal component including the trigger and popover logic
 export function FeedbackModal({
     children,
-    disabled = false,
+    session,
     variant = "button",
 }: {
     children: React.ReactNode;
-    disabled?: boolean;
+    session: Session | null;
     variant?: "button" | "link";
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const t = useTranslations("Feedback.NewForm");
     const tError = useTranslations();
+    const tGlobal = useTranslations("Navbar");
     const utils = api.useUtils();
 
     const {
@@ -70,22 +77,60 @@ export function FeedbackModal({
     const onSubmit = (data: FeedbackFormValues) => {
         createFeedback.mutate(data);
     };
+
+    // If user is not logged in, render the trigger inside a Popover
+    if (!session) {
+        const PopoverTriggerElement =
+            variant === "link" ? (
+                <Button color="primary" disableRipple disableAnimation variant="light" className="p-0 m-0 h-max text-base text-text-foreground/60 data-[hover]:dark:bg-transparent data-[hover]:bg-transparent opacity-70 cursor-not-allowed">
+                    {children}
+                </Button>
+            ) : (
+                <Button color="primary" variant="light">
+                    {children}
+                </Button>
+            );
+
+        return (
+            <Popover showArrow placement="top">
+                <PopoverTrigger>{PopoverTriggerElement}</PopoverTrigger>
+                <PopoverContent>
+                    <div className="px-2 py-2">
+                        <div className="text-small font-bold">{t('authRequiredTitle')}</div>
+                        <div className="text-tiny">
+                            {t('authRequiredDescription')}{' '}
+                            <Button
+                                color="primary"
+                                variant="light"
+                                onPress={() => signIn()}
+                                className="p-0 m-0 h-max text-base font-semibold data-[hover]:dark:bg-transparent data-[hover]:bg-transparent data-[hover]:text-primary data-[hover]:underline data-[hover]:underline-offset-2 text-primary underline underline-offset-2"
+                                disableAnimation
+                                disableRipple
+                            >
+                                {tGlobal('Sign In')}
+                            </Button>
+                        </div>
+                    </div>
+                </PopoverContent>
+            </Popover>
+        );
+    }
+
+    // If user is logged in, render the fully functional modal
     const Trigger =
-        variant === "link" ? (
-            <Link
-                href="#"
-                onPress={() => setIsOpen(true)}
-                underline="hover"
-                isDisabled={disabled}
-                className="text-base text-text-foreground/60 hover:text-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                {children}
-            </Link>
-        ) : (
-            <Button color="primary" isDisabled={disabled} onPress={() => setIsOpen(true)}>
+        variant === "link" ?
+            <Button variant="light" onPress={() => setIsOpen(true)}
+                disableAnimation
+                disableRipple
+                className="p-0 m-0 h-max text-base data-[hover]:dark:bg-transparent data-[hover]:bg-transparent">
                 {children}
             </Button>
-        );
+            : (
+                <Button color="primary" onPress={() => setIsOpen(true)}>
+                    {children}
+                </Button>
+            );
+
     return (
         <>
             {Trigger}

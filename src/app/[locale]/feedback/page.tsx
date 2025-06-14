@@ -22,7 +22,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
         <div className="container mx-auto py-8 px-4">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">{t("title")}</h1>
-                <FeedbackModal disabled={!session}>
+                <FeedbackModal session={session}>
                     {t("submitFeedback")}
                 </FeedbackModal>
             </div>

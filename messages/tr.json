@@ -786,6 +786,8 @@
       "submitting": "Gönderiliyor...",
       "submitButton": "Gönder",
       "cancel": "İptal",
+      "authRequiredTitle": "Giriş Yapılmalı",
+      "authRequiredDescription": "Geri bildirim göndermek için lütfen giriş yapın.",
       "types": {
         "feature": "Özellik Talebi",
         "bug": "Hata Bildirimi"

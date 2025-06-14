@@ -815,6 +815,8 @@
       "submitting": "Submitting...",
       "submitButton": "Submit",
       "cancel": "Cancel",
+      "authRequiredTitle": "Sign In Required",
+      "authRequiredDescription": "Please sign in to submit feedback.",
       "types": {
         "feature": "Feature Request",
         "bug": "Bug Report"

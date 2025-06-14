@@ -34,7 +34,7 @@ export default async function Footer() {
                         <ul className="space-y-2">
                             {footerLinks.dictionary.map(link => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-base text-text-foreground/60 hover:text-text-foreground">
+                                    <Link underline='hover' href={link.href} className="text-base text-text-foreground/60 hover:text-text-foreground">
                                         {link.label}
                                     </Link>
                                 </li>
@@ -48,13 +48,13 @@ export default async function Footer() {
                         <ul className="space-y-2">
                             {footerLinks.community.map(link => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-base text-text-foreground/60 hover:text-text-foreground">
+                                    <Link underline='hover' href={link.href} className="text-base text-text-foreground/60 hover:text-text-foreground">
                                         {link.label}
                                     </Link>
                                 </li>
                             ))}
                             <li>
-                                <FeedbackModal disabled={!session} variant="link">
+                                <FeedbackModal session={session} variant="link">
                                     <span className="text-base text-text-foreground/60 hover:text-text-foreground cursor-pointer">
                                         {tFeedback("submitFeedback")}
                                     </span>
@@ -69,7 +69,7 @@ export default async function Footer() {
                         <ul className="space-y-2">
                             {footerLinks.legal.map(link => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-base text-text-foreground/60 hover:text-text-foreground">
+                                    <Link underline='hover' href={link.href} className="text-base text-text-foreground/60 hover:text-text-foreground">
                                         {link.label}
                                     </Link>
                                 </li>
@@ -79,7 +79,7 @@ export default async function Footer() {
                     {/* Social Column - Optional */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-text-foreground tracking-wider uppercase">{t("headings.social")}</h3>
-                        <Link href="https://github.com/4furki4/Turkish-Dictionary" target="_blank" rel="noopener noreferrer" className="text-text-foreground/60 hover:text-text-foreground flex items-center gap-2">
+                        <Link underline='hover' href="https://github.com/4furki4/Turkish-Dictionary" target="_blank" rel="noopener noreferrer" className="text-text-foreground/60 hover:text-text-foreground flex items-center gap-2">
                             <Github size={20} />
                             <span>GitHub</span>
                         </Link>
