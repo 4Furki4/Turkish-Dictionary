@@ -74,10 +74,7 @@ export default async function RootLayout({
   }
   return (
     <html suppressHydrationWarning lang={locale as string} className="dark" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      </head>
-      <body className={`${GeistSans.className} relative`}>
+      <body className={`${GeistSans.className} relative`} >
         <TRPCReactProvider>
 
           {/* <NextSSRPlugin
