@@ -176,6 +176,13 @@
       "when": 1749596449892,
       "tag": "0024_worried_scorpion",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1749900773437,
+      "tag": "0025_tranquil_lenny_balinger",
+      "breakpoints": true
     }
   ]
 }
