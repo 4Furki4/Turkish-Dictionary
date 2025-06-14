@@ -1,13 +1,15 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+import { use } from "react";
 
 interface TermsOfServicePageProps {
     params: Promise<{ locale: string }>;
 }
 
-export default async function TermsOfServicePage({ params }: TermsOfServicePageProps) {
-    const { locale } = await params;
+export default function TermsOfServicePage({ params }: TermsOfServicePageProps) {
+    const { locale } = use(params);
     setRequestLocale(locale);
-    const t = await getTranslations("TermsOfService");
+    const t = useTranslations("TermsOfService");
 
     return (
         <div className="container mx-auto py-12 px-4">

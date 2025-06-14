@@ -1,13 +1,15 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+import { use } from "react";
 
 interface PrivacyPolicyPageProps {
     params: Promise<{ locale: string }>;
 }
 
-export default async function PrivacyPolicyPage({ params }: PrivacyPolicyPageProps) {
-    const { locale } = await params;
+export default function PrivacyPolicyPage({ params }: PrivacyPolicyPageProps) {
+    const { locale } = use(params);
     setRequestLocale(locale);
-    const t = await getTranslations("PrivacyPolicy");
+    const t = useTranslations("PrivacyPolicy");
 
     return (
         <div className="container mx-auto  py-12 px-4">

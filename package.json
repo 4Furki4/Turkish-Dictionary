@@ -70,7 +70,6 @@
     "react-dom": "19.1.0",
     "react-email": "^2.1.6",
     "react-hook-form": "7.57.0",
-    "react-intersection-observer": "^9.16.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
