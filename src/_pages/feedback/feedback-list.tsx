@@ -2,7 +2,7 @@
 
 import { api } from "@/src/trpc/react";
 import { useTranslations } from "next-intl";
-import { Button, Card, CardBody, CardFooter, CardHeader } from "@heroui/react";
+import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip } from "@heroui/react";
 import Image from "next/image";
 import { formatDate } from "@/src/utils/date";
 import { toast } from "sonner";
@@ -71,13 +71,7 @@ function FeedbackCard({ item, session }: { item: FeedbackItem, session: Session 
         <Card className="mb-4">
             <CardHeader className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
-                    <Image
-                        src={item.user?.image ?? '/default-avatar.png'}
-                        alt={item.user?.name ?? 'User'}
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                    />
+                    <Avatar src={item.user?.image ?? '/default-avatar.png'} />
                     <div>
                         <p className="font-semibold">{item.user?.name}</p>
                         <p className="text-sm text-muted-foreground">
@@ -85,9 +79,9 @@ function FeedbackCard({ item, session }: { item: FeedbackItem, session: Session 
                         </p>
                     </div>
                 </div>
-                <div className="text-xs font-semibold uppercase px-2 py-1 rounded-full bg-primary-100 text-primary-800">
+                <Chip color={item.feedback.type === "feature" ? "success" : item.feedback.type === "bug" ? "danger" : "warning"} variant="flat" radius="sm" className="text-xs font-semibold uppercase px-2 py-1">
                     {t(`types.${item.feedback.type}`)}
-                </div>
+                </Chip>
             </CardHeader>
             <CardBody>
                 <h3 className="text-xl font-bold mb-2">{item.feedback.title}</h3>

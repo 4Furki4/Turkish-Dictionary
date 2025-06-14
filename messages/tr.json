@@ -776,7 +776,8 @@
     "noFeedbackYet": "Henüz geri bildirim yok. İlk gönderen siz olun!",
     "types": {
       "bug": "Hata Bildirimi",
-      "feature": "Özellik Talebi"
+      "feature": "Özellik Talebi",
+      "other": "Diğer"
     },
     "NewForm": {
       "title": "Yeni Geri Bildirim Gönder",
@@ -794,7 +795,8 @@
       "authRequiredDescription": "Geri bildirim göndermek için lütfen giriş yapın.",
       "types": {
         "feature": "Özellik Talebi",
-        "bug": "Hata Bildirimi"
+        "bug": "Hata Bildirimi",
+        "other": "Diğer"
       }
     }
   },

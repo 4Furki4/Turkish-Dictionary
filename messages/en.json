@@ -805,7 +805,8 @@
     "noFeedbackYet": "No feedback yet. Be the first to submit!",
     "types": {
       "bug": "Bug Report",
-      "feature": "Feature Request"
+      "feature": "Feature Request",
+      "other": "Other"
     },
     "NewForm": {
       "title": "Submit New Feedback",
@@ -823,7 +824,8 @@
       "authRequiredDescription": "Please sign in to submit feedback.",
       "types": {
         "feature": "Feature Request",
-        "bug": "Bug Report"
+        "bug": "Bug Report",
+        "other": "Other"
       }
     }
   },

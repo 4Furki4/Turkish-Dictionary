@@ -150,6 +150,7 @@ export function FeedbackModal({
                                                 <RadioGroup {...field} className="mt-2 flex gap-4">
                                                     <Radio value="feature">{t("types.feature")}</Radio>
                                                     <Radio value="bug">{t("types.bug")}</Radio>
+                                                    <Radio value="other">{t("types.other")}</Radio>
                                                 </RadioGroup>
                                             )}
                                         />
