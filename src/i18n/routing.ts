@@ -135,7 +135,14 @@ export const routing = defineRouting({
       "en": "/feedback/new",
       "tr": "/geri-bildirim/yeni",
     },
-    // Dynamic params are supported via square brackets
+    "/terms-of-service": {
+      "en": "/terms-of-service",
+      "tr": "/kullanim-sartlari",
+    },
+    "/privacy-policy": {
+      "en": "/privacy-policy",
+      "tr": "/gizlilik-politikasi",
+    },
   }
 
 })
