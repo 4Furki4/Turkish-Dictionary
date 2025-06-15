@@ -130,7 +130,7 @@ export default function WordList() {
         switch (columnKey) {
             case "name":
                 return (
-                    <NextUILink as={Link} href={`/search/${item.name}`}>
+                    <NextUILink target="_blank" color="primary" underline="hover" as={Link} href={`/search/${item.name}`}>
                         {cellValue}
                     </NextUILink>
                 );
@@ -149,13 +149,39 @@ export default function WordList() {
                     </h1>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                         <Controller name="search" control={control} render={({ field }) => (
-                            <Input {...field} placeholder={t('searchPlaceholder')} size="lg" />
+                            <Input
+                                type="search"
+                                color="primary"
+                                variant="bordered"
+                                classNames={{
+                                    inputWrapper: [
+                                        "rounded-sm",
+                                        "backdrop-blur-xs",
+                                        "border-2 border-primary/40",
+                                        "shadow-xl",
+                                        "group-data-[hover=true]:border-primary/60",
+                                    ],
+                                    input: [
+                                        "py-6",
+                                        "text-base",
+                                        "text-foreground",
+                                        "placeholder:text-muted-foreground",
+                                    ]
+                                }}
+                                {...field} placeholder={t('searchPlaceholder')} size="lg" />
                         )}
                         />
                         <Select label={t('wordsPerPage')} defaultSelectedKeys={[wordsPerPage.toString()]}
                             size="sm"
+                            color="primary"
+                            variant="bordered"
                             classNames={{
                                 base: "ml-auto sm:max-w-64",
+                                trigger: "border-2 border-primary/40",
+                                label: "text-foreground",
+                                listbox: "bg-background/10",
+                                popoverContent: "bg-background border-primary/40",
+
                             }} onChange={(e) => {
                                 setWordsPerPage(parseInt(e.target.value));
                             }}>
@@ -169,12 +195,18 @@ export default function WordList() {
                 </div>
             } bottomContent={
                 <Pagination isDisabled={totalPageNumber === undefined} classNames={{
-                    wrapper: ["mx-auto"]
-                }} isCompact showControls total={totalPageNumber ?? 1} initialPage={1} page={pageNumber} onChange={async (page) => {
+                    wrapper: "mx-auto",
+                    item: "bg-primary/10 p-1 min-w-max",
+                    next: "bg-primary/10",
+                    prev: "bg-primary/10",
+                }} isCompact showControls className="cursor-pointer" total={totalPageNumber ?? 1} initialPage={1} page={pageNumber} onChange={async (page) => {
                     setPageNumber(page);
                 }} />
             } classNames={{
                 base: ["min-h-[300px]"],
+                wrapper: "flex flex-col relative overflow-hidden h-auto text-foreground box-border outline-hidden data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 shadow-medium bg-background/10  backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+                td: "group-data-[odd=true]/tr:before:bg-primary/10 group-data-[odd=true]/tr:before:opacity-100",
+                th: "bg-primary/10",
             }} isStriped aria-label="Example table with dynamic content">
                 <TableHeader columns={columns}>
                     {(column) => (
@@ -196,6 +228,6 @@ export default function WordList() {
                     )}
                 </TableBody>
             </Table>
-        </section>
+        </section >
     );
 }

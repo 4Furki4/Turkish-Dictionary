@@ -115,7 +115,7 @@ export default async function AnnouncementDetailPage({
       <div className="container mx-auto py-8 px-4">
         <div className="mb-6">
           <Link href={{ pathname: "/announcements" }}>
-            <Button variant="ghost" className="flex items-center gap-2">
+            <Button variant="solid" color="primary" className="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -134,7 +134,9 @@ export default async function AnnouncementDetailPage({
           </Link>
         </div>
 
-        <Card className="overflow-hidden">
+        <Card classNames={{
+          base: "bg-background/10",
+        }} className="border-2 border-border rounded-sm px-2 py-4 w-full" isBlurred>
           <CardHeader>
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl font-bold">{announcement.title}</h1>
