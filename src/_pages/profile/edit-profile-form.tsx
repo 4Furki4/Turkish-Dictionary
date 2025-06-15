@@ -71,7 +71,7 @@ export default function EditProfileForm({ isOpen, onOpenChange, user }: EditProf
   const updateProfileMutation = api.profile.updateProfile.useMutation({
     onSuccess: async () => {
       toast.success(t('updateSuccess'));
-      await utils.user.getProfile.invalidate({ userId: user.id });
+      await utils.user.getPublicProfileData.invalidate({ userId: user.id! });
       // Session update will be handled by NextAuth's session management if image URL in session changes
       onOpenChange(false);
     },

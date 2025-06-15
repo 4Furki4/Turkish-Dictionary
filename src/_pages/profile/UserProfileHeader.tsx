@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Avatar, Button, Card, CardBody, CardHeader } from '@heroui/react';
+import { Avatar, Button, Card, CardBody } from '@heroui/react';
 import Image from 'next/image';
 import { type User } from 'next-auth';
 

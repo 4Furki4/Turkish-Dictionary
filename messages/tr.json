@@ -647,9 +647,11 @@
     }
   },
   "Common": {
-    "anonymousUser": "Anonim Kullanıcı"
+    "anonymousUser": "Anonim Kullanıcı",
+    "somethingWentWrong": "Bir şeyler yanlış gitti"
   },
   "ProfilePage": {
+    "notFound": "Kullanıcı bulunamadı",
     "loadingProfileError": "Profil yüklenemedi. Lütfen daha sonra tekrar deneyin.",
     "myProfileTitle": "Profilim",
     "userProfileTitle": "{name} Kişisinin Profili",

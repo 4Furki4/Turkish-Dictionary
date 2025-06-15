@@ -1,11 +1,12 @@
 import { auth } from '@/src/server/auth/auth';
-import { api } from '@/src/trpc/server';
+import { api, HydrateClient } from '@/src/trpc/server';
 import React from 'react';
-import { UserProfilePageClient } from '@/src/_pages/profile/user-profile-page-client';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import ProfilePageWrapper from '@/src/_pages/profile/profile-page-wrapper';
+import { notFound } from 'next/navigation';
 import { TRPCError } from '@trpc/server';
-import { redirect } from 'next/navigation';
-import { setRequestLocale } from 'next-intl/server';
-
+import { ErrorBoundary } from 'react-error-boundary';
+import { Card, CardBody } from '@heroui/react';
 interface ProfilePageProps {
     params: Promise<{
         id: string;
@@ -16,25 +17,26 @@ interface ProfilePageProps {
 export default async function ProfilePage({ params: paramsPromise }: ProfilePageProps) {
     const { id, locale } = await paramsPromise;
     setRequestLocale(locale);
-
+    const t = await getTranslations('Common');
     const session = await auth();
-
     try {
         const profileData = await api.user.getPublicProfileData({ userId: id });
-        if (!profileData) {
-            // This case should ideally be handled by tRPC throwing an error if user not found
-            // but as a fallback:
-            redirect(`/${locale}/not-found`); // Or a more specific error page
-        }
 
-        return <UserProfilePageClient profileData={profileData} session={session} locale={locale} />;
+        return (
+            <ErrorBoundary fallback={<Card className='w-full bg-transparent'>
+                <CardBody className='flex items-center justify-center'>
+                    <h1 className='text-fs-2'>{t('somethingWentWrong')}</h1>
+                </CardBody>
+            </Card>}>
+                <ProfilePageWrapper profileData={profileData} userId={id} session={session} locale={locale} />
+            </ErrorBoundary>
+        )
     } catch (error) {
+
         if (error instanceof TRPCError && error.code === 'NOT_FOUND') {
-            redirect(`/${locale}/not-found`);
+            notFound();
+        } else {
+
         }
-        // Handle other errors appropriately, maybe show a generic error page
-        console.error('Failed to load profile data:', error);
-        // For now, redirect to a generic error or home page
-        redirect(`/${locale}/error`); // Assuming you have an error page
     }
 }
