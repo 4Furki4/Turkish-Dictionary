@@ -4,15 +4,8 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./save-word";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure, Popover, PopoverTrigger, PopoverContent, Tabs, Tab } from "@heroui/react";
+import { Button, useDisclosure, Popover, PopoverTrigger, PopoverContent, Tabs, Tab } from "@heroui/react";
 import { Link as NextUILink } from "@heroui/react"
-
-import WordEditRequest from "./edit-request-modal/word-edit-request";
-import MeaningsEditRequest from "./edit-request-modal/meanings-edit-request";
-import RelatedWordsEditTabContent from "./edit-request-modal/related-words-edit-tab-content";
-import RelatedPhrasesEditTabContent from "./edit-request-modal/related-phrases-edit-tab-content";
-import RelatedWordEditRequestModal from "./edit-request-modal/related-word-edit-request-modal";
-import RelatedWordDeleteRequestModal from "./edit-request-modal/related-word-delete-request-modal";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -20,31 +13,18 @@ import { Link } from "@/src/i18n/routing";
 import { Camera, Share2, Volume2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, } from "react";
 import { captureElementScreenshot } from "../../utils/screenshot";
 import { copyPageUrl } from "../../utils/clipboard";
 import clsx from "clsx";
+import WordCardRequestModal from "./modals/word-card-request-modal";
 
-type RelatedWordItemType = NonNullable<WordSearchResult['word_data']['relatedWords']>[number];
 
 export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
-  const { isOpen: isEditRelOpen, onOpen: onEditRelOpen, onClose: onEditRelClose, onOpenChange: onEditRelOpenChange } = useDisclosure();
-  const { isOpen: isCreateRelOpen, onOpen: onCreateRelOpen, onClose: onCreateRelClose, onOpenChange: onCreateRelOpenChange } = useDisclosure();
-  const { isOpen: isDeleteRelOpen, onOpen: onDeleteRelOpen, onClose: onDeleteRelClose, onOpenChange: onDeleteRelOpenChange } = useDisclosure();
-  const [selectedRelatedWord, setSelectedRelatedWord] = useState<{ id: number; related_word_id: number; related_word_name: string; relation_type?: string | undefined; } | null>(null);
 
-  const handleEditRelatedWord = (relatedWord: RelatedWordItemType) => {
-    setSelectedRelatedWord({ id: relatedWord.related_word_id, ...relatedWord });
-    onEditRelOpen();
-  };
-
-  const handleDeleteRelatedWord = (relatedWord: RelatedWordItemType) => {
-    setSelectedRelatedWord({ id: relatedWord.related_word_id, ...relatedWord });
-    onDeleteRelOpen();
-  };
   const { isOpen, onOpenChange } = useDisclosure()
   const t = useTranslations("WordCard");
-  const tRequests = useTranslations("Requests");
+
   const pathname = usePathname();
   const cardRef = useRef<HTMLDivElement>(null);
   const handleCameraPress = async () => {
@@ -272,9 +252,10 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                 <div className="p-2">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {word_data.relatedWords.map((related_word) => (
-                      <Card key={related_word.related_word_id}>
+                      <Card isBlurred className="border border-border" key={related_word.related_word_id}>
                         <CardBody className="flex flex-row items-center justify-between">
                           <NextUILink
+                            underline="hover"
                             as={Link}
                             href={`/search/${related_word.related_word_name}`}
                           >
@@ -302,9 +283,10 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                 <div className="p-2">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {word_data.relatedPhrases.map((related_phrase) => (
-                      <Card key={related_phrase.related_phrase_id}>
+                      <Card key={related_phrase.related_phrase_id} isBlurred className="border border-border">
                         <CardBody>
                           <NextUILink
+                            underline="hover"
                             as={Link}
                             href={`/search/${related_phrase.related_phrase}`}
                           >
@@ -354,107 +336,8 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
               )
           }
         </>
-        <Modal size="3xl" scrollBehavior="inside" backdrop="opaque" isOpen={isOpen} onOpenChange={onOpenChange}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader>
-                  {t("EditWord")}
-                </ModalHeader>
-                <ModalBody>
-                  <Tabs>
-                    <Tab value={"words"} title={t("Words")}>
-                      <WordEditRequest data={{ word_data }} />
-                    </Tab>
-                    <Tab value={"meanings"} title={t("Meanings")}>
-                      <MeaningsEditRequest meanings={word_data.meanings} />
-                    </Tab>
-                    <Tab value={"related_words"} title={tRequests("RelatedWordsTabTitle")}>
-                      <RelatedWordsEditTabContent
-                        relatedWords={word_data.relatedWords?.map(rw => ({
-                          id: rw.related_word_id,
-                          related_word: {
-                            id: rw.related_word_id,
-                            word: rw.related_word_name,
-                          },
-                          relation_type: rw.relation_type || '',
-                        })) || []}
-                        onOpenEditModal={(relatedWordId, relationType) => {
-                          const wordToEdit = word_data.relatedWords?.find(rw => rw.related_word_id === relatedWordId);
-                          if (wordToEdit) {
-                            setSelectedRelatedWord({
-                              id: wordToEdit.related_word_id,
-                              related_word_id: wordToEdit.related_word_id,
-                              related_word_name: wordToEdit.related_word_name,
-                              relation_type: relationType,
-                            });
-                            onEditRelOpen();
-                          }
-                        }}
-                        onOpenDeleteModal={(relationshipId, relatedWordName) => {
-                          const wordToDelete = word_data.relatedWords?.find(rw => rw.related_word_id === relationshipId);
-                          if (wordToDelete) {
-                            setSelectedRelatedWord({
-                              id: relationshipId,
-                              related_word_id: wordToDelete.related_word_id,
-                              related_word_name: relatedWordName,
-                              relation_type: wordToDelete.relation_type,
-                            });
-                            onDeleteRelOpen();
-                          }
-                        }}
-                        currentWordId={word_data.word_id}
-                        session={session}
-                      />
-                    </Tab>
-                    <Tab value={"related_phrases"} title={tRequests("RelatedPhrasesTabTitle")}>
-                      <RelatedPhrasesEditTabContent
-                        currentWordId={word_data.word_id}
-                        relatedPhrases={word_data.relatedPhrases || []}
-                        session={session}
-                      // Pass phrase edit/delete handlers when ready
-                      />
-                    </Tab>
-                  </Tabs>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    {t('Close')}
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
+        <WordCardRequestModal word={{ word_data }} session={session} isOpen={isOpen} onOpenChange={onOpenChange} />
       </CardFooter>
-
-      {/* Related Word Edit Modal */}
-      {selectedRelatedWord && (
-        <RelatedWordEditRequestModal
-          isOpen={isEditRelOpen}
-          onClose={() => {
-            onEditRelClose();
-            setSelectedRelatedWord(null);
-          }}
-          wordId={word_data.word_id}
-          relatedWord={selectedRelatedWord}
-          session={session}
-        />
-      )}
-
-      {/* Related Word Delete Modal */}
-      {selectedRelatedWord && (
-        <RelatedWordDeleteRequestModal
-          isOpen={isDeleteRelOpen}
-          onClose={() => {
-            onDeleteRelClose();
-            setSelectedRelatedWord(null);
-          }}
-          wordId={word_data.word_id}
-          relatedWord={selectedRelatedWord}
-          session={session}
-        />
-      )}
     </Card>
   );
 }

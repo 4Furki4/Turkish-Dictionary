@@ -133,7 +133,26 @@ export function FeedbackModal({
     return (
         <>
             {Trigger}
-            <Modal size="2xl" isOpen={isOpen} onOpenChange={setIsOpen}>
+            <Modal motionProps={{
+                variants: {
+                    enter: {
+                        opacity: 1,
+                        transition: {
+                            duration: 0.1,
+                            ease: 'easeInOut',
+                        }
+                    },
+                    exit: {
+                        opacity: 0,
+                        transition: {
+                            duration: 0.1,
+                            ease: 'easeInOut',
+                        }
+                    },
+                }
+            }} classNames={{
+                base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+            }} size="2xl" scrollBehavior="inside" backdrop="opaque" isOpen={isOpen} onOpenChange={setIsOpen}>
                 <ModalContent>
                     {(close) => (
                         <>
