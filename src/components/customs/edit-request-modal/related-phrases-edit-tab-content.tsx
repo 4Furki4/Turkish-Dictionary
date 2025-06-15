@@ -68,7 +68,7 @@ const RelatedPhrasesEditTabContent: React.FC<RelatedPhrasesEditTabContentProps> 
            e.g., t('SuggestEditForRelatedPhrase', { phraseText: phrase.related_phrase_text })
            e.g., t('SuggestDeletionForRelatedPhrase', { phraseText: phrase.related_phrase_text }) */}
           {relatedPhrases.map((phrase) => (
-            <Card key={phrase.related_phrase_id}>
+            <Card isBlurred key={phrase.related_phrase_id}>
               <CardBody className="flex flex-row justify-between items-center">
                 <div>
                   {/* Phrases might not be directly linkable like words, adjust as needed */}

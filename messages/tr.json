@@ -102,6 +102,7 @@
     "seeAlso": "Ayrıca Bakınız",
     "turkishEquivalent": "Türkçe Karşılığı",
     "obsolete": "Eskimiş",
+    "compoundWord": "Bileşik Kelime",
     "SuggestEditForRelatedWord": "{relatedWordName} için düzenleme öner",
     "SuggestDeletionForRelatedWord": "{relatedWordName} için silme öner",
     "SuggestEditForRelatedWordHeader": "Düzenleme Öner: {relatedWordName}",

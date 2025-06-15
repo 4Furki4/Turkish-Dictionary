@@ -76,7 +76,26 @@ const RelatedPhraseEditRequestModal: React.FC<RelatedPhraseEditRequestModalProps
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal motionProps={{
+      variants: {
+        enter: {
+          opacity: 1,
+          transition: {
+            duration: 0.1,
+            ease: 'easeInOut',
+          }
+        },
+        exit: {
+          opacity: 0,
+          transition: {
+            duration: 0.1,
+            ease: 'easeInOut',
+          }
+        },
+      }
+    }} classNames={{
+      base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+    }} isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <form onSubmit={handleSubmit(onSubmit)}>

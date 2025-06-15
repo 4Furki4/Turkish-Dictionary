@@ -270,7 +270,7 @@ function MeaningEditRequestForm({
   })
 
   return (
-    <Card className="w-full">
+    <Card isBlurred className="w-full border border-border" >
       <CardHeader className="flex flex-row justify-between items-center">
         <span className="font-semibold">{t("Meaning")} {index + 1}</span>
         <div className="flex space-x-2">

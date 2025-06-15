@@ -99,6 +99,7 @@
     "synonym": "synonym",
     "correction": "correction",
     "seeAlso": "see also",
+    "compoundWord": "compound word",
     "turkishEquivalent": "Türkçe Karşılığı",
     "NoMeaningsFound": "The word exists but no meaning found.",
     "SuggestEditForRelatedWord": "Suggest edit for {relatedWordName}",

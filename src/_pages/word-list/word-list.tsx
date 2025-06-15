@@ -207,7 +207,7 @@ export default function WordList() {
                 wrapper: "flex flex-col relative overflow-hidden h-auto text-foreground box-border outline-hidden data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 shadow-medium bg-background/10  backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
                 td: "group-data-[odd=true]/tr:before:bg-primary/10 group-data-[odd=true]/tr:before:opacity-100",
                 th: "bg-primary/10",
-            }} isStriped aria-label="Example table with dynamic content">
+            }} isCompact isStriped aria-label="Example table with dynamic content">
                 <TableHeader columns={columns}>
                     {(column) => (
                         <TableColumn align={column.key === "actions" ? "end" : "start"} key={column.key}>{column.label}</TableColumn>

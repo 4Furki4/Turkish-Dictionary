@@ -56,7 +56,7 @@ const RelatedWordsEditTabContent: React.FC<RelatedWordsEditTabContentProps> = ({
         {relatedWords && relatedWords.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {relatedWords.map((item) => (
-              <Card key={item.id} className="w-full">
+              <Card isBlurred key={item.id} className="w-full">
                 <CardBody className="flex flex-row items-center justify-between p-4">
                   <div>
                     <p className="font-semibold">{item.related_word.word}</p>
