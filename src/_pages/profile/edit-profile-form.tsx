@@ -63,7 +63,7 @@ export default function EditProfileForm({ isOpen, onOpenChange, user }: EditProf
     } else {
       // Clear states when modal is closed, especially if not submitted
       setSelectedFile(null);
-      setPreviewUrl(null); 
+      setPreviewUrl(null);
       setFileError(null);
     }
   }, [isOpen, user, reset]);
@@ -140,14 +140,33 @@ export default function EditProfileForm({ isOpen, onOpenChange, user }: EditProf
 
     updateProfileMutation.mutate({
       ...data,
-      image: imageUrl === null ? undefined : imageUrl, 
+      image: imageUrl === null ? undefined : imageUrl,
     });
   };
 
   const currentAvatarSrc = previewUrl || '/images/default-avatar.png';
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
+    <Modal motionProps={{
+      variants: {
+        enter: {
+          opacity: 1,
+          transition: {
+            duration: 0.1,
+            ease: 'easeInOut',
+          }
+        },
+        exit: {
+          opacity: 0,
+          transition: {
+            duration: 0.1,
+            ease: 'easeInOut',
+          }
+        },
+      }
+    }} classNames={{
+      base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+    }} isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
       <ModalContent>
         {(onClose) => (
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -211,9 +230,9 @@ export default function EditProfileForm({ isOpen, onOpenChange, user }: EditProf
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={() => { 
+              <Button color="danger" variant="light" onPress={() => {
                 handleRemovePreview(); // Also clear any pending changes on explicit cancel
-                onClose(); 
+                onClose();
               }}>
                 {t('cancel')}
               </Button>
