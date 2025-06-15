@@ -680,9 +680,11 @@
     }
   },
   "Common": {
-    "anonymousUser": "Anonymous User"
+    "anonymousUser": "Anonymous User",
+    "somethingWentWrong": "Something went wrong"
   },
   "ProfilePage": {
+    "notFound": "User not found",
     "loadingProfileError": "Could not load profile. Please try again later.",
     "myProfileTitle": "My Profile",
     "userProfileTitle": "{name}'s Profile",
