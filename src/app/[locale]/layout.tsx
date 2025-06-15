@@ -14,6 +14,7 @@ import { Params } from "next/dist/server/request/params";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
+import { BackgroundGradient } from "@/src/components/customs/background-gradient";
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
@@ -104,8 +105,10 @@ export default async function RootLayout({
                   ariaLanguages={t("ariaLanguages")}
                   ariaSwitchTheme={t("ariaSwitchTheme")}
                 />
-                {/* ✨ Main content area that grows to push the footer down */}
-                <main className="flex-grow w-full flex">
+
+                <main className="relative flex-grow w-full flex">
+                  {/* ✨ Moved BackgroundGradient here */}
+                  <BackgroundGradient />
                   {children}
                 </main>
                 <Footer />

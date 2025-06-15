@@ -94,9 +94,9 @@ export default function Hero({ children }: {
   return (
     <div className="relative isolate">
       {/* Background */}
-      <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+      {/* <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
         <div className="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-linear-to-tr from-primary via-primary/75 to-primary/25 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
-      </div>
+      </div> */}
 
       <div className="mx-auto max-w-7xl px-2 pb-12 pt-10 sm:pb-16 lg:px-8">
         <div className="mx-auto text-center space-y-8">
@@ -219,9 +219,9 @@ export default function Hero({ children }: {
       </div>
 
       {/* Background continued */}
-      <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+      {/* <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
         <div className="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-linear-to-tr from-primary via-primary/75 to-primary/25 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
-      </div>
+      </div> */}
     </div >
   );
 }
