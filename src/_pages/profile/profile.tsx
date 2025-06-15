@@ -5,7 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useParams } from 'next/navigation';
-import { Input, Link as HeroUILink, Alert, Button, Avatar } from '@heroui/react';
+import { Input, Link as HeroUILink, Alert, Button, Avatar, Card, CardBody, CardHeader } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { Session } from 'next-auth';
 import { toast } from 'sonner';
@@ -81,7 +81,7 @@ export default function Profile({
     if (isSuccess) {
         return (
             <main className="container mx-auto px-4 py-8">
-                <div className="max-w-7xl mx-auto bg-content1 p-6 rounded-lg shadow-lg">
+                <Card className="max-w-7xl mx-auto bg-content1 p-6 rounded-lg shadow-lg">
                     <div className="flex items-center gap-4 mb-8">
                         <Avatar
                             showFallback
@@ -137,7 +137,7 @@ export default function Profile({
                             </div>
                         </div>
                     )}
-                </div>
+                </Card>
             </main>
         );
     }

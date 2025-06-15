@@ -63,41 +63,28 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
     return (
         <div className="container mx-auto px-4 py-8 space-y-8">
             <UserProfileHeader profileData={profileData} locale={locale} isOwnProfile={isOwnProfile} user={session?.user ?? null} />
-
-            {/* Account Details Section (only for own profile, shows email) */}
-            {isOwnProfile && profileData.email && (
-                <Card>
-                    <CardHeader>
-                        <h3 className="text-lg font-semibold">{t('accountDetailsTitle')}</h3>
-                    </CardHeader>
-                    <CardBody>
-                        <p><span className="font-medium">{t('emailLabel')}:</span> {profileData.email}</p>
-                    </CardBody>
-                </Card>
-            )}
-
             {/* Contribution Stats Section */}
-            <Card>
+            <Card isBlurred className='border border-border'>
                 <CardHeader>
                     <h3 className="text-lg font-semibold">{t('contributionStatsTitle')}</h3>
                 </CardHeader>
                 <CardBody>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="p-4 bg-background rounded-md shadow-sm text-center border">
+                        <div className="p-4 bg-background/50 rounded-md shadow-sm text-center border">
                             <p className="text-2xl font-bold">{totalApprovedCount}</p>
                             <div className="w-full flex items-center justify-center gap-1">
                                 <p className=" text-muted-foreground">{t('approvedContributionsLabel')}</p>
                                 <CheckCheck className="h-5 w-5 text-green-500" />
                             </div>
                         </div>
-                        <div className="p-4 bg-background rounded-md shadow-sm text-center border">
+                        <div className="p-4 bg-background/50 rounded-md shadow-sm text-center border">
                             <p className="text-2xl font-bold">{totalPendingCount}</p>
                             <div className="w-full flex items-center justify-center gap-1">
                                 <p className=" text-muted-foreground">{t('pendingContributionsLabel')}</p>
                                 <Clock className="h-5 w-5 text-yellow-500" />
                             </div>
                         </div>
-                        <div className="p-4 bg-background rounded-md shadow-sm text-center border">
+                        <div className="p-4 bg-background/50 rounded-md shadow-sm text-center border">
                             <p className="text-2xl font-bold">{totalRejectedCount}</p>
                             <div className="w-full flex items-center justify-center gap-1">
                                 <p className=" text-muted-foreground">{t('rejectedContributionsLabel')}</p>
@@ -110,7 +97,7 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
 
             {/* Saved Words Section */}
             {isOwnProfile && (
-                <Card>
+                <Card isBlurred className='border border-border'>
                     <CardHeader>
                         <h3 className="text-lg font-semibold">{t('savedWordsTitle')}</h3>
                     </CardHeader>
@@ -151,7 +138,7 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
             )}
 
             {/* Recent Contributions Section */}
-            <Card>
+            <Card isBlurred className='border border-border'>
                 <CardHeader>
                     <h3 className="text-lg font-semibold">{t('recentContributionsTitle')}</h3>
                 </CardHeader>
