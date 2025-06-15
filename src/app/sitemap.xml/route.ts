@@ -23,7 +23,6 @@ export async function GET() {
 
   // Word pages
   const rows = await db.select({ name: words.name }).from(words).limit(49500).execute();
-  console.log('rows.length', rows.length)
   for (const { name } of rows) {
     const encoded = encodeURIComponent(name);
     xml += `<url><loc>${baseUrl}/search/${encoded}</loc><changefreq>daily</changefreq><priority>0.8</priority><xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/en/search/${encoded}" /></url>\n`;
