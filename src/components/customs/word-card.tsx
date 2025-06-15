@@ -158,9 +158,10 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
       </CardHeader>
       <CardBody>
         <>
-          <Tabs disableAnimation classNames={{
-            tabList: "w-full dark:bg-card ",
+          <Tabs color="primary" disableAnimation classNames={{
+            tabList: "w-full bg-primary/10 border border-primary",
             tabContent: "text-primary md:w-full",
+            tab: "data-[selected=true]:bg-primary/60",
           }}>
             <Tab value={"meaning"} title={t("Meanings")} >
               {word_data.meanings && word_data.meanings.length > 0 ? (
@@ -192,7 +193,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                                 {meaning.meaning}
                               </p>
                               {meaning.sentence ? (
-                                <div className="w-full italic px-2 text-fs--1 text-left bg-muted/50 p-2">
+                                <div className="w-full italic px-2 text-fs--1 text-left bg-primary/15 p-2">
                                   <p>
                                     <q>{meaning.sentence}</q>
                                   </p>

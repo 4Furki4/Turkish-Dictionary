@@ -3,7 +3,6 @@
 import { api } from "@/src/trpc/react";
 import { useTranslations } from "next-intl";
 import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip } from "@heroui/react";
-import Image from "next/image";
 import { formatDate } from "@/src/utils/date";
 import { toast } from "sonner";
 import { type inferRouterOutputs } from "@trpc/server";
@@ -68,7 +67,9 @@ function FeedbackCard({ item, session }: { item: FeedbackItem, session: Session 
     };
 
     return (
-        <Card className="mb-4">
+        <Card classNames={{
+            base: "bg-background/10",
+        }} className="border border-border rounded-sm p-2 w-full mb-4" isBlurred >
             <CardHeader className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
                     <Avatar src={item.user?.image ?? '/default-avatar.png'} />

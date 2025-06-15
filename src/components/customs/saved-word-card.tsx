@@ -37,10 +37,12 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
   const fullData = details?.[0];
 
   return (
-    <Card className="shadow-xs">
+    <Card className="border border-border rounded-sm p-2 w-full" classNames={{
+      base: "bg-background/10",
+    }} isBlurred>
       <CardHeader className="flex items-center gap-2">
         <h3 className="text-lg font-medium">
-          <Link as={NextIntlLink} href={`/search/${wordData.word_name}`}>
+          <Link color="primary" underline="hover" as={NextIntlLink} href={`/search/${wordData.word_name}`}>
             {wordData.word_name}
           </Link>
         </h3>
@@ -60,7 +62,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
         </p>
       </CardBody>
       <CardFooter className="flex justify-between">
-        <Button onPress={onOpenChange} size="sm">
+        <Button color="primary" onPress={onOpenChange} size="sm">
           {t("view")}
         </Button>
         <Button onPress={onUnsave} color="danger" size="sm">
@@ -68,7 +70,9 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
         </Button>
       </CardFooter>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl" backdrop="opaque" scrollBehavior="inside">
+      <Modal classNames={{
+        base: "bg-background/10",
+      }} isOpen={isOpen} onOpenChange={onOpenChange} size="3xl" backdrop="opaque" scrollBehavior="inside">
         <ModalContent>
           {loadingDetails ? (
             <Loading />

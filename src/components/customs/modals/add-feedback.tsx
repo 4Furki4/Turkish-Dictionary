@@ -133,7 +133,7 @@ export function FeedbackModal({
     return (
         <>
             {Trigger}
-            <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+            <Modal size="2xl" isOpen={isOpen} onOpenChange={setIsOpen}>
                 <ModalContent>
                     {(close) => (
                         <>

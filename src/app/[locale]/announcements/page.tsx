@@ -55,7 +55,9 @@ export default async function AnnouncementsPage({
       ) : (
         <div className="grid gap-6">
           {items.map((announcement) => (
-            <Card key={announcement.id} className="overflow-hidden">
+            <Card classNames={{
+              base: "bg-background/10",
+            }} key={announcement.id} className="border border-border rounded-sm p-2 w-full" isBlurred>
               <CardHeader className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold">{announcement.title}</h2>
                 <span className="text-sm text-gray-500">
