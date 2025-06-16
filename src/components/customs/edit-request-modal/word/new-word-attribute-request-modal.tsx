@@ -5,6 +5,7 @@ import { AriaModalOverlayProps } from '@react-aria/overlays';
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 type AddWordAttributeModalProps = {
     onClose: () => void,
     isOpen: boolean,
@@ -16,6 +17,7 @@ export default function NewWordAttributeRequestModal({
     onClose,
     ...modalProps
 }: AddWordAttributeModalProps) {
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
     const t = useTranslations();
     const requestUtils = api.useUtils().request
@@ -31,8 +33,18 @@ export default function NewWordAttributeRequestModal({
             onClose()
         }
     })
-    function onNewAttributeSubmit(newAttribute: NewAttributeForm) {
-        addWordAttributeMutation.mutate(newAttribute.attribute)
+    async function onNewAttributeSubmit(newAttribute: NewAttributeForm) {
+        if (!executeRecaptcha) {
+            toast.error(t("Errors.captchaError"));
+            return;
+        }
+        try {
+            const token = await executeRecaptcha("new_word_attribute_request");
+            addWordAttributeMutation.mutate({ attribute: newAttribute.attribute, captchaToken: token });
+        } catch (error) {
+            console.error("reCAPTCHA execution failed:", error);
+            toast.error(t("Errors.captchaError"));
+        }
     }
     return (
         <Modal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal" {...modalProps}>

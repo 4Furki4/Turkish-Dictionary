@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { api } from '@/src/trpc/react';
 import { toast } from 'sonner';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 interface SimpleWord {
   id: number;
@@ -38,6 +39,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
   const t = useTranslations('Requests');
   const tActions = useTranslations('Actions');
   const tForm = useTranslations('Form');
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateRelatedPhraseFormValues>({
     resolver: zodResolver(createRelatedPhraseSchema),
@@ -75,12 +77,18 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
     }
   }, [wordOptions]);
 
-  const onSubmit = (data: CreateRelatedPhraseFormValues) => {
+  const onSubmit = async (data: CreateRelatedPhraseFormValues) => {
+    if (!executeRecaptcha) {
+      toast.error(t("Errors.captchaError"));
+      return;
+    }
+    const token = await executeRecaptcha("word_edit_request");
     createRequestMutation.mutate({
       wordId: wordId,
       phraseId: data.relatedPhraseId, // Correctly pass relatedPhraseId as phraseId
       description: data.description,
       reason: data.reason,
+      captchaToken: token
     });
   };
 

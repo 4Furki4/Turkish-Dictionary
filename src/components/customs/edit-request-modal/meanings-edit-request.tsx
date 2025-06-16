@@ -14,6 +14,7 @@ import MeaningAuthorInput from "./meanings/meaning-author-input"
 import PartOfSpeechInput from "./meanings/part-of-speech-input"
 import DeleteMeaningModal from "./delete-meaning-modal"
 import { useTranslations } from "next-intl"
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
@@ -40,6 +41,7 @@ export type MeaningEditRequestForm = z.infer<typeof meaningSchema>
 type MeaningEditSubmitData = {
   meaning_id: number;
   reason: string;
+  captchaToken: string;
   meaning?: string;
   part_of_speech_id?: number;
   attributes?: number[];
@@ -65,6 +67,7 @@ export default function MeaningsEditRequest({
 }: {
   meanings: Meaning[]
 }) {
+  const { executeRecaptcha } = useGoogleReCaptcha()
   const { data: meaningAttributes, isLoading: meaningAttributesIsLoading } = api.params.getMeaningAttributes.useQuery()
   const { data: partOfSpeeches, isLoading: partOfSpeechesIsLoading } = api.params.getPartOfSpeeches.useQuery()
   const { data: authors, isLoading: authorsIsLoading } = api.params.getExampleSentenceAuthors.useQuery()
@@ -96,13 +99,20 @@ export default function MeaningsEditRequest({
   }
 
   const handleDeleteConfirm = async (reason: string) => {
+    if (!executeRecaptcha) {
+      toast.error(t("Errors.captchaError"));
+      return;
+    }
     try {
+      const token = await executeRecaptcha("meaning_delete_request");
       await requestDeleteMeaning.mutateAsync({
         meaning_id: deletingMeaning!.meaning_id,
-        reason
+        reason,
+        captchaToken: token,
       })
     } catch (error) {
-      // Error handling is done in the mutation configuration
+      console.error("reCAPTCHA execution failed:", error);
+      toast.error(t("Errors.captchaError"));
     }
   }
 
@@ -129,31 +139,42 @@ export default function MeaningsEditRequest({
           authorsIsLoading={authorsIsLoading}
           onSubmit={async (data) => {
             const { meaning_id, reason, ...rest } = data;
-            const preparedData: MeaningEditSubmitData = {
-              meaning_id,
-              reason,
-              ...Object.entries(rest).reduce<Record<string, unknown>>((acc, [key, value]) => {
-                if (value !== undefined && value !== "") {
-                  switch (key) {
-                    case 'part_of_speech_id':
-                      acc[key] = parseInt(value as string);
-                      break;
-                    case 'attributes':
-                      if (Array.isArray(value)) {
-                        acc[key] = value.map(attr => parseInt(attr as unknown as string));
-                      }
-                      break;
-                    case 'author_id':
-                      acc[key] = value ? parseInt(value as string) : undefined;
-                      break;
-                    default:
-                      acc[key] = value;
+            if (!executeRecaptcha) {
+              toast.error(t("Errors.captchaError"));
+              return;
+            }
+            try {
+              const token = await executeRecaptcha("meaning_edit_request");
+              const preparedData: MeaningEditSubmitData = {
+                meaning_id,
+                reason,
+                captchaToken: token,
+                ...Object.entries(rest).reduce<Record<string, unknown>>((acc, [key, value]) => {
+                  if (value !== undefined && value !== "") {
+                    switch (key) {
+                      case 'part_of_speech_id':
+                        acc[key] = parseInt(value as string);
+                        break;
+                      case 'attributes':
+                        if (Array.isArray(value)) {
+                          acc[key] = value.map(attr => parseInt(attr as unknown as string));
+                        }
+                        break;
+                      case 'author_id':
+                        acc[key] = value ? parseInt(value as string) : undefined;
+                        break;
+                      default:
+                        acc[key] = value;
+                    }
                   }
-                }
-                return acc;
-              }, {})
-            };
-            await requestEditMeaning.mutateAsync(preparedData);
+                  return acc;
+                }, {})
+              };
+              await requestEditMeaning.mutateAsync(preparedData);
+            } catch (error) {
+              console.error("reCAPTCHA execution failed:", error);
+              toast.error(t("Errors.captchaError"));
+            }
           }}
         />
       ))}
@@ -204,7 +225,7 @@ function MeaningEditRequestForm({
     name: string;
   }[] | undefined;
   authorsIsLoading: boolean;
-  onSubmit: (data: MeaningEditSubmitData) => Promise<void>;
+  onSubmit: (data: Omit<MeaningEditSubmitData, 'captchaToken'>) => Promise<void>;
 }) {
   const t = useTranslations()
   const {
@@ -238,7 +259,7 @@ function MeaningEditRequestForm({
       return
     }
 
-    const preparedData: MeaningEditSubmitData = {
+    const preparedData: Omit<MeaningEditSubmitData, 'captchaToken'> = {
       meaning_id: data.meaning_id,
       reason: data.reason,
       ...Object.keys(dirtyFields).reduce<Record<string, unknown>>((acc, key) => {

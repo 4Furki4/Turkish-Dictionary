@@ -10,6 +10,7 @@ import { api } from "@/src/trpc/react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Session } from "next-auth";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 interface RelatedWordItemType {
   related_word_id: number;
@@ -40,6 +41,7 @@ export default function RelatedWordDeleteRequestModal({
 }: RelatedWordDeleteRequestModalProps) {
   const t = useTranslations(); // Using generic t for now, can scope to 'WordCard' or a new 'Requests' scope
   const commonT = useTranslations("Common");
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const { mutate, isPending } = api.request.requestDeleteRelatedWord.useMutation({
     onSuccess: () => {
@@ -58,16 +60,27 @@ export default function RelatedWordDeleteRequestModal({
     },
   });
 
-  const onSubmit = (data: DeleteRequestForm) => {
+  const onSubmit = async (data: DeleteRequestForm) => {
     if (!session?.user) {
       toast.error(t("Errors.MustBeLoggedIn"));
       return;
     }
-    mutate({
-      wordId: wordId,
-      relatedWordId: relatedWord.related_word_id,
-      reason: data.reason,
-    });
+    if (!executeRecaptcha) {
+      toast.error(t("Errors.captchaError"));
+      return;
+    }
+    try {
+      const token = await executeRecaptcha("related_word_delete_request");
+      mutate({
+        wordId: wordId,
+        relatedWordId: relatedWord.related_word_id,
+        reason: data.reason,
+        captchaToken: token,
+      });
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
+      toast.error(t("Errors.captchaError"));
+    }
   };
 
   // Reset form when modal is closed or relatedWord changes

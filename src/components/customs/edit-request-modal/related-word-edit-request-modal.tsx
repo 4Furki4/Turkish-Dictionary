@@ -10,6 +10,7 @@ import { api } from "@/src/trpc/react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Session } from "next-auth";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 interface RelatedWordItemType {
   related_word_id: number;
@@ -52,6 +53,7 @@ export default function RelatedWordEditRequestModal({
   const t = useTranslations(); // Generic for now
   const tRequests = useTranslations("Requests");
   const tRelationTypes = useTranslations("RelationTypes");
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const { mutate, isPending } = api.request.requestEditRelatedWord.useMutation({
     onSuccess: () => {
@@ -71,7 +73,7 @@ export default function RelatedWordEditRequestModal({
     },
   });
 
-  const onSubmit = (data: EditRequestForm) => {
+  const onSubmit = async (data: EditRequestForm) => {
     if (!session?.user) {
       toast.error(t("Errors.MustBeLoggedIn"));
       return;
@@ -80,13 +82,24 @@ export default function RelatedWordEditRequestModal({
       toast.error(t("Errors.OriginalRelationTypeMissing")); // New error key
       return;
     }
-    mutate({
-      wordId: wordId,
-      relatedWordId: relatedWord.related_word_id,
-      newRelationType: data.newRelationType,
-      originalRelationType: relatedWord.relation_type, // Pass original for the backend handler
-      reason: data.reason,
-    });
+    if (!executeRecaptcha) {
+      toast.error(t("Errors.captchaError"));
+      return;
+    }
+    try {
+      const token = await executeRecaptcha("related_word_edit_request");
+      mutate({
+        wordId: wordId,
+        relatedWordId: relatedWord.related_word_id,
+        newRelationType: data.newRelationType,
+        originalRelationType: relatedWord.relation_type, // Pass original for the backend handler
+        reason: data.reason,
+        captchaToken: token,
+      });
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
+      toast.error(t("Errors.captchaError"));
+    }
   };
 
   React.useEffect(() => {

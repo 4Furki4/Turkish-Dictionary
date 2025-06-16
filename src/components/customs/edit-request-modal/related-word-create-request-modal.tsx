@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { api } from '@/src/trpc/react';
 import { toast } from 'sonner';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 interface RelatedWordCreateRequestModalProps {
   isOpen: boolean;
@@ -47,6 +48,7 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
   const tActions = useTranslations('Actions');
   const tRelationTypes = useTranslations('RelationTypes');
   const tForm = useTranslations('Form'); // For common form labels/errors
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const [inputValue, setInputValue] = useState('');
   const [debouncedInputValue, setDebouncedInputValue] = useState('');
@@ -94,11 +96,22 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
     },
   });
 
-  const onSubmit = (data: CreateRelatedWordFormValues) => {
-    createRequestMutation.mutate({
-      ...data,
-      wordId: wordId,
-    });
+  const onSubmit = async (data: CreateRelatedWordFormValues) => {
+    if (!executeRecaptcha) {
+      toast.error(t('Errors.captchaError'));
+      return;
+    }
+    try {
+      const token = await executeRecaptcha('related_word_create_request');
+      createRequestMutation.mutate({
+        ...data,
+        wordId: wordId,
+        captchaToken: token,
+      });
+    } catch (error) {
+      console.error('reCAPTCHA execution failed:', error);
+      toast.error(t('Errors.captchaError'));
+    }
   };
 
   if (!session) return null;

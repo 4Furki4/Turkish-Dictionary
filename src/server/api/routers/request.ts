@@ -130,11 +130,18 @@ export const requestRouter = createTRPCRouter({
 
     cancelRequest: protectedProcedure
         .input(z.object({
-            requestId: z.number()
+            requestId: z.number(),
+            captchaToken: z.string(),
         }))
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
-            const { requestId } = input;
-
+            const { requestId, captchaToken } = input;
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
             // Check if the request exists and belongs to the user
             const requestData = await db.select()
                 .from(requests)
@@ -162,11 +169,18 @@ export const requestRouter = createTRPCRouter({
         .input(z.object({
             requestId: z.number(),
             newData: z.record(z.unknown()),
-            reason: z.string().optional()
+            reason: z.string().optional(),
+            captchaToken: z.string(),
         }))
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
-            const { requestId, newData, reason } = input;
-
+            const { requestId, newData, reason, captchaToken } = input;
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
             // Check if the request exists and belongs to the user
             const requestData = await db.select()
                 .from(requests)
@@ -201,10 +215,17 @@ export const requestRouter = createTRPCRouter({
             originalRelationType: z.string().min(1),
             newRelationType: z.string().min(1),
             reason: z.string().optional(),
+            captchaToken: z.string(),
         }))
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
-            const { wordId, relatedWordId, originalRelationType, newRelationType, reason } = input;
-
+            const { wordId, relatedWordId, originalRelationType, newRelationType, reason, captchaToken } = input;
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
             // Check if the original related word entry exists
             const existingRelation = await db.query.relatedWords.findFirst({
                 where: and(
@@ -254,10 +275,17 @@ export const requestRouter = createTRPCRouter({
             wordId: z.number(),
             relatedWordId: z.number(),
             reason: z.string().optional(),
+            captchaToken: z.string(),
         }))
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
-            const { wordId, relatedWordId, reason } = input;
-
+            const { wordId, relatedWordId, reason, captchaToken } = input;
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
             const existingRelation = await db.query.relatedWords.findFirst({
                 where: and(
                     eq(relatedWords.wordId, wordId),
@@ -295,10 +323,17 @@ export const requestRouter = createTRPCRouter({
             relatedWordId: z.number(),
             relationType: z.string(),
             reason: z.string().optional(),
+            captchaToken: z.string(),
         }))
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
-            const { wordId, relatedWordId, relationType, reason } = input;
-
+            const { wordId, relatedWordId, relationType, reason, captchaToken } = input;
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
             const existingRelation = await db.query.relatedWords.findFirst({
                 where: and(
                     eq(relatedWords.wordId, wordId),
@@ -336,10 +371,17 @@ export const requestRouter = createTRPCRouter({
             oldRelatedPhraseId: z.number(), // ID of the word that IS the phrase being replaced
             newRelatedPhraseId: z.number(), // ID of the new word to become the phrase
             reason: z.string().optional(),
+            captchaToken: z.string(),
         }))
         .mutation(async ({ ctx, input }) => {
-            const { wordId, oldRelatedPhraseId, newRelatedPhraseId, reason } = input;
-
+            const { wordId, oldRelatedPhraseId, newRelatedPhraseId, reason, captchaToken } = input;
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
             await ctx.db.insert(requests).values({
                 userId: ctx.session.user.id,
                 entityType: "related_phrases",
@@ -363,8 +405,16 @@ export const requestRouter = createTRPCRouter({
             phraseId: z.number(),
             description: z.string().optional(),
             reason: z.string().optional(),
+            captchaToken: z.string(),
         }))
-        .mutation(async ({ input: { wordId, phraseId, description, reason }, ctx: { db, session: { user } } }) => {
+        .mutation(async ({ input: { wordId, phraseId, description, reason, captchaToken }, ctx: { db, session: { user } } }) => {
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
             const existingPhrase = await db.query.relatedPhrases.findFirst({
                 where: and(
                     eq(relatedPhrases.wordId, wordId),
@@ -495,8 +545,9 @@ export const requestRouter = createTRPCRouter({
         attributes: z.array(z.number()).optional(),
         author_id: z.number().optional(),
         reason: z.string().min(1, "Reason is required"),
+        captchaToken: z.string(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
-        const { meaning_id, reason, ...restInput } = input;
+        const { meaning_id, reason, captchaToken, ...restInput } = input;
         const preparedData = Object.keys(restInput).reduce<Record<string, unknown>>((acc, key) => {
             if (restInput[key as keyof typeof restInput]) {
                 acc[key] = restInput[key as keyof typeof restInput]
@@ -504,6 +555,13 @@ export const requestRouter = createTRPCRouter({
             return acc
         }, {})
         const purifiedData = purifyObject(preparedData)
+        const { success } = await verifyRecaptcha(captchaToken);
+        if (!success) {
+            throw new TRPCError({
+                code: 'FORBIDDEN',
+                message: 'Error.captchaFailed',
+            });
+        }
         await db.transaction(async (tx) => {
             await tx.insert(requests).values({
                 entityType: "meanings",
@@ -518,7 +576,16 @@ export const requestRouter = createTRPCRouter({
     requestDeleteMeaning: protectedProcedure.input(z.object({
         meaning_id: z.number(),
         reason: z.string().min(1, "Reason is required"),
+        captchaToken: z.string(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+        const { meaning_id, reason, captchaToken } = input;
+        const { success } = await verifyRecaptcha(captchaToken);
+        if (!success) {
+            throw new TRPCError({
+                code: 'FORBIDDEN',
+                message: 'Error.captchaFailed',
+            });
+        }
         await db.transaction(async (tx) => {
             await tx.insert(requests).values({
                 entityType: "meanings",
@@ -529,13 +596,24 @@ export const requestRouter = createTRPCRouter({
             })
         })
     }),
-    newWordAttribute: protectedProcedure.input(z.string().min(2)).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+    newWordAttribute: protectedProcedure.input(z.object({
+        attribute: z.string().min(2),
+        captchaToken: z.string(),
+    })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+        const { attribute, captchaToken } = input;
+        const { success } = await verifyRecaptcha(captchaToken);
+        if (!success) {
+            throw new TRPCError({
+                code: 'FORBIDDEN',
+                message: 'Error.captchaFailed',
+            });
+        }
         await db.transaction(async (tx) => {
             await tx.insert(requests).values({
                 entityType: "word_attributes",
                 action: "create",
                 userId: user.id,
-                newData: JSON.stringify({ attribute: input }),
+                newData: JSON.stringify({ attribute }),
             })
         })
     }),

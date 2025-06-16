@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 import type { Session } from 'next-auth';
 import { toast } from 'sonner';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useDebounce } from '@uidotdev/usehooks';
 import type { AppRouter } from '@/src/server/api/root';
 import type { TRPCClientErrorLike } from '@trpc/client';
@@ -29,6 +30,7 @@ interface RelatedPhraseEditRequestModalProps {
 const RelatedPhraseEditRequestModal: React.FC<RelatedPhraseEditRequestModalProps> = ({ isOpen, onOpenChange, wordId, relatedPhrase, session }) => {
   const t = useTranslations('EditRelatedPhraseModal');
   const t_general = useTranslations();
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const FormSchema = z.object({
     newPhraseId: z.number({ required_error: t('validation.newPhraseRequired') }),
@@ -66,13 +68,24 @@ const RelatedPhraseEditRequestModal: React.FC<RelatedPhraseEditRequestModalProps
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    requestReplacement({
-      wordId: wordId,
-      oldRelatedPhraseId: relatedPhrase.related_phrase_id,
-      newRelatedPhraseId: data.newPhraseId, // This comes from the form input
-      reason: data.reason,
-    });
+  const onSubmit = async (data: FormValues) => {
+    if (!executeRecaptcha) {
+      toast.error(t_general('Errors.captchaError'));
+      return;
+    }
+    try {
+      const token = await executeRecaptcha('related_phrase_edit_request');
+      requestReplacement({
+        wordId: wordId,
+        oldRelatedPhraseId: relatedPhrase.related_phrase_id,
+        newRelatedPhraseId: data.newPhraseId,
+        reason: data.reason,
+        captchaToken: token,
+      });
+    } catch (error) {
+      console.error('reCAPTCHA execution failed:', error);
+      toast.error(t_general('Errors.captchaError'));
+    }
   };
 
   return (
