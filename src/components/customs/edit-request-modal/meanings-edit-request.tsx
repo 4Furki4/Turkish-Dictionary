@@ -137,6 +137,8 @@ export default function MeaningsEditRequest({
           partOfSpeechesIsLoading={partOfSpeechesIsLoading}
           authors={authors}
           authorsIsLoading={authorsIsLoading}
+          isDeletePending={requestDeleteMeaning.isPending}
+          isEditPending={requestEditMeaning.isPending}
           onSubmit={async (data) => {
             const { meaning_id, reason, ...rest } = data;
             if (!executeRecaptcha) {
@@ -203,6 +205,8 @@ function MeaningEditRequestForm({
   authors,
   authorsIsLoading,
   onSubmit,
+  isDeletePending,
+  isEditPending,
 }: {
   meaning: Meaning;
   index: number;
@@ -226,6 +230,8 @@ function MeaningEditRequestForm({
   }[] | undefined;
   authorsIsLoading: boolean;
   onSubmit: (data: Omit<MeaningEditSubmitData, 'captchaToken'>) => Promise<void>;
+  isDeletePending: boolean;
+  isEditPending: boolean;
 }) {
   const t = useTranslations()
   const {
@@ -386,6 +392,13 @@ function MeaningEditRequestForm({
             />
 
             <div className="flex justify-end space-x-2">
+              <Button
+                color="primary"
+                onPress={async () => await onFormSubmit()}
+                isLoading={isEditPending}
+              >
+                {t("Submit")}
+              </Button>
               <Button
                 color="danger"
                 variant="light"
