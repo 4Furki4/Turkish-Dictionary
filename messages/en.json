@@ -770,7 +770,8 @@
     "partOfSpeechId": "Part of Speech ID",
     "imageUrl": "Image URL",
     "part_of_speech_id": "Part of Speech ID",
-    "order": "Order"
+    "order": "Order",
+    "phraseId": "Phrase ID"
   },
   "RequestActions": {
     "create": "Create",

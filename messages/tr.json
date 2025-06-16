@@ -737,7 +737,8 @@
     "partOfSpeechId": "Kelime Türü ID",
     "imageUrl": "Resim URL",
     "part_of_speech_id": "Kelime Türü ID",
-    "order": "Anlam sıralaması"
+    "order": "Anlam sıralaması",
+    "phraseId": "Deyim ID"
   },
   "RequestActions": {
     "create": "Oluştur",

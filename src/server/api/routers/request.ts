@@ -435,7 +435,7 @@ export const requestRouter = createTRPCRouter({
                     eq(requests.action, "create"),
                     eq(requests.status, "pending"),
                     eq(requests.entityId, wordId),
-                    sql`"newData"->>'phraseId' = ${phraseId}`
+                    sql`"new_data"->>'phraseId' = ${String(phraseId)}`
                 )
             });
 
