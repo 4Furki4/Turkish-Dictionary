@@ -425,7 +425,7 @@
     "descriptionPlaceholder": "Bu deyim için bir açıklama girin..."
   },
   "Requests": {
-    "request": "İstek",
+    "title": "İstek",
     "myRequests": "İsteklerim",
     "SuggestEditForRelatedWord": "{relatedWordName} için düzenleme öner",
     "SuggestDeletionForRelatedWord": "{relatedWordName} için silme öner",
@@ -517,7 +517,9 @@
       "loadingWordName": "Kelime yükleniyor...",
       "errorLoadingWordName": "Kelime yüklenirken hata oluştu",
       "wordNameNotFound": "Kelime bulunamadı",
-      "willChangeTo": "Bununla değişecek"
+      "willChangeTo": "Bununla değişecek",
+      "deletionRequest": "Silme İsteği",
+      "deletionWarning": "Silme isteğinde bulundunuz, isteğiniz onaylandıktan sonra silinecektir."
     },
     "RequestedAttributeByYou": "Sizin eklediğiniz özellik",
     "NoChanges": "Değişiklik tespit edilmedi",
@@ -532,6 +534,7 @@
     "DeleteMeaningRequestSentence": "\"{meaning}\" anlamı için silme isteğini göndermek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
     "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
     "ReasonRequired": "Lütfen değişiklik için gerekçenizi girin",
+    "ReasonMinLength15": "Gerekçe en az 15 karakter uzunluğunda olmalıdır",
     "ConfirmDeleteRelatedWord": "'{relatedWordName}' kelimesi ile olan '{relationType}' ilişkisinin silinmesini talep etmek istediğinizden emin misiniz?",
     "ReasonOptional": "Gerekçe (İsteğe Bağlı)",
     "ReasonPlaceholderDeleteRelated": "örneğin, Bu ilişki yanlış çünkü...",
@@ -544,7 +547,9 @@
     "phraseLabel": "Deyim",
     "phrasePlaceholder": "İlgili deyimi girin",
     "descriptionLabelOptional": "Açıklama (İsteğe Bağlı)",
-    "descriptionPlaceholder": "Deyim için bir açıklama girin"
+    "descriptionPlaceholder": "Deyim için bir açıklama girin",
+    "SuggestDeletionForRelatedPhraseHeader": "İlgili Deyim Silme İsteği: {relatedPhraseName}",
+    "ConfirmDeleteRelatedPhrase": "İlgili ilişkiyi silmek istediğinizden emin misiniz? Lütfen silme nedeni giriniz."
   },
   "Phonetic": "Fonetik",
   "WordName": "Kelime",
@@ -730,7 +735,9 @@
     "attributeId": "Nitelik ID",
     "type": "Tür",
     "partOfSpeechId": "Kelime Türü ID",
-    "imageUrl": "Resim URL"
+    "imageUrl": "Resim URL",
+    "part_of_speech_id": "Kelime Türü ID",
+    "order": "Anlam sıralaması"
   },
   "RequestActions": {
     "create": "Oluştur",

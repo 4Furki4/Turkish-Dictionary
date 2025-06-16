@@ -556,7 +556,9 @@
       "loadingWordName": "Loading Word Name...",
       "errorLoadingWordName": "Error loading word name",
       "wordNameNotFound": "Word not found",
-      "willChangeTo": "Will change to"
+      "willChangeTo": "Will change to",
+      "deletionRequest": "Deletion Request",
+      "deletionWarning": "Deletion request submitted, the request will be processed after approval."
     },
     "RequestedAttributeByYou": "Requested Attribute by You",
     "NoChanges": "No changes detected",
@@ -574,6 +576,7 @@
     "AttributeIsRequired": "Attribute is required, please enter an attribute.",
     "AttributeRequestedSuccessfully": "Attribute requested successfully",
     "ReasonRequired": "Please enter your reason for the change",
+    "ReasonMinLength15": "Reason must be at least 15 characters long",
     "ConfirmDeleteRelatedWord": "Are you sure you want to request the deletion of the relation '{relationType}' to the word '{relatedWordName}'?",
     "ReasonOptional": "Reason (Optional)",
     "ReasonPlaceholderDeleteRelated": "e.g., This relation is incorrect because...",
@@ -582,7 +585,9 @@
     "SelectRelationTypePlaceholder": "Select a new relation type",
     "ReasonPlaceholderEditRelated": "Enter a reason for your edit request (optional)",
     "RelatedWordsTabTitle": "Related Words",
-    "RelatedPhrasesTabTitle": "Related Phrases"
+    "RelatedPhrasesTabTitle": "Related Phrases",
+    "SuggestDeletionForRelatedPhraseHeader": "Suggest Deletion for: {relatedPhraseName}",
+    "ConfirmDeleteRelatedPhrase": "Are you sure you want to request the deletion? Please provide a reason for the deletion."
   },
   "WordAttribute": "Word Attribute",
   "WordName": "Word Name",
@@ -763,7 +768,9 @@
     "attributeId": "Attribute ID",
     "type": "Type",
     "partOfSpeechId": "Part of Speech ID",
-    "imageUrl": "Image URL"
+    "imageUrl": "Image URL",
+    "part_of_speech_id": "Part of Speech ID",
+    "order": "Order"
   },
   "RequestActions": {
     "create": "Create",

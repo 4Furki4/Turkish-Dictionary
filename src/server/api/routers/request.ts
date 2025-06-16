@@ -467,6 +467,43 @@ export const requestRouter = createTRPCRouter({
             return { success: true, message: "Related phrase creation request submitted." };
         }),
 
+    requestDeleteRelatedPhrase: protectedProcedure
+        .input(z.object({
+            wordId: z.number(),
+            relatedPhraseId: z.number(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordId, relatedPhraseId, reason } = input;
+
+            const existingRelation = await db.query.relatedPhrases.findFirst({
+                where: and(
+                    eq(relatedPhrases.wordId, wordId),
+                    eq(relatedPhrases.relatedPhraseId, relatedPhraseId)
+                )
+            });
+
+            if (!existingRelation) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Related phrase entry not found, cannot request deletion."
+                });
+            }
+
+            await db.insert(requests).values({
+                userId: user.id,
+                entityType: "related_phrases",
+                entityId: wordId,
+                action: "delete",
+                newData: { relatedPhraseId },
+                status: "pending",
+                reason: reason,
+                requestDate: new Date(),
+            });
+
+            return { success: true, message: "Related phrase deletion request submitted." };
+        }),
+
     // In src/server/api/routers/params.ts
     getWordAttributesWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
         // Get approved attributes from the main table

@@ -5,6 +5,7 @@ import { CreateWordAttributeHandler, UpdateWordAttributeHandler } from "./word-a
 import { UpdateWordHandler } from "./word-handler";
 import { UpdateMeaningHandler, DeleteMeaningHandler } from "./meaning-handler";
 import { UpdateRelatedWordHandler, DeleteRelatedWordHandler } from "./related-words-handler";
+import { DeleteRelatedPhraseHandler } from "./related-phrase-handler";
 // Import other handlers
 
 type HandlerRegistry = {
@@ -28,6 +29,9 @@ const registry: HandlerRegistry = {
     related_words: {
         update: new UpdateRelatedWordHandler(),
         delete: new DeleteRelatedWordHandler(),
+    },
+    related_phrases: {
+        delete: new DeleteRelatedPhraseHandler(),
     },
     // Add other entity types and actions...
 };

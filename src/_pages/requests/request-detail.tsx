@@ -555,7 +555,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <h2 className="text-2xl font-semibold text-foreground">
-                {t("request")}{` #${request.id}: ${entityTypeLabels[request.entityType]} - ${actionLabels[request.action]}`}
+                {t("title")}{` #${request.id}: ${entityTypeLabels[request.entityType]} - ${actionLabels[request.action]}`}
               </h2>
               {request.entityType === "words" && (request.action === "update" || request.action === "delete") && request.entityId && (
                 <div className="mt-1 flex items-center gap-2">
