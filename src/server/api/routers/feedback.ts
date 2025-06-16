@@ -8,6 +8,8 @@ import { and, desc, eq, sql } from "drizzle-orm";
 import { feedbacks, feedbackTypeEnum } from "@/db/schema/feedbacks";
 import { feedbackVotes } from "@/db/schema/feedback_votes";
 import { users } from "@/db/schema/users"; // Import the users schema
+import { verifyRecaptcha } from "@/src/lib/recaptcha";
+import { TRPCError } from "@trpc/server";
 
 export const feedbackRouter = createTRPCRouter({
     /**
@@ -19,11 +21,25 @@ export const feedbackRouter = createTRPCRouter({
                 title: z.string().min(5, "Error.titleMinLength"),
                 description: z.string().min(10, "Error.descriptionMinLength"),
                 type: z.enum(feedbackTypeEnum.enumValues),
+                captchaToken: z.string(),
             })
         )
         .mutation(async ({ ctx: { db, session }, input }) => {
+            const { captchaToken, ...feedbackData } = input;
+
+            // ✨ Verify the token before proceeding
+            const { success, score } = await verifyRecaptcha(captchaToken);
+            console.log(success, score);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Error.captchaFailed',
+                });
+            }
+
+            // If verification is successful, create the feedback
             await db.insert(feedbacks).values({
-                ...input,
+                ...feedbackData,
                 userId: session.user.id,
             });
         }),

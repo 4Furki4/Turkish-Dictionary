@@ -24,7 +24,7 @@ import {
 import { feedbackTypeEnum } from "@/db/schema/feedbacks"; // Corrected import path
 import { type Session } from "next-auth";
 import { signIn } from "next-auth/react";
-
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3"
 // Zod schema for form validation
 const feedbackSchema = z.object({
     title: z.string().min(5, "Error.titleMinLength"),
@@ -46,10 +46,10 @@ export function FeedbackModal({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const t = useTranslations("Feedback.NewForm");
-    const tError = useTranslations();
+    const tError = useTranslations('Errors');
     const tGlobal = useTranslations("Navbar");
     const utils = api.useUtils();
-
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const {
         register,
         handleSubmit,
@@ -73,8 +73,22 @@ export function FeedbackModal({
         },
     });
 
-    const onSubmit = (data: FeedbackFormValues) => {
-        createFeedback.mutate(data);
+    const onSubmit = async (data: FeedbackFormValues) => {
+        if (!executeRecaptcha) {
+            console.error("reCAPTCHA not available");
+            toast.error(t("captchaError"));
+            return;
+        }
+
+        try {
+            // ✨ Generate a token for this specific action
+            const token = await executeRecaptcha("feedback_submission");
+            // ✨ Call the mutation with the form data and the new token
+            createFeedback.mutate({ ...data, captchaToken: token });
+        } catch (e) {
+            console.error("reCAPTCHA execution failed:", e);
+            toast.error(t("captchaError"));
+        }
     };
 
     // If user is not logged in, render the trigger inside a Popover
@@ -186,7 +200,7 @@ export function FeedbackModal({
                                         />
                                         {errors.title && (
                                             <p className="text-red-500 text-sm mt-1">
-                                                {tError(errors.title.message as any)}
+                                                {t(errors.title.message as any)}
                                             </p>
                                         )}
                                     </div>
@@ -203,7 +217,7 @@ export function FeedbackModal({
                                         />
                                         {errors.description && (
                                             <p className="text-red-500 text-sm mt-1">
-                                                {tError(errors.description.message as any)}
+                                                {t(errors.description.message as any)}
                                             </p>
                                         )}
                                     </div>

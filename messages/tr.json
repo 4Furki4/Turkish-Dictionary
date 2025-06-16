@@ -697,7 +697,9 @@
   },
   "Errors": {
     "MustBeLoggedIn": "Bu işlemi gerçekleştirmek için giriş yapmış olmanız gerekir.",
-    "OriginalRelationTypeMissing": "Orijinal ilişki türü eksik. Düzenleme isteği gönderilemiyor."
+    "OriginalRelationTypeMissing": "Orijinal ilişki türü eksik. Düzenleme isteği gönderilemiyor.",
+    "captchaFailed": "reCAPTCHA doğrulaması başarısız oldu. Bir robot olabileceğinizden lütfen tekrar deneyin.",
+    "captchaError": "reCAPTCHA anahtarı alınamadı. Lütfen bağlantınızı kontrol edip tekrar deneyin."
   },
   "DbFieldLabels": {
     "reason": "Değişiklik Nedeni",
@@ -800,12 +802,12 @@
         "feature": "Özellik Talebi",
         "bug": "Hata Bildirimi",
         "other": "Diğer"
+      },
+      "Error": {
+        "titleMinLength": "Başlık en az 5 karakter uzunluğunda olmalıdır.",
+        "descriptionMinLength": "Açıklama en az 10 karakter uzunluğunda olmalıdır."
       }
     }
-  },
-  "Error": {
-    "titleMinLength": "Başlık en az 5 karakter uzunluğunda olmalıdır.",
-    "descriptionMinLength": "Açıklama en az 10 karakter uzunluğunda olmalıdır."
   },
   "TermsOfService": {
     "title": "Kullanım Şartları",

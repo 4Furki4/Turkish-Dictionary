@@ -15,6 +15,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
 import { BackgroundGradient } from "@/src/components/customs/background-gradient";
+import { CaptchaProvider } from "@/src/components/customs/captcha-provider";
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
@@ -85,37 +86,40 @@ export default async function RootLayout({
       <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
           <NextIntlClientProvider messages={messages}>
-            <Providers>
-              <div className="flex flex-col min-h-screen">
+            <CaptchaProvider>
 
-                <NavbarAndSidebar
-                  session={session}
-                  HomeIntl={t("Home")}
-                  SignInIntl={t("Sign In")}
-                  WordListIntl={t("Word List")}
-                  TitleIntl={t("Title")}
-                  ProfileIntl={t("Profile")}
-                  SavedWordsIntl={t("SavedWords")}
-                  MyRequestsIntl={t("MyRequests")}
-                  SearchHistoryIntl={t("SearchHistory")}
-                  LogoutIntl={t("Logout")}
-                  AnnouncementsIntl={t("Announcements")}
-                  ariaAvatar={t("ariaAvatar")}
-                  ariaMenu={t("ariaMenu")}
-                  ariaLanguages={t("ariaLanguages")}
-                  ariaSwitchTheme={t("ariaSwitchTheme")}
-                />
+              <Providers>
+                <div className="flex flex-col min-h-screen">
 
-                <main className="relative flex-grow w-full flex">
-                  {/* ✨ Moved BackgroundGradient here */}
-                  <BackgroundGradient />
-                  {children}
-                </main>
-                <Footer />
-              </div>
-              <SpeedInsights />
-              <Analytics />
-            </Providers>
+                  <NavbarAndSidebar
+                    session={session}
+                    HomeIntl={t("Home")}
+                    SignInIntl={t("Sign In")}
+                    WordListIntl={t("Word List")}
+                    TitleIntl={t("Title")}
+                    ProfileIntl={t("Profile")}
+                    SavedWordsIntl={t("SavedWords")}
+                    MyRequestsIntl={t("MyRequests")}
+                    SearchHistoryIntl={t("SearchHistory")}
+                    LogoutIntl={t("Logout")}
+                    AnnouncementsIntl={t("Announcements")}
+                    ariaAvatar={t("ariaAvatar")}
+                    ariaMenu={t("ariaMenu")}
+                    ariaLanguages={t("ariaLanguages")}
+                    ariaSwitchTheme={t("ariaSwitchTheme")}
+                  />
+
+                  <main className="relative flex-grow w-full flex">
+                    {/* ✨ Moved BackgroundGradient here */}
+                    <BackgroundGradient />
+                    {children}
+                  </main>
+                  <Footer />
+                </div>
+                <SpeedInsights />
+                <Analytics />
+              </Providers>
+            </CaptchaProvider>
           </NextIntlClientProvider>
         </TRPCReactProvider>
         <Toaster />
