@@ -568,6 +568,7 @@
     "Reason": "Reason for Change",
     "EnterReason": "Please enter your reason for the change",
     "DeleteRequestSubmittedSuccessfully": "Delete request submitted successfully",
+    "EditRequestSubmittedSuccessfully": "Edit request submitted successfully",
     "FailedToSubmitEditRequest": "Failed to submit edit request",
     "FailedToSubmitDeleteRequest": "Failed to submit delete request",
     "SubmitRequest": "Submit Request",
@@ -577,7 +578,7 @@
     "AttributeRequestedSuccessfully": "Attribute requested successfully",
     "ReasonRequired": "Please enter your reason for the change",
     "ReasonMinLength15": "Reason must be at least 15 characters long",
-    "ConfirmDeleteRelatedWord": "Are you sure you want to request the deletion of the relation '{relationType}' to the word '{relatedWordName}'?",
+    "ConfirmDeleteRelatedWord": "Are you sure you want to request the deletion of the relation \"{relationType}\" to the word \"{relatedWordName}\"?",
     "ReasonOptional": "Reason (Optional)",
     "ReasonPlaceholderDeleteRelated": "e.g., This relation is incorrect because...",
     "CurrentRelationTypeIs": "Current relation type: {relationType}",
@@ -587,7 +588,19 @@
     "RelatedWordsTabTitle": "Related Words",
     "RelatedPhrasesTabTitle": "Related Phrases",
     "SuggestDeletionForRelatedPhraseHeader": "Suggest Deletion for: {relatedPhraseName}",
-    "ConfirmDeleteRelatedPhrase": "Are you sure you want to request the deletion? Please provide a reason for the deletion."
+    "ConfirmDeleteRelatedPhrase": "Are you sure you want to request the deletion? Please provide a reason for the deletion.",
+    "Forms": {
+      "RelatedWord": {
+        "Required": "Related word is required, please enter a related word."
+      },
+      "RelationType": {
+        "Required": "Relation type is required, please select a relation type."
+      },
+      "Reason": {
+        "Required": "Reason is required, please enter a reason.",
+        "MinLength15": "Reason must be at least 15 characters long"
+      }
+    }
   },
   "WordAttribute": "Word Attribute",
   "WordName": "Word Name",
@@ -652,6 +665,9 @@
     "items": "items"
   },
   "Forms": {
+    "Word": {
+      "Required": "Word name is required, please enter a word name."
+    },
     "Attributes": {
       "Required": "Attribute is required, please enter an attribute.",
       "MinLength2": "Attribute length must be greater than 2 characters."

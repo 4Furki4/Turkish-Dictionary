@@ -522,7 +522,7 @@
       "deletionWarning": "Silme isteğinde bulundunuz, isteğiniz onaylandıktan sonra silinecektir."
     },
     "RequestedAttributeByYou": "Sizin eklediğiniz özellik",
-    "NoChanges": "Değişiklik tespit edilmedi",
+    "NoChanges": "Değişiklik tespit edilmedi, lütfen değişiklik yapınız.",
     "Reason": "Değişiklik Nedeni",
     "EnterReason": "Lütfen değişiklik nedeni giriniz",
     "EditRequestSubmittedSuccessfully": "Değişiklik isteği başarıyla gönderildi",
@@ -549,7 +549,19 @@
     "descriptionLabelOptional": "Açıklama (İsteğe Bağlı)",
     "descriptionPlaceholder": "Deyim için bir açıklama girin",
     "SuggestDeletionForRelatedPhraseHeader": "İlgili Deyim Silme İsteği: {relatedPhraseName}",
-    "ConfirmDeleteRelatedPhrase": "İlgili ilişkiyi silmek istediğinizden emin misiniz? Lütfen silme nedeni giriniz."
+    "ConfirmDeleteRelatedPhrase": "İlgili ilişkiyi silmek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
+    "Forms": {
+      "RelatedWord": {
+        "Required": "İlgili kelime gerekli, lütfen bir ilgili kelime giriniz."
+      },
+      "RelationType": {
+        "Required": "İlişki türü gerekli, lütfen bir ilişki türü seçiniz."
+      },
+      "Reason": {
+        "Required": "Gerekçe gerekli, lütfen bir gerekçe giriniz.",
+        "MinLength15": "Gerekçe en az 15 karakter uzunluğunda olmalıdır."
+      }
+    }
   },
   "Phonetic": "Fonetik",
   "WordName": "Kelime",
@@ -605,6 +617,9 @@
   },
   "EnterAuthor": "Yazar Giriniz",
   "Forms": {
+    "Word": {
+      "Required": "Kelime adı gerekli, lütfen bir kelime adı giriniz."
+    },
     "Attributes": {
       "Required": "Özellik gerekli, lütfen bir özellik giriniz.",
       "MinLength2": "Özellik uzunluğu 2 karakterden uzun olmalıdır."

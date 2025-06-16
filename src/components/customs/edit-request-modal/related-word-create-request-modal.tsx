@@ -30,7 +30,13 @@ const relationTypes = [
 const createRelatedWordSchema = z.object({
   relatedWordId: z.number({ required_error: 'Related word is required.' }), // Will be string then parsed, or directly number if select returns number
   relationType: z.string().min(1, 'Relation type is required.'),
-  reason: z.string().optional(),
+  reason: z.string(),
+});
+
+const getCreateRelatedWordSchemaIntl = (relatedWordRequired: string, relationTypeRequired: string, reasonRequired: string, reasonMinLength: string) => z.object({
+  relatedWordId: z.number({ required_error: relatedWordRequired }),
+  relationType: z.string().min(1, relationTypeRequired),
+  reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
 });
 
 type CreateRelatedWordFormValues = z.infer<typeof createRelatedWordSchema>;
@@ -72,7 +78,7 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
   );
 
   const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<CreateRelatedWordFormValues>({
-    resolver: zodResolver(createRelatedWordSchema),
+    resolver: zodResolver(getCreateRelatedWordSchemaIntl(t("Forms.RelatedWord.Required"), t("Forms.RelationType.Required"), t("Forms.Reason.Required"), t("Forms.Reason.MinLength15"))),
     defaultValues: {
       relatedWordId: undefined,
       relationType: '',
@@ -162,6 +168,7 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
                   listboxProps={{
                     emptyContent: tForm('noWordsFound'),
                   }}
+                  isRequired
                   onBlur={field.onBlur} // Important for RHF validation trigger
                   name={field.name} // Important for RHF
                 // TODO: Consider if `inputProps={{ ref: field.ref }}` is needed or if RHF handles ref correctly with Autocomplete
@@ -189,6 +196,7 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
                   name={field.name}
                   ref={field.ref}
                   onBlur={field.onBlur}
+                  isRequired
                 >
                   {relationTypes.map((type) => (
                     <SelectItem key={type.id} textValue={tRelationTypes(type.id as any) || type.name}>
@@ -205,8 +213,9 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
               render={({ field }) => (
                 <Textarea
                   {...field}
-                  label={tForm('reasonLabelOptional')}
-                  placeholder={tForm('reasonPlaceholder')}
+                  isRequired
+                  label={t('Reason')}
+                  placeholder={t('EnterReason')}
                   isInvalid={!!errors.reason}
                   errorMessage={errors.reason?.message}
                 />

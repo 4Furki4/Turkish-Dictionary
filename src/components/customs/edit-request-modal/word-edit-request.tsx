@@ -21,37 +21,45 @@ const wordEditRequestSchema = z.object({
   root: z.string().optional(),
   suffix: z.string().optional(),
   attributes: z.array(z.string()).optional(),
-  reason: z.string().min(1, "Reason is required"),
+  reason: z.string().min(1, 'ReasonRequired').min(15, 'ReasonMinLength15')
+})
+
+const getWordEditRequestIntlSchema = (wordNameRequired: string, reasonRequired: string, reasonMinLength: string) => z.object({
+  language: z.string().optional(),
+  name: z.string().min(1, wordNameRequired),
+  phonetic: z.string().optional(),
+  prefix: z.string().optional(),
+  root: z.string().optional(),
+  suffix: z.string().optional(),
+  attributes: z.array(z.string()).optional(),
+  reason: z.string().min(1, reasonRequired).min(15, reasonMinLength)
 })
 
 export type WordEditRequestForm = z.infer<typeof wordEditRequestSchema>
 
 export default function WordEditRequest({
   data: { word_data },
+  onClose,
 }: {
   data: WordSearchResult
+  onClose: () => void
 }) {
   const locale = useLocale();
   const t = useTranslations();
+  const tRequests = useTranslations("Requests");
   const { executeRecaptcha } = useGoogleReCaptcha();
   const { data: languages, isLoading: languagesIsLoading } = api.params.getLanguages.useQuery()
   const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesWithRequested.useQuery()
-  const { mutate, isPending } = api.request.requestEditWord.useMutation({
-    onSuccess: () => {
-      toast.success(t("Requests.EditRequestSubmittedSuccessfully"))
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    }
-  })
+
   const {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors, dirtyFields },
 
   } = useForm<WordEditRequestForm>({
-    resolver: zodResolver(wordEditRequestSchema),
+    resolver: zodResolver(getWordEditRequestIntlSchema(t("Forms.Word.Required"), t("Requests.Forms.Reason.Required"), t("Requests.Forms.Reason.MinLength15"))),
     defaultValues: {
       name: word_data.word_name,
       phonetic: word_data.phonetic ?? "",
@@ -63,7 +71,16 @@ export default function WordEditRequest({
       reason: "",
     },
   })
+  const { mutate, isPending } = api.request.requestEditWord.useMutation({
+    onSuccess: () => {
+      toast.success(t("Requests.EditRequestSubmittedSuccessfully"))
 
+      onClose()
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    }
+  })
   const onSubmit = async (data: WordEditRequestForm) => {
     if (!executeRecaptcha) {
       toast.error(t("Errors.captchaError"));
@@ -83,7 +100,7 @@ export default function WordEditRequest({
         captchaToken: token
       }
       if (Object.keys(dirtyFields).filter((key) => key !== 'reason').length === 0) {
-        toast.error(t("NoChanges"))
+        toast.error(tRequests("NoChanges"))
         return
       }
       mutate(preparedData)
@@ -219,8 +236,8 @@ export default function WordEditRequest({
         render={({ field, fieldState: { error } }) => (
           <Textarea
             {...field}
-            label={t("Requests.Reason")}
-            placeholder={t("Requests.EnterReason")}
+            label={tRequests("Reason")}
+            placeholder={tRequests("EnterReason")}
             labelPlacement="outside"
             isInvalid={!!error}
             errorMessage={error?.message}

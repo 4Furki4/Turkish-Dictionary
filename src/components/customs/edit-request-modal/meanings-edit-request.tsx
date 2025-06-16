@@ -25,14 +25,14 @@ const meaningSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
 })
 
-const getMeaningIntlSchema = (meaningRequired: string, partOfSpeechRequired: string, reasonRequired: string) => z.object({
+const getMeaningIntlSchema = (meaningRequired: string, reasonRequired: string, reasonMinLength: string) => z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, meaningRequired),
   part_of_speech_id: z.string().optional().nullable(),
   attributes: z.array(z.string()).optional(),
   sentence: z.string().optional(),
   author_id: z.string().optional(),
-  reason: z.string().min(1, reasonRequired),
+  reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
 })
 
 export type MeaningEditRequestForm = z.infer<typeof meaningSchema>
@@ -240,7 +240,7 @@ function MeaningEditRequestForm({
     formState: { dirtyFields, errors },
     watch
   } = useForm<MeaningEditRequestForm>({
-    resolver: zodResolver(getMeaningIntlSchema(t("Forms.Meanings.Required"), t("Forms.PartOfSpeech.Required"), t("Requests.ReasonRequired"))),
+    resolver: zodResolver(getMeaningIntlSchema(t("Forms.Meanings.Required"), t("Requests.ReasonRequired"), t("Requests.ReasonMinLength15"))),
     defaultValues: {
       meaning_id: meaning.meaning_id,
       meaning: meaning.meaning,

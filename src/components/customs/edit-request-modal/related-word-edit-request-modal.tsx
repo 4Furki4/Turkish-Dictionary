@@ -30,7 +30,12 @@ const RELATION_TYPES = [
 
 const editRequestSchema = z.object({
   newRelationType: z.string().min(1, "New relation type is required"),
-  reason: z.string().optional(),
+  reason: z.string(),
+});
+
+const getEditRequestSchemaIntl = (newRelationTypeRequired: string, reasonRequired: string, reasonMinLength: string) => z.object({
+  newRelationType: z.string().min(1, newRelationTypeRequired),
+  reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
 });
 
 type EditRequestForm = z.infer<typeof editRequestSchema>;
@@ -66,7 +71,7 @@ export default function RelatedWordEditRequestModal({
   });
 
   const { control, handleSubmit, reset, setValue } = useForm<EditRequestForm>({
-    resolver: zodResolver(editRequestSchema),
+    resolver: zodResolver(getEditRequestSchemaIntl(tRequests("Forms.RelationType.Required"), tRequests("Forms.Reason.Required"), tRequests("Forms.Reason.MinLength15"))),
     defaultValues: {
       newRelationType: relatedWord?.relation_type || "",
       reason: "",
@@ -173,12 +178,14 @@ export default function RelatedWordEditRequestModal({
             <Controller
               name="reason"
               control={control}
-              render={({ field }) => (
+              render={({ field, fieldState: { error } }) => (
                 <Textarea
                   {...field}
-                  label={tRequests("ReasonOptional")}
-                  placeholder={tRequests("ReasonPlaceholderEditRelated")}
+                  label={tRequests("Reason")}
+                  placeholder={tRequests("EnterReason")}
                   minRows={3}
+                  isInvalid={!!error}
+                  errorMessage={error?.message}
                 />
               )}
             />

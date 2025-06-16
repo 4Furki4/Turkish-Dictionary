@@ -16,6 +16,10 @@ const deleteRequestSchema = z.object({
   reason: z.string().min(1, 'ReasonRequired').min(15, 'ReasonMinLength15')
 });
 
+const getDeleteRequestSchemaIntl = (reasonRequired: string, reasonMinLength: string) => z.object({
+  reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
+});
+
 type DeleteRequestForm = z.infer<typeof deleteRequestSchema>;
 
 interface RelatedPhraseDeleteRequestModalProps {
@@ -48,7 +52,7 @@ export default function RelatedPhraseDeleteRequestModal({
   });
 
   const { control, handleSubmit, reset } = useForm<DeleteRequestForm>({
-    resolver: zodResolver(deleteRequestSchema),
+    resolver: zodResolver(getDeleteRequestSchemaIntl(t("Forms.Reason.Required"), t("Forms.Reason.MinLength15"))),
     defaultValues: {
       reason: "",
     },
@@ -107,7 +111,7 @@ export default function RelatedPhraseDeleteRequestModal({
             <Controller
               name="reason"
               control={control}
-              render={({ field, formState: { errors } }) => (
+              render={({ field, fieldState: { error } }) => (
                 <Textarea
                   {...field}
                   label={t("Reason")}
@@ -115,8 +119,8 @@ export default function RelatedPhraseDeleteRequestModal({
                   isRequired
                   placeholder={t("ReasonPlaceholderDeleteRelated")}
                   minRows={3}
-                  errorMessage={t(errors.reason?.message as string)}
-                  isInvalid={!!errors.reason}
+                  errorMessage={error?.message}
+                  isInvalid={!!error}
                 />
               )}
             />

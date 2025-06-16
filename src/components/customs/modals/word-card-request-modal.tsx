@@ -13,7 +13,7 @@ import { Session } from 'next-auth';
 
 type RelatedWordItemType = NonNullable<WordSearchResult['word_data']['relatedWords']>[number];
 
-export default function WordCardRequestModal({ word: { word_data }, session, isOpen, onOpenChange }: { word: WordSearchResult, session: Session | null, isOpen: boolean, onOpenChange: (isOpen: boolean) => void }) {
+export default function WordCardRequestModal({ word: { word_data }, session, isOpen, onOpenChange, onClose }: { word: WordSearchResult, session: Session | null, isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onClose: () => void }) {
     const t = useTranslations("WordCard");
     const tRequests = useTranslations("Requests");
     const [selectedRelatedWord, setSelectedRelatedWord] = useState<{ id: number; related_word_id: number; related_word_name: string; relation_type?: string | undefined; } | null>(null);
@@ -66,7 +66,7 @@ export default function WordCardRequestModal({ word: { word_data }, session, isO
                                     tab: "data-[selected=true]:bg-primary/60",
                                 }}>
                                     <Tab value={"words"} title={t("Words")}>
-                                        <WordEditRequest data={{ word_data }} />
+                                        <WordEditRequest data={{ word_data }} onClose={onClose} />
                                     </Tab>
                                     <Tab value={"meanings"} title={t("Meanings")}>
                                         <MeaningsEditRequest meanings={word_data.meanings} />

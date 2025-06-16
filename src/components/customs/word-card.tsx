@@ -22,7 +22,7 @@ import WordCardRequestModal from "./modals/word-card-request-modal";
 
 export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
 
-  const { isOpen, onOpenChange } = useDisclosure()
+  const { isOpen, onOpenChange, onClose } = useDisclosure()
   const t = useTranslations("WordCard");
 
   const pathname = usePathname();
@@ -44,7 +44,6 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
       successMessage: t("urlCopiedDescription") || "URL copied to clipboard!"
     });
   };
-  console.log('word_data.relatedWords', word_data.relatedWords)
   return (
     <Card
       ref={cardRef}
@@ -336,7 +335,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
               )
           }
         </>
-        <WordCardRequestModal word={{ word_data }} session={session} isOpen={isOpen} onOpenChange={onOpenChange} />
+        <WordCardRequestModal word={{ word_data }} session={session} isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
       </CardFooter>
     </Card>
   );

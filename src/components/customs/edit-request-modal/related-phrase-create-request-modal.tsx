@@ -23,9 +23,13 @@ interface RelatedPhraseCreateRequestModalProps {
 }
 
 const createRelatedPhraseSchema = z.object({
-  relatedPhraseId: z.number({ required_error: 'This field is required.' }), // Will replace with tForm('requiredField') later
-  description: z.string().optional(),
-  reason: z.string().optional(),
+  relatedPhraseId: z.number({ required_error: 'This field is required.' }),
+  reason: z.string().min(1, 'ReasonRequired').min(15, 'ReasonMinLength15')
+});
+
+const getCreateRelatedPhraseSchemaIntl = (relatedPhraseIdRequired: string, reasonRequired: string, reasonMinLength: string) => z.object({
+  relatedPhraseId: z.number({ required_error: relatedPhraseIdRequired }),
+  reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
 });
 
 type CreateRelatedPhraseFormValues = z.infer<typeof createRelatedPhraseSchema>;
@@ -42,10 +46,8 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateRelatedPhraseFormValues>({
-    resolver: zodResolver(createRelatedPhraseSchema),
+    resolver: zodResolver(getCreateRelatedPhraseSchemaIntl(t("Forms.RelatedWord.Required"), t("Forms.Reason.Required"), t("Forms.Reason.MinLength15"))),
     defaultValues: {
-      // relatedPhraseId will be undefined by default, which is fine for a required field
-      description: '',
       reason: '',
     },
   });
@@ -85,8 +87,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
     const token = await executeRecaptcha("word_edit_request");
     createRequestMutation.mutate({
       wordId: wordId,
-      phraseId: data.relatedPhraseId, // Correctly pass relatedPhraseId as phraseId
-      description: data.description,
+      phraseId: data.relatedPhraseId,
       reason: data.reason,
       captchaToken: token
     });
@@ -135,7 +136,10 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
                     isInvalid={!!errors.relatedPhraseId}
                     errorMessage={errors.relatedPhraseId?.message}
                     allowsCustomValue={false}
-                  // emptyContent prop removed as it's likely not supported or needed; Autocomplete might handle this internally
+                    isRequired
+                    listboxProps={{
+                      emptyContent: tForm('noWordsFound')
+                    }}
                   >
                     {(item: SimpleWord) => (
                       <AutocompleteItem key={item.id} textValue={item.name}>
@@ -146,29 +150,16 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
                 )}
               />
               <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <Textarea
-                    {...field}
-                    label={tForm('descriptionLabelOptional')}
-                    placeholder={tForm('descriptionPlaceholder')}
-                    isInvalid={!!errors.description}
-                    errorMessage={errors.description?.message}
-                    minRows={3}
-                  />
-                )}
-              />
-              <Controller
                 name="reason"
                 control={control}
-                render={({ field }) => (
+                render={({ field, fieldState: { error } }) => (
                   <Textarea
                     {...field}
-                    label={tForm('reasonLabelOptional')}
-                    placeholder={tForm('reasonPlaceholder')}
-                    isInvalid={!!errors.reason}
-                    errorMessage={errors.reason?.message}
+                    isRequired
+                    label={t('Reason')}
+                    placeholder={t('ReasonPlaceholderDeleteRelated')}
+                    isInvalid={!!error}
+                    errorMessage={error?.message}
                     minRows={3}
                   />
                 )}

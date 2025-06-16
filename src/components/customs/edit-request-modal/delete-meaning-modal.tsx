@@ -3,13 +3,17 @@
 import { Button } from "@heroui/button"
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react"
 import { Textarea } from "@heroui/input"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useTranslations } from "next-intl"
 
 const deleteReasonSchema = z.object({
-    reason: z.string().min(1, "Reason is required").min(50, "Reason must be at least 50 characters")
+    reason: z.string().min(1, "ReasonRequired").min(15, "ReasonMinLength15")
+})
+
+const getDeleteReasonSchemaIntl = (reasonRequired: string, reasonMinLength: string) => z.object({
+    reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
 })
 
 type DeleteReasonForm = z.infer<typeof deleteReasonSchema>
@@ -23,8 +27,8 @@ interface DeleteMeaningModalProps {
 
 export default function DeleteMeaningModal({ isOpen, onClose, onConfirm, meaning }: DeleteMeaningModalProps) {
     const t = useTranslations()
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<DeleteReasonForm>({
-        resolver: zodResolver(deleteReasonSchema),
+    const { control, handleSubmit, reset } = useForm<DeleteReasonForm>({
+        resolver: zodResolver(getDeleteReasonSchemaIntl(t("Requests.ReasonRequired"), t("Requests.ReasonMinLength15"))),
         defaultValues: {
             reason: ""
         }
@@ -46,12 +50,20 @@ export default function DeleteMeaningModal({ isOpen, onClose, onConfirm, meaning
                             {t("Requests.DeleteMeaningRequestSentence", { meaning })}
                         </p>
                         <div className="mt-4">
-                            <Textarea
-                                {...register("reason")}
-                                placeholder={t("Requests.EnterReason")}
-                                className="min-h-[100px]"
-                                errorMessage={errors.reason?.message}
-                                isInvalid={!!errors.reason}
+                            <Controller
+                                name="reason"
+                                control={control}
+                                render={({ field, fieldState: { error } }) => (
+                                    <Textarea
+                                        {...field}
+                                        placeholder={t("Requests.Reason")}
+                                        label={t("Requests.EnterReason")}
+                                        isRequired
+                                        className="min-h-[100px]"
+                                        errorMessage={error?.message}
+                                        isInvalid={!!error}
+                                    />
+                                )}
                             />
                         </div>
                     </ModalBody>

@@ -19,7 +19,11 @@ interface RelatedWordItemType {
 }
 
 const deleteRequestSchema = z.object({
-  reason: z.string().optional(),
+  reason: z.string(),
+});
+
+const getDeleteRequestSchemaIntl = (reasonRequired: string, reasonMinLength: string) => z.object({
+  reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
 });
 
 type DeleteRequestForm = z.infer<typeof deleteRequestSchema>;
@@ -54,7 +58,7 @@ export default function RelatedWordDeleteRequestModal({
   });
 
   const { control, handleSubmit, reset } = useForm<DeleteRequestForm>({
-    resolver: zodResolver(deleteRequestSchema),
+    resolver: zodResolver(getDeleteRequestSchemaIntl(t("Requests.Forms.Reason.Required"), t("Requests.Forms.Reason.MinLength15"))),
     defaultValues: {
       reason: "",
     },
@@ -130,12 +134,14 @@ export default function RelatedWordDeleteRequestModal({
             <Controller
               name="reason"
               control={control}
-              render={({ field }) => (
+              render={({ field, fieldState: { error } }) => (
                 <Textarea
                   {...field}
-                  label={t("Requests.ReasonOptional")}
+                  label={t("Requests.Reason")}
                   placeholder={t("Requests.ReasonPlaceholderDeleteRelated")}
                   minRows={3}
+                  isInvalid={!!error}
+                  errorMessage={error?.message}
                 />
               )}
             />
