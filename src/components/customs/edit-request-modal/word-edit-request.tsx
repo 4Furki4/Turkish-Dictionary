@@ -11,6 +11,7 @@ import { Textarea } from "@heroui/input"
 import { WordSearchResult } from "@/types"
 import WordAttributesRequestInput from "./word/word-attributes-request-input"
 import { useTranslations, useLocale } from "next-intl";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const wordEditRequestSchema = z.object({
   language: z.string().optional(),
@@ -32,6 +33,7 @@ export default function WordEditRequest({
 }) {
   const locale = useLocale();
   const t = useTranslations();
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const { data: languages, isLoading: languagesIsLoading } = api.params.getLanguages.useQuery()
   const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesWithRequested.useQuery()
   const { mutate, isPending } = api.request.requestEditWord.useMutation({
@@ -63,21 +65,33 @@ export default function WordEditRequest({
   })
 
   const onSubmit = async (data: WordEditRequestForm) => {
-    const preparedData = {
-      word_id: word_data.word_id,
-      reason: data.reason,
-      ...Object.keys(dirtyFields).reduce<Record<string, unknown>>((acc, key) => {
-        if (dirtyFields[key as keyof typeof dirtyFields] && key !== 'reason') {
-          acc[key] = data[key as keyof typeof data];
-        }
-        return acc;
-      }, {})
+    if (!executeRecaptcha) {
+      toast.error(t("Errors.captchaError"));
+      return;
     }
-    if (Object.keys(dirtyFields).filter((key) => key !== 'reason').length === 0) {
-      toast.error(t("NoChanges"))
-      return
+    try {
+      const token = await executeRecaptcha("word_edit_request");
+      const preparedData = {
+        word_id: word_data.word_id,
+        reason: data.reason,
+        ...Object.keys(dirtyFields).reduce<Record<string, unknown>>((acc, key) => {
+          if (dirtyFields[key as keyof typeof dirtyFields] && key !== 'reason') {
+            acc[key] = data[key as keyof typeof data];
+          }
+          return acc;
+        }, {}),
+        captchaToken: token
+      }
+      if (Object.keys(dirtyFields).filter((key) => key !== 'reason').length === 0) {
+        toast.error(t("NoChanges"))
+        return
+      }
+      mutate(preparedData)
+
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
+      toast.error(t("Errors.captchaError"));
     }
-    mutate(preparedData)
   }
 
   return (

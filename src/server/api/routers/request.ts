@@ -11,6 +11,7 @@ import { relatedWords } from "@/db/schema/related_words";
 import { getHandler } from "../handlers/request-handlers/registry";
 import { TRPCError } from "@trpc/server";
 import { relatedPhrases } from "@/db/schema/related_phrases";
+import { verifyRecaptcha } from "@/src/lib/recaptcha";
 
 export const requestRouter = createTRPCRouter({
     // User request management endpoints
@@ -453,9 +454,10 @@ export const requestRouter = createTRPCRouter({
         suffix: z.string().optional(),
         attributes: z.array(z.string()).optional(),
         reason: z.string().min(1, "Reason is required"),
+        captchaToken: z.string(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
         const wordAttributes = input.attributes?.map((attribute) => ({ attribute: Number(attribute) }))
-        const { word_id, ...restInput } = input;
+        const { word_id, captchaToken, ...restInput } = input;
         const wordData = {
             attributes: wordAttributes,
             ...restInput
@@ -467,6 +469,13 @@ export const requestRouter = createTRPCRouter({
             return acc
         }, {})
         const purifiedData = purifyObject(preparedData)
+        const { success } = await verifyRecaptcha(captchaToken);
+        if (!success) {
+            throw new TRPCError({
+                code: 'FORBIDDEN',
+                message: 'Error.captchaFailed',
+            });
+        }
         await db.transaction(async (tx) => {
             await tx.insert(requests).values({
                 entityType: "words",
