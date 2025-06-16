@@ -36,6 +36,7 @@ const RelatedWordsEditTabContent: React.FC<RelatedWordsEditTabContentProps> = ({
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
   const tActions = useTranslations('Actions');
   const tWordCard = useTranslations('WordCard');
+  const tRelationTypes = useTranslations('RelationTypes');
 
   if (!session) {
     return (
@@ -60,7 +61,7 @@ const RelatedWordsEditTabContent: React.FC<RelatedWordsEditTabContentProps> = ({
                 <CardBody className="flex flex-row items-center justify-between p-4">
                   <div>
                     <p className="font-semibold">{item.related_word.word}</p>
-                    <p className="text-sm text-gray-500">{item.relation_type}</p>
+                    <p className="text-sm text-gray-500">{tRelationTypes(item.relation_type)}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button
