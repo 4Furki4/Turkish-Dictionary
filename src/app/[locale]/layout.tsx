@@ -87,10 +87,8 @@ export default async function RootLayout({
         <TRPCReactProvider>
           <NextIntlClientProvider messages={messages}>
             <CaptchaProvider>
-
               <Providers>
                 <div className="flex flex-col min-h-screen">
-
                   <NavbarAndSidebar
                     session={session}
                     HomeIntl={t("Home")}
@@ -108,7 +106,6 @@ export default async function RootLayout({
                     ariaLanguages={t("ariaLanguages")}
                     ariaSwitchTheme={t("ariaSwitchTheme")}
                   />
-
                   <main className="relative flex-grow w-full flex">
                     {/* ✨ Moved BackgroundGradient here */}
                     <BackgroundGradient />
@@ -119,11 +116,11 @@ export default async function RootLayout({
                 <SpeedInsights />
                 <Analytics />
               </Providers>
-            </CaptchaProvider>
-          </NextIntlClientProvider>
-        </TRPCReactProvider>
+            </CaptchaProvider >
+          </NextIntlClientProvider >
+        </TRPCReactProvider >
         <Toaster />
-      </body>
-    </html>
+      </body >
+    </html >
   );
 }
