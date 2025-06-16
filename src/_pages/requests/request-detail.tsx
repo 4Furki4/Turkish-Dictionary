@@ -37,6 +37,8 @@ import {
   AlertTriangle,
   Clock
 } from "lucide-react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { toast } from "sonner";
 
 
 export interface RequestDetailProps {
@@ -56,7 +58,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState<Record<string, any>>({});
   const [activeTab, setActiveTab] = useState<string>("current");
-
+  const { executeRecaptcha } = useGoogleReCaptcha()
   const entityTypeLabels = useMemo<Record<EntityTypes, string>>(() => ({
     words: t("entityTypes.words"),
     meanings: t("entityTypes.meanings"),
@@ -123,17 +125,38 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
     },
   });
 
-  const handleCancelRequest = useCallback(() => {
-    cancelRequestMutation.mutate({ requestId });
-  }, [cancelRequestMutation, requestId]);
+  const handleCancelRequest = useCallback(async () => {
+    if (!executeRecaptcha) {
+      toast.error(t("Errors.captchaError"));
+      return;
+    }
+    try {
+      const captchaToken = await executeRecaptcha("cancel_request");
+      cancelRequestMutation.mutate({ requestId, captchaToken });
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
+      toast.error(t("Errors.captchaError"));
+    }
+  }, [cancelRequestMutation, requestId, executeRecaptcha, t]);
 
-  const handleUpdateRequest = useCallback(() => {
-    updateRequestMutation.mutate({
-      requestId,
-      newData: editedData,
-      reason: reason || data?.request.reason || "",
-    });
-  }, [updateRequestMutation, requestId, editedData, reason, data]);
+  const handleUpdateRequest = useCallback(async () => {
+    if (!executeRecaptcha) {
+      toast.error(t("Errors.captchaError"));
+      return;
+    }
+    try {
+      const captchaToken = await executeRecaptcha("update_request");
+      updateRequestMutation.mutate({
+        requestId,
+        newData: editedData,
+        reason: reason || data?.request.reason || "",
+        captchaToken,
+      });
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
+      toast.error(t("Errors.captchaError"));
+    }
+  }, [updateRequestMutation, requestId, editedData, reason, data, executeRecaptcha, t]);
 
   const handleEditData = (key: string, value: any) => {
     setEditedData(prev => ({
