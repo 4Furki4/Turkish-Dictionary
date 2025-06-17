@@ -6,7 +6,9 @@ import { api } from '@/src/trpc/react';
 import { Chip } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { Flame } from 'lucide-react';
-
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
+import { cn } from '@/lib/utils';
 interface PopularWord {
     id: number;
     name: string;
@@ -14,6 +16,7 @@ interface PopularWord {
 
 export default function PopularSearches() {
     const t = useTranslations('Components.PopularSearches');
+    const { isBlurEnabled } = useSnapshot(preferencesState);
     const [popularWords] = api.word.getPopularWords.useSuspenseQuery(
         { limit: 10, period: 'allTime' }
     );
@@ -42,17 +45,7 @@ export default function PopularSearches() {
                         className="block"
                     >
                         <Chip
-                            className="rounded-sm
-                                bg-background/80 dark:bg-background/60
-                                backdrop-blur-xs
-                                px-4 py-2
-                                text-sm font-medium
-                                text-foreground
-                                shadow-sm
-                                ring-1 ring-border/50
-                                hover:bg-background dark:hover:bg-background/80
-                                transition-colors
-                                hover:underline"
+                            className={cn("rounded-sm bg-background/80 dark:bg-background/60 px-4 py-2 text-sm font-medium text-foreground shadow-sm ring-1 ring-border/50 hover:bg-background dark:hover:bg-background/80 transition-colors hover:underline", { "backdrop-blur-lg": isBlurEnabled })}
                         >
                             {word.name}
                         </Chip>

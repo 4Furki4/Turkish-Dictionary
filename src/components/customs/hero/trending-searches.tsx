@@ -6,6 +6,9 @@ import { api } from '@/src/trpc/react';
 import { Chip } from '@heroui/react';
 import { Link } from '@/src/i18n/routing';
 import { TrendingUp } from 'lucide-react';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
+import { cn } from '@/lib/utils';
 
 interface TrendingWord {
     id: number;
@@ -18,7 +21,7 @@ interface TrendingSearchesProps {
 
 export default function TrendingSearches({ period = '7days' }: TrendingSearchesProps) {
     const t = useTranslations('Components.TrendingSearches');
-
+    const { isBlurEnabled } = useSnapshot(preferencesState);
     const [trendingWords] = api.word.getPopularWords.useSuspenseQuery({
         limit: 10,
         period: period === '7days' ? 'last7Days' : 'last30Days'
@@ -43,17 +46,7 @@ export default function TrendingSearches({ period = '7days' }: TrendingSearchesP
                         className="block"
                     >
                         <Chip
-                            className="rounded-sm
-                                bg-background/80 dark:bg-background/60
-                                backdrop-blur-xs
-                                px-4 py-2
-                                text-sm font-medium
-                                text-foreground
-                                shadow-sm
-                                ring-1 ring-border/50
-                                hover:bg-background dark:hover:bg-background/80
-                                transition-colors
-                                hover:underline"
+                            className={cn("rounded-sm bg-background/80 dark:bg-background/60 px-4 py-2 text-sm font-medium text-foreground shadow-sm ring-1 ring-border/50 hover:bg-background dark:hover:bg-background/80 transition-colors hover:underline", { "backdrop-blur-lg": isBlurEnabled })}
                         >
                             {word.name}
                         </Chip>
