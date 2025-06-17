@@ -536,7 +536,7 @@
     "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
     "ReasonRequired": "Lütfen değişiklik için gerekçenizi girin",
     "ReasonMinLength15": "Gerekçe en az 15 karakter uzunluğunda olmalıdır",
-    "ConfirmDeleteRelatedWord": "'{relatedWordName}' kelimesi ile olan '{relationType}' ilişkisinin silinmesini talep etmek istediğinizden emin misiniz?",
+    "ConfirmDeleteRelatedWord": "\"{relatedWordName}\" kelimesi ile olan \"{relationType}\" ilişkisinin silinmesini talep etmek istediğinizden emin misiniz?",
     "ReasonOptional": "Gerekçe (İsteğe Bağlı)",
     "ReasonPlaceholderDeleteRelated": "örneğin, Bu ilişki yanlış çünkü...",
     "CurrentRelationTypeIs": "Mevcut ilişki türü: {relationType}",
