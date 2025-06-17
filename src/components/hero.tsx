@@ -96,11 +96,6 @@ export default function Hero({ children }: {
 
   return (
     <div className="relative isolate">
-      {/* Background */}
-      {/* <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-        <div className="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-linear-to-tr from-primary via-primary/75 to-primary/25 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
-      </div> */}
-
       <div className="mx-auto max-w-7xl px-2 pb-12 pt-10 sm:pb-16 lg:px-8">
         <div className="mx-auto text-center space-y-8">
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl sm:leading-[5rem] bg-clip-text text-transparent bg-linear-to-r from-primary via-primary/80 to-primary/60">
@@ -220,11 +215,6 @@ export default function Hero({ children }: {
           <TrendingSearchesContainer />
         </div>
       </div>
-
-      {/* Background continued */}
-      {/* <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
-        <div className="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-linear-to-tr from-primary via-primary/75 to-primary/25 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
-      </div> */}
     </div >
   );
 }
@@ -232,7 +222,7 @@ export default function Hero({ children }: {
 function FeatureCard({ title, description, icon }: { title: string, description: string, icon: React.ReactNode }) {
   const { isBlurEnabled } = useSnapshot(preferencesState);
   return (
-    <Card isBlurred={isBlurEnabled} className={cn("bg-background/50 p-6 rounded-lg border border-border/50", isBlurEnabled && "backdrop-blur-xl feature-card-shine")}>
+    <Card isBlurred={isBlurEnabled} className={cn("bg-background/50 p-6 rounded-lg border border-border/50", isBlurEnabled && "backdrop-blur-xl md:feature-card-shine")}>
       <CardHeader className="flex flex-col gap-2">
         {icon}
         <h2 className="text-lg font-semibold text-foreground">
