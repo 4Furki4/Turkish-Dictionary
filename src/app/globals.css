@@ -135,11 +135,12 @@
   animation: glow 3s ease-in-out infinite;
 }
 
-/* Shine Effect */
-.feature-card-shine {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Shine Effect only on md and above screens */
+@media (min-width: 768px) {
+  .feature-card-shine {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   isolation: isolate;
 }
 
@@ -169,4 +170,5 @@
 
 .feature-card-shine:hover::before {
   transform: translateX(100%) skewX(-10deg);
+}
 }
