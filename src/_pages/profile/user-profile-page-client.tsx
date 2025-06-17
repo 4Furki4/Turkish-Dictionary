@@ -9,6 +9,8 @@ import { type RouterOutputs } from '@/src/trpc/shared';
 import { UserProfileHeader } from './UserProfileHeader';
 import { Card, CardHeader, CardBody } from '@heroui/react';
 import { CheckCheck, Clock, X } from 'lucide-react';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 
 export type ProfileDataUser = RouterOutputs['user']['getPublicProfileData'];
 
@@ -38,6 +40,7 @@ interface UserProfilePageClientProps {
 
 export function UserProfilePageClient({ profileData, session, locale }: UserProfilePageClientProps) {
     const t = useTranslations('ProfilePage');
+    const { isBlurEnabled } = useSnapshot(preferencesState);
 
     if (!profileData) {
         return (
@@ -64,7 +67,7 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
         <div className="container mx-auto px-4 py-8 space-y-8">
             <UserProfileHeader profileData={profileData} locale={locale} isOwnProfile={isOwnProfile} user={session?.user ?? null} />
             {/* Contribution Stats Section */}
-            <Card isBlurred className='border border-border'>
+            <Card isBlurred={isBlurEnabled} className='border border-border'>
                 <CardHeader>
                     <h3 className="text-lg font-semibold">{t('contributionStatsTitle')}</h3>
                 </CardHeader>
@@ -97,7 +100,7 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
 
             {/* Saved Words Section */}
             {isOwnProfile && (
-                <Card isBlurred className='border border-border'>
+                <Card isBlurred={isBlurEnabled} className='border border-border'>
                     <CardHeader>
                         <h3 className="text-lg font-semibold">{t('savedWordsTitle')}</h3>
                     </CardHeader>
@@ -138,7 +141,7 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
             )}
 
             {/* Recent Contributions Section */}
-            <Card isBlurred className='border border-border'>
+            <Card isBlurred={isBlurEnabled} className='border border-border'>
                 <CardHeader>
                     <h3 className="text-lg font-semibold">{t('recentContributionsTitle')}</h3>
                 </CardHeader>

@@ -7,7 +7,8 @@ import { useTranslations } from 'next-intl';
 import { Session } from 'next-auth';
 import RelatedPhraseCreateRequestModal from './related-phrase-create-request-modal';
 import RelatedPhraseDeleteRequestModal from './related-phrase-delete-request-modal';
-
+import { useSnapshot } from "valtio"
+import { preferencesState } from "@/src/store/preferences"
 export type RelatedPhraseItemType = {
   related_phrase_id: number;
   related_phrase: string; // Changed from related_phrase_text
@@ -32,7 +33,7 @@ const RelatedPhrasesEditTabContent: React.FC<RelatedPhrasesEditTabContentProps> 
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onOpenChange: onDeleteOpenChange } = useDisclosure();
   const [phraseToDelete, setPhraseToDelete] = useState<RelatedPhraseItemType | null>(null);
-
+  const { isBlurEnabled } = useSnapshot(preferencesState);
 
 
   if (!session) {
@@ -64,7 +65,7 @@ const RelatedPhrasesEditTabContent: React.FC<RelatedPhrasesEditTabContentProps> 
       ) : (
         <div className="space-y-2">
           {relatedPhrases.map((phrase) => (
-            <Card isBlurred key={phrase.related_phrase_id}>
+            <Card isBlurred={isBlurEnabled} key={phrase.related_phrase_id}>
               <CardBody className="flex flex-row justify-between items-center">
                 <div>
                   {/* Phrases might not be directly linkable like words, adjust as needed */}

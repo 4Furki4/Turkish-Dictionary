@@ -7,6 +7,9 @@ import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useTranslations } from "next-intl"
+import { cn } from "@/lib/utils"
+import { useSnapshot } from 'valtio'
+import { preferencesState } from '@/src/store/preferences'
 
 const deleteReasonSchema = z.object({
     reason: z.string().min(1, "ReasonRequired").min(15, "ReasonMinLength15")
@@ -26,6 +29,7 @@ interface DeleteMeaningModalProps {
 }
 
 export default function DeleteMeaningModal({ isOpen, onClose, onConfirm, meaning }: DeleteMeaningModalProps) {
+    const { isBlurEnabled } = useSnapshot(preferencesState);
     const t = useTranslations()
     const { control, handleSubmit, reset } = useForm<DeleteReasonForm>({
         resolver: zodResolver(getDeleteReasonSchemaIntl(t("Requests.ReasonRequired"), t("Requests.ReasonMinLength15"))),
@@ -41,7 +45,29 @@ export default function DeleteMeaningModal({ isOpen, onClose, onConfirm, meaning
     })
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal motionProps={{
+            variants: {
+                enter: {
+                    opacity: 1,
+                    transition: {
+                        duration: 0.1,
+                        ease: 'easeInOut',
+                    }
+                },
+                exit: {
+                    opacity: 0,
+                    transition: {
+                        duration: 0.1,
+                        ease: 'easeInOut',
+                    }
+                },
+            }
+        }} classNames={{
+            base: cn(
+                "bg-background border-2 border-border rounded-sm p-2 w-full",
+                { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+            )
+        }} isOpen={isOpen} onClose={onClose}>
             <ModalContent>
                 <form onSubmit={onSubmit}>
                     <ModalHeader>{t("Requests.DeleteMeaningRequest")}</ModalHeader>

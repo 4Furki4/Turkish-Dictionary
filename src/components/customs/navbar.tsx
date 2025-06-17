@@ -11,7 +11,7 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@heroui/react";
-import { Languages, Menu, Moon, Sun } from "lucide-react";
+import { Languages, Menu, Moon, Sparkle, Sparkles, Sun } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
@@ -20,6 +20,9 @@ import { usePathname, Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from "next-auth";
 import logo from "@/public/svg/navbar/logo.svg";
 import Image from "next/image";
+import { useSnapshot } from "valtio";
+import { preferencesState, toggleBlur } from "@/src/store/preferences";
+import { cn } from "@/lib/utils";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,6 +54,7 @@ export default function Navbar({
   const isAuthPage = ["/signup", "/signin", "/forgot-password"].includes(
     pathName
   );
+  const snap = useSnapshot(preferencesState);
   return (
     <NextuiNavbar
       className="bg-background-foreground/100 border-b border-border"
@@ -150,6 +154,12 @@ export default function Navbar({
           <Button aria-label={ariaSwitchTheme} variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
+        </NavbarItem>
+        <NavbarItem>
+          <Button aria-label={ariaSwitchTheme} variant="light" isIconOnly onPress={toggleBlur}>
+            <Sparkles className={cn("h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-0 scale-100" : "rotate-90 scale-0")} />
+            <Sparkle className={cn("absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-90 scale-0" : "rotate-0 scale-100")} />
           </Button>
         </NavbarItem>
         {!session?.user ? (

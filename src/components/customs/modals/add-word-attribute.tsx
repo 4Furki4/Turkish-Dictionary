@@ -7,7 +7,9 @@ import { toast } from 'sonner';
 import { Controller, useForm } from 'react-hook-form';
 import { AriaModalOverlayProps } from '@react-aria/overlays';
 import { useTranslations } from 'next-intl';
-
+import { cn } from '@/lib/utils';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 
 type AddWordAttributeModalProps = {
     onClose: () => void,
@@ -20,6 +22,7 @@ export default function AddWordAttributeModal({
     onOpenChange,
     ...modalProps
 }: AddWordAttributeModalProps) {
+    const { isBlurEnabled } = useSnapshot(preferencesState);
     const t = useTranslations()
     const { control: newAttributeControl, handleSubmit, reset } = useForm<NewAttributeForm>()
     const paramsUtils = api.useUtils().params
@@ -39,7 +42,29 @@ export default function AddWordAttributeModal({
         addWordAttributeMutation.mutate(newAttribute.attribute)
     }
     return (
-        <Modal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal" {...modalProps}>
+        <Modal motionProps={{
+            variants: {
+                enter: {
+                    opacity: 1,
+                    transition: {
+                        duration: 0.1,
+                        ease: 'easeInOut',
+                    }
+                },
+                exit: {
+                    opacity: 0,
+                    transition: {
+                        duration: 0.1,
+                        ease: 'easeInOut',
+                    }
+                },
+            }
+        }} classNames={{
+            base: cn(
+                "bg-background border-2 border-border rounded-sm p-2 w-full",
+                { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+            )
+        }} size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal" {...modalProps}>
             <ModalContent>
                 {(close) => (
                     <>

@@ -1,10 +1,8 @@
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { api } from "@/src/trpc/server";
-import { Link } from "@/src/i18n/routing";
-import Image from "next/image";
-import { Card, CardBody, CardHeader, Button, Pagination } from "@heroui/react";
-import { formatDate } from "@/src/utils/date";
+import { Pagination } from "@heroui/react";
+import Announcement from "@/src/_pages/announcements/announcements-card";
 
 interface AnnouncementsPageProps {
   params: Promise<{
@@ -35,7 +33,6 @@ export default async function AnnouncementsPage({
   const { page } = await searchParams;
   const t = await getTranslations({ locale, namespace: "Announcements" });
   const pageNumber = Number(page) || 1;
-
   const { items, meta } = await api.announcements.listPublishedAnnouncements({
     page: pageNumber,
     limit: 10,
@@ -55,39 +52,11 @@ export default async function AnnouncementsPage({
       ) : (
         <div className="grid gap-6">
           {items.map((announcement) => (
-            <Card classNames={{
-              base: "bg-background/10",
-            }} key={announcement.id} className="border border-border rounded-sm p-2 w-full" isBlurred>
-              <CardHeader className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">{announcement.title}</h2>
-                <span className="text-sm text-gray-500">
-                  {formatDate(announcement.publishedAt, locale)}
-                </span>
-              </CardHeader>
-
-              <CardBody>
-                {announcement.imageUrl && (
-                  <div className="mb-4 relative w-full h-48">
-                    <Image
-                      src={announcement.imageUrl}
-                      alt={announcement.title || ""}
-                      fill
-                      className="object-cover rounded-md"
-                    />
-                  </div>
-                )}
-
-                <p className="text-gray-400 mb-4">{announcement.excerpt}</p>
-
-                <div className="flex justify-end">
-                  <Link href={{ pathname: "/announcements/[slug]", params: { slug: announcement.slug } }}>
-                    <Button color="primary">
-                      {t("readMore")}
-                    </Button>
-                  </Link>
-                </div>
-              </CardBody>
-            </Card>
+            <Announcement
+              key={announcement.id}
+              announcement={announcement}
+              locale={locale}
+            />
           ))}
         </div>
       )}

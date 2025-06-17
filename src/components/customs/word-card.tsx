@@ -11,13 +11,14 @@ import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/routing";
 import { Camera, Share2, Volume2 } from "lucide-react";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useRef, } from "react";
 import { captureElementScreenshot } from "../../utils/screenshot";
 import { copyPageUrl } from "../../utils/clipboard";
 import clsx from "clsx";
 import WordCardRequestModal from "./modals/word-card-request-modal";
+import { useSnapshot } from "valtio";
+import { preferencesState } from "@/src/store/preferences";
 
 
 export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
@@ -25,7 +26,6 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
   const { isOpen, onOpenChange, onClose } = useDisclosure()
   const t = useTranslations("WordCard");
 
-  const pathname = usePathname();
   const cardRef = useRef<HTMLDivElement>(null);
   const handleCameraPress = async () => {
     if (cardRef.current) {
@@ -38,6 +38,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
       });
     }
   };
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   // Handler for the share button to copy the current page URL
   const handleSharePress = () => {
     copyPageUrl({
@@ -50,10 +51,10 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
       as={"article"}
       aria-label="word card"
       role="article"
-      isBlurred
+      isBlurred={isBlurEnabled}
       className="border border-border rounded-sm p-2 w-full"
       classNames={{
-        base: ["p-2"]
+        base: ["bg-background/10 p-2"]
       }}
     >
       <CardHeader className="w-full flex flex-col items-start">
@@ -251,7 +252,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                 <div className="p-2">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {word_data.relatedWords.map((related_word) => (
-                      <Card isBlurred className="border border-border" key={related_word.related_word_id}>
+                      <Card isBlurred={isBlurEnabled} className="border border-border" key={related_word.related_word_id}>
                         <CardBody className="flex flex-row items-center justify-between">
                           <NextUILink
                             underline="hover"
@@ -282,7 +283,7 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
                 <div className="p-2">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {word_data.relatedPhrases.map((related_phrase) => (
-                      <Card key={related_phrase.related_phrase_id} isBlurred className="border border-border">
+                      <Card key={related_phrase.related_phrase_id} isBlurred={isBlurEnabled} className="border border-border">
                         <CardBody>
                           <NextUILink
                             underline="hover"

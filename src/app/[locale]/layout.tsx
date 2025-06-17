@@ -16,6 +16,7 @@ import { Analytics } from "@vercel/analytics/next";
 import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
 import { BackgroundGradient } from "@/src/components/customs/background-gradient";
 import { CaptchaProvider } from "@/src/components/customs/captcha-provider";
+import { PreferencesInitializer } from "@/src/components/customs/preferences-initializer";
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
@@ -89,6 +90,7 @@ export default async function RootLayout({
             <CaptchaProvider>
               <Providers>
                 <div className="flex flex-col min-h-screen">
+                  <PreferencesInitializer />
                   <NavbarAndSidebar
                     session={session}
                     HomeIntl={t("Home")}

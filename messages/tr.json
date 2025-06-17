@@ -14,7 +14,9 @@
     "ariaAvatar": "Profil Resmi Avatarı",
     "ariaMenu": "Menü Butonu",
     "ariaLanguages": "Dil Değiştirme Butonu",
-    "ariaSwitchTheme": "Tema Değiştirme Butonu"
+    "ariaSwitchTheme": "Tema Değiştirme Butonu",
+    "enable_effects": "Görsel Efektleri Aktifleştir",
+    "disable_effects": "Görsel Efektleri Devre Dışı Bırak"
   },
   "Footer": {
     "copyright": "Tüm hakları saklıdır.",

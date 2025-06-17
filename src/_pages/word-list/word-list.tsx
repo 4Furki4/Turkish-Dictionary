@@ -20,6 +20,9 @@ import { Controller, useForm } from "react-hook-form";
 import { useDebounce } from "@uidotdev/usehooks";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useSnapshot } from "valtio";
+import { preferencesState } from "@/src/store/preferences";
+import { cn } from "@/lib/utils";
 
 const wordPerPageOptions = [
     {
@@ -45,7 +48,7 @@ export default function WordList() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-
+    const { isBlurEnabled } = useSnapshot(preferencesState);
     // Get initial values from URL params
     const initialPage = Number(searchParams.get('page')) || 1;
     const initialPerPage = Number(searchParams.get('per_page')) || 10;
@@ -196,16 +199,28 @@ export default function WordList() {
             } bottomContent={
                 <Pagination isDisabled={totalPageNumber === undefined} classNames={{
                     wrapper: "mx-auto",
-                    item: "bg-primary/10 p-1 min-w-max",
-                    next: "bg-primary/10",
-                    prev: "bg-primary/10",
+                    item: "[&[data-hover=true]:not([data-active=true])]:bg-primary/30 bg-primary/10 p-1 min-w-max",
+                    next: "[&[data-hover=true]:not([data-active=true])]:bg-primary/30 bg-primary/10",
+                    prev: "[&[data-hover=true]:not([data-active=true])]:bg-primary/30 bg-primary/10",
                 }} isCompact showControls className="cursor-pointer" total={totalPageNumber ?? 1} initialPage={1} page={pageNumber} onChange={async (page) => {
                     setPageNumber(page);
                 }} />
             } classNames={{
                 base: ["min-h-[300px]"],
-                wrapper: "flex flex-col relative overflow-hidden h-auto text-foreground box-border outline-hidden data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 shadow-medium bg-background/10  backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
-                td: "group-data-[odd=true]/tr:before:bg-primary/10 group-data-[odd=true]/tr:before:opacity-100",
+                wrapper: cn(
+                    "flex flex-col relative overflow-hidden h-auto text-foreground box-border outline-hidden data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 border-2 border-border rounded-sm p-2 w-full",
+                    {
+                        "shadow-medium bg-background/10 backdrop-blur-md backdrop-saturate-150 transition-all duration-300 motion-reduce:transition-none": isBlurEnabled,
+                        "bg-background/70 transition-all duration-300": !isBlurEnabled
+                    }
+                ),
+                td: cn(
+                    'group-data-[odd=true]/tr:before:transition-all',
+                    'group-data-[odd=true]/tr:before:bg-primary/10',
+                    {
+                        'group-data-[odd=true]/tr:before:bg-primary/10': isBlurEnabled,
+                    }
+                ),
                 th: "bg-primary/10",
             }} isCompact isStriped aria-label="Example table with dynamic content">
                 <TableHeader columns={columns}>

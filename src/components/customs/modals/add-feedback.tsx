@@ -25,6 +25,9 @@ import { feedbackTypeEnum } from "@/db/schema/feedbacks"; // Corrected import pa
 import { type Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3"
+import { cn } from '@/lib/utils';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 // Zod schema for form validation
 const feedbackSchema = z.object({
     title: z.string().min(5, "Error.titleMinLength"),
@@ -44,6 +47,7 @@ export function FeedbackModal({
     session: Session | null;
     variant?: "button" | "link";
 }) {
+    const { isBlurEnabled } = useSnapshot(preferencesState);
     const [isOpen, setIsOpen] = useState(false);
     const t = useTranslations("Feedback.NewForm");
     const tError = useTranslations('Errors');
@@ -165,7 +169,10 @@ export function FeedbackModal({
                     },
                 }
             }} classNames={{
-                base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+                base: cn(
+                    "bg-background border-2 border-border rounded-sm p-2 w-full",
+                    { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+                )
             }} size="2xl" scrollBehavior="inside" backdrop="opaque" isOpen={isOpen} onOpenChange={setIsOpen}>
                 <ModalContent>
                     {(close) => (

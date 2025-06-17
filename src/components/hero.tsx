@@ -10,6 +10,9 @@ import { api } from "@/src/trpc/react";
 import { useDebounce } from "@uidotdev/usehooks";
 import PopularSearches from "./customs/hero/popular-searches";
 import TrendingSearchesContainer from "./customs/hero/trending-searches-container";
+import { useSnapshot } from "valtio";
+import { preferencesState } from "../store/preferences";
+import { cn } from "@/lib/utils";
 
 export default function Hero({ children }: {
   children: React.ReactNode;
@@ -227,8 +230,9 @@ export default function Hero({ children }: {
 }
 
 function FeatureCard({ title, description, icon }: { title: string, description: string, icon: React.ReactNode }) {
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   return (
-    <Card className="feature-card-shine bg-background/50 backdrop-blur-xs p-6 rounded-lg border border-border/50">
+    <Card isBlurred={isBlurEnabled} className={cn("bg-background/50 p-6 rounded-lg border border-border/50", isBlurEnabled && "backdrop-blur-xl feature-card-shine")}>
       <CardHeader className="flex flex-col gap-2">
         {icon}
         <h2 className="text-lg font-semibold text-foreground">
