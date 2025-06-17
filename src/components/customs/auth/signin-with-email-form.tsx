@@ -11,8 +11,9 @@ import { z } from 'zod'
 export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmailIntl, EmailSigninLabelIntl, MagicLinkIntl, InvalidEmailIntl }: { SigninWithEmailIntl: string, EnterYourEmailIntl: string, EmailSigninLabelIntl: string, MagicLinkIntl: string, InvalidEmailIntl: string }) {
     const { control, handleSubmit } = useForm({
         resolver: zodResolver(z.object({
-            email: z.string().min(1, { message: InvalidEmailIntl }).email({ message: InvalidEmailIntl })
-        }))
+            email: z.string().email({ message: InvalidEmailIntl })
+        })),
+        mode: 'all'
     })
     const mutation = useMutation({
         mutationFn: async (data: FieldValues) => {
@@ -29,12 +30,27 @@ export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmai
                 name="email"
                 render={({ field, fieldState: { error } }) => (
                     <Input
+                        classNames={{
+                            inputWrapper: [
+                                "rounded-sm",
+                                "backdrop-blur-xs",
+                                "border-2 border-primary/40",
+                                "shadow-xl",
+                                "group-data-[hover=true]:border-primary/60",
+                            ],
+                            input: [
+                                "py-6",
+                                "text-base",
+                                "text-foreground",
+                                "placeholder:text-muted-foreground",
+                            ]
+                        }}
                         {...field}
                         className="rounded-sm w-full"
                         label={EmailSigninLabelIntl}
                         variant="bordered"
                         labelPlacement='outside'
-
+                        color='primary'
                         type="email"
                         name="email"
                         errorMessage={error?.message}
@@ -46,7 +62,7 @@ export default function SigninWithEmailForm({ SigninWithEmailIntl, EnterYourEmai
             />
             <Button
                 className="rounded-sm w-full"
-                variant="faded"
+                variant="flat"
                 color="primary"
                 type="submit"
                 isLoading={mutation.isPending}
