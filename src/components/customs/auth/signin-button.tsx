@@ -6,7 +6,7 @@ export default function SigninButton({ provider, IntlMessage, startContent, redi
         <Button
             onPress={() => signIn(provider, { redirectTo: redirectUrl })}
             className="rounded-sm w-full"
-            variant="faded"
+            variant="flat"
             color="primary"
             type="submit"
             startContent={startContent}
