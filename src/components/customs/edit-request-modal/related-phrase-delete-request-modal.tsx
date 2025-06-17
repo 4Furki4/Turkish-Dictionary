@@ -11,6 +11,9 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Session } from "next-auth";
 import { RelatedPhraseItemType } from './related-phrases-edit-tab-content';
+import { cn } from '@/lib/utils';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 
 const deleteRequestSchema = z.object({
   reason: z.string().min(1, 'ReasonRequired').min(15, 'ReasonMinLength15')
@@ -37,6 +40,7 @@ export default function RelatedPhraseDeleteRequestModal({
   relatedPhrase,
   session,
 }: RelatedPhraseDeleteRequestModalProps) {
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   const t = useTranslations("Requests");
   const tWordCard = useTranslations("WordCard");
   const commonT = useTranslations("Common");
@@ -97,7 +101,10 @@ export default function RelatedPhraseDeleteRequestModal({
         },
       }
     }} classNames={{
-      base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+      base: cn(
+        "bg-background border-2 border-border rounded-sm p-2 w-full",
+        { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+      )
     }} isOpen={isOpen} onOpenChange={onClose} size="xl">
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>

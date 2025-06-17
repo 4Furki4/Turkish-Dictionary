@@ -8,6 +8,8 @@ import { type User } from 'next-auth';
 
 import EditProfileForm from './edit-profile-form';
 import { type ProfileDataUser as ProfileData } from './user-profile-page-client';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 
 interface UserProfileHeaderProps {
   profileData: ProfileData;
@@ -20,6 +22,7 @@ export function UserProfileHeader({ profileData, locale, isOwnProfile, user }: U
   const t = useTranslations('ProfilePage');
   const tCommon = useTranslations('Common');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isBlurEnabled } = useSnapshot(preferencesState);
 
   const displayName = profileData.name || profileData.username || tCommon('anonymousUser');
 
@@ -29,7 +32,7 @@ export function UserProfileHeader({ profileData, locale, isOwnProfile, user }: U
 
   return (
     <>
-      <Card isBlurred className='border border-border'>
+      <Card isBlurred={isBlurEnabled} className='border border-border'>
         <CardBody className="flex flex-col items-center gap-6 rounded-lg p-6 shadow-sm sm:flex-row">
           <Avatar
             src={profileData.image || undefined}

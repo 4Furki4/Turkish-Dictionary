@@ -9,6 +9,9 @@ import * as z from 'zod';
 import { api } from '@/src/trpc/react';
 import { toast } from 'sonner';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { cn } from '@/lib/utils';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 
 interface SimpleWord {
   id: number;
@@ -40,6 +43,7 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
   wordId,
   session,
 }) => {
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   const t = useTranslations('Requests');
   const tActions = useTranslations('Actions');
   const tForm = useTranslations('Form');
@@ -114,7 +118,10 @@ const RelatedPhraseCreateRequestModal: React.FC<RelatedPhraseCreateRequestModalP
         },
       }
     }} classNames={{
-      base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+      base: cn(
+        "bg-background border-2 border-border rounded-sm p-2 w-full",
+        { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+      )
     }} isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside" backdrop="opaque">
       <ModalContent>
         {(onClose) => (

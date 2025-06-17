@@ -15,6 +15,8 @@ import PartOfSpeechInput from "./meanings/part-of-speech-input"
 import DeleteMeaningModal from "./delete-meaning-modal"
 import { useTranslations } from "next-intl"
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3"
+import { useSnapshot } from "valtio"
+import { preferencesState } from "@/src/store/preferences"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
@@ -234,6 +236,7 @@ function MeaningEditRequestForm({
   isEditPending: boolean;
 }) {
   const t = useTranslations()
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   const {
     control,
     handleSubmit,
@@ -297,7 +300,7 @@ function MeaningEditRequestForm({
   })
 
   return (
-    <Card isBlurred className="w-full border border-border" >
+    <Card isBlurred={isBlurEnabled} className="w-full border border-border" >
       <CardHeader className="flex flex-row justify-between items-center">
         <span className="font-semibold">{t("Meaning")} {index + 1}</span>
         <div className="flex space-x-2">

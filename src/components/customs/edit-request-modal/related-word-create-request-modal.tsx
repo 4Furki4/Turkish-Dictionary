@@ -8,6 +8,9 @@ import * as z from 'zod';
 import { api } from '@/src/trpc/react';
 import { toast } from 'sonner';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { cn } from '@/lib/utils';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 
 interface RelatedWordCreateRequestModalProps {
   isOpen: boolean;
@@ -50,6 +53,7 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
   wordId, // Changed from currentWordId
   session,
 }) => {
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   const t = useTranslations('Requests');
   const tActions = useTranslations('Actions');
   const tRelationTypes = useTranslations('RelationTypes');
@@ -141,7 +145,10 @@ const RelatedWordCreateRequestModal: React.FC<RelatedWordCreateRequestModalProps
         },
       }
     }} classNames={{
-      base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+      base: cn(
+        "bg-background border-2 border-border rounded-sm p-2 w-full",
+        { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+      )
     }} isOpen={isOpen} onClose={() => { reset(); setInputValue(''); setDebouncedInputValue(''); onClose(); }} scrollBehavior="inside" backdrop="opaque">
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>

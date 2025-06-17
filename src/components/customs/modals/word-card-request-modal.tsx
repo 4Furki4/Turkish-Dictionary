@@ -10,14 +10,16 @@ import { WordSearchResult } from '@/types';
 import RelatedWordEditRequestModal from '../edit-request-modal/related-word-edit-request-modal';
 import RelatedWordDeleteRequestModal from '../edit-request-modal/related-word-delete-request-modal';
 import { Session } from 'next-auth';
-
+import { useSnapshot } from "valtio"
+import { preferencesState } from "@/src/store/preferences"
+import { cn } from '@/lib/utils';
 type RelatedWordItemType = NonNullable<WordSearchResult['word_data']['relatedWords']>[number];
 
 export default function WordCardRequestModal({ word: { word_data }, session, isOpen, onOpenChange, onClose }: { word: WordSearchResult, session: Session | null, isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onClose: () => void }) {
     const t = useTranslations("WordCard");
     const tRequests = useTranslations("Requests");
     const [selectedRelatedWord, setSelectedRelatedWord] = useState<{ id: number; related_word_id: number; related_word_name: string; relation_type?: string | undefined; } | null>(null);
-
+    const { isBlurEnabled } = useSnapshot(preferencesState);
     const { isOpen: isEditRelOpen, onOpen: onEditRelOpen, onClose: onEditRelClose, onOpenChange: onEditRelOpenChange } = useDisclosure();
     const { isOpen: isCreateRelOpen, onOpen: onCreateRelOpen, onClose: onCreateRelClose, onOpenChange: onCreateRelOpenChange } = useDisclosure();
     const { isOpen: isDeleteRelOpen, onOpen: onDeleteRelOpen, onClose: onDeleteRelClose, onOpenChange: onDeleteRelOpenChange } = useDisclosure();
@@ -51,7 +53,10 @@ export default function WordCardRequestModal({ word: { word_data }, session, isO
                     },
                 }
             }} classNames={{
-                base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+                base: cn(
+                    "bg-background border-2 border-border rounded-sm p-2 w-full",
+                    { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+                )
             }} size="3xl" scrollBehavior="inside" backdrop="opaque" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (

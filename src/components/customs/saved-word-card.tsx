@@ -12,6 +12,8 @@ import { formatDistanceToNow } from "date-fns";
 import { tr } from "date-fns/locale";
 import { Link as NextIntlLink } from "@/src/i18n/routing";
 import { Link } from "@heroui/react";
+import { useSnapshot } from "valtio";
+import { preferencesState } from "@/src/store/preferences";
 interface SavedWordCardProps {
   wordData: {
     word_id: number;
@@ -33,13 +35,13 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
     { name: wordData.word_name, skipLogging: true },
     { enabled: isOpen }
   );
-
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   const fullData = details?.[0];
 
   return (
     <Card className="border border-border rounded-sm p-2 w-full" classNames={{
       base: "bg-background/10",
-    }} isBlurred>
+    }} isBlurred={isBlurEnabled}>
       <CardHeader className="flex items-center gap-2">
         <h3 className="text-lg font-medium">
           <Link color="primary" underline="hover" as={NextIntlLink} href={`/search/${wordData.word_name}`}>

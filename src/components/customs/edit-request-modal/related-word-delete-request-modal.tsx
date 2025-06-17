@@ -11,6 +11,9 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Session } from "next-auth";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { cn } from '@/lib/utils';
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
 
 interface RelatedWordItemType {
   related_word_id: number;
@@ -43,6 +46,7 @@ export default function RelatedWordDeleteRequestModal({
   relatedWord,
   session,
 }: RelatedWordDeleteRequestModalProps) {
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   const t = useTranslations(); // Using generic t for now, can scope to 'WordCard' or a new 'Requests' scope
   const commonT = useTranslations("Common");
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -117,7 +121,10 @@ export default function RelatedWordDeleteRequestModal({
         },
       }
     }} classNames={{
-      base: "shadow-medium bg-background/40 backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none border-2 border-border rounded-sm p-2 w-full",
+      base: cn(
+        "bg-background border-2 border-border rounded-sm p-2 w-full",
+        { "bg-background/60 shadow-medium backdrop-blur-md backdrop-saturate-150 transition-transform-background motion-reduce:transition-none": isBlurEnabled }
+      )
     }} isOpen={isOpen} onOpenChange={onClose} size="xl">
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
