@@ -14,7 +14,8 @@
     "ariaAvatar": "Profile Picture Avatar",
     "ariaMenu": "Menu",
     "ariaLanguages": "Languages",
-    "ariaSwitchTheme": "Switch Theme"
+    "ariaSwitchTheme": "Switch Theme",
+    "ariaBlur": "Toggle Blur Efects"
   },
   "Footer": {
     "copyright": "All rights reserved.",

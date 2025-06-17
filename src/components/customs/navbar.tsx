@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl" | "ariaAvatar" | "ariaMenu" | "ariaLanguages" | "ariaSwitchTheme", string>;
+} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl" | "ariaAvatar" | "ariaMenu" | "ariaLanguages" | "ariaSwitchTheme" | "ariaBlur", string>;
 
 export default function Navbar({
   session,
@@ -45,6 +45,7 @@ export default function Navbar({
   ariaMenu,
   ariaLanguages,
   ariaSwitchTheme,
+  ariaBlur,
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
   const pathName = usePathname();
@@ -157,7 +158,12 @@ export default function Navbar({
           </Button>
         </NavbarItem>
         <NavbarItem>
-          <Button aria-label={ariaSwitchTheme} variant="light" isIconOnly onPress={toggleBlur}>
+
+          <Button className="md:hidden" size="sm" aria-label={ariaBlur} variant="light" isIconOnly onPress={toggleBlur}>
+            <Sparkles className={cn("h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-0 scale-100" : "rotate-90 scale-0")} />
+            <Sparkle className={cn("absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-90 scale-0" : "rotate-0 scale-100")} />
+          </Button>
+          <Button className="hidden md:inline-flex" aria-label={ariaBlur} variant="light" isIconOnly onPress={toggleBlur}>
             <Sparkles className={cn("h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-0 scale-100" : "rotate-90 scale-0")} />
             <Sparkle className={cn("absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-90 scale-0" : "rotate-0 scale-100")} />
           </Button>

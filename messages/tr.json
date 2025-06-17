@@ -15,8 +15,7 @@
     "ariaMenu": "Menü Butonu",
     "ariaLanguages": "Dil Değiştirme Butonu",
     "ariaSwitchTheme": "Tema Değiştirme Butonu",
-    "enable_effects": "Görsel Efektleri Aktifleştir",
-    "disable_effects": "Görsel Efektleri Devre Dışı Bırak"
+    "ariaBlur": "Blur Etkilerini Açma/Kapatma Butonu"
   },
   "Footer": {
     "copyright": "Tüm hakları saklıdır.",
