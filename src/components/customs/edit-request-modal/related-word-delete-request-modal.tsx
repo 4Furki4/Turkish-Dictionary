@@ -135,7 +135,7 @@ export default function RelatedWordDeleteRequestModal({
             <p>
               {t("Requests.ConfirmDeleteRelatedWord", {
                 relatedWordName: relatedWord.related_word_name,
-                relationType: relatedWord.relation_type || commonT("unknownRelation")
+                relationType: t(`RelationTypes.${relatedWord.relation_type}`) || commonT("unknownRelation")
               })}
             </p>
             <Controller
