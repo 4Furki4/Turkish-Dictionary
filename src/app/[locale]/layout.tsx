@@ -107,6 +107,7 @@ export default async function RootLayout({
                     ariaMenu={t("ariaMenu")}
                     ariaLanguages={t("ariaLanguages")}
                     ariaSwitchTheme={t("ariaSwitchTheme")}
+                    ariaBlur={t("ariaBlur")}
                   />
                   <main className="relative flex-grow w-full flex">
                     {/* ✨ Moved BackgroundGradient here */}
