@@ -6,9 +6,10 @@ import { api } from '@/src/trpc/react';
 import { Chip } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { Flame } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useSnapshot } from 'valtio';
 import { preferencesState } from '@/src/store/preferences';
-import { cn } from '@/lib/utils';
+
 interface PopularWord {
     id: number;
     name: string;
@@ -45,7 +46,7 @@ export default function PopularSearches() {
                         className="block"
                     >
                         <Chip
-                            className={cn("rounded-sm bg-background/80 dark:bg-background/60 px-4 py-2 text-sm font-medium text-foreground shadow-sm ring-1 ring-border/50 hover:bg-background dark:hover:bg-background/80 transition-colors hover:underline", { "backdrop-blur-lg": isBlurEnabled })}
+                            className={cn("rounded-sm md:bg-background/80 dark:bg-background/60 px-4 py-2 text-sm font-medium text-foreground md:shadow-sm ring-1 ring-border/50 hover:bg-background dark:hover:bg-background/80 md:transition-colors md:hover:underline", { "md:backdrop-blur-lg": isBlurEnabled })}
                         >
                             {word.name}
                         </Chip>
