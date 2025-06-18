@@ -664,7 +664,11 @@
     "searchedOn": "Searched on",
     "refresh": "Refresh search history",
     "item": "item",
-    "items": "items"
+    "items": "items",
+    "clearSearchHistoryTitle": "Your search history will be cleared.",
+    "clearSearchHistoryDescription": "Are you sure you want to clear your search history?",
+    "cancel": "Cancel",
+    "clear": "Clear"
   },
   "Forms": {
     "Word": {

@@ -9,7 +9,7 @@ export default async function SearchHistoryPage() {
 
   // Redirect to sign-in if not authenticated
   if (!session?.user) {
-    redirect('/signin');
+    redirect('/signin?callbackUrl=/search-history');
   }
 
   void api.user.getUserSearchHistory.prefetch({ limit: 50 });

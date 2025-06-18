@@ -457,4 +457,8 @@ export const userRouter = createTRPCRouter({
 
       return { success: true };
     }),
+  clearUserSearchHistory: protectedProcedure.mutation(async ({ ctx: { db, session } }) => {
+    await db.delete(userSearchHistory).where(eq(userSearchHistory.userId, session.user.id));
+    return { success: true };
+  }),
 });

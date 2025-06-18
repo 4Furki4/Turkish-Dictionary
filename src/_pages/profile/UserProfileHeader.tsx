@@ -32,7 +32,9 @@ export function UserProfileHeader({ profileData, locale, isOwnProfile, user }: U
 
   return (
     <>
-      <Card isBlurred={isBlurEnabled} className='border border-border'>
+      <Card isBlurred={isBlurEnabled} className="border border-border rounded-sm p-2 w-full" classNames={{
+        base: "bg-background/10",
+      }}>
         <CardBody className="flex flex-col items-center gap-6 rounded-lg p-6 shadow-sm sm:flex-row">
           <Avatar
             src={profileData.image || undefined}

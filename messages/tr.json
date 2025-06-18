@@ -615,7 +615,12 @@
     "searchedOn": "Arama tarihi",
     "refresh": "Arama geçmişini yenile",
     "item": "kelime",
-    "items": "kelime"
+    "items": "kelime",
+    "clearHistory": "Arama geçmişini temizle",
+    "clearSearchHistoryTitle": "Arama geçmişiniz silinecek.",
+    "clearSearchHistoryDescription": "Arama geçmişinizi temizlemek istediğinizden emin misiniz?",
+    "cancel": "İptal",
+    "clear": "Temizle"
   },
   "EnterAuthor": "Yazar Giriniz",
   "Forms": {

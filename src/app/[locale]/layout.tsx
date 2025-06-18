@@ -28,9 +28,9 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string }; // Simplified based on usage
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = params;
+  const { locale } = await params;
   const isEnglish = locale === 'en';
 
   // --- Unified, SEO-friendly Description ---

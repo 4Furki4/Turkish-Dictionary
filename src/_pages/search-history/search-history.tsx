@@ -2,13 +2,14 @@
 
 import { useTranslations } from 'next-intl';
 import { api } from '@/src/trpc/react';
-import { Card, CardBody, CardHeader, Alert, Button } from '@heroui/react';
-import { Skeleton } from '@heroui/skeleton';
-import { Clock, AlertTriangle, RefreshCw } from 'lucide-react';
-
+import { Card, CardBody, CardHeader, Alert, Button, ButtonGroup } from '@heroui/react';
+import { Clock, AlertTriangle, RefreshCw, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Link } from '@/src/i18n/routing';
-
+import { useSnapshot } from 'valtio';
+import { preferencesState } from '@/src/store/preferences';
+import { useDisclosure } from '@heroui/react'
+import ClearSearchHistory from '@/src/components/customs/modals/clear-search-history';
 interface SearchHistoryProps {
   userId: string;
 }
@@ -16,14 +17,17 @@ interface SearchHistoryProps {
 export default function SearchHistory({ userId }: SearchHistoryProps) {
   const t = useTranslations('SearchHistory');
   const navT = useTranslations('Navbar');
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { data: searchHistory, isLoading, error, refetch, isRefetching } = api.user.getUserSearchHistory.useQuery(
+  const { isBlurEnabled } = useSnapshot(preferencesState);
+
+  const [searchHistory, { error, refetch, isRefetching, isSuccess }] = api.user.getUserSearchHistory.useSuspenseQuery(
     { limit: 50 },
     {
-      enabled: !!userId,
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: true,
     }
   );
+  const { mutateAsync: clearUserSearchHistory } = api.user.clearUserSearchHistory.useMutation();
 
   const handleRefresh = () => {
     void refetch();
@@ -32,36 +36,17 @@ export default function SearchHistory({ userId }: SearchHistoryProps) {
   const formatDate = (date: Date) => {
     return format(new Date(date), 'PPpp');
   };
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold mb-6">{navT('SearchHistory')}</h1>
-        <Card className="w-full">
-          <CardHeader>
-            <h2 className="text-xl font-semibold">{t('loading')}</h2>
-          </CardHeader>
-          <CardBody>
-            <div className="space-y-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex justify-between items-center">
-                  <Skeleton className="h-6 w-1/3 rounded-md" />
-                  <Skeleton className="h-4 w-1/4 rounded-md" />
-                </div>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-    );
-  }
+  const clearHistory = async () => {
+    await clearUserSearchHistory();
+    await refetch();
+    onClose()
+  };
 
   // Error state
   if (error) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold mb-6">{navT('SearchHistory')}</h1>
+        <h1 className="text-3xl font-bold">{navT('SearchHistory')}</h1>
         <Alert color="danger">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4" />
@@ -76,15 +61,29 @@ export default function SearchHistory({ userId }: SearchHistoryProps) {
   }
 
   // Empty history state
-  if (!searchHistory || searchHistory.length === 0) {
+  if (isSuccess && (!searchHistory || searchHistory.length === 0)) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold mb-6">{navT('SearchHistory')}</h1>
-        <Card className="w-full">
+        <Card isBlurred={isBlurEnabled} className="border border-border rounded-sm p-2 w-full" classNames={{
+          base: "bg-background/10",
+        }}>
           <CardHeader>
-            <h2 className="text-xl font-semibold">{t('title')}</h2>
-            <p className="text-muted-foreground">{t('emptyHistory')}</p>
+            <h1 className="text-3xl font-bold">{navT('SearchHistory')}</h1>
+            <Button
+              onPress={handleRefresh}
+              variant="flat"
+              isLoading={isRefetching}
+              disabled={isRefetching}
+              aria-label={t('refresh')}
+              className='ml-auto'
+              isIconOnly
+            >
+              <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
+            </Button>
           </CardHeader>
+          <CardBody>
+            <p className="text-muted-foreground">{t('emptyHistory')}</p>
+          </CardBody>
         </Card>
       </div>
     );
@@ -93,32 +92,44 @@ export default function SearchHistory({ userId }: SearchHistoryProps) {
   // Render search history
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">{navT('SearchHistory')}</h1>
-          <p className="text-muted-foreground mt-1">
-            {searchHistory.length} {searchHistory.length === 1 ? t('item') : t('items')}
-          </p>
-        </div>
-        <Button
-          onPress={handleRefresh}
-          isIconOnly
-          variant="flat"
-          isLoading={isRefetching}
-          disabled={isLoading || isRefetching}
-          aria-label={t('refresh')}
-        >
-          <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
-        </Button>
-      </div>
-
-      <Card className="w-full">
+      <Card isBlurred={isBlurEnabled} className="border border-border rounded-sm p-2 w-full" classNames={{
+        base: "bg-background/10",
+      }}>
         <CardHeader>
-          <h2 className="text-xl font-semibold">{t('title')}</h2>
+          <div className="mb-6 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold">{navT('SearchHistory')}</h1>
+              <p className="text-muted-foreground mt-1">
+                {searchHistory?.length} {searchHistory?.length === 1 ? t('item') : t('items')}
+              </p>
+            </div>
+          </div>
+          <ButtonGroup className='ml-auto gap-2'>
+            <Button
+              onPress={onOpen}
+              variant="flat"
+              color="danger"
+              aria-label={t('clearHistory')}
+              isDisabled={isRefetching}
+              isIconOnly
+            >
+              <Trash2 className="w-5 h-5" />
+            </Button>
+            <Button
+              onPress={handleRefresh}
+              variant="flat"
+              isLoading={isRefetching}
+              disabled={isRefetching}
+              aria-label={t('refresh')}
+              isIconOnly
+            >
+              <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
+            </Button>
+          </ButtonGroup>
         </CardHeader>
         <CardBody>
           <div className="divide-y">
-            {searchHistory.map((item, index) => (
+            {searchHistory?.map((item, index) => (
               <div
                 key={`${item.wordId}-${index}`}
                 className="py-3 first:pt-0 last:pb-0 last:border-b-0"
@@ -145,6 +156,7 @@ export default function SearchHistory({ userId }: SearchHistoryProps) {
           </div>
         </CardBody>
       </Card>
+      <ClearSearchHistory isOpen={isOpen} onClose={onClose} onClear={clearHistory} />
     </div>
   );
 }

@@ -67,7 +67,9 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
         <div className="container mx-auto px-4 py-8 space-y-8">
             <UserProfileHeader profileData={profileData} locale={locale} isOwnProfile={isOwnProfile} user={session?.user ?? null} />
             {/* Contribution Stats Section */}
-            <Card isBlurred={isBlurEnabled} className='border border-border'>
+            <Card isBlurred={isBlurEnabled} className="border border-border rounded-sm p-2 w-full" classNames={{
+                base: "bg-background/10",
+            }}>
                 <CardHeader>
                     <h3 className="text-lg font-semibold">{t('contributionStatsTitle')}</h3>
                 </CardHeader>
@@ -100,7 +102,9 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
 
             {/* Saved Words Section */}
             {isOwnProfile && (
-                <Card isBlurred={isBlurEnabled} className='border border-border'>
+                <Card isBlurred={isBlurEnabled} className="border border-border rounded-sm p-2 w-full" classNames={{
+                    base: "bg-background/10",
+                }}>
                     <CardHeader>
                         <h3 className="text-lg font-semibold">{t('savedWordsTitle')}</h3>
                     </CardHeader>
@@ -141,7 +145,9 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
             )}
 
             {/* Recent Contributions Section */}
-            <Card isBlurred={isBlurEnabled} className='border border-border'>
+            <Card isBlurred={isBlurEnabled} className="border border-border rounded-sm p-2 w-full" classNames={{
+                base: "bg-background/10",
+            }}>
                 <CardHeader>
                     <h3 className="text-lg font-semibold">{t('recentContributionsTitle')}</h3>
                 </CardHeader>
