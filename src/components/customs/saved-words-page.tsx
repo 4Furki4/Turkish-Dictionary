@@ -7,6 +7,7 @@ import SavedWordCardSkeleton from "./saved-word-card-skeleton";
 import { Session } from "next-auth";
 import { api } from "@/src/trpc/react";
 import { Pagination } from "@heroui/pagination";
+import { CustomPagination } from "./heroui/custom-pagination";
 
 interface SavedWordsPageProps {
   session: Session;
@@ -72,10 +73,7 @@ export default function SavedWordsPage({ session, locale }: SavedWordsPageProps)
         )}
       </div>
       <div className="flex justify-center px-4 mt-4">
-        <Pagination
-          isDisabled={totalCount === undefined}
-          isCompact
-          showControls
+        <CustomPagination
           total={totalCount ? Math.ceil(totalCount / perPage) : 1}
           initialPage={pageNumber}
           onChange={(page) => setPageNumber(page)}

@@ -337,6 +337,10 @@
   "SavedWords": {
     "Toolbar": {
       "searchPlaceholder": "Search saved words...",
+      "sortAlphabet": "Sort by alphabet",
+      "sortDate": "Sort by date",
+      "OldToNew": "Old to New",
+      "NewToOld": "New to Old",
       "filters": "Filters",
       "sort": {
         "az": "A → Z",
@@ -665,6 +669,7 @@
     "refresh": "Refresh search history",
     "item": "item",
     "items": "items",
+    "clearHistory": "Clear history",
     "clearSearchHistoryTitle": "Your search history will be cleared.",
     "clearSearchHistoryDescription": "Are you sure you want to clear your search history?",
     "cancel": "Cancel",

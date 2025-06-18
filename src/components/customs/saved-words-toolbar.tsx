@@ -5,6 +5,11 @@ import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { ArrowDownAZ, ArrowDownZA } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { preferencesState } from "@/src/store/preferences";
+import { useSnapshot } from "valtio";
+import { cn } from "@/src/lib/utils";
+import { CustomInput } from "./heroui/custom-input";
+import { CustomSelect, OptionsMap } from "./heroui/custom-select";
 
 export type ViewType = "list" | "grid";
 export type AlphabetOrder = "az" | "za";
@@ -22,8 +27,8 @@ const alphabetOptions = [
   { key: "za", label: "ZA" }
 ]
 const dateOptions = [
-  { key: "dateAsc", label: "Date (Ascending)" },
-  { key: "dateDesc", label: "Date (Descending)" }
+  { key: "dateAsc", label: "OldToNew" },
+  { key: "dateDesc", label: "NewToOld" }
 ]
 const wordPerPageOptions = [
   {
@@ -48,6 +53,7 @@ export default function SavedWordsToolbar({ onSearch, onAlphabetSort, onDateSort
   const [search, setSearch] = useState("");
   const [sortAlphabet, setSortAlphabet] = useState<AlphabetOrder>("az");
   const [sortDate, setSortDate] = useState<DateOrder>("dateAsc");
+  const { isBlurEnabled } = useSnapshot(preferencesState);
   useEffect(() => {
     const handler = setTimeout(() => {
       onSearch(search);
@@ -56,16 +62,27 @@ export default function SavedWordsToolbar({ onSearch, onAlphabetSort, onDateSort
   }, [search, onSearch]);
 
   return (
-    <div className="flex flex-wrap items-center gap-4 px-4 py-2 bg-background border border-border rounded-sm">
-      <div className="flex-1 min-w-[200px]">
-        <Input
+    <div className={cn("grid md:grid-cols-2 lg:grid-cols-4 items-center gap-4 px-4 py-2 bg-background border-2 border-border rounded-sm", {
+      "backdrop-blur-md bg-background/10 backdrop-saturate-150 transition-all duration-300 motion-reduce:transition-none": isBlurEnabled,
+      "bg-background/70 transition-all duration-300": !isBlurEnabled
+    })}>
+      <div className="w-full">
+        <CustomInput
           value={search}
           onValueChange={setSearch}
           placeholder={t("searchPlaceholder")}
         />
       </div>
-      <div className="flex-1 min-w-[150px]">
-        <Select
+      <div className="w-full">
+        <CustomSelect
+          classNames={{
+            base: "w-full"
+          }}
+          label={t("sortAlphabet")}
+          options={alphabetOptions.reduce((acc, option) => {
+            acc[option.key] = option.label;
+            return acc;
+          }, {} as OptionsMap)}
           placeholder={t("sortPlaceholder")}
           startContent={sortAlphabet === "az" ? <ArrowDownAZ /> : <ArrowDownZA />}
           defaultSelectedKeys={["az"]}
@@ -74,16 +91,18 @@ export default function SavedWordsToolbar({ onSearch, onAlphabetSort, onDateSort
             setSortAlphabet(val);
             onAlphabetSort(val);
           }}
-        >
-          {alphabetOptions.map((option) => (
-            <SelectItem key={option.key} >
-              {option.label}
-            </SelectItem>
-          ))}
-        </Select>
+        />
       </div>
-      <div className="flex-1 min-w-[150px]">
-        <Select
+      <div className="w-full">
+        <CustomSelect
+          classNames={{
+            base: "w-full"
+          }}
+          label={t("sortDate")}
+          options={dateOptions.reduce((acc, option) => {
+            acc[option.key] = t(option.label);
+            return acc;
+          }, {} as OptionsMap)}
           placeholder={t("sortPlaceholder")}
           defaultSelectedKeys={["dateAsc"]}
           onChange={(e) => {
@@ -91,29 +110,22 @@ export default function SavedWordsToolbar({ onSearch, onAlphabetSort, onDateSort
             setSortDate(val);
             onDateSort(val);
           }}
-        >
-          {dateOptions.map((option) => (
-            <SelectItem key={option.key} >
-              {option.label}
-            </SelectItem>
-          ))}
-        </Select>
+        />
       </div>
-      <div className=" min-w-[150px] ml-auto">
-        <Select
+      <div className="w-full">
+        <CustomSelect
+          classNames={{
+            base: "w-full"
+          }}
+          label={t("pagination.wordsPerPage")}
+          options={wordPerPageOptions.reduce((acc, option) => {
+            acc[option.key] = option.label;
+            return acc;
+          }, {} as OptionsMap)}
           placeholder={t("pagination.wordsPerPage")}
           defaultSelectedKeys={[wordPerPageOptions.find((option) => option.key === perPage.toString())?.key ?? perPage.toString()]}
-          classNames={{
-            base: "ml-auto"
-          }}
           onChange={(e) => onPerPageChange(Number((e.target as HTMLSelectElement).value))}
-        >
-          {wordPerPageOptions.map((option) => (
-            <SelectItem key={option.key} >
-              {option.label}
-            </SelectItem>
-          ))}
-        </Select>
+        />
       </div>
     </div>
   );

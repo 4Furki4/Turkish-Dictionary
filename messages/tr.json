@@ -326,6 +326,10 @@
   "SavedWords": {
     "Toolbar": {
       "searchPlaceholder": "Kaydedilen kelimelerde ara...",
+      "sortAlphabet": "Harf sıralamasına göre",
+      "sortDate": "Tarih sıralamasına göre",
+      "OldToNew": "Eskiden Yeniye",
+      "NewToOld": "Yeniden Eskiye",
       "filters": "Filtreler",
       "sort": {
         "az": "A → Z",
