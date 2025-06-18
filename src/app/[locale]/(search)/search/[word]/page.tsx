@@ -17,6 +17,7 @@ export async function generateMetadata({
     const { word, locale } = await params;
     const wordName = decodeURIComponent(word);
     const [result] = await api.word.getWord({ name: wordName, skipLogging: true });
+
     if (!result) {
         return {
             title: "Kelime Bulunamadı",
