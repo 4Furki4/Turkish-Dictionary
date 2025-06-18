@@ -1,29 +1,24 @@
 "use client"
 import { api } from "@/src/trpc/react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Spinner,
   Chip,
-  Select,
-  SelectItem,
   Card,
   CardBody,
-  Button
+  Button,
 } from "@heroui/react";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { EntityTypes, Actions, Status, entityTypesEnum, actionsEnum, statusEnum } from "@/db/schema/requests";
 import { Link } from "@/src/i18n/routing";
-import { Pagination } from "@heroui/pagination";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { tr } from "date-fns/locale";
+import { useSnapshot } from "valtio";
+import { preferencesState } from "@/src/store/preferences";
+import { CustomTable } from "@/src/components/customs/heroui/custom-table";
+import { CustomPagination } from "@/src/components/customs/heroui/custom-pagination";
+import { CustomSelect, OptionsMap } from "@/src/components/customs/heroui/custom-select";
 
 export default function RequestsList() {
   const t = useTranslations("Requests");
@@ -87,6 +82,8 @@ export default function RequestsList() {
   const [entityTypeFilter, setEntityTypeFilter] = useState<EntityTypes | "all">(initialEntityType);
   const [actionFilter, setActionFilter] = useState<Actions | "all">(initialAction);
   const [statusFilter, setStatusFilter] = useState<Status | "all">(initialStatus);
+
+  const { isBlurEnabled } = useSnapshot(preferencesState);
 
   // Update URL when parameters change
   const updateQueryParams = useCallback((params: {
@@ -164,7 +161,12 @@ export default function RequestsList() {
           <div className="flex items-center gap-2">
             <Link
               className="text-secondary hover:underline"
-              href={`/requests/${request.id}` as any}
+              href={{
+                pathname: "/my-requests/[id]",
+                params: {
+                  id: request.key.toString(),
+                },
+              }}
             >
               {t("buttons.viewDetails")}
             </Link>
@@ -173,8 +175,6 @@ export default function RequestsList() {
                 size="sm"
                 color="danger"
                 variant="light"
-                as={Link}
-                href={`/requests/${request.id}?action=cancel` as any}
               >
                 {t("buttons.cancel")}
               </Button>
@@ -207,155 +207,89 @@ export default function RequestsList() {
     { key: "actions", label: t("tableColumns.actions") },
   ];
 
-  type Row = {
-    id: number;
-    entityType: EntityTypes;
-    entityId: number | null;
-    action: Actions;
-    status: Status;
-    requestDate: Date | null;
-  };
+  type Row = (typeof rows)[0];
+  const rows = requests.map((request) => ({
+    key: request.id,
+    entityType: request.entityType,
+    entityId: request.entityId,
+    action: request.action,
+    status: request.status,
+    requestDate: request.requestDate,
+  }));
 
   return (
     <div className="container mx-auto py-8">
       <h1 className="mb-6 text-2xl font-bold">{t("myRequests")}</h1>
-      <Card>
-        <CardBody>
-          <Table
-            topContent={(
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <Select
-                    size="sm"
-                    label={t("entityTypes.title")}
-                    selectedKeys={[entityTypeFilter]}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setEntityTypeFilter(value === "all" ? "all" : value as EntityTypes);
-                    }}
-                    className="w-full sm:w-48"
-                  >
-                    <>
-                      <SelectItem key="all" >{t("entityTypes.all")}</SelectItem>
-                      {Object.entries(entityTypeLabels).map(([key, label]) => (
-                        <SelectItem key={key} >
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </>
-                  </Select>
-
-                  <Select
-                    size="sm"
-                    label={t("actions.title")}
-                    selectedKeys={[actionFilter]}
-                    selectionMode="single"
-                    disallowEmptySelection
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setActionFilter(value === "all" ? "all" : value as Actions);
-                    }}
-                    className="w-full sm:w-36"
-                  >
-                    <>
-                      <SelectItem key="all">{t("actions.all")}</SelectItem>
-                      {Object.entries(actionLabels).map(([key, label]) => (
-                        <SelectItem key={key} >
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </>
-                  </Select>
-
-                  <Select
-                    size="sm"
-                    label={t("status.title")}
-                    selectedKeys={[statusFilter]}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setStatusFilter(value === "all" ? "all" : value as Status);
-                    }}
-                    className="w-full sm:w-36"
-                  >
-                    <>
-                      <SelectItem key="all">{t("status.all")}</SelectItem>
-                      {Object.entries(statusLabels).map(([key, label]) => (
-                        <SelectItem key={key} >
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </>
-                  </Select>
-
-                  <Select
-                    label={t("messages.itemsPerPage")}
-                    defaultSelectedKeys={[requestsPerPage.toString()]}
-                    size="sm"
-                    classNames={{
-                      base: "ml-auto sm:max-w-64",
-                    }}
-                    onChange={(e) => {
-                      setRequestsPerPage(parseInt(e.target.value));
-                      setPageNumber(1); // Reset to first page on requests per page change
-                    }}
-                  >
-                    {requestsPerPageOptions.map((pageCount) => (
-                      <SelectItem key={pageCount.key}>
-                        {pageCount.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-            )}
-            aria-label="User requests table"
-            classNames={{
-              base: ["min-h-[300px]"],
-            }}
-            isStriped
-            bottomContent={
-              <Pagination
-                isDisabled={totalPageNumber === undefined}
-                classNames={{
-                  wrapper: ["mx-auto"]
-                }}
-                isCompact
-                showControls
-                total={totalPageNumber}
-                initialPage={pageNumber}
-                page={pageNumber}
-                onChange={(page) => {
-                  setPageNumber(page);
+      <CustomTable
+        columns={columns}
+        items={rows}
+        renderCell={renderCell}
+        loadingState={isLoading ? 'loading' : undefined}
+        topContent={
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <CustomSelect
+                options={entityTypeLabels}
+                label={t("entityTypes.title")}
+                showAllOption
+                allOptionLabel={t("entityTypes.all")}
+                selectedKeys={[entityTypeFilter]}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setEntityTypeFilter(value === "all" ? "all" : value as EntityTypes);
                 }}
               />
-            }
-          >
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn key={column.key}>{column.label}</TableColumn>
-              )}
-            </TableHeader>
-            <TableBody
-              items={(requests || [])}
-              loadingContent={<Spinner />}
-              loadingState={isLoading ? "loading" : "idle"}
-              emptyContent={
-                <div className="py-8 text-center">
-                  <p className="text-center text-gray-500">{t("messages.noRequests")}</p>
-                </div>
-              }
-            >
-              {(request) => (
-                <TableRow key={request.id}>
-                  {(columnKey) => (
-                    <TableCell>{renderCell(request, columnKey)}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardBody>
-      </Card>
+              <CustomSelect
+                options={actionLabels}
+                label={t("actions.title")}
+                showAllOption
+                allOptionLabel={t("actions.all")}
+                selectedKeys={[actionFilter]}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setActionFilter(value === "all" ? "all" : value as Actions);
+                }}
+              />
+              <CustomSelect
+                options={statusLabels}
+                label={t("status.title")}
+                showAllOption
+                allOptionLabel={t("status.all")}
+                selectedKeys={[statusFilter]}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setStatusFilter(value === "all" ? "all" : value as Status);
+                }}
+              />
+              <CustomSelect
+                options={requestsPerPageOptions.reduce((acc, option) => {
+                  acc[option.key] = option.label;
+                  return acc;
+                }, {} as OptionsMap)}
+                label={t("messages.itemsPerPage")}
+                selectedKeys={[requestsPerPage.toString()]}
+                onChange={(e) => {
+                  setRequestsPerPage(parseInt(e.target.value));
+                  setPageNumber(1); // Reset to first page on requests per page change
+                }}
+                className="w-full ml-auto"
+                color="primary"
+                variant="bordered"
+              />
+            </div>
+          </div>
+        }
+        bottomContent={
+          <CustomPagination
+            total={totalPageNumber}
+            initialPage={pageNumber}
+            page={pageNumber}
+            onChange={(page) => {
+              setPageNumber(page);
+            }}
+          />
+        }
+      />
     </div>
   );
 }

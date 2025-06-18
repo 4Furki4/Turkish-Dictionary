@@ -1,20 +1,8 @@
 "use client";
 import React, { useCallback, useEffect, useRef } from "react";
-import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Spinner,
-    Input,
-} from "@heroui/react";
 import { api } from "@/src/trpc/react";
 import { Link as NextUILink } from "@heroui/react";
 import { Link } from "@/src/i18n/routing";
-import { Pagination } from "@heroui/pagination";
-import { Select, SelectItem } from "@heroui/select";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { useDebounce } from "@uidotdev/usehooks";
@@ -22,7 +10,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useSnapshot } from "valtio";
 import { preferencesState } from "@/src/store/preferences";
-import { cn } from "@/lib/utils";
+import { CustomPagination } from "@/src/components/customs/heroui/custom-pagination";
+import { CustomTable } from "@/src/components/customs/heroui/custom-table";
+import { CustomInput } from "@/src/components/customs/heroui/custom-input";
+import { CustomSelect, OptionsMap } from "@/src/components/customs/heroui/custom-select";
 
 const wordPerPageOptions = [
     {
@@ -144,105 +135,51 @@ export default function WordList() {
 
     return (
         <section>
-
-            <Table topContent={
-                <div className="flex flex-col gap-4">
-                    <h1 className="text-fs-1">
-                        {t('title')}
-                    </h1>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                        <Controller name="search" control={control} render={({ field }) => (
-                            <Input
-                                type="search"
-                                color="primary"
-                                variant="bordered"
-                                classNames={{
-                                    inputWrapper: [
-                                        "rounded-sm",
-                                        "backdrop-blur-xs",
-                                        "border-2 border-primary/40",
-                                        "shadow-xl",
-                                        "group-data-[hover=true]:border-primary/60",
-                                    ],
-                                    input: [
-                                        "py-6",
-                                        "text-base",
-                                        "text-foreground",
-                                        "placeholder:text-muted-foreground",
-                                    ]
-                                }}
-                                {...field} placeholder={t('searchPlaceholder')} size="lg" />
-                        )}
-                        />
-                        <Select label={t('wordsPerPage')} defaultSelectedKeys={[wordsPerPage.toString()]}
-                            size="sm"
-                            color="primary"
-                            variant="bordered"
-                            classNames={{
-                                base: "ml-auto sm:max-w-64",
-                                trigger: "border-2 border-primary/40",
-                                label: "text-foreground",
-                                listbox: "bg-background/10",
-                                popoverContent: "bg-background border-primary/40",
-
-                            }} onChange={(e) => {
-                                setWordsPerPage(parseInt(e.target.value));
-                            }}>
-                            {wordPerPageOptions.map((pageCount) => (
-                                <SelectItem key={pageCount.key}>
-                                    {pageCount.label}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                    </div>
-                </div>
-            } bottomContent={
-                <Pagination isDisabled={totalPageNumber === undefined} classNames={{
-                    wrapper: "mx-auto",
-                    item: "[&[data-hover=true]:not([data-active=true])]:bg-primary/30 bg-primary/10 p-1 min-w-max",
-                    next: "[&[data-hover=true]:not([data-active=true])]:bg-primary/30 bg-primary/10",
-                    prev: "[&[data-hover=true]:not([data-active=true])]:bg-primary/30 bg-primary/10",
-                }} isCompact showControls className="cursor-pointer" total={totalPageNumber ?? 1} initialPage={1} page={pageNumber} onChange={async (page) => {
-                    setPageNumber(page);
-                }} />
-            } classNames={{
-                base: ["min-h-[300px]"],
-                wrapper: cn(
-                    "flex flex-col relative overflow-hidden h-auto text-foreground box-border outline-hidden data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 border-2 border-border rounded-sm p-2 w-full",
-                    {
-                        "shadow-medium bg-background/10 backdrop-blur-md backdrop-saturate-150 transition-all duration-300 motion-reduce:transition-none": isBlurEnabled,
-                        "bg-background/70 transition-all duration-300": !isBlurEnabled
-                    }
-                ),
-                td: cn(
-                    'group-data-[odd=true]/tr:before:transition-all',
-                    'group-data-[odd=true]/tr:before:bg-primary/10',
-                    {
-                        'group-data-[odd=true]/tr:before:bg-primary/10': isBlurEnabled,
-                    }
-                ),
-                th: "bg-primary/10",
-            }} isCompact isStriped aria-label="Example table with dynamic content">
-                <TableHeader columns={columns}>
-                    {(column) => (
-                        <TableColumn align={column.key === "actions" ? "end" : "start"} key={column.key}>{column.label}</TableColumn>
-                    )}
-                </TableHeader>
-                <TableBody items={rows}
-                    loadingContent={<Spinner />}
-                    loadingState={
-                        wordsQuery.isFetching ? "loading" : "idle"
-                    }
-                >
-                    {(item) => (
-                        <TableRow key={item.key + item.name}>
-                            {(columnKey) => (
-                                <TableCell>{renderCell(item, columnKey)}</TableCell>
+            <CustomTable
+                columns={columns}
+                items={rows}
+                renderCell={renderCell}
+                loadingState={wordsQuery.isPending ? 'loading' : 'idle'}
+                bottomContent={
+                    <CustomPagination
+                        total={totalPageNumber ?? 1}
+                        initialPage={pageNumber}
+                        page={pageNumber}
+                        onChange={(page) => {
+                            setPageNumber(page);
+                        }}
+                    />
+                }
+                topContent={
+                    <div className="flex flex-col gap-4">
+                        <h1 className="text-fs-1">
+                            {t('title')}
+                        </h1>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                            <Controller name="search" control={control} render={({ field }) => (
+                                <CustomInput
+                                    {...field}
+                                    placeholder={t('searchPlaceholder')}
+                                    size="lg"
+                                />
                             )}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+                            />
+                            <CustomSelect
+                                options={wordPerPageOptions.map((option) => ({
+                                    key: option.key,
+                                    label: option.label
+                                })) as unknown as OptionsMap}
+                                value={wordsPerPage}
+                                onChange={(e) => {
+                                    setWordsPerPage(parseInt(e.target.value));
+                                }}
+                            />
+
+                        </div>
+                    </div>
+                }
+
+            />
         </section >
     );
 }

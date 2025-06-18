@@ -219,7 +219,7 @@ export default function Navbar({
                   </Link>
                 </DropdownItem>
                 <DropdownItem key={"requests"} className="text-center rounded-sm">
-                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/requests">
+                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/my-requests">
                     {MyRequestsIntl}
                   </Link>
                 </DropdownItem>

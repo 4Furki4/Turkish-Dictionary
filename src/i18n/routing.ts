@@ -91,6 +91,14 @@ export const routing = defineRouting({
       "en": "/complete-profile",
       "tr": "/profil-tamamla",
     },
+    '/my-requests': {
+      "en": "/my-requests",
+      "tr": "/isteklerim",
+    },
+    '/my-requests/[id]': {
+      "en": "/my-requests/[id]",
+      "tr": "/isteklerim/[id]",
+    },
     "/dashboard/requests": {
       "en": "/dashboard/requests",
       "tr": "/panel/istekler",
