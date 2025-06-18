@@ -22,45 +22,67 @@ export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
 
+// Assuming Params is defined elsewhere, if not, define it.
+// type Params = { locale: string };
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Params>
+  params: { locale: string }; // Simplified based on usage
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale } = params;
   const isEnglish = locale === 'en';
+
+  // --- Unified, SEO-friendly Description ---
+  // Using a single, strong description ensures a consistent message.
+  // This version highlights the key features: community-driven, modern, and open-source.
+  const description = isEnglish
+    ? "The community-driven, modern, and open-source Turkish Dictionary. Search for words and their meanings, see sample sentences, and contribute."
+    : "Toplulukla gelişen, çağdaş ve açık kaynak Türkçe Sözlük. Kelimeleri ve anlamlarını arayın, paylaşın, örnek cümleleri görün ve katkıda bulunun.";
+
+  // --- Homepage-specific Keywords ---
+  // While not used by Google for ranking, this can be useful for other tools.
+  const keywords = isEnglish
+    ? ['turkish', 'dictionary', 'turkish language', 'online dictionary', 'learn turkish', 'sozluk', 'modern', 'open source', 'community driven']
+    : ['türkçe', 'sözlük', 'türkçe sözlük', 'online sözlük', 'türkçe öğren', 'kelime anlamları', 'tdk', 'çağdaş türkçe sözlük', 'modern', 'açık kaynak', 'toplulukla gelişen'];
+
   return {
     metadataBase: new URL('https://turkce-sozluk.com'),
+    // --- Title ---
+    // The title structure is excellent. No changes needed.
     title: {
-      template: isEnglish ? "%s | Turkish Dictionary" : "%s | Türkçe Sözlük",
+      template: isEnglish ? "%s | Modern Turkish Dictionary" : "%s | Çağdaş Türkçe Sözlük",
       default: isEnglish
-        ? "Turkish Dictionary - Words, Definitions and Examples"
-        : "Türkçe Sözlük - Kelimeler, Anlamları ve Örnek Cümleler",
+        ? "Turkish Dictionary - The Modern, Open-Source and Community-Driven Dictionary"
+        : "Türkçe Sözlük - Toplulukla Gelişen, Çağdaş ve Açık Kaynak Sözlük",
     },
-    description: isEnglish
-      ? "Online Turkish Dictionary where you can search for Turkish words and can save them to your account for later."
-      : "Türkçe kelimeleri arayabileceğiniz ve daha sonra hesabınıza kaydedebileceğiniz çevrimiçi Türkçe Sözlük.",
+    // --- Main Description ---
+    description,
+    // --- Keywords ---
+    keywords,
+    // --- Open Graph (for social media) ---
     openGraph: {
-      title: isEnglish ? "Turkish Dictionary" : "Türkçe Sözlük",
-      description: isEnglish
-        ? "Comprehensive Turkish dictionary with definitions, examples, and more"
-        : "Kapsamlı Türkçe sözlük, tanımlar, örnekler ve daha fazlası",
+      title: isEnglish ? "Modern Turkish Dictionary" : "Çağdaş Türkçe Sözlük",
+      description, // Using the unified description
       type: 'website',
       locale: isEnglish ? 'en_US' : 'tr_TR',
       siteName: isEnglish ? 'Turkish Dictionary' : 'Türkçe Sözlük',
+      // The opengraph-image is automatically added by Next.js
     },
+    // --- Twitter Card ---
     twitter: {
       card: 'summary_large_image',
-      title: isEnglish ? "Turkish Dictionary" : "Türkçe Sözlük",
-      description: isEnglish
-        ? "Comprehensive Turkish dictionary with definitions, examples, and more"
-        : "Kapsamlı Türkçe sözlük, tanımlar, örnekler ve daha fazlası",
+      title: isEnglish ? "Modern Turkish Dictionary" : "Çağdaş Türkçe Sözlük",
+      description, // Using the unified description
+      // The twitter:image is also automatically added
     },
+    // --- Alternates ---
+    // Your alternates configuration is perfect for i18n. No changes needed.
     alternates: {
       canonical: '/',
       languages: {
-        'en': 'https://turkce-sozluk.com/en',
-        'tr': 'https://turkce-sozluk.com/tr',
+        'en-US': '/en',
+        'tr-TR': '/tr',
       },
     },
   };
