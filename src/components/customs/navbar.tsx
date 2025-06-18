@@ -62,6 +62,7 @@ export default function Navbar({
       maxWidth="xl"
       shouldHideOnScroll
       classNames={{
+
         item: [
           "relative",
           "flex",
@@ -91,7 +92,7 @@ export default function Navbar({
           </button>
         </NavbarBrand>
       </NavbarItem>
-      <NavbarContent justify="end" className="gap-4 md:gap-8">
+      <NavbarContent justify="end" className="gap-2 md:gap-4 lg:gap-6">
         {session?.user.role === "admin" ? (
           <NavbarItem className="hidden md:flex" isActive={pathName === "/dashboard"}>
             <NextIntlLink href={"/dashboard"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
@@ -126,7 +127,7 @@ export default function Navbar({
               locale="tr"
             >
               <span className="flex items-center gap-2">
-                <Languages aria-label="languages icon" className="w-6 h-6" /> TR
+                <Languages aria-label="languages icon" className="w-5 h-5 xs:w-6 xs:h-6" /> TR
               </span>
             </NextIntlLink>
           ) : (
@@ -145,25 +146,30 @@ export default function Navbar({
               locale="en"
             >
               <span className="flex items-center gap-2">
-                <Languages aria-label={ariaLanguages} className="w-6 h-6" /> EN
+                <Languages aria-label={ariaLanguages} className="w-5 h-5 xs:w-6 xs:h-6" /> EN
               </span>
             </NextIntlLink>
           )}
         </NavbarItem>
         <NavbarItem>
           {/* theme button */}
-          <Button aria-label={ariaSwitchTheme} variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
+          <Button className="hidden xs:inline-flex" aria-label={ariaSwitchTheme} variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           </Button>
+          <Button size="sm" className="xs:hidden" aria-label={ariaSwitchTheme} variant="light" isIconOnly onPress={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            <Sun className="h-[1rem] w-[1rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1rem] w-[1rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
+
         </NavbarItem>
         <NavbarItem>
 
-          <Button className="md:hidden" size="sm" aria-label={ariaBlur} variant="light" isIconOnly onPress={toggleBlur}>
-            <Sparkles className={cn("h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-0 scale-100" : "rotate-90 scale-0")} />
-            <Sparkle className={cn("absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-90 scale-0" : "rotate-0 scale-100")} />
+          <Button className="xs:hidden" size="sm" aria-label={ariaBlur} variant="light" isIconOnly onPress={toggleBlur}>
+            <Sparkles className={cn("h-[1rem] w-[1rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-0 scale-100" : "rotate-90 scale-0")} />
+            <Sparkle className={cn("absolute h-[1rem] w-[1rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-90 scale-0" : "rotate-0 scale-100")} />
           </Button>
-          <Button className="hidden md:inline-flex" aria-label={ariaBlur} variant="light" isIconOnly onPress={toggleBlur}>
+          <Button className="hidden xs:inline-flex" aria-label={ariaBlur} variant="light" isIconOnly onPress={toggleBlur}>
             <Sparkles className={cn("h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-0 scale-100" : "rotate-90 scale-0")} />
             <Sparkle className={cn("absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all", snap.isBlurEnabled ? "rotate-90 scale-0" : "rotate-0 scale-100")} />
           </Button>
@@ -171,12 +177,24 @@ export default function Navbar({
         {!session?.user ? (
           <NavbarItem>
             <Button
+              size="md"
               onPress={() => signIn()}
               aria-disabled={isAuthPage}
               isDisabled={isAuthPage}
               variant="shadow"
               color="primary"
-              className="font-bold"
+              className="font-bold hidden xs:inline-flex"
+            >
+              {SignInIntl}
+            </Button>
+            <Button
+              size="sm"
+              onPress={() => signIn()}
+              aria-disabled={isAuthPage}
+              isDisabled={isAuthPage}
+              variant="shadow"
+              color="primary"
+              className="xs:hidden font-bold"
             >
               {SignInIntl}
             </Button>

@@ -23,6 +23,10 @@
     border-color: var(--color-gray-200, currentcolor);
   }
 }
+@theme {
+  --breakpoint-xs: 20rem;
+
+}
 
 @layer base {
   :root {
