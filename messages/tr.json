@@ -18,6 +18,7 @@
     "ariaBlur": "Blur Etkilerini Açma/Kapatma Butonu"
   },
   "Footer": {
+    "description": "Topluluk ile gelişen, açık kaynak ve modern Türkçe sözlüğü.",
     "copyright": "Tüm hakları saklıdır.",
     "licenseInfo": "Bu proje açık kaynaklıdır ve GNU GPLv3 lisansı altındadır.",
     "headings": {
@@ -48,22 +49,22 @@
   "Home": {
     "alreadySignedIn": "Zaten giriş yaptınız",
     "hero": {
-      "title": "Türkçeyi Keşfedin",
-      "description": "Topluluk ile gelişen, açık kaynak ve modern Türkçe sözlüğü.",
+      "title": "Çağdaş Türkçe Sözlüğü",
+      "motto": "Söz hazineni genişlet, zihin hazinen genişlesin.",
       "searchPlaceholder": "Kelime ara...",
       "popularSearches": "Popüler Aramalar",
       "searchError": "Lütfen aramak için bir kelime girin",
       "feature1": {
         "title": "Katkıda Bulunun",
-        "description": "Yeni kelimeler ve anlamlar ekleyerek sözlüğe katkıda bulunabilirsiniz."
+        "description": "Yeni kelimeler, anlamlar ve özellikler önererek sözlüğe katkıda bulunabilirsiniz"
       },
       "feature2": {
-        "title": "Düzenleme Yapın",
-        "description": "Kelimelerin anlamlarını ve özelliklerini düzenleyebilirsiniz."
+        "title": "Değişiklik Önerin",
+        "description": "Kelimelerin anlam ve özellikleri için öneride bulunabilirsiniz."
       },
       "feature3": {
-        "title": "Kelimeleri Kaydedin",
-        "description": "Yeni öğrendiğiniz, önceden duymadığınız veya sevdiğiniz kelimeleri kaydedebilirsiniz."
+        "title": "Kaydedin ve Paylaşın",
+        "description": "Yeni öğrendiğiniz, önceden duymadığınız veya sevdiğiniz kelimeleri kaydedebilir ve paylaşabilirsiniz."
       }
     }
   },

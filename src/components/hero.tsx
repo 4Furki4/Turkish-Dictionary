@@ -2,7 +2,6 @@
 import { useTranslations } from "next-intl";
 import { Edit3, HeartHandshake, Search as SearchIcon, Stars } from "lucide-react";
 import { useRouter } from "@/src/i18n/routing";
-import { useSearchParams } from "next/navigation";
 import { Input } from "@heroui/input";
 import { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
@@ -18,7 +17,6 @@ export default function Hero({ children }: {
   children: React.ReactNode;
 }) {
   const t = useTranslations("Home");
-  const params = useSearchParams();
   const router = useRouter();
   const [wordInput, setWordInput] = useState<string>("");
   const [inputError, setInputError] = useState<string>("");
@@ -35,7 +33,6 @@ export default function Hero({ children }: {
     }
   );
 
-  // Reset selected index when recommendations change
   useEffect(() => {
     setSelectedIndex(-1);
   }, [recommendations]);
@@ -97,106 +94,108 @@ export default function Hero({ children }: {
   return (
     <div className="relative isolate">
       <div className="mx-auto max-w-7xl px-2 pb-12 pt-10 sm:pb-16 lg:px-8">
-        <div className="mx-auto text-center space-y-8">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl sm:leading-[5rem] bg-clip-text text-transparent bg-linear-to-r from-primary via-primary/80 to-primary/60">
-            {t("hero.title")}
-          </h1>
-          <p className="mt-6 text-lg leading-8">
-            {t("hero.description")}
-          </p>
+        <div className="mx-auto text-center space-y-4">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-fs-4 font-bold tracking-tight sm:text-6xl sm:leading-[5rem] bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
+              {t("hero.title")}
+            </h1>
+            <p className="mt-4 text-fs-0 leading-8 text-muted-foreground sm:text-fs-1">
+              {t("hero.motto")}
+            </p>
+          </div>
 
           {/* Search Form */}
-          <form onSubmit={handleSearch} className="mt-8">
-            <div className="relative">
-              <Input
-                classNames={{
-                  inputWrapper: [
-                    "rounded-sm",
-                    "backdrop-blur-xs",
-                    "border-2 border-primary/40",
-                    "shadow-xl",
-                    "group-data-[hover=true]:border-primary/60",
-                  ],
-                  input: [
-                    "py-6",
-                    "text-base",
-                    "text-foreground",
-                    "placeholder:text-muted-foreground",
-                  ]
-                }}
-                startContent={
-                  <button
-                    type="submit"
-                    className="p-2 hover:bg-muted/50 rounded-full transition-colors"
-                    aria-label="search button"
-                  >
-                    <SearchIcon className="w-5 h-5 text-muted-foreground" />
-                  </button>
-                }
-                aria-required
-                autoFocus
-                aria-label="search words"
-                value={wordInput}
-                onKeyDown={handleKeyDown}
-                onValueChange={(val) => {
-                  setWordInput(val);
-                  if (val.trim()) {
-                    setInputError("");
-                    setShowRecommendations(true);
-                  } else {
-                    setShowRecommendations(false);
+          <div className="mt-8"> {/* Increased top margin */}
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <Input
+                  classNames={{
+                    inputWrapper: [
+                      "rounded-sm",
+                      "backdrop-blur-xs",
+                      "border-2 border-primary/40",
+                      "shadow-xl",
+                      "group-data-[hover=true]:border-primary/60",
+                    ],
+                    input: [
+                      "py-6",
+                      "text-base",
+                      "text-foreground",
+                      "placeholder:text-muted-foreground",
+                    ]
+                  }}
+                  startContent={
+                    <button
+                      type="submit"
+                      className="p-2 hover:bg-muted/50 rounded-full transition-colors"
+                      aria-label="search button"
+                    >
+                      <SearchIcon className="w-5 h-5 text-muted-foreground" />
+                    </button>
                   }
-                }}
-                onBlur={() => {
-                  // Delay hiding recommendations to allow click events
-                  setTimeout(() => {
-                    setShowRecommendations(false);
-                    setSelectedIndex(-1);
-                  }, 200);
-                }}
-                color="primary"
-                variant="bordered"
-                name="search"
-                placeholder={t("hero.searchPlaceholder")}
-                isInvalid={!!inputError}
-                errorMessage={inputError}
-                type="search"
-              />
-              {showRecommendations && isLoading && (
-                <div className="absolute z-10 w-full mt-1 bg-background/90 backdrop-blur-xs border border-primary/20 rounded-md shadow-lg text-left border-b-0 p-2">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <div
-                      key={idx}
-                      className="h-6 px-4 py-2 bg-muted-foreground/20 rounded-sm my-2 animate-pulse"
-                    />
-                  ))}
-                </div>
-              )}
-              {showRecommendations && recommendations && recommendations.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-background/90 backdrop-blur-xs border border-primary/20 rounded-md shadow-lg text-left border-b-0">
-                  <ul role="listbox">
-                    {recommendations.map((rec, index) => (
-                      <li
-                        key={rec.word_id}
-                        role="option"
-                        aria-selected={index === selectedIndex}
-                        className={`px-4 py-2 cursor-pointer transition-colors border-b border-primary/20 ${index === selectedIndex
-                          ? "bg-primary/30"
-                          : "hover:bg-primary/10"
-                          }`}
-                        onClick={() => handleRecommendationClick(rec.name)}
-                        onMouseEnter={() => setSelectedIndex(index)}
-                      >
-                        {rec.name}
-                      </li>
+                  aria-required
+                  autoFocus
+                  aria-label="search words"
+                  value={wordInput}
+                  onKeyDown={handleKeyDown}
+                  onValueChange={(val) => {
+                    setWordInput(val);
+                    if (val.trim()) {
+                      setInputError("");
+                      setShowRecommendations(true);
+                    } else {
+                      setShowRecommendations(false);
+                    }
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      setShowRecommendations(false);
+                      setSelectedIndex(-1);
+                    }, 200);
+                  }}
+                  color="primary"
+                  variant="bordered"
+                  name="search"
+                  placeholder={t("hero.searchPlaceholder")}
+                  isInvalid={!!inputError}
+                  errorMessage={inputError}
+                  type="search"
+                />
+                {showRecommendations && isLoading && (
+                  <div className="absolute z-10 w-full mt-1 bg-background/90 backdrop-blur-xs border border-primary/20 rounded-md shadow-lg text-left border-b-0 p-2">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className="h-6 px-4 py-2 bg-muted-foreground/20 rounded-sm my-2 animate-pulse"
+                      />
                     ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </form>
+                  </div>
+                )}
+                {showRecommendations && recommendations && recommendations.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-background/90 backdrop-blur-xs border border-primary/20 rounded-md shadow-lg text-left border-b-0">
+                    <ul role="listbox">
+                      {recommendations.map((rec, index) => (
+                        <li
+                          key={rec.word_id}
+                          role="option"
+                          aria-selected={index === selectedIndex}
+                          className={`px-4 py-2 cursor-pointer transition-colors border-b border-primary/20 ${index === selectedIndex
+                            ? "bg-primary/30"
+                            : "hover:bg-primary/10"
+                            }`}
+                          onClick={() => handleRecommendationClick(rec.name)}
+                          onMouseEnter={() => setSelectedIndex(index)}
+                        >
+                          {rec.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </form>
+          </div>
 
-          {/* Search Results */}
           <>
             {children}
           </>
