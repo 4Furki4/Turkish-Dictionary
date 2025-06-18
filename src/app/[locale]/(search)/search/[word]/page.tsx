@@ -3,127 +3,72 @@ import { api } from '@/src/trpc/server';
 import { db } from '@/db';
 import SearchResult from '@/src/_pages/search/search-result';
 import Loading from '../_loading';
-import type { WordSearchResult } from '@/types';
 import { notFound } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { words } from '@/db/schema/words';
+import { Metadata } from 'next';
 
-export async function generateMetadata(
-    props: {
-        params: Promise<{ word: string, locale: string }>
-    }
-) {
-    const params = await props.params;
-
-    const {
-        word,
-        locale
-    } = params;
-
-    const parsedWord = decodeURIComponent(word).trim();
-
-    // --- Call tRPC procedure, skipping logging --- 
-    const response = await api.word.getWord({ name: parsedWord, skipLogging: true });
-    // Type the response properly and add null checks
-    const typedResponse = response as unknown as WordSearchResult[];
-    const wordExists = typedResponse.length > 0;
-    const defString = wordExists &&
-        typedResponse[0]?.word_data?.meanings &&
-        Array.isArray(typedResponse[0].word_data.meanings) ?
-        typedResponse[0].word_data.meanings.map((meaning, idx) => {
-            return `${idx + 1}. ${meaning.meaning}:`
-        }).join(" ") :
-        "No definition found for this word";
-    // --- End of tRPC call ---
-
-    const isEnglish = locale === 'en';
-    const title = parsedWord;
-    const description = isEnglish
-        ? `${parsedWord} definition: ${defString}`
-        : `${parsedWord} kelimesinin anlamı: ${defString}`;
-
-    if (wordExists) {
+// This is the updated metadata generation function
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ word: string, locale: string }>
+}): Promise<Metadata> {
+    const { word, locale } = await params;
+    const wordName = decodeURIComponent(word);
+    const [result] = await api.word.getWord({ name: wordName });
+    if (!result) {
         return {
-            title: title,
-            description: description,
-            keywords: isEnglish
-                ? [
-                    parsedWord,
-                    `${parsedWord} definition`,
-                    `${parsedWord} meaning`,
-                    'Turkish dictionary',
-                    'Turkish words',
-                    'learn Turkish',
-                    'Turkish vocabulary'
-                ]
-                : [
-                    parsedWord,
-                    `${parsedWord} ne demek`,
-                    `${parsedWord} anlamı`,
-                    'Türkçe sözlük',
-                    'Türkçe kelimeler',
-                    'Türkçe öğren',
-                    'Türkçe kelime dağarcığı'
-                ],
-            openGraph: {
-                title: isEnglish
-                    ? `${parsedWord} | Turkish Dictionary`
-                    : `${parsedWord} | Türkçe Sözlük`,
-                description: description,
-                type: 'website',
-                locale: isEnglish ? 'en_US' : 'tr_TR',
-                siteName: isEnglish ? 'Turkish Dictionary' : 'Türkçe Sözlük',
-                url: `/${locale}/search/${encodeURIComponent(parsedWord)}`,
-            },
-            twitter: {
-                card: 'summary_large_image',
-                title: isEnglish
-                    ? `${parsedWord} | Turkish Dictionary`
-                    : `${parsedWord} | Türkçe Sözlük`,
-                description: description,
-            },
-            alternates: {
-                canonical: `/${locale}/search/${encodeURIComponent(parsedWord)}`,
-                languages: {
-                    'en': `/en/search/${encodeURIComponent(parsedWord)}`,
-                    'tr': `/tr/search/${encodeURIComponent(parsedWord)}`,
-                },
-            },
+            title: "Kelime Bulunamadı",
+            description: "Aradığınız kelime sözlükte bulunamadı.",
         };
     }
-    const notFoundTitle = isEnglish ? "Word Not Found" : "Kelime Bulunamadı";
-    const notFoundDescription = isEnglish
-        ? "The word you searched for does not exist in our dictionary."
-        : "Aranan kelime sözlüğümüzde bulunamadı.";
 
+
+    const { word_data } = result
+    const relatedWords = word_data?.relatedWords?.map((word) => word.related_word_name) || [];
+    const relatedPhrases = word_data?.relatedPhrases?.map((phrase) => phrase.related_phrase) || [];
+    const isEnglish = locale === "en";
+    const firstMeaning = word_data.meanings[0]?.meaning || "";
+
+    // SEO-optimized Title
+    const title = isEnglish
+        ? `What does "${word_data.word_name}" mean? Definition & Examples `
+        : `"${word_data.word_name}" ne demek? Anlamı ve Örnek Cümleler`;
+
+    // SEO-optimized Description
+    const description = isEnglish
+        ? `Official definition, pronunciation, and example sentences for the Turkish word "${word_data.word_name}": ${firstMeaning}. Learn more with our community-driven dictionary.`
+        : `"${word_data.word_name}" kelimesinin resmi tanımı, okunuşu ve örnek cümleleri: ${firstMeaning}. Toplulukla gelişen sözlüğümüzle daha fazlasını öğrenin.`;
+
+    // Combine them for the keywords tag
+    const baseKeywords = isEnglish
+        ? ['turkish dictionary', 'meaning of ' + word_data.word_name, 'turkish words']
+        : ['türkçe sözlük', `${word_data.word_name} anlamı`, `${word_data.word_name} ne demek`, 'kelime anlamları'];
+
+    const keywords = [word_data.word_name, ...baseKeywords, ...relatedWords, ...relatedPhrases];
     return {
-        title: notFoundTitle,
-        description: notFoundDescription,
+        title,
+        description,
+        keywords,
         openGraph: {
-            title: isEnglish
-                ? 'Word Not Found | Turkish Dictionary'
-                : 'Kelime Bulunamadı | Türkçe Sözlük',
-            description: notFoundDescription,
-            type: 'website',
-            locale: isEnglish ? 'en_US' : 'tr_TR',
-            siteName: isEnglish ? 'Turkish Dictionary' : 'Türkçe Sözlük',
-            url: `/${locale}/search/${encodeURIComponent(parsedWord)}`,
+            title: title,
+            description: description,
+            // Next.js will automatically find the opengraph-image.tsx in this directory
         },
         twitter: {
-            card: 'summary_large_image',
-            title: isEnglish
-                ? 'Word Not Found | Turkish Dictionary'
-                : 'Kelime Bulunamadı | Türkçe Sözlük',
-            description: notFoundDescription
+            title: title,
+            description: description,
+            // Twitter will also use the opengraph-image by default
         },
         alternates: {
-            canonical: `/${locale}/search/${encodeURIComponent(parsedWord)}`,
+            canonical: `/arama/${wordName}`,
             languages: {
-                'en': `/en/search/${encodeURIComponent(parsedWord)}`,
-                'tr': `/tr/search/${encodeURIComponent(parsedWord)}`,
+                'en': `/en/search/${wordName}`,
+                'tr': `/tr/arama/${wordName}`,
             },
         },
-    }
+    };
 }
 
 // export async function generateStaticParams() {
