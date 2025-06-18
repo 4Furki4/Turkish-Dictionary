@@ -18,6 +18,7 @@
     "ariaBlur": "Toggle Blur Efects"
   },
   "Footer": {
+    "description": "Community-driven, open source and modern Turkish dictionary.",
     "copyright": "All rights reserved.",
     "licenseInfo": "This project is open source, licensed under the GNU GPLv3.",
     "headings": {
@@ -48,22 +49,22 @@
   "Home": {
     "alreadySignedIn": "You are already signed in",
     "hero": {
-      "title": "Discover Turkish",
-      "description": "Your comprehensive Turkish dictionary with meanings, examples, and translations. Perfect for learners and native speakers alike.",
+      "title": "Modern Turkish Dictionary",
+      "motto": "Enrich your vocabulary, enhance your understanding",
       "searchPlaceholder": "Search for a word...",
       "popularSearches": "Popular Searches",
       "searchError": "Please enter a word to search",
       "feature1": {
         "title": "Contribute New Words",
-        "description": "Add new Turkish words and their meanings to help grow our dictionary. Share your knowledge with the community."
+        "description": "Add new Turkish words and their meanings to help grow our dictionary."
       },
       "feature2": {
         "title": "Edit and Improve",
-        "description": "Help improve existing entries by suggesting edits and corrections. Keep our dictionary accurate and up-to-date."
+        "description": "Help improve existing entries by suggesting edits and corrections."
       },
       "feature3": {
         "title": "Save for Later",
-        "description": "Create your personal collection of words. Save interesting words to review later and track your learning progress."
+        "description": "Save and share the words you find interesting or don't know before."
       }
     }
   },

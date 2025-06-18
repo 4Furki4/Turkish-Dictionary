@@ -88,10 +88,10 @@ export default async function Footer() {
 
                 <div className="border-t border-border py-2">
                     <p className="text-sm text-text-foreground/60 text-center">
-                        © {new Date().getFullYear()} Turkish Dictionary
+                        {t("description")}
                     </p>
                     <p className="text-sm text-center text-text-foreground/50 mt-1">
-                        {t("licenseInfo")}
+                        © {new Date().getFullYear()} {t("licenseInfo")}
                     </p>
                 </div>
             </div>
