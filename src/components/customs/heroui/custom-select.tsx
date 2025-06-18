@@ -35,7 +35,7 @@ export function CustomSelect({
     const customSelectStyles = tv({
         slots: {
             base: "sm:max-w-64",
-            trigger: "border-2 border-primary/40",
+            trigger: "border-2 border-primary/40 cursor-pointer",
             label: "text-foreground",
             listbox: "bg-background/10",
             popoverContent: "bg-background border-primary/40",
