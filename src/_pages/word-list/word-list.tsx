@@ -165,11 +165,12 @@ export default function WordList() {
                             )}
                             />
                             <CustomSelect
-                                options={wordPerPageOptions.map((option) => ({
-                                    key: option.key,
-                                    label: option.label
-                                })) as unknown as OptionsMap}
-                                value={wordsPerPage}
+                                options={wordPerPageOptions.reduce((acc, option) => {
+                                    acc[option.key] = option.label;
+                                    return acc;
+                                }, {} as OptionsMap)}
+                                label={t('wordsPerPage')}
+                                selectedKeys={[wordsPerPage.toString()]}
                                 onChange={(e) => {
                                     setWordsPerPage(parseInt(e.target.value));
                                 }}

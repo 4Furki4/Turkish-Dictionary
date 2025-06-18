@@ -1,14 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useRef } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
   useDisclosure,
-  Spinner,
   Button,
 } from "@heroui/react";
 import {
@@ -24,15 +17,17 @@ import { Link as NextUILink } from "@heroui/react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Link } from "@/src/i18n/routing";
 import WordListDeleteModal from "./word-list-delete-modal";
-import { Pagination } from "@heroui/pagination";
-import { Select, SelectItem } from "@heroui/select";
 import EditWordModal from "./edit-modal/edit-word-modal";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Controller } from "react-hook-form";
-import { Input } from "@heroui/react";
 import { useTranslations } from "next-intl";
+import { CustomTable } from "@/src/components/customs/heroui/custom-table";
+import { CustomPagination } from '@/src/components/customs/heroui/custom-pagination'
+import { CustomSelect, OptionsMap } from '@/src/components/customs/heroui/custom-select'
+import { CustomInput } from '@/src/components/customs/heroui/custom-input'
+
 
 const wordPerPageOptions = [
   {
@@ -226,66 +221,46 @@ export default function WordList() {
   }, [onDeleteModalOpen, onEditModalOpen, t, setSelectedWord]);
   return (
     <section>
-      <Table topContent={
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <NextUILink as={Link} href={"/dashboard/create-word"} className="w-fit">
-              <Button
-                startContent={<Plus className="w-4 h-4" />}
-                color="primary"
-                size="lg"
-              >
-                {t("Dashboard.CreateWord")}
-              </Button>
-            </NextUILink>
-            <Controller name="search" control={control} render={({ field }) => (
-              <Input {...field} placeholder={t("SearchWord")} size="lg" />
-            )}
-            />
-            <Select label={t("WordsPerPage")} defaultSelectedKeys={[wordsPerPage.toString()]}
-              size="sm"
-              classNames={{
-                base: "ml-auto sm:max-w-64",
-              }} onChange={(e) => {
-                setWordsPerPage(parseInt(e.target.value));
-              }}>
-              {wordPerPageOptions.map((pageCount) => (
-                <SelectItem key={pageCount.key}>
-                  {pageCount.label}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-        </div>
-      } bottomContent={
-        <Pagination isDisabled={totalPageNumber === undefined} classNames={{
-          wrapper: ["mx-auto"]
-        }} isCompact showControls total={totalPageNumber ?? 1} initialPage={pageNumber} onChange={async (page) => {
-          setPageNumber(page);
-        }} />
-      } classNames={{
-        base: ["min-h-[300px]"],
-      }} isStriped aria-label="Example table with dynamic content">
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn align={column.key === "actions" ? "end" : "start"} key={column.key}>{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={rows}
-          loadingContent={<Spinner />}
-          loadingState={
-            wordsQuery.isFetching ? "loading" : "idle"
-          }
-        >
-          {(item) => (
-            <TableRow key={item.key + item.name}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+      <CustomTable
+        columns={columns}
+        items={rows}
+        renderCell={renderCell}
+        bottomContent={
+          <CustomPagination
+            total={totalPageNumber ?? 1} initialPage={pageNumber} onChange={async (page) => {
+              setPageNumber(page);
+            }}
+          />
+        }
+        topContent={
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <NextUILink as={Link} href={"/dashboard/create-word"} className="w-fit">
+                <Button
+                  startContent={<Plus className="w-4 h-4" />}
+                  color="primary"
+                  size="lg"
+                >
+                  {t("Dashboard.CreateWord")}
+                </Button>
+              </NextUILink>
+              <Controller name="search" control={control} render={({ field }) => (
+                <CustomInput {...field} placeholder={t("SearchWord")} size="lg" />
               )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+              />
+              <CustomSelect
+                options={wordPerPageOptions.reduce((acc, option) => {
+                  acc[option.key] = option.label;
+                  return acc;
+                }, {} as OptionsMap)}
+                label={t("WordList.wordsPerPage")}
+                selectedKeys={[wordsPerPage.toString()]}
+                onChange={(e) => setWordsPerPage(Number(e.target.value))}
+              />
+            </div>
+          </div>
+        }
+      />
 
       <WordListDeleteModal key={`word-delete-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isDeleteModalOpen} onOpen={onDeleteModalOpen} onOpenChange={onDeleteModalChange} wordId={selectedWord.wordId} name={selectedWord.name} take={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />
       <EditWordModal partOfSpeeches={partOfSpeeches ?? []} languages={languages ?? []} key={`word-edit-modal-${selectedWord.wordId}-${selectedWord.name}`} isOpen={isEditModalOpen} onOpen={onEditModalOpen} onOpenChange={onEditModalChange} wordName={selectedWord.name} wordsPerPage={wordsPerPage} skip={(pageNumber - 1) * wordsPerPage} />

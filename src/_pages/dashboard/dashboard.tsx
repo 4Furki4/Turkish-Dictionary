@@ -12,7 +12,7 @@ export default function Dashboard({
 }) {
 
   return (
-    <Card className="max-w-7xl w-full mx-auto my-4 max-lg:mx-4 h-max" radius="sm">
+    <Card isBlurred className="max-w-7xl w-full mx-auto my-4 max-lg:mx-4 h-max border-2 border-border" radius="sm">
       <CardHeader className="gap-2">
         <DashboardLinks />
       </CardHeader>

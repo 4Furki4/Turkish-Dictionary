@@ -4,8 +4,6 @@ import React from 'react';
 import { Select, SelectItem, type SelectProps } from "@heroui/react";
 import { cn } from '@/lib/utils';
 import { tv } from 'tailwind-variants';
-import { useSnapshot } from 'valtio';
-import { preferencesState } from '@/src/store/preferences';
 
 // Define the structure for the options we'll pass in.
 // It's a simple key-value record, like your `entityTypeLabels` object.
@@ -34,7 +32,6 @@ export function CustomSelect({
 
     // We use tailwind-variants to define the default styles for our component slots.
     // This is the same system HeroUI uses internally.
-    const { isBlurEnabled } = useSnapshot(preferencesState);
     const customSelectStyles = tv({
         slots: {
             base: "sm:max-w-64",
