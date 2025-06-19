@@ -18,7 +18,7 @@ export const savedWords = pgTable(
     wordId: integer("word_id")
       .notNull()
       .references(() => words.id, { onDelete: "cascade" }),
-    createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+    createdAt: timestamp('createdAt', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
   },
   (t) => ({
     pk: primaryKey({
