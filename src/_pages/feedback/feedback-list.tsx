@@ -13,6 +13,7 @@ import { useCallback, useState, useMemo } from "react";
 import { PublicFeedbackFilterBar, type PublicFeedbackFilters } from "@/src/_pages/feedback/public-feedback-filter-bar";
 import { useDebounce } from "@/src/hooks/use-debounce";
 import { feedbackTypeEnum, feedbackStatusEnum } from "@/db/schema/feedbacks";
+import { FeedbackSkeleton } from "./skeleton";
 
 // Define the type for a single feedback item based on router output
 type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -209,9 +210,7 @@ export function FeedbackList({ session }: FeedbackListProps) {
             {/* Feedback List */}
             <div className="space-y-4">
                 {isLoading ? (
-                    <div className="text-center py-8">
-                        <p>{t("loading")}</p>
-                    </div>
+                    <FeedbackSkeleton count={6} />
                 ) : allItems.length === 0 ? (
                     <div className="text-center py-8">
                         <p className="text-muted-foreground">{t("noFeedbackFound")}</p>

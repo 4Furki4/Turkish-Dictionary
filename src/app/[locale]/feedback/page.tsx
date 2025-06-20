@@ -18,7 +18,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
     const session = await auth();
 
     // Prefetch with default filters (exclude closed statuses by default)
-    await api.feedback.list.prefetch({
+    void api.feedback.list.prefetch({
         limit: 10,
         // Default exclusion of closed/resolved statuses for public view
         status: undefined, // Let the backend handle default exclusions

@@ -17,6 +17,7 @@ import { tr } from "date-fns/locale";
 import { useDebounce } from "@/src/hooks/use-debounce";
 import { UpdateTypeModal } from "./modals/update-type";
 import { FeedbackFilterBar, type FeedbackFilters } from "@/src/_pages/dashboard/feedback/feedback-filter-bar";
+import { FeedbackTableSkeleton } from "@/src/_pages/feedback/table-skeleton";
 
 type Feedback = {
     id: number;
@@ -229,24 +230,26 @@ export function FeedbackList() {
                 onFiltersChange={handleFiltersChange}
                 onClearFilters={handleClearFilters}
             />
-            <CustomTable
-                emptyContent={t("table.empty")}
-                aria-label={t("title")}
-                columns={columns}
-                items={data?.feedbacks ?? []}
-                renderCell={renderCell}
-                loadingState={isLoading ? 'loading' : undefined}
-                bottomContent={
-                    <div className="flex w-full justify-center">
-                        <CustomPagination
-                            page={page}
-                            total={data?.totalPages ?? 1}
-                            onChange={(p) => setPage(p)}
-                        />
-                    </div>
-                }
-            />
-
+            {isLoading ? (
+                <FeedbackTableSkeleton rowCount={10} />
+            ) : (
+                <CustomTable
+                    emptyContent={t("table.empty")}
+                    aria-label={t("title")}
+                    columns={columns}
+                    items={data?.feedbacks ?? []}
+                    renderCell={renderCell}
+                    bottomContent={
+                        <div className="flex w-full justify-center">
+                            <CustomPagination
+                                page={page}
+                                total={data?.totalPages ?? 1}
+                                onChange={(p) => setPage(p)}
+                            />
+                        </div>
+                    }
+                />
+            )}
             {selectedFeedback && (
                 <>
                     <UpdateStatusModal
