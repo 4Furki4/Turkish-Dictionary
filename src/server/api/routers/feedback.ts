@@ -99,7 +99,6 @@ export const feedbackRouter = createTRPCRouter({
             const items = await db
                 .select({
                     feedback: feedbacks,
-                    // ✨ Correctly select from the joined 'users' table
                     user: {
                         id: users.id,
                         name: users.name,

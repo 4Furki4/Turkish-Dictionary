@@ -32,6 +32,11 @@ const getLinks: (locale: string) => { href: string; label: string; icon?: React.
     label: locale === "en" ? "Requests" : "İstekler",
     icon: <Settings className="w-5 h-5" />,
   },
+  {
+    href: "/dashboard/feedback",
+    label: locale === "en" ? "Feedback" : "Geri Bildirim",
+    icon: <Settings className="w-5 h-5" />,
+  },
 ]
 
 export default function DashboardLinks() {

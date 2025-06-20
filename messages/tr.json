@@ -292,6 +292,83 @@
         "confirmButton": "Sil",
         "cancelButton": "İptal"
       }
+    },
+    "feedback": {
+      "title": "Geri Bildirim Yönetimi",
+      "anonymous_user": "Anonim",
+      "table": {
+        "user": "Kullanıcı",
+        "title": "Başlık",
+        "type": "Tür",
+        "status": "Durum",
+        "votes": "Oylar",
+        "created_at": "Oluşturulma",
+        "actions": "Eylemler",
+        "empty": "Geri Bildirim bulunamadı"
+      },
+      "actions": {
+        "title": "Eylemler",
+        "edit_status": "Durumu Düzenle",
+        "edit_type": "Türü Düzenle",
+        "delete": "Geri Bildirimi Sil"
+      },
+      "types": {
+        "bug": "Hata",
+        "feature": "Özellik",
+        "recommendation": "Öneri",
+        "other": "Diğer"
+      },
+      "statuses": {
+        "open": "Açık",
+        "in_progress": "Devam Ediyor",
+        "implemented": "Uygulandı",
+        "testing": "Test Ediliyor",
+        "verified": "Doğrulandı",
+        "rejected": "Reddedildi",
+        "duplicate": "Mükerrer",
+        "fixed": "Düzeltildi",
+        "wont_implement": "Uygulanmayacak",
+        "closed": "Kapalı"
+      },
+      "update_status_modal": {
+        "title": "Geri Bildirim Durumunu Güncelle",
+        "status_label": "Durum",
+        "cancel": "İptal",
+        "update": "Güncelle",
+        "edit_status": "Durumu Düzenle",
+        "edit_type": "Türü Düzenle",
+        "delete": "Geri Bildirimi Sil"
+      },
+      "update_type_modal": {
+        "title": "Geri Bildirim Türünü Güncelle",
+        "type_label": "Tür",
+        "cancel": "İptal",
+        "update": "Güncelle"
+      },
+      "delete_modal": {
+        "title": "Geri Bildirimi Sil",
+        "confirmation_message": "\"{title}\" başlıklı geri bildirimi silmek istediğinizden emin misiniz?",
+        "cancel": "İptal",
+        "delete": "Sil"
+      },
+      "toasts": {
+        "status_updated_success": "Geri bildirim durumu başarıyla güncellendi.",
+        "status_updated_error": "Geri bildirim durumu güncellenemedi: {error}",
+        "deleted_success": "Geri bildirim başarıyla silindi.",
+        "deleted_error": "Geri bildirim silinemedi: {error}",
+        "type_updated_success": "Geri bildirim türü başarıyla güncellendi.",
+        "type_updated_error": "Geri bildirim türü güncellenemedi: {error}"
+      },
+      "filter": {
+        "type": "Tür",
+        "status": "Durum",
+        "all": "Tümü",
+        "searchPlaceholder": "Ara...",
+        "itemsPerPage": "Sayfa başına"
+      }
+    },
+    "sidebar": {
+      "feedback": "Geri Bildirim"
     }
   },
   "LanguageAndRootInput": {
@@ -816,6 +893,7 @@
     "types": {
       "bug": "Hata Bildirimi",
       "feature": "Özellik Talebi",
+      "recommendation": "Öneri",
       "other": "Diğer"
     },
     "NewForm": {
