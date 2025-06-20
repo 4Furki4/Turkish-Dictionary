@@ -303,6 +303,80 @@
         "confirmButton": "Delete",
         "cancelButton": "Cancel"
       }
+    },
+    "feedback": {
+      "title": "Feedback Management",
+      "anonymous_user": "Anonymous",
+      "table": {
+        "user": "User",
+        "title": "Title",
+        "type": "Type",
+        "status": "Status",
+        "votes": "Votes",
+        "created_at": "Created At",
+        "actions": "Actions",
+        "empty": "Feedback not found"
+      },
+      "actions": {
+        "title": "Actions",
+        "edit_status": "Edit Status",
+        "edit_type": "Edit Type",
+        "delete": "Delete Feedback"
+      },
+      "types": {
+        "bug": "Bug",
+        "feature": "Feature",
+        "recommendation": "Recommendation",
+        "other": "Other"
+      },
+      "statuses": {
+        "open": "Open",
+        "in_progress": "In Progress",
+        "implemented": "Implemented",
+        "testing": "Testing",
+        "verified": "Verified",
+        "rejected": "Rejected",
+        "duplicate": "Duplicate",
+        "fixed": "Fixed",
+        "wont_implement": "Won't Implement",
+        "closed": "Closed"
+      },
+      "update_status_modal": {
+        "title": "Update Feedback Status",
+        "status_label": "Status",
+        "cancel": "Cancel",
+        "update": "Update"
+      },
+      "update_type_modal": {
+        "title": "Update Feedback Type",
+        "type_label": "Type",
+        "cancel": "Cancel",
+        "update": "Update"
+      },
+      "delete_modal": {
+        "title": "Delete Feedback",
+        "confirmation_message": "Are you sure you want to delete the feedback \"{title}\"?",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      },
+      "toasts": {
+        "status_updated_success": "Feedback status updated successfully.",
+        "status_updated_error": "Failed to update feedback status: {error}",
+        "deleted_success": "Feedback deleted successfully.",
+        "deleted_error": "Failed to delete feedback: {error}",
+        "type_updated_success": "Feedback type updated successfully.",
+        "type_updated_error": "Failed to update feedback type: {error}"
+      },
+      "filter": {
+        "type": "Type",
+        "status": "Status",
+        "all": "All",
+        "searchPlaceholder": "Search...",
+        "itemsPerPage": "Items per page"
+      }
+    },
+    "sidebar": {
+      "feedback": "Feedback"
     }
   },
   "LanguageAndRootInput": {
@@ -846,6 +920,7 @@
     "types": {
       "bug": "Bug Report",
       "feature": "Feature Request",
+      "recommendation": "Recommendation",
       "other": "Other"
     },
     "NewForm": {
@@ -868,6 +943,7 @@
       },
       "types": {
         "feature": "Feature Request",
+        "recommendation": "Recommendation",
         "bug": "Bug Report",
         "other": "Other"
       }

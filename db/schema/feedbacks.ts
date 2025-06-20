@@ -11,10 +11,17 @@ import { users } from "./users";
 import { feedbackVotes } from "./feedback_votes";
 
 // Define enums for feedback type and status to ensure data consistency.
-export const feedbackTypeEnum = pgEnum("feedback_type", ["bug", "feature", "other"]);
+export const feedbackTypeEnum = pgEnum("feedback_type", ["bug", "feature", "recommendation", "other"]);
 export const feedbackStatusEnum = pgEnum("feedback_status", [
     "open",
     "in_progress",
+    "implemented",
+    "testing",
+    "verified",
+    "rejected",
+    "duplicate",
+    "fixed",
+    "wont_implement",
     "closed",
 ]);
 

@@ -75,6 +75,10 @@ export const routing = defineRouting({
       "en": "/dashboard/dynamic-parameters/roots",
       "tr": "/panel/dinamik-parametreler/kökler",
     },
+    "/dashboard/feedback": {
+      "en": "/dashboard/feedback",
+      "tr": "/panel/geri-bildirim",
+    },
     "/search": {
       "en": "/search",
       "tr": "/arama",

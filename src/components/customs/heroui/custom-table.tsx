@@ -35,6 +35,7 @@ export interface CustomTableProps<T extends object> extends Omit<TableProps, 'ch
     items: T[];
     renderCell: (item: T, columnKey: React.Key) => React.ReactNode;
     loadingState?: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering';
+    emptyContent?: React.ReactNode;
 }
 
 
@@ -44,6 +45,7 @@ export function CustomTable<T extends object>({
     renderCell,
     loadingState,
     classNames,
+    emptyContent,
     ...props
 }: CustomTableProps<T>) {
     const { isBlurEnabled } = useSnapshot(preferencesState);
@@ -85,6 +87,7 @@ export function CustomTable<T extends object>({
                 items={items}
                 loadingContent={<Spinner />}
                 loadingState={loadingState}
+                emptyContent={emptyContent}
             >
                 {(item) => (
                     // --- The Fix: Let HeroUI handle the key ---

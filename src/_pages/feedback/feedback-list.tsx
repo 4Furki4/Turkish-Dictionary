@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { type inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "@/src/server/api/root";
 import { Session } from "next-auth";
+import { FeedbackStatus, statusColorMap } from "../dashboard/feedback/feedback-list";
+import { useCallback } from "react";
 // Define the type for a single feedback item based on router output
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type FeedbackItem = RouterOutput["feedback"]["list"]["items"][number];
@@ -15,8 +17,10 @@ type InitialFeedbackData = RouterOutput["feedback"]["list"];
 /**
  * Renders a single feedback card with details and voting button.
  */
+
 function FeedbackCard({ item, session }: { item: FeedbackItem, session: Session | null }) {
     const t = useTranslations("Feedback");
+    const tDashboard = useTranslations("Dashboard.feedback");
     const utils = api.useUtils();
 
     const voteMutation = api.feedback.vote.useMutation({
@@ -65,6 +69,10 @@ function FeedbackCard({ item, session }: { item: FeedbackItem, session: Session 
         }
         voteMutation.mutate({ feedbackId: item.feedback.id });
     };
+    const isUpvoteDisabled = useCallback((feedbackStatus: FeedbackStatus) => {
+        const disabledStatuses: FeedbackStatus[] = ["closed", "rejected", "duplicate", "fixed", "wont_implement", "implemented"];
+        if (disabledStatuses.includes(feedbackStatus)) return true;
+    }, []);
 
     return (
         <Card classNames={{
@@ -80,9 +88,14 @@ function FeedbackCard({ item, session }: { item: FeedbackItem, session: Session 
                         </p>
                     </div>
                 </div>
-                <Chip color={item.feedback.type === "feature" ? "success" : item.feedback.type === "bug" ? "danger" : "warning"} variant="flat" radius="sm" className="text-xs font-semibold uppercase px-2 py-1">
-                    {t(`types.${item.feedback.type}`)}
-                </Chip>
+                <div className="flex flex-col sm:flex-row items-center gap-2">
+                    <Chip variant="flat" radius="sm" className="text-xs font-semibold uppercase px-2 py-1" color={statusColorMap[item.feedback.status]} size="sm">
+                        {tDashboard(`statuses.${item.feedback.status}`)}
+                    </Chip>
+                    <Chip color={item.feedback.type === "feature" ? "success" : item.feedback.type === "bug" ? "danger" : "warning"} variant="flat" radius="sm" className="text-xs font-semibold uppercase px-2 py-1" size="sm">
+                        {t(`types.${item.feedback.type}`)}
+                    </Chip>
+                </div>
             </CardHeader>
             <CardBody>
                 <h3 className="text-xl font-bold mb-2">{item.feedback.title}</h3>
@@ -93,7 +106,7 @@ function FeedbackCard({ item, session }: { item: FeedbackItem, session: Session 
                     variant={item.hasVoted ? "solid" : "flat"}
                     color="primary"
                     onPress={handleVote}
-                    disabled={voteMutation.isPending}
+                    disabled={voteMutation.isPending || isUpvoteDisabled(item.feedback.status)}
                     className="flex items-center gap-2"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 15 7-7 7 7" /></svg>
