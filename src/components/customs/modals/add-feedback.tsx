@@ -42,10 +42,12 @@ export function FeedbackModal({
     children,
     session,
     variant = "button",
+    className,
 }: {
     children: React.ReactNode;
     session: Session | null;
     variant?: "button" | "link";
+    className?: string;
 }) {
     const { isBlurEnabled } = useSnapshot(preferencesState);
     const [isOpen, setIsOpen] = useState(false);
@@ -99,18 +101,18 @@ export function FeedbackModal({
     if (!session) {
         const PopoverTriggerElement =
             variant === "link" ? (
-                <Button color="primary" disableRipple disableAnimation variant="light" className="p-0 m-0 h-max text-base text-text-foreground/60 data-[hover]:dark:bg-transparent data-[hover]:bg-transparent opacity-70 cursor-not-allowed">
+                <Button color="primary" disableRipple disableAnimation variant="light" className={cn("p-0 m-0 h-max text-base text-text-foreground/60 data-[hover]:dark:bg-transparent data-[hover]:bg-transparent opacity-70 cursor-not-allowed", className)}>
                     {children}
                 </Button>
             ) : (
-                <Button color="primary" variant="light">
+                <Button color="primary" variant="light" className={cn("p-0 m-0 h-max text-base text-text-foreground/60 data-[hover]:dark:bg-transparent data-[hover]:bg-transparent opacity-70 cursor-not-allowed", className)}>
                     {children}
                 </Button>
             );
 
         return (
             <Popover showArrow placement="top">
-                <PopoverTrigger>{PopoverTriggerElement}</PopoverTrigger>
+                <PopoverTrigger className="self-start">{PopoverTriggerElement}</PopoverTrigger>
                 <PopoverContent>
                     <div className="px-2 py-2">
                         <div className="text-small font-bold">{t('authRequiredTitle')}</div>
@@ -139,11 +141,11 @@ export function FeedbackModal({
             <Button variant="light" onPress={() => setIsOpen(true)}
                 disableAnimation
                 disableRipple
-                className="p-0 m-0 h-max text-base data-[hover]:dark:bg-transparent data-[hover]:bg-transparent">
+                className={cn("p-0 m-0 h-max text-base data-[hover]:dark:bg-transparent data-[hover]:bg-transparent", className)}>
                 {children}
             </Button>
             : (
-                <Button color="primary" onPress={() => setIsOpen(true)}>
+                <Button color="primary" onPress={() => setIsOpen(true)} className={className}>
                     {children}
                 </Button>
             );
