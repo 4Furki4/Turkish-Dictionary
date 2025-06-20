@@ -2,7 +2,7 @@ import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/src/serv
 import { db } from "@/db";
 import { feedbacks, feedbackStatusEnum, feedbackTypeEnum } from "@/db/schema/feedbacks";
 import { users } from "@/db/schema/users";
-import { and, eq, ilike, or, sql } from "drizzle-orm";
+import { and, eq, ilike, or, sql, desc, asc, notInArray, gte, lte } from "drizzle-orm";
 import { z } from "zod";
 import { feedbackVotes } from "@/db/schema/feedback_votes";
 
@@ -11,28 +11,52 @@ export const feedbackAdminRouter = createTRPCRouter({
         .input(z.object({
             page: z.number().min(1).default(1),
             limit: z.number().min(1).max(100).default(20),
-            status: z.enum(feedbackStatusEnum.enumValues).optional(),
-            type: z.enum(feedbackTypeEnum.enumValues).optional(),
+            status: z.array(z.enum(feedbackStatusEnum.enumValues)).optional(),
+            type: z.array(z.enum(feedbackTypeEnum.enumValues)).optional(),
             searchTerm: z.string().optional(),
+            sortBy: z.enum(["votes", "createdAt"]).default("votes"),
+            sortOrder: z.enum(["asc", "desc"]).default("desc"),
+            excludeStatuses: z.array(z.enum(feedbackStatusEnum.enumValues)).default([
+                "closed", "rejected", "duplicate", "fixed", "wont_implement"
+            ]),
+            startDate: z.date().optional(),
+            endDate: z.date().optional(),
         }))
         .query(async ({ ctx, input }) => {
             if (ctx.session.user.role !== 'admin') {
                 throw new Error("Unauthorized");
             }
 
-            const { page, limit, status, type, searchTerm } = input;
+            const { page, limit, status, type, searchTerm, sortBy, sortOrder, excludeStatuses, startDate, endDate } = input;
             const offset = (page - 1) * limit;
 
             const whereConditions = and(
-                status ? eq(feedbacks.status, status) : undefined,
-                type ? eq(feedbacks.type, type) : undefined,
+                // Apply status filters
+                status && status.length > 0 
+                    ? or(...status.map(s => eq(feedbacks.status, s)))
+                    : excludeStatuses.length > 0 
+                        ? notInArray(feedbacks.status, excludeStatuses)
+                        : undefined,
+                // Apply type filters
+                type && type.length > 0 
+                    ? or(...type.map(t => eq(feedbacks.type, t)))
+                    : undefined,
+                // Apply search term
                 searchTerm
                     ? or(
                         ilike(feedbacks.title, `%${searchTerm}%`),
                         ilike(feedbacks.description, `%${searchTerm}%`)
                     )
-                    : undefined
+                    : undefined,
+                // Apply date range filters
+                startDate ? gte(feedbacks.createdAt, startDate) : undefined,
+                endDate ? lte(feedbacks.createdAt, endDate) : undefined,
             );
+
+            // Determine sort order
+            const orderByClause = sortBy === "votes" 
+                ? (sortOrder === "desc" ? desc(sql<number>`count(${feedbackVotes.id})`) : asc(sql<number>`count(${feedbackVotes.id})`))
+                : (sortOrder === "desc" ? desc(feedbacks.createdAt) : asc(feedbacks.createdAt));
 
             const feedbackEntries = await db
                 .select({
@@ -54,7 +78,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 .leftJoin(feedbackVotes, eq(feedbacks.id, feedbackVotes.feedbackId))
                 .where(whereConditions)
                 .groupBy(feedbacks.id, users.id)
-                .orderBy(feedbacks.createdAt)
+                .orderBy(orderByClause)
                 .limit(limit)
                 .offset(offset);
 
@@ -67,6 +91,7 @@ export const feedbackAdminRouter = createTRPCRouter({
             return {
                 feedbacks: feedbackEntries,
                 totalPages: Math.ceil(totalFeedbacks / limit),
+                totalCount: totalFeedbacks,
             };
         }),
     updateStatus: adminProcedure

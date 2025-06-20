@@ -371,8 +371,23 @@
         "type": "Type",
         "status": "Status",
         "all": "All",
-        "searchPlaceholder": "Search...",
-        "itemsPerPage": "Items per page"
+        "itemsPerPage": "Items per page",
+        "title": "Filters",
+        "clear": "Clear Filters",
+        "searchPlaceholder": "Search feedback...",
+        "typePlaceholder": "Select types...",
+        "typeLabel": "Type",
+        "statusPlaceholder": "Select statuses...",
+        "statusLabel": "Status",
+        "dateRangeLabel": "Date Range",
+        "sortByLabel": "Sort By",
+        "sortOrderLabel": "Order",
+        "sortByPlaceholder": "Select sort by...",
+        "sortOrderPlaceholder": "Select order..."
+      },
+      "sort": {
+        "votes": "Votes",
+        "createdAt": "Created At"
       }
     },
     "sidebar": {
@@ -787,7 +802,9 @@
   },
   "Common": {
     "anonymousUser": "Anonymous User",
-    "somethingWentWrong": "Something went wrong"
+    "somethingWentWrong": "Something went wrong",
+    "desc": "Descending",
+    "asc": "Ascending"
   },
   "ProfilePage": {
     "notFound": "User not found",
@@ -916,6 +933,8 @@
     "loadingMore": "Loading...",
     "loadMore": "Load More",
     "noMoreFeedback": "You've reached the end!",
+    "noFeedbackFound": "Feedback not found",
+    "loading": "Loading...",
     "noFeedbackYet": "No feedback yet. Be the first to submit!",
     "types": {
       "bug": "Bug Report",

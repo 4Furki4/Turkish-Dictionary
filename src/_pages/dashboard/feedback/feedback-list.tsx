@@ -1,10 +1,10 @@
 // src/_pages/dashboard/feedback/feedback-list.tsx
 "use client";
 
-import { Key, useCallback, useMemo, useState } from "react";
+import { Key, useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { User, Chip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, DropdownSection } from "@heroui/react";
-import { EditIcon, MoreVertical, SearchIcon, Trash2Icon, PencilRuler } from "lucide-react";
+import { EditIcon, MoreVertical, Trash2Icon, PencilRuler } from "lucide-react";
 
 import { api } from "@/src/trpc/react";
 import { feedbackStatusEnum, feedbackTypeEnum } from "@/db/schema/feedbacks";
@@ -14,16 +14,15 @@ import { formatDistanceToNow } from "date-fns";
 import { CustomTable } from "@/src/components/customs/heroui/custom-table";
 import { CustomPagination } from "@/src/components/customs/heroui/custom-pagination";
 import { tr } from "date-fns/locale";
-import { CustomInput } from "@/src/components/customs/heroui/custom-input";
 import { useDebounce } from "@/src/hooks/use-debounce";
-import { CustomSelect, OptionsMap } from "@/src/components/customs/heroui/custom-select";
 import { UpdateTypeModal } from "./modals/update-type";
+import { FeedbackFilterBar, type FeedbackFilters } from "@/src/_pages/dashboard/feedback/feedback-filter-bar";
 
 type Feedback = {
     id: number;
     title: string;
     description: string;
-    type: "bug" | "feature" | "recommendation" | "other";
+    type: typeof feedbackTypeEnum.enumValues[number];
     status: typeof feedbackStatusEnum.enumValues[number];
     createdAt: Date;
     user: {
@@ -48,12 +47,7 @@ export const statusColorMap: Record<typeof feedbackStatusEnum.enumValues[number]
     wont_implement: "default",
     closed: "danger",
 };
-const itemsPerPageOptions = [
-    { key: "10", value: "10", label: "10" },
-    { key: "20", value: "20", label: "20" },
-    { key: "50", value: "50", label: "50" },
-    { key: "100", value: "100", label: "100" },
-];
+
 export function FeedbackList() {
     const locale = useLocale()
     const t = useTranslations("Dashboard.feedback");
@@ -65,18 +59,48 @@ export function FeedbackList() {
     const [isUpdateTypeModalOpen, setUpdateTypeModalOpen] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
-    const [typeFilter, setTypeFilter] = useState<FeedbackType | "all">("all");
-    const [statusFilter, setStatusFilter] = useState<FeedbackStatus | "all">("all");
-    const [searchTerm, setSearchTerm] = useState("");
-    const debouncedSearchTerm = useDebounce(searchTerm, 500);
+    // Initialize filters with default values
+    const [filters, setFilters] = useState<FeedbackFilters>({
+        types: [],
+        statuses: [],
+        searchTerm: "",
+        sortBy: "votes",
+        sortOrder: "desc",
+        startDate: null,
+        endDate: null,
+    });
+
+    const debouncedSearchTerm = useDebounce(filters.searchTerm, 500);
 
     const { data, isLoading } = api.admin.feedback.getAll.useQuery({
         page,
         limit: itemsPerPage,
-        type: typeFilter === "all" ? undefined : typeFilter,
-        status: statusFilter === "all" ? undefined : statusFilter,
+        type: filters.types.length > 0 ? filters.types as (typeof feedbackTypeEnum.enumValues[number])[] : undefined,
+        status: filters.statuses.length > 0 ? filters.statuses as (typeof feedbackStatusEnum.enumValues[number])[] : undefined,
         searchTerm: debouncedSearchTerm,
+        sortBy: filters.sortBy,
+        sortOrder: filters.sortOrder,
+        startDate: filters.startDate ?? undefined,
+        endDate: filters.endDate ?? undefined,
     });
+
+    const handleFiltersChange = (newFilters: FeedbackFilters) => {
+        setFilters(newFilters);
+        setPage(1); // Reset to first page when filters change
+    };
+
+    const handleClearFilters = () => {
+        setFilters({
+            types: [],
+            statuses: [],
+            searchTerm: "",
+            sortBy: "votes",
+            sortOrder: "desc",
+            startDate: null,
+            endDate: null,
+        });
+        setPage(1);
+    };
 
     const openUpdateStatusModal = (feedback: Feedback) => {
         setSelectedFeedback(feedback);
@@ -196,78 +220,15 @@ export function FeedbackList() {
                 return null;
         }
     }, [t, locale]);
-    const typeLabels = useMemo(() => feedbackTypeEnum.enumValues.map(type => ({
-        key: type,
-        value: type,
-        label: t(`types.${type}`)
-    })), [t]);
-
-    const statusLabels = useMemo(() => feedbackStatusEnum.enumValues.map(status => ({
-        key: status,
-        value: status,
-        label: t(`statuses.${status}`)
-    })), [t]);
-
-    const topContent = useMemo(() => {
-        return (
-            <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                    <CustomInput
-                        isClearable
-                        className="w-full sm:max-w-[44%]"
-                        placeholder={t('filter.searchPlaceholder')}
-                        startContent={<SearchIcon />}
-                        value={searchTerm}
-                        onClear={() => setSearchTerm("")}
-                        onValueChange={setSearchTerm}
-                    />
-                    <div className="flex gap-2 justify-end w-full">
-                        <CustomSelect
-                            options={typeLabels.reduce((acc, option) => {
-                                acc[option.key] = option.label;
-                                return acc;
-                            }, {} as OptionsMap)}
-                            label={t("filter.type")}
-                            showAllOption
-                            allOptionLabel={t("filter.all")}
-                            selectedKeys={[typeFilter]}
-                            onChange={(e) => setTypeFilter(e.target.value as FeedbackType | "all")}
-                            className="w-full sm:max-w-xs"
-                        />
-                        <CustomSelect
-                            options={statusLabels.reduce((acc, option) => {
-                                acc[option.key] = option.label;
-                                return acc;
-                            }, {} as OptionsMap)}
-                            label={t("filter.status")}
-                            showAllOption
-                            allOptionLabel={t("filter.all")}
-                            selectedKeys={[statusFilter]}
-                            onChange={(e) => setStatusFilter(e.target.value as FeedbackStatus | "all")}
-                            className="w-full sm:max-w-xs"
-                        />
-                        <CustomSelect
-                            options={itemsPerPageOptions.reduce((acc, option) => {
-                                acc[option.key] = option.label;
-                                return acc;
-                            }, {} as OptionsMap)}
-                            label={t("filter.itemsPerPage")}
-                            selectedKeys={[itemsPerPage.toString()]}
-                            onChange={(e) => {
-                                setItemsPerPage(parseInt(e.target.value));
-                                setPage(1); // Reset to first page on requests per page change
-                            }}
-                            className="w-full "
-                        />
-                    </div>
-                </div>
-            </div>
-        );
-    }, [t, typeFilter, statusFilter, searchTerm, itemsPerPage, typeLabels, statusLabels]);
 
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">{t("title")}</h1>
+            <FeedbackFilterBar
+                filters={filters}
+                onFiltersChange={handleFiltersChange}
+                onClearFilters={handleClearFilters}
+            />
             <CustomTable
                 emptyContent={t("table.empty")}
                 aria-label={t("title")}
@@ -275,7 +236,6 @@ export function FeedbackList() {
                 items={data?.feedbacks ?? []}
                 renderCell={renderCell}
                 loadingState={isLoading ? 'loading' : undefined}
-                topContent={topContent}
                 bottomContent={
                     <div className="flex w-full justify-center">
                         <CustomPagination

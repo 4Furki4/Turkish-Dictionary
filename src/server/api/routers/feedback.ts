@@ -4,8 +4,8 @@ import {
     protectedProcedure,
     publicProcedure,
 } from "@/src/server/api/trpc";
-import { and, desc, eq, sql } from "drizzle-orm";
-import { feedbacks, feedbackTypeEnum } from "@/db/schema/feedbacks";
+import { and, desc, eq, sql, asc, or, ilike, notInArray, gte, lte } from "drizzle-orm";
+import { feedbacks, feedbackTypeEnum, feedbackStatusEnum } from "@/db/schema/feedbacks";
 import { feedbackVotes } from "@/db/schema/feedback_votes";
 import { users } from "@/db/schema/users"; // Import the users schema
 import { verifyRecaptcha } from "@/src/lib/recaptcha";
@@ -27,7 +27,7 @@ export const feedbackRouter = createTRPCRouter({
         .mutation(async ({ ctx: { db, session }, input }) => {
             const { captchaToken, ...feedbackData } = input;
 
-            // ✨ Verify the token before proceeding
+            // Verify the token before proceeding
             const { success, score } = await verifyRecaptcha(captchaToken);
             console.log(success, score);
             if (!success) {
@@ -74,18 +74,55 @@ export const feedbackRouter = createTRPCRouter({
     /**
      * Lists all feedback submissions, ordered by the most recent.
      * Includes vote counts and indicates if the current user has voted.
+     * Supports filtering and sorting.
      */
     list: publicProcedure
         .input(
             z.object({
                 limit: z.number().min(1).max(100).nullish(),
                 cursor: z.number().nullish(),
+                type: z.array(z.enum(feedbackTypeEnum.enumValues)).optional(),
+                status: z.array(z.enum(feedbackStatusEnum.enumValues)).optional(),
+                searchTerm: z.string().optional(),
+                sortBy: z.enum(["votes", "createdAt"]).default("votes"),
+                sortOrder: z.enum(["asc", "desc"]).default("desc"),
+                excludeStatuses: z.array(z.enum(feedbackStatusEnum.enumValues)).default([
+                    "closed", "rejected", "duplicate", "fixed", "wont_implement"
+                ]),
+                startDate: z.date().optional(),
+                endDate: z.date().optional(),
             })
         )
         .query(async ({ ctx: { db, session }, input }) => {
             const limit = input.limit ?? 10;
-            const { cursor } = input;
+            const { cursor, type, status, searchTerm, sortBy, sortOrder, excludeStatuses, startDate, endDate } = input;
             const userId = session?.user?.id;
+
+            // Build where conditions
+            const whereConditions = and(
+                // Apply status filters
+                status && status.length > 0 
+                    ? or(...status.map(s => eq(feedbacks.status, s)))
+                    : excludeStatuses.length > 0 
+                        ? notInArray(feedbacks.status, excludeStatuses)
+                        : undefined,
+                // Apply type filters
+                type && type.length > 0 
+                    ? or(...type.map(t => eq(feedbacks.type, t)))
+                    : undefined,
+                // Apply search term
+                searchTerm
+                    ? or(
+                        ilike(feedbacks.title, `%${searchTerm}%`),
+                        ilike(feedbacks.description, `%${searchTerm}%`)
+                    )
+                    : undefined,
+                // Apply date range filters
+                startDate ? gte(feedbacks.createdAt, startDate) : undefined,
+                endDate ? lte(feedbacks.createdAt, endDate) : undefined,
+                // Apply cursor for pagination
+                cursor ? sql`feedbacks.id < ${cursor}` : undefined,
+            );
 
             const voteCounts = db
                 .select({
@@ -95,6 +132,11 @@ export const feedbackRouter = createTRPCRouter({
                 .from(feedbackVotes)
                 .groupBy(feedbackVotes.feedbackId)
                 .as("vote_counts");
+
+            // Determine sort order
+            const orderByClause = sortBy === "votes" 
+                ? (sortOrder === "desc" ? desc(sql<number>`COALESCE(${voteCounts.count}, 0)`) : asc(sql<number>`COALESCE(${voteCounts.count}, 0)`))
+                : (sortOrder === "desc" ? desc(feedbacks.createdAt) : asc(feedbacks.createdAt));
 
             const items = await db
                 .select({
@@ -111,10 +153,9 @@ export const feedbackRouter = createTRPCRouter({
                 })
                 .from(feedbacks)
                 .leftJoin(voteCounts, eq(feedbacks.id, voteCounts.feedbackId))
-                // ✨ Correctly join the 'users' table on the user ID
                 .leftJoin(users, eq(feedbacks.userId, users.id))
-                .orderBy(desc(feedbacks.createdAt))
-                .where(cursor ? sql`feedbacks.id < ${cursor}` : undefined)
+                .where(whereConditions)
+                .orderBy(orderByClause)
                 .limit(limit + 1); // Fetch one extra item to determine if there's a next page
 
             let nextCursor: typeof cursor | undefined = undefined;

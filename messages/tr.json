@@ -363,8 +363,24 @@
         "type": "Tür",
         "status": "Durum",
         "all": "Tümü",
-        "searchPlaceholder": "Ara...",
-        "itemsPerPage": "Sayfa başına"
+        "itemsPerPage": "Sayfa başına",
+        "title": "Filtreler",
+        "clear": "Filtreleri Temizle",
+        "searchLabel": "Ara",
+        "searchPlaceholder": "Geri bildirim ara...",
+        "typePlaceholder": "Türleri seçin...",
+        "typeLabel": "Tür",
+        "statusPlaceholder": "Durumları seçin...",
+        "statusLabel": "Durum",
+        "dateRangeLabel": "Tarih Aralığı",
+        "sortByLabel": "Sıralama",
+        "sortOrderLabel": "Sıra",
+        "sortByPlaceholder": "Sıralama",
+        "sortOrderPlaceholder": "Sıra"
+      },
+      "sort": {
+        "votes": "Oylar",
+        "createdAt": "Oluşturulma Tarihi"
       }
     },
     "sidebar": {
@@ -756,7 +772,9 @@
   },
   "Common": {
     "anonymousUser": "Anonim Kullanıcı",
-    "somethingWentWrong": "Bir şeyler yanlış gitti"
+    "somethingWentWrong": "Bir şeyler yanlış gitti",
+    "desc": "Azalan",
+    "asc": "Artan"
   },
   "ProfilePage": {
     "notFound": "Kullanıcı bulunamadı",
@@ -889,6 +907,8 @@
     "loadingMore": "Yükleniyor...",
     "loadMore": "Daha Fazla Yükle",
     "noMoreFeedback": "Listenin sonuna ulaştınız!",
+    "noFeedbackFound": "Geri Bildirim bulunamadı",
+    "loading": "Yükleniyor...",
     "noFeedbackYet": "Henüz geri bildirim yok. İlk gönderen siz olun!",
     "types": {
       "bug": "Hata Bildirimi",
