@@ -143,7 +143,6 @@ interface FeedbackListProps {
 
 export function FeedbackList({ session }: FeedbackListProps) {
     const t = useTranslations("Feedback");
-    const tDashboard = useTranslations("Dashboard.feedback");
 
     // Filter state
     const [filters, setFilters] = useState<PublicFeedbackFilters>({

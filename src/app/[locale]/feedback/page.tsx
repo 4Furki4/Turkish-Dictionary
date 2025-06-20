@@ -30,12 +30,15 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
         <HydrateClient>
             <div className="container mx-auto py-8 px-4">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold">{t("title")}</h1>
-                    <FeedbackModal session={session}>
+                    <h1 className="text-fs-1 font-bold">{t("title")}</h1>
+                    <FeedbackModal session={session} className="hidden sm:inline-flex">
                         {t("submitFeedback")}
                     </FeedbackModal>
                 </div>
                 <p className="text-muted-foreground mb-8">{t("description")}</p>
+                <FeedbackModal className="w-full mb-2 sm:hidden" session={session}>
+                    {t("submitFeedback")}
+                </FeedbackModal>
 
                 <FeedbackList session={session} />
             </div>
