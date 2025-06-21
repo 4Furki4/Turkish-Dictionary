@@ -17,6 +17,7 @@ import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
 import { BackgroundGradient } from "@/src/components/customs/background-gradient";
 import { CaptchaProvider } from "@/src/components/customs/captcha-provider";
 import { PreferencesInitializer } from "@/src/components/customs/preferences-initializer";
+import { SessionProvider } from "next-auth/react";
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
@@ -112,35 +113,38 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <CaptchaProvider>
               <Providers>
-                <div className="flex flex-col min-h-screen">
-                  <PreferencesInitializer />
-                  <NavbarAndSidebar
-                    session={session}
-                    HomeIntl={t("Home")}
-                    SignInIntl={t("Sign In")}
-                    WordListIntl={t("Word List")}
-                    TitleIntl={t("Title")}
-                    ProfileIntl={t("Profile")}
-                    SavedWordsIntl={t("SavedWords")}
-                    MyRequestsIntl={t("MyRequests")}
-                    SearchHistoryIntl={t("SearchHistory")}
-                    LogoutIntl={t("Logout")}
-                    AnnouncementsIntl={t("Announcements")}
-                    ariaAvatar={t("ariaAvatar")}
-                    ariaMenu={t("ariaMenu")}
-                    ariaLanguages={t("ariaLanguages")}
-                    ariaSwitchTheme={t("ariaSwitchTheme")}
-                    ariaBlur={t("ariaBlur")}
-                  />
-                  <main className="relative flex-grow w-full flex">
-                    {/* ✨ Moved BackgroundGradient here */}
-                    <BackgroundGradient />
-                    {children}
-                  </main>
-                  <Footer />
-                </div>
-                <SpeedInsights />
-                <Analytics />
+                <SessionProvider session={session}>
+
+                  <div className="flex flex-col min-h-screen">
+                    <PreferencesInitializer />
+                    <NavbarAndSidebar
+                      session={session}
+                      HomeIntl={t("Home")}
+                      SignInIntl={t("Sign In")}
+                      WordListIntl={t("Word List")}
+                      TitleIntl={t("Title")}
+                      ProfileIntl={t("Profile")}
+                      SavedWordsIntl={t("SavedWords")}
+                      MyRequestsIntl={t("MyRequests")}
+                      SearchHistoryIntl={t("SearchHistory")}
+                      LogoutIntl={t("Logout")}
+                      AnnouncementsIntl={t("Announcements")}
+                      ariaAvatar={t("ariaAvatar")}
+                      ariaMenu={t("ariaMenu")}
+                      ariaLanguages={t("ariaLanguages")}
+                      ariaSwitchTheme={t("ariaSwitchTheme")}
+                      ariaBlur={t("ariaBlur")}
+                    />
+                    <main className="relative flex-grow w-full flex">
+                      {/* ✨ Moved BackgroundGradient here */}
+                      <BackgroundGradient />
+                      {children}
+                    </main>
+                    <Footer />
+                  </div>
+                  <SpeedInsights />
+                  <Analytics />
+                </SessionProvider>
               </Providers>
             </CaptchaProvider >
           </NextIntlClientProvider >

@@ -3,7 +3,6 @@ import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
 import { and, eq, SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import { purifyObject } from "@/src/lib/utils";
-import { wordAttributes } from "@/db/schema/word_attributes";
 import { users } from "@/db/schema/users";
 import { words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
@@ -12,6 +11,7 @@ import { getHandler } from "../handlers/request-handlers/registry";
 import { TRPCError } from "@trpc/server";
 import { relatedPhrases } from "@/db/schema/related_phrases";
 import { verifyRecaptcha } from "@/src/lib/recaptcha";
+import { wordAttributes } from "@/db/schema/word_attributes";
 
 export const requestRouter = createTRPCRouter({
     // User request management endpoints
@@ -531,6 +531,73 @@ export const requestRouter = createTRPCRouter({
         }))
         return [...approvedAttributes, ...pendingRequestsWithIds];
     }),
+
+    // Simple word request for Tier-1 contribution flow
+    createSimpleWordRequest: protectedProcedure
+        .input(z.object({
+            wordName: z.string().min(1, "Word name is required").max(100),
+            locale: z.enum(["en", "tr"]),
+            captchaToken: z.string(),
+        }))
+        .mutation(async ({ input, ctx: { db, session: { user } } }) => {
+            const { wordName, locale, captchaToken } = input;
+
+            // Verify reCAPTCHA
+            const { success } = await verifyRecaptcha(captchaToken);
+            if (!success) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'captchaFailed',
+                });
+            }
+
+            // Check if user already requested this word
+            const existingRequest = await db.select()
+                .from(requests)
+                .where(and(
+                    eq(requests.userId, user.id),
+                    eq(requests.entityType, "words"),
+                    eq(requests.action, "create"),
+                    eq(requests.status, "pending")
+                ));
+
+            // Check if any existing request has the same word name
+            const duplicateRequest = existingRequest.find(req => {
+                try {
+                    if (!req.newData || typeof req.newData !== 'string') return false;
+                    const newData = JSON.parse(req.newData) as Record<string, any>;
+                    return newData.name === wordName.trim();
+                } catch {
+                    return false;
+                }
+            });
+
+            if (duplicateRequest) {
+                throw new TRPCError({
+                    code: 'CONFLICT',
+                    message: 'wordAlreadyRequested',
+                });
+            }
+
+            // Create the simple word request
+            const requestData = {
+                name: wordName.trim(),
+                locale: locale,
+                requestType: 'simple' // Flag to identify simple requests
+            };
+
+            await db.insert(requests).values({
+                entityType: "words",
+                action: "create",
+                userId: user.id,
+                entityId: null, // No entity ID for new word requests
+                newData: JSON.stringify(requestData),
+                reason: `Simple word request for: ${wordName.trim()}`
+            });
+
+            return { success: true };
+        }),
+
     requestEditWord: protectedProcedure.input(z.object({
         word_id: z.number(),
         wordName: z.string().optional(),
@@ -833,5 +900,5 @@ export const requestRouter = createTRPCRouter({
                 .where(eq(requests.id, requestId));
 
             return { success: true };
-        })
+        }),
 })

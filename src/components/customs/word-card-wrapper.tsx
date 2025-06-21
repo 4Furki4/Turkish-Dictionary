@@ -3,25 +3,22 @@ import { api } from '@/src/trpc/react'
 import React from 'react'
 import WordCard from './word-card';
 import { Session } from 'next-auth';
-import { useTranslations } from 'next-intl';
-import { Link as NextIntlLink } from "@/src/i18n/routing";
+import WordNotFoundCard from './word-not-found-card';
+
 export default function WordCardWrapper({ name, session, locale }: { name: string, session: Session | null, locale: "en" | "tr" }) {
     const [response] = api.word.getWord.useSuspenseQuery({ name }, {
         staleTime: 60 * 30 * 1000 // 30 minutes cache
     })
-    const t = useTranslations('SearchResults')
-    if (!response || response.length === 0) return (
-        <>
-            <h1 className="text-center text-fs-3">{name}</h1>
-            <p className="text-center text-fs-3">
-                {t('NoMeaningError')}
-            </p>
-            {/* TODO: change here when contact page is ready. */}
-            <NextIntlLink href="/" locale={locale}>
-                {t('Contact')}
-            </NextIntlLink>
-        </>
-    )
+
+    if (!response || response.length === 0) {
+        return (
+            <WordNotFoundCard 
+                wordName={name}
+                locale={locale}
+                session={session}
+            />
+        );
+    }
     return response && response.length > 0 ? (
         response.map((word, index) => {
             // Ensure we have a valid unique key for each word card
@@ -36,15 +33,10 @@ export default function WordCardWrapper({ name, session, locale }: { name: strin
             );
         })
     ) : (
-        <>
-            <h1 className="text-center text-fs-3">{name}</h1>
-            <p className="text-center text-fs-3">
-                {t('NoMeaningError')}
-            </p>
-            {/* TODO: change here when contact page is ready. */}
-            <NextIntlLink href="/" locale={locale}>
-                {t('Contact')}
-            </NextIntlLink>
-        </>
+        <WordNotFoundCard 
+            wordName={name}
+            locale={locale}
+            session={session}
+        />
     );
 }

@@ -400,8 +400,27 @@
   },
   "SearchResults": {
     "NoResults": "Word not found",
-    "NoMeaningError": "Word found but no meanings found. Please contact with admins!",
-    "Contact": "Contact Admins"
+    "NoMeaningError": "No meanings found for this word.",
+    "Contact": "Contact us to add this word",
+    "requestWord": "Request Word",
+    "addDetailedEntry": "Add Detailed Entry"
+  },
+  "SimpleWordRequest": {
+    "title": "Request Missing Word",
+    "description": "We'll add this word to our review queue and notify you when it's available.",
+    "whatHappensNext": "What happens next?",
+    "step1": "Your request is submitted to our team",
+    "step2": "We review and research the word",
+    "step3": "The word is added to the dictionary",
+    "wantToAddMore": "Want to add detailed information yourself?",
+    "addDetailedEntry": "Add Detailed Entry",
+    "submitRequest": "Submit Request",
+    "submitting": "Submitting...",
+    "requestSubmitted": "Word request submitted successfully!",
+    "requestFailed": "Failed to submit request. Please try again.",
+    "captchaFailed": "reCAPTCHA verification failed. Please try again.",
+    "captchaNotReady": "reCAPTCHA not ready. Please wait a moment.",
+    "wordAlreadyRequested": "You have already requested this word."
   },
   "WordList": {
     "title": "Turkish Dictionary Word List",
@@ -1046,5 +1065,14 @@
       "title": "Contact Us",
       "p1": "If you have any questions about this Privacy Policy, please contact us via the feedback form."
     }
+  },
+  "WordNotFound": {
+    "title": "Word Not Found",
+    "searchedWord": "Searched word",
+    "description": "This word is not in our dictionary yet. Help us improve by requesting it or adding detailed information.",
+    "requestWord": "Request Word",
+    "addDetailedEntry": "Add Detailed Entry",
+    "helpText": "Quick request adds the word to our review queue. Detailed entry lets you contribute meanings, examples, and more.",
+    "backToSearch": "Back to search"
   }
 }

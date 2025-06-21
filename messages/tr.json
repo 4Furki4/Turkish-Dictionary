@@ -393,8 +393,27 @@
   },
   "SearchResults": {
     "NoResults": "Sonuç bulunamadı",
-    "NoMeaningError": "Kelime bulundu ancak anlamı bulunamadı. Lütfen yöneticiyle iletişime geçin.",
-    "Contact": "İletişime Geçin"
+    "NoMeaningError": "Bu kelime için anlam bulunamadı.",
+    "Contact": "Bu kelimeyi eklemek için bizimle iletişime geçin",
+    "requestWord": "Kelime Talep Et",
+    "addDetailedEntry": "Detaylı Girdi Ekle"
+  },
+  "SimpleWordRequest": {
+    "title": "Eksik Kelime Talebi",
+    "description": "Bu kelimeyi inceleme kuyruğumuza ekleyeceğiz ve mevcut olduğunda size bildireceğiz.",
+    "whatHappensNext": "Bundan sonra ne olacak?",
+    "step1": "Talebiniz ekibimize gönderilir",
+    "step2": "Kelimeyi inceler ve araştırırız",
+    "step3": "Kelime sözlüğe eklenir",
+    "wantToAddMore": "Detaylı bilgileri kendiniz eklemek ister misiniz?",
+    "addDetailedEntry": "Detaylı Giriş Ekle",
+    "submitRequest": "Talep Gönder",
+    "submitting": "Gönderiliyor...",
+    "requestSubmitted": "Kelime talebi başarıyla gönderildi!",
+    "requestFailed": "Talep gönderilemedi. Lütfen tekrar deneyin.",
+    "captchaFailed": "reCAPTCHA doğrulaması başarısız. Lütfen tekrar deneyin.",
+    "captchaNotReady": "reCAPTCHA hazır değil. Lütfen biraz bekleyin.",
+    "wordAlreadyRequested": "Bu kelimeyi zaten talep ettiniz."
   },
   "WordList": {
     "title": "Türkçe Sözlük Kelimeleri",
@@ -1019,5 +1038,14 @@
       "title": "Bize Ulaşın",
       "p1": "Bu Gizlilik Politikası hakkında herhangi bir sorunuz varsa, lütfen geri bildirim formu aracılığıyla bizimle iletişime geçin."
     }
+  },
+  "WordNotFound": {
+    "title": "Kelime Bulunamadı",
+    "searchedWord": "Aranan kelime",
+    "description": "Bu kelime henüz sözlüğümüzde yok. Talep ederek veya detaylı bilgi ekleyerek gelişmemize yardımcı olun.",
+    "requestWord": "Kelime Talep Et",
+    "addDetailedEntry": "Detaylı Giriş Ekle",
+    "helpText": "Hızlı talep kelimeyi inceleme kuyruğumuza ekler. Detaylı giriş anlamlar, örnekler ve daha fazlasını eklemenizi sağlar.",
+    "backToSearch": "Aramaya dön"
   }
 }
