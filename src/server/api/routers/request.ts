@@ -536,11 +536,10 @@ export const requestRouter = createTRPCRouter({
     createSimpleWordRequest: protectedProcedure
         .input(z.object({
             wordName: z.string().min(1, "Word name is required").max(100),
-            locale: z.enum(["en", "tr"]),
             captchaToken: z.string(),
         }))
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
-            const { wordName, locale, captchaToken } = input;
+            const { wordName, captchaToken } = input;
 
             // Verify reCAPTCHA
             const { success } = await verifyRecaptcha(captchaToken);
@@ -582,7 +581,6 @@ export const requestRouter = createTRPCRouter({
             // Create the simple word request
             const requestData = {
                 name: wordName.trim(),
-                locale: locale,
                 requestType: 'simple' // Flag to identify simple requests
             };
 

@@ -1046,6 +1046,8 @@
     "requestWord": "Kelime Talep Et",
     "addDetailedEntry": "Detaylı Giriş Ekle",
     "helpText": "Hızlı talep kelimeyi inceleme kuyruğumuza ekler. Detaylı giriş anlamlar, örnekler ve daha fazlasını eklemenizi sağlar.",
-    "backToSearch": "Aramaya dön"
+    "backToSearch": "Aramaya dön",
+    "signInToRequestWord": "Kelime Talep Etmek İçin Önce Giriş Yapmalısınız",
+    "signIn": "Giriş Yap"
   }
 }

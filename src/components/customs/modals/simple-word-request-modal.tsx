@@ -14,23 +14,22 @@ import { api } from "@/src/trpc/react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { toast } from "sonner";
 import { Link as NextIntlLink } from "@/src/i18n/routing";
-import { Plus, ExternalLink } from "lucide-react";
+import { Plus, ExternalLink, HeartHandshake } from "lucide-react";
+import { CustomModal } from "../heroui/custom-modal";
 
 interface SimpleWordRequestModalProps {
   wordName: string;
-  locale: "en" | "tr";
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export default function SimpleWordRequestModal({
   wordName,
-  locale,
   isOpen,
   onOpenChange,
 }: SimpleWordRequestModalProps) {
   const t = useTranslations("SimpleWordRequest");
-  const tCommon = useTranslations("Common");
+  const tGeneral = useTranslations("");
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,10 +62,9 @@ export default function SimpleWordRequestModal({
 
     try {
       const captchaToken = await executeRecaptcha("simple_word_request");
-      
+
       await createSimpleRequestMutation.mutateAsync({
         wordName: wordName.trim(),
-        locale,
         captchaToken,
       });
     } catch (error) {
@@ -76,35 +74,32 @@ export default function SimpleWordRequestModal({
   };
 
   return (
-    <Modal 
-      isOpen={isOpen} 
+    <CustomModal
+      isOpen={isOpen}
       onOpenChange={onOpenChange}
-      size="md"
+      size="lg"
       backdrop="opaque"
-      classNames={{
-        base: "bg-background/95 backdrop-blur-md",
-      }}
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <Plus className="w-5 h-5 text-primary" />
             <span>{t("title")}</span>
+            <HeartHandshake className="w-5 h-5 text-primary" />
           </div>
         </ModalHeader>
-        
+
         <ModalBody>
           <div className="space-y-4">
             <div className="text-center">
-              <p className="text-lg font-medium mb-2">
+              <p className="text-lg font-medium mb-2 text-primary underline underline-offset-2">
                 &ldquo;{wordName}&rdquo;
               </p>
               <p className="text-default-600">
                 {t("description")}
               </p>
             </div>
-            
-            <div className="bg-default-100 rounded-lg p-4">
+
+            <div className="bg-primary/10 rounded-lg p-4">
               <p className="text-sm text-default-700 mb-3">
                 {t("whatHappensNext")}
               </p>
@@ -119,9 +114,8 @@ export default function SimpleWordRequestModal({
               <p className="text-sm text-default-600 mb-3">
                 {t("wantToAddMore")}
               </p>
-              <NextIntlLink 
+              <NextIntlLink
                 href={`/contribute-word?word=${encodeURIComponent(wordName)}` as any}
-                locale={locale}
                 className="inline-flex items-center gap-2 text-primary hover:text-primary-600 text-sm font-medium"
               >
                 <ExternalLink className="w-4 h-4" />
@@ -130,17 +124,17 @@ export default function SimpleWordRequestModal({
             </div>
           </div>
         </ModalBody>
-        
+
         <ModalFooter>
-          <Button 
-            variant="light" 
+          <Button
+            variant="light"
             onPress={() => onOpenChange(false)}
             isDisabled={isSubmitting}
           >
-            {tCommon("cancel")}
+            {tGeneral("Actions.Cancel")}
           </Button>
-          <Button 
-            color="primary" 
+          <Button
+            color="primary"
             onPress={handleSubmitRequest}
             isLoading={isSubmitting}
             isDisabled={isSubmitting}
@@ -149,6 +143,6 @@ export default function SimpleWordRequestModal({
           </Button>
         </ModalFooter>
       </ModalContent>
-    </Modal>
+    </CustomModal>
   );
 }

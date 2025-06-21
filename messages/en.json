@@ -1073,6 +1073,8 @@
     "requestWord": "Request Word",
     "addDetailedEntry": "Add Detailed Entry",
     "helpText": "Quick request adds the word to our review queue. Detailed entry lets you contribute meanings, examples, and more.",
-    "backToSearch": "Back to search"
+    "backToSearch": "Back to search",
+    "signInToRequestWord": "Sign in to request word",
+    "signIn": "Sign in"
   }
 }
