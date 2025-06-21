@@ -1,10 +1,10 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { Edit3, HeartHandshake, Search as SearchIcon, Stars } from "lucide-react";
+import { Edit3, HeartHandshake, KeyboardIcon, Search as SearchIcon, Stars } from "lucide-react";
 import { useRouter } from "@/src/i18n/routing";
 import { Input } from "@heroui/input";
 import { useEffect, useState } from "react";
-import { Card, CardBody, CardHeader } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, Popover, PopoverContent, PopoverTrigger, Tooltip } from "@heroui/react";
 import { api } from "@/src/trpc/react";
 import { useDebounce } from "@uidotdev/usehooks";
 import PopularSearches from "./customs/hero/popular-searches";
@@ -12,6 +12,7 @@ import TrendingSearchesContainer from "./customs/hero/trending-searches-containe
 import { useSnapshot } from "valtio";
 import { preferencesState } from "../store/preferences";
 import { cn } from "@/lib/utils";
+import { TurkishKeyboard } from "./customs/utils/TurkishKeyboard";
 
 export default function Hero({ children }: {
   children: React.ReactNode;
@@ -109,6 +110,22 @@ export default function Hero({ children }: {
             <form onSubmit={handleSearch}>
               <div className="relative">
                 <Input
+                  endContent={
+                    <Popover placement="bottom-end" classNames={{
+                      content: "bg-background"
+                    }}>
+                      <PopoverTrigger>
+                        <Button className="bg-transparent" isIconOnly variant="flat" radius="none">
+                          <Tooltip content={t("hero.turkishLetters")}>
+                            <KeyboardIcon className="text-default-400" />
+                          </Tooltip>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="grid grid-cols-3 gap-1">
+                        <TurkishKeyboard className="bg-background/50 border border-border" onCharClick={(char) => setWordInput((prev) => prev + char)} />
+                      </PopoverContent>
+                    </Popover>
+                  }
                   classNames={{
                     inputWrapper: [
                       "rounded-sm",

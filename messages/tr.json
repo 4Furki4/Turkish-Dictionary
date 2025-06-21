@@ -50,6 +50,7 @@
   "Home": {
     "alreadySignedIn": "Zaten giriş yaptınız",
     "hero": {
+      "turkishLetters": "Türkçe karakterler",
       "title": "Çağdaş Türkçe Sözlüğü",
       "motto": "Söz hazineni genişlet, zihin hazinen genişlesin.",
       "searchPlaceholder": "Kelime ara...",
