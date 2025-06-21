@@ -11,6 +11,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { purifyObject } from "@/src/lib/utils";
 import { searchLogs, type NewSearchLog } from "@/db/schema/search_logs";
 import { userSearchHistory, type InsertUserSearchHistory } from "@/db/schema/user_search_history";
+import { generateAccentVariations } from "@/src/lib/search-utils";
 
 export const wordRouter = createTRPCRouter({
   searchWordsSimple: publicProcedure
@@ -371,20 +372,32 @@ export const wordRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx: { db } }) => {
       const purifiedInput = purifyObject(input);
-      const recommendations = await db.execute(
-        sql`
+      if (!purifiedInput.query) {
+        return [];
+      }
+
+      const searchVariations = generateAccentVariations(purifiedInput.query);
+
+      // Dynamically construct the parts of the raw SQL query using Drizzle's `sql` tag
+      const whereClauses = searchVariations.map(term => sql`w.name ILIKE ${`%${term}%`}`);
+      const whereSql = sql.join(whereClauses, sql` OR `);
+
+      const caseClauses = searchVariations.flatMap(term => [
+        sql`WHEN w.name ILIKE ${term} THEN 1`,
+        sql`WHEN w.name ILIKE ${`${term}%`} THEN 2`
+      ]);
+      const caseSql = sql.join(caseClauses, sql` `);
+
+      // The entire query is now a single `SQL` object
+      const finalQuery = sql`
         WITH RankedWords AS (
           SELECT
             w.id AS word_id,
             w.name AS name,
-            CASE 
-              WHEN w.name ILIKE ${purifiedInput.query} THEN 1
-              WHEN w.name ILIKE ${`${purifiedInput.query}%`} THEN 2
-              ELSE 3
-            END AS match_rank,
+            CASE ${caseSql} ELSE 3 END AS match_rank,
             LENGTH(w.name) AS name_length
           FROM words w
-          WHERE w.name ILIKE ${`%${purifiedInput.query}%`}
+          WHERE ${whereSql}
         )
         SELECT DISTINCT
           word_id,
@@ -396,8 +409,13 @@ export const wordRouter = createTRPCRouter({
           match_rank,
           name_length
         LIMIT ${purifiedInput.limit};
-        `
-      ) as { word_id: number; name: string; match_rank: number; name_length: number }[];
+      `;
+
+      // db.execute now receives a single, valid argument
+      const result = await db.execute(finalQuery) as { word_id: number; name: string; match_rank: number; name_length: number }[]
+
+      // The result from vercel/postgres driver is an object with a 'rows' property
+      const recommendations = result ?? [];
 
       return recommendations.map(({ word_id, name }) => ({ word_id, name }));
     }),
