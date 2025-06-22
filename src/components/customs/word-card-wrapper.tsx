@@ -12,9 +12,7 @@ export default function WordCardWrapper({ name, session, locale }: { name: strin
 
     if (!response || response.length === 0) {
         return (
-            <WordNotFoundCard 
-                wordName={name}
-                locale={locale}
+            <WordNotFoundCard
                 session={session}
             />
         );
@@ -33,9 +31,7 @@ export default function WordCardWrapper({ name, session, locale }: { name: strin
             );
         })
     ) : (
-        <WordNotFoundCard 
-            wordName={name}
-            locale={locale}
+        <WordNotFoundCard
             session={session}
         />
     );
