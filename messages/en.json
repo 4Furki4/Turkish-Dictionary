@@ -1153,7 +1153,7 @@
     "removeImage": "Remove Image",
     "contributionTabs": "Contribution Tabs",
     "relatedWords": "Related Words",
-    "relatedPhrases": "Related Phrases", 
+    "relatedPhrases": "Related Phrases",
     "relatedWordsDescription": "Add words that are related to this word (synonyms, antonyms, etc.)",
     "relatedPhrasesDescription": "Add phrases and idioms that are related to this word",
     "addRelatedWord": "Add Related Word",
@@ -1174,5 +1174,9 @@
     "noWordsFound": "No words found matching your search",
     "add": "Add",
     "cancel": "Cancel"
+  },
+  "VerifyRequest": {
+    "title": "Verify Request",
+    "description": "Check your email for the sign in link."
   }
 }

@@ -68,7 +68,7 @@
     "postgres": "^3.4.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-email": "^2.1.6",
+    "react-email": "^4.0.16",
     "react-error-boundary": "^6.0.0",
     "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "7.57.0",
