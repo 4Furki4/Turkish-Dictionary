@@ -1047,5 +1047,9 @@
       "title": "Contact Us",
       "p1": "If you have any questions about this Privacy Policy, please contact us via the feedback form."
     }
+  },
+  "VerifyRequest": {
+    "title": "Verify Request",
+    "description": "Check your email for the sign in link."
   }
 }

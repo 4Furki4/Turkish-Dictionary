@@ -84,5 +84,12 @@ export const authConfig = {
     pages: {
         newUser: "/complete-profile",
         signIn: "/signin",
+        verifyRequest: "/verify-request",
+    },
+    theme: {
+        brandColor: "#a91101",
+        colorScheme: "dark",
+        logo: "/logo.svg",
+
     }
 } satisfies NextAuthConfig;

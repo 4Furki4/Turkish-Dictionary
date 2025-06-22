@@ -1020,5 +1020,9 @@
       "title": "Bize Ulaşın",
       "p1": "Bu Gizlilik Politikası hakkında herhangi bir sorunuz varsa, lütfen geri bildirim formu aracılığıyla bizimle iletişime geçin."
     }
+  },
+  "VerifyRequest": {
+    "title": "Doğrulama Talebi",
+    "description": "E-posta adresinize giriş bağlantısı gönderildi."
   }
 }
