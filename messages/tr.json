@@ -1101,6 +1101,13 @@
     "noAttributesFound": "Özellik bulunamadı",
     "noLanguagesFound": "Dil bulunamadı",
     "noPartsOfSpeechFound": "Kelime Türü bulunamadı",
-    "noMeaningAttributesFound": "Anlam Özellikleri bulunamadı"
+    "noMeaningAttributesFound": "Anlam Özellikleri bulunamadı",
+    "uploadBegin": "Resimler yüklenmeye başlandı...",
+    "uploadingImages": "Resimler yükleniyor...",
+    "imagesUploaded": "Resimler başarıyla yüklendi",
+    "imagesUploadFailed": "Resimler yüklenemedi",
+    "imageTooLarge": "Resim boyutu çok büyük (azami boyut: {size}MB).",
+    "imageTooLargeDescription": "Resim boyutunu azaltmak için çevrimiçi sıkıştırma araçlarını kullanabilirsiniz: ",
+    "removeImage": "Resmi kaldır"
   }
 }

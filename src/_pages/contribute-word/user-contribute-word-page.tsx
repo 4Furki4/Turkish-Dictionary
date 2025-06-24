@@ -14,6 +14,7 @@ import {
   CardHeader,
   AutocompleteItem,
   Divider,
+  Link,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -23,7 +24,7 @@ import type { Session } from "next-auth";
 
 import { api } from "@/src/trpc/react";
 import NewWordAttributeRequestModal from "@/src/components/customs/edit-request-modal/word/new-word-attribute-request-modal";
-import { Plus, Trash2, Upload, X } from "lucide-react";
+import { AlertCircle, Plus, Trash2, Upload, X } from "lucide-react";
 import { CustomTabs } from "@/src/components/customs/heroui/custom-tabs";
 import CustomCard from "@/src/components/customs/heroui/custom-card";
 import { CustomInput } from "@/src/components/customs/heroui/custom-input";
@@ -32,6 +33,7 @@ import { CustomTextarea } from "@/src/components/customs/heroui/custom-textarea"
 import { CustomAutocomplete } from "@/src/components/customs/heroui/custom-autocomplete";
 import type { TRPCClientErrorLike } from "@trpc/client";
 import type { AppRouter } from "@/src/server/api/root";
+import type { ClientUploadedFileData } from "uploadthing/types";
 
 // Schema for detailed form
 const detailedFormSchema = z.object({
@@ -50,10 +52,7 @@ const detailedFormSchema = z.object({
       sentence: z.string().optional(),
       author: z.string().optional(),
     }).optional(),
-    imageFile: z.object({
-      url: z.string(),
-      key: z.string(),
-    }).nullable().optional(),
+    image: z.any().optional(), // Changed to handle File objects
   })).min(1, "At least one meaning is required"),
 });
 
@@ -77,7 +76,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
 
   const [activeTab, setActiveTab] = useState("detailed");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<Record<number, number>>({});
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [isAttributeModalOpen, setIsAttributeModalOpen] = useState(false);
 
   // API queries for existing data
@@ -138,7 +137,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
         meaning: "",
         attributes: [],
         example: { sentence: "", author: "" },
-        imageFile: null,
+        image: null,
       }],
     },
   });
@@ -155,69 +154,138 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
     control: detailedForm.control,
     name: "meanings",
   });
+  console.log('detailedForm values', detailedForm.getValues())
 
-  // Handle image upload
-  const handleImageUpload = useCallback(async (file: File, meaningIndex: number) => {
+  // Handle image selection for preview
+  const handleImageSelect = useCallback((file: File, meaningIndex: number) => {
     try {
-      setUploadProgress(prev => ({ ...prev, [meaningIndex]: 0 }));
-
-      const uploadResult = await uploadFiles("imageUploader", {
-        files: [file],
-        onUploadProgress: ({ progress }: any) => {
-          setUploadProgress(prev => ({ ...prev, [meaningIndex]: progress }));
-        },
-      });
-
-      if (uploadResult && uploadResult[0]) {
-        const uploadedFile = uploadResult[0];
-        detailedForm.setValue(`meanings.${meaningIndex}.imageFile`, {
-          url: uploadedFile.url,
-          key: uploadedFile.key,
-        });
-        toast.success(t("imageUploaded"));
+      // Validate file size (4MB limit)
+      const ONE_MB = 1 * 1024 * 1024;
+      if (file.size > ONE_MB) {
+        toast(
+          (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="text-primary h-5 w-5" />
+                <h1>{t("imageTooLarge", { size: 1 })}</h1>
+              </div>
+              <p>{t("imageTooLargeDescription")}</p>
+              <Link color="foreground" underline="always" href="https://www.iloveimg.com/compress-image" target="_blank" rel="noopener noreferrer">
+                ILoveImg
+              </Link>
+            </div>
+          ),
+          {
+            duration: 4000, // 4 seconds
+            dismissible: true,
+            style: {
+              background: "hsl(var(--destructive)/0.3)",
+            },
+          }
+        );
+        return;
       }
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreviewUrls(prev => {
+          const newPreviews = [...prev];
+          newPreviews[meaningIndex] = reader.result as string;
+          return newPreviews;
+        });
+      };
+      reader.readAsDataURL(file);
+
+      // Store file in form
+      detailedForm.setValue(`meanings.${meaningIndex}.image`, [file]);
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error(t("imageUploadFailed"));
-    } finally {
-      setUploadProgress(prev => ({ ...prev, [meaningIndex]: 0 }));
+      console.error("Image selection error:", error);
+      toast.error(t("imageSelectionFailed"));
     }
   }, [detailedForm, t]);
 
-  // Upload functionality
+  // Remove image
+  const removeImage = useCallback((meaningIndex: number) => {
+    detailedForm.setValue(`meanings.${meaningIndex}.image`, null);
+    setImagePreviewUrls(prev => {
+      const newPreviews = [...prev];
+      newPreviews[meaningIndex] = "";
+      return newPreviews;
+    });
+  }, [detailedForm]);
+
   // Submit detailed form
   const onSubmitDetailed = async (data: DetailedFormData) => {
     if (!executeRecaptcha) {
-      toast.error(t("captchaFailed"));
+      toast.error(t("recaptchaError"));
       return;
     }
 
-    const captchaToken = await executeRecaptcha("submit_detailed_word_request");
+    setIsSubmitting(true);
+    try {
+      const captchaToken = await executeRecaptcha("submit_detailed_word_request");
 
-    // Format the data for the API
-    const formattedData = {
-      name: data.name.trim(),
-      phonetic: data.phonetic?.trim() || undefined,
-      prefix: data.prefix?.trim() || undefined,
-      root: data.root?.trim() || undefined,
-      suffix: data.suffix?.trim() || undefined,
-      language: data.languageCode || undefined,
-      attributes: data.attributes?.map(attr => parseInt(attr)) || [],
-      meanings: data.meanings.map(meaning => ({
-        partOfSpeechId: meaning.partOfSpeechId ? parseInt(meaning.partOfSpeechId) : undefined,
-        meaning: meaning.meaning.trim(),
-        attributes: meaning.attributes?.map(attr => parseInt(attr)) || [],
-        example: meaning.example?.sentence?.trim() ? {
-          sentence: meaning.example.sentence.trim(),
-          // TODO: Handle author name to ID conversion on backend
-          // author: meaning.example.author?.trim() || null,
-        } : undefined,
-        imageUrl: meaning.imageFile?.url || undefined,
-      })),
-      captchaToken,
-    };
+      // Upload images first if any exist
+      const meaningImages = data.meanings.map(meaning => meaning.image?.[0]).filter(Boolean) as File[];
+      let uploadedImageUrls: string[] = [];
+      let uploadResults: ClientUploadedFileData<{
+        uploadedBy: string;
+      }>[] = [];
+      if (meaningImages.length > 0) {
+        try {
+          const uploadFilesPromise = uploadFiles("imageUploader", {
+            files: meaningImages,
+            onUploadBegin: () => {
+              toast.info(t("uploadBegin"));
+            },
+          });
+          toast.promise(uploadFilesPromise, {
+            success: (data) => {
+              uploadResults = data;
+              return toast.success(t("imagesUploaded"));
+            },
+            error: t("imageUploadFailed"),
+          });
+          uploadedImageUrls = uploadResults.map(result => result.ufsUrl);
+        } catch (uploadError) {
+          throw new Error(t("imageUploadFailed"));
+        }
+      }
 
-    createFullWordRequest.mutate(formattedData);
+      // Format the data for the API
+      let imageIndex = 0;
+      const formattedData = {
+        name: data.name.trim(),
+        phonetic: data.phonetic?.trim() || undefined,
+        prefix: data.prefix?.trim() || undefined,
+        root: data.root?.trim() || undefined,
+        suffix: data.suffix?.trim() || undefined,
+        language: data.languageCode || undefined,
+        attributes: data.attributes?.map(attr => parseInt(attr)).filter(Boolean) || [],
+        meanings: data.meanings.map((meaning) => ({
+          partOfSpeechId: meaning.partOfSpeechId ? parseInt(meaning.partOfSpeechId) : undefined,
+          meaning: meaning.meaning.trim(),
+          attributes: meaning.attributes?.map(attr => parseInt(attr)).filter(Boolean) || [],
+          example: meaning.example?.sentence?.trim() ? {
+            sentence: meaning.example.sentence.trim(),
+            author: meaning.example.author?.trim() ? parseInt(meaning.example.author.trim()) : undefined,
+          } : undefined,
+          imageUrl: meaning.image?.[0] ? uploadedImageUrls[imageIndex++] : undefined,
+        })),
+        captchaToken,
+      };
+
+      await createFullWordRequest.mutateAsync(formattedData);
+      toast.success(t("requestSubmitted"));
+      detailedForm.reset();
+      setImagePreviewUrls([]);
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      toast.error(error.message || t("submissionError"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Submit simple form
@@ -595,52 +663,51 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                       <div className="space-y-3">
                         <h5 className="font-medium text-sm">{t("image")}</h5>
 
-                        <div className="flex items-center gap-4">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                handleImageUpload(file, meaningIndex);
-                              }
-                            }}
-                            className="hidden"
-                            id={`image-upload-${meaningIndex}`}
-                          />
-                          <Button
-                            type="button"
-                            variant="bordered"
-                            size="sm"
-                            onClick={() => {
-                              document.getElementById(`image-upload-${meaningIndex}`)?.click();
-                            }}
-                            disabled={uploadProgress[meaningIndex] > 0}
-                          >
-                            <Upload className="h-4 w-4 mr-2" />
-                            {uploadProgress[meaningIndex] > 0
-                              ? `${uploadProgress[meaningIndex]}%`
-                              : t("uploadImage")
-                            }
-                          </Button>
 
-                          {detailedForm.watch(`meanings.${meaningIndex}.imageFile`) && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-success">✓ {t("imageUploaded")}</span>
-                              <Button
-                                type="button"
-                                isIconOnly
-                                size="sm"
-                                variant="light"
-                                onPress={() => {
-                                  detailedForm.setValue(`meanings.${meaningIndex}.imageFile`, null);
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          )}
-                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleImageSelect(file, meaningIndex);
+                            }
+                          }}
+                          className="hidden"
+                          id={`image-upload-${meaningIndex}`}
+                        />
+                        <Button
+                          type="button"
+                          variant="bordered"
+                          size="sm"
+                          onPress={() => {
+                            document.getElementById(`image-upload-${meaningIndex}`)?.click();
+                          }}
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          {t("uploadImage")}
+                        </Button>
+
+                        {imagePreviewUrls[meaningIndex] && (
+                          <div className="flex flex-col gap-2">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={imagePreviewUrls[meaningIndex]}
+                              alt="Uploaded Image"
+                              className="rounded object-cover"
+                            />
+                            <Button
+                              type="button"
+                              color="danger"
+                              onPress={() => {
+                                removeImage(meaningIndex);
+                              }}
+                              endContent={<X className="h-4 w-4" />}
+                            >
+                              {t("removeImage")}
+                            </Button>
+                          </div>
+                        )}
                       </div>
                       <Button
                         type="button"
@@ -650,7 +717,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                           meaning: "",
                           attributes: [],
                           example: { sentence: "", author: "" },
-                          imageFile: null,
+                          image: null,
                         })}
                         className="text-primary"
                       >

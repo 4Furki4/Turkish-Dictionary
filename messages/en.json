@@ -1128,6 +1128,13 @@
     "noAttributesFound": "No attributes found",
     "noLanguagesFound": "No languages found",
     "noPartsOfSpeechFound": "No parts of speech found",
-    "noMeaningAttributesFound": "No meaning attributes found"
+    "noMeaningAttributesFound": "No meaning attributes found",
+    "uploadBegin": "Uploading images...",
+    "uploadingImages": "Uploading images...",
+    "imagesUploaded": "Images uploaded successfully",
+    "imagesUploadFailed": "Failed to upload images",
+    "imageTooLarge": "Image is too large (max {size}MB).",
+    "imageTooLargeDescription": "You can compress your image using online tools like: ",
+    "removeImage": "Remove Image"
   }
 }
