@@ -1112,7 +1112,7 @@
     "exampleSentence": "Example Sentence",
     "exampleSentencePlaceholder": "Enter an example sentence",
     "exampleAuthor": "Example Author",
-    "exampleAuthorPlaceholder": "Enter author name (optional)",
+    "exampleAuthorPlaceholder": "Select author (optional)",
     "image": "Image",
     "uploadImage": "Upload Image",
     "imageUploaded": "Image uploaded successfully",
@@ -1124,6 +1124,10 @@
     "requestFailed": "Failed to submit your contribution. Please try again.",
     "captchaFailed": "reCAPTCHA verification failed. Please try again.",
     "wordAlreadyRequested": "You have already requested this word. Please wait for admin review.",
-    "backToSearch": "Back to Search"
+    "backToSearch": "Back to Search",
+    "noAttributesFound": "No attributes found",
+    "noLanguagesFound": "No languages found",
+    "noPartsOfSpeechFound": "No parts of speech found",
+    "noMeaningAttributesFound": "No meaning attributes found"
   }
 }

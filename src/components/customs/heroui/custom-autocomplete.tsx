@@ -13,19 +13,8 @@ const customAutocompleteStyles = tv({
         base: "sm:max-w-64",
         listboxWrapper: "max-h-[320px]",
         listbox: "bg-background/90",
-        popoverContent: "bg-background/80 backdrop-blur-sm border-primary/40",
-        inputWrapper: [ // Added from the Input component for consistency
-            "rounded-sm",
-            "border-2",
-            "border-primary/40",
-            "shadow-xl",
-            "group-data-[hover=true]:border-primary/60",
-        ],
-        input: [ // Added from the Input component for consistency
-            "text-base",
-            "text-foreground",
-            "placeholder:text-muted-foreground",
-        ],
+        inputWrapper: "border-primary/40",
+        popoverContent: "bg-background/80 backdrop-blur-sm",
         clearButton: "text-foreground",
         selectorButton: "text-foreground",
     },
@@ -36,7 +25,7 @@ const customAutocompleteStyles = tv({
                 popoverContent: "backdrop-blur-sm",
             },
             false: {
-                popoverContent: "bg-background border-primary/40",
+                popoverContent: "bg-background",
             }
         }
     }
@@ -53,6 +42,11 @@ export const CustomAutocomplete = React.forwardRef<HTMLInputElement, CustomAutoc
         return (
             <Autocomplete
                 ref={ref}
+                inputProps={{
+                    classNames: {
+                        inputWrapper: styles.inputWrapper(),
+                    }
+                }}
                 // Apply default props
                 color="primary"
                 variant="bordered"

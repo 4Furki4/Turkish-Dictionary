@@ -701,8 +701,11 @@ export const requestRouter = createTRPCRouter({
             return acc
         }, {})
         const purifiedData = purifyObject(preparedData)
-        const { success } = await verifyRecaptcha(captchaToken);
-        if (!success) {
+        try {
+            const { success } = await verifyRecaptcha(captchaToken);
+            console.log('success', success)
+        } catch (error) {
+            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -737,8 +740,11 @@ export const requestRouter = createTRPCRouter({
             return acc
         }, {})
         const purifiedData = purifyObject(preparedData)
-        const { success } = await verifyRecaptcha(captchaToken);
-        if (!success) {
+        try {
+            const { success } = await verifyRecaptcha(captchaToken);
+            console.log('success', success)
+        } catch (error) {
+            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -761,8 +767,11 @@ export const requestRouter = createTRPCRouter({
         captchaToken: z.string(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
         const { meaning_id, reason, captchaToken } = input;
-        const { success } = await verifyRecaptcha(captchaToken);
-        if (!success) {
+        try {
+            const { success } = await verifyRecaptcha(captchaToken);
+            console.log('success', success)
+        } catch (error) {
+            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -783,13 +792,17 @@ export const requestRouter = createTRPCRouter({
         captchaToken: z.string(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
         const { attribute, captchaToken } = input;
-        const { success } = await verifyRecaptcha(captchaToken);
-        if (!success) {
+        try {
+            const { success } = await verifyRecaptcha(captchaToken);
+            console.log('success', success)
+        } catch (error) {
+            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
             });
         }
+
         await db.transaction(async (tx) => {
             await tx.insert(requests).values({
                 entityType: "word_attributes",

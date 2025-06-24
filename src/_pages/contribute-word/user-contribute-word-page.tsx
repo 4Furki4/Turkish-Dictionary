@@ -13,6 +13,7 @@ import {
   CardBody,
   CardHeader,
   AutocompleteItem,
+  Divider,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -29,6 +30,8 @@ import { CustomInput } from "@/src/components/customs/heroui/custom-input";
 import { CustomSelect } from "@/src/components/customs/heroui/custom-flexable-select";
 import { CustomTextarea } from "@/src/components/customs/heroui/custom-textarea";
 import { CustomAutocomplete } from "@/src/components/customs/heroui/custom-autocomplete";
+import type { TRPCClientErrorLike } from "@trpc/client";
+import type { AppRouter } from "@/src/server/api/root";
 
 // Schema for detailed form
 const detailedFormSchema = z.object({
@@ -78,14 +81,46 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
   const [isAttributeModalOpen, setIsAttributeModalOpen] = useState(false);
 
   // API queries for existing data
-  const { data: languages } = api.params.getLanguages.useQuery();
-  const { data: partsOfSpeech } = api.params.getPartOfSpeeches.useQuery();
-  const { data: wordAttributesWithRequested } = api.request.getWordAttributesWithRequested.useQuery();
-  const { data: meaningAttributes } = api.params.getMeaningAttributes.useQuery();
-
+  const { data: languages, isLoading: languagesIsLoading } = api.params.getLanguages.useQuery();
+  const { data: partsOfSpeech, isLoading: partsOfSpeechIsLoading } = api.params.getPartOfSpeeches.useQuery();
+  const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesWithRequested.useQuery();
+  const { data: meaningAttributes, isLoading: meaningAttributesIsLoading } = api.params.getMeaningAttributes.useQuery();
+  const { data: authors, isLoading: authorsIsLoading } = api.params.getAuthors.useQuery();
   // API mutations
-  const createFullWordRequest = api.request.createFullWordRequest.useMutation();
-  const createSimpleWordRequest = api.request.createSimpleWordRequest.useMutation();
+  const createFullWordRequest = api.request.createFullWordRequest.useMutation({
+    onSuccess: () => {
+      toast.success(t("requestSubmitted"));
+      detailedForm.reset();
+      setIsSubmitting(false);
+    },
+    onError: (error: TRPCClientErrorLike<AppRouter>) => {
+      console.error("Submission error:", error);
+      if (error.message?.includes("already requested")) {
+        toast.error(t("wordAlreadyRequested"));
+      } else if (error.message?.includes("reCAPTCHA")) {
+        toast.error(t("captchaFailed"));
+      } else {
+        toast.error(t("requestFailed"));
+      }
+    },
+  });
+  const createSimpleWordRequest = api.request.createSimpleWordRequest.useMutation({
+    onSuccess: () => {
+      toast.success(t("requestSubmitted"));
+      simpleForm.reset();
+      setIsSubmitting(false);
+    },
+    onError: (error: TRPCClientErrorLike<AppRouter>) => {
+      console.error("Submission error:", error);
+      if (error.message?.includes("already requested")) {
+        toast.error(t("wordAlreadyRequested"));
+      } else if (error.message?.includes("reCAPTCHA")) {
+        toast.error(t("captchaFailed"));
+      } else {
+        toast.error(t("requestFailed"));
+      }
+    }
+  });
 
   // Detailed form setup
   const detailedForm = useForm<DetailedFormData>({
@@ -157,49 +192,32 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      const captchaToken = await executeRecaptcha("submit_detailed_word_request");
+    const captchaToken = await executeRecaptcha("submit_detailed_word_request");
 
-      // Format the data for the API
-      const formattedData = {
-        name: data.name.trim(),
-        phonetic: data.phonetic?.trim() || undefined,
-        prefix: data.prefix?.trim() || undefined,
-        root: data.root?.trim() || undefined,
-        suffix: data.suffix?.trim() || undefined,
-        language: data.languageCode || undefined,
-        attributes: data.attributes?.map(attr => parseInt(attr)) || [],
-        meanings: data.meanings.map(meaning => ({
-          partOfSpeechId: meaning.partOfSpeechId ? parseInt(meaning.partOfSpeechId) : undefined,
-          meaning: meaning.meaning.trim(),
-          attributes: meaning.attributes?.map(attr => parseInt(attr)) || [],
-          example: meaning.example?.sentence?.trim() ? {
-            sentence: meaning.example.sentence.trim(),
-            // TODO: Handle author name to ID conversion on backend
-            // author: meaning.example.author?.trim() || null,
-          } : undefined,
-          imageUrl: meaning.imageFile?.url || undefined,
-        })),
-        captchaToken,
-      };
+    // Format the data for the API
+    const formattedData = {
+      name: data.name.trim(),
+      phonetic: data.phonetic?.trim() || undefined,
+      prefix: data.prefix?.trim() || undefined,
+      root: data.root?.trim() || undefined,
+      suffix: data.suffix?.trim() || undefined,
+      language: data.languageCode || undefined,
+      attributes: data.attributes?.map(attr => parseInt(attr)) || [],
+      meanings: data.meanings.map(meaning => ({
+        partOfSpeechId: meaning.partOfSpeechId ? parseInt(meaning.partOfSpeechId) : undefined,
+        meaning: meaning.meaning.trim(),
+        attributes: meaning.attributes?.map(attr => parseInt(attr)) || [],
+        example: meaning.example?.sentence?.trim() ? {
+          sentence: meaning.example.sentence.trim(),
+          // TODO: Handle author name to ID conversion on backend
+          // author: meaning.example.author?.trim() || null,
+        } : undefined,
+        imageUrl: meaning.imageFile?.url || undefined,
+      })),
+      captchaToken,
+    };
 
-      await createFullWordRequest.mutateAsync(formattedData);
-
-      toast.success(t("requestSubmitted"));
-      detailedForm.reset();
-    } catch (error: any) {
-      console.error("Submission error:", error);
-      if (error.message?.includes("already requested")) {
-        toast.error(t("wordAlreadyRequested"));
-      } else if (error.message?.includes("reCAPTCHA")) {
-        toast.error(t("captchaFailed"));
-      } else {
-        toast.error(t("requestFailed"));
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    createFullWordRequest.mutate(formattedData);
   };
 
   // Submit simple form
@@ -275,23 +293,24 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                   )}
                 />
 
-                {/* Phonetic */}
-                <Controller
-                  name="phonetic"
-                  control={detailedForm.control}
-                  render={({ field, fieldState: { error } }) => (
-                    <CustomInput
-                      {...field}
-                      label={t("phonetic")}
-                      placeholder={t("phoneticPlaceholder")}
-                      isInvalid={!!error}
-                      errorMessage={error?.message}
-                    />
-                  )}
-                />
+
 
                 {/* Prefix, Root, Suffix Row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  {/* Phonetic */}
+                  <Controller
+                    name="phonetic"
+                    control={detailedForm.control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomInput
+                        {...field}
+                        label={t("phonetic")}
+                        placeholder={t("phoneticPlaceholder")}
+                        isInvalid={!!error}
+                        errorMessage={error?.message}
+                      />
+                    )}
+                  />
                   <Controller
                     name="prefix"
                     control={detailedForm.control}
@@ -306,19 +325,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                     )}
                   />
 
-                  <Controller
-                    name="root"
-                    control={detailedForm.control}
-                    render={({ field, fieldState: { error } }) => (
-                      <CustomInput
-                        {...field}
-                        label={t("root")}
-                        placeholder={t("rootPlaceholder")}
-                        isInvalid={!!error}
-                        errorMessage={error?.message}
-                      />
-                    )}
-                  />
+
 
                   <Controller
                     name="suffix"
@@ -333,43 +340,16 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                       />
                     )}
                   />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Language */}
-                  <Controller
-                    name="languageCode"
-                    control={detailedForm.control}
-                    render={({ field, fieldState: { error } }) => (
-                      <CustomAutocomplete
-                        classNames={{
-                          base: "w-full",
-                        }}
-                        size="lg"
-                        label={t("language")}
-                        placeholder={t("selectLanguage")}
-                        defaultItems={languages || []}
-                        onSelectionChange={(item) => {
-                          field.onChange(item);
-                        }}
-                        isInvalid={!!error}
-                        errorMessage={error?.message}
-                      >
-                        {(item: any) => (
-                          <AutocompleteItem key={item.language_code}>
-                            {locale === "en" ? item.language_en : item.language_tr}
-                          </AutocompleteItem>
-                        )}
-                      </CustomAutocomplete>
-                    )}
-                  />
-
                   {/* Word Attributes */}
                   <Controller
                     name="attributes"
                     control={detailedForm.control}
                     render={({ field, fieldState: { error } }) => (
                       <CustomSelect
+                        isLoading={wordAttributesWithRequestedIsLoading}
+                        listboxProps={{
+                          emptyContent: t("noAttributesFound"),
+                        }}
                         as={'div'}
                         size="lg"
                         classNames={{
@@ -405,26 +385,58 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                   />
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Language */}
+                  <Controller
+                    name="languageCode"
+                    control={detailedForm.control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomAutocomplete
+
+                        classNames={{
+                          base: "w-full",
+                        }}
+                        isLoading={languagesIsLoading}
+                        listboxProps={{
+                          emptyContent: t("noLanguagesFound"),
+                        }}
+                        size="lg"
+                        label={t("language")}
+                        placeholder={t("selectLanguage")}
+                        defaultItems={languages || []}
+                        onSelectionChange={(item) => {
+                          field.onChange(item);
+                        }}
+                        isInvalid={!!error}
+                        errorMessage={error?.message}
+                      >
+                        {(item: any) => (
+                          <AutocompleteItem key={item.language_code}>
+                            {locale === "en" ? item.language_en : item.language_tr}
+                          </AutocompleteItem>
+                        )}
+                      </CustomAutocomplete>
+                    )}
+                  />
+                  <Controller
+                    name="root"
+                    control={detailedForm.control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomInput
+                        {...field}
+                        label={t("root")}
+                        placeholder={t("rootPlaceholder")}
+                        isInvalid={!!error}
+                        errorMessage={error?.message}
+                      />
+                    )}
+                  />
+                </div>
+                <Divider />
                 {/* Meanings Section */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold">{t("meanings")}</h3>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onPress={() => appendMeaning({
-                        partOfSpeechId: "",
-                        meaning: "",
-                        attributes: [],
-                        example: { sentence: "", author: "" },
-                        imageFile: null,
-                      })}
-                      className="text-primary"
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      {t("addMeaning")}
-                    </Button>
                   </div>
 
                   {meaningFields.map((field, meaningIndex) => (
@@ -451,6 +463,10 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                           control={detailedForm.control}
                           render={({ field, fieldState: { error } }) => (
                             <CustomSelect
+                              isLoading={partsOfSpeechIsLoading}
+                              listboxProps={{
+                                emptyContent: t("noPartsOfSpeechFound"),
+                              }}
                               as={'div'}
                               size="lg"
                               classNames={{
@@ -481,6 +497,10 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                           control={detailedForm.control}
                           render={({ field, fieldState: { error } }) => (
                             <CustomSelect
+                              isLoading={meaningAttributesIsLoading}
+                              listboxProps={{
+                                emptyContent: t("noMeaningAttributesFound"),
+                              }}
                               as={'div'}
                               size="lg"
                               classNames={{
@@ -544,13 +564,29 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                           name={`meanings.${meaningIndex}.example.author`}
                           control={detailedForm.control}
                           render={({ field, fieldState: { error } }) => (
-                            <CustomInput
+                            <CustomAutocomplete
                               {...field}
+                              isLoading={authorsIsLoading}
+                              as={'div'}
+                              size="lg"
+                              classNames={{
+                                base: "w-full",
+                              }}
                               label={t("exampleAuthor")}
                               placeholder={t("exampleAuthorPlaceholder")}
                               isInvalid={!!error}
                               errorMessage={error?.message}
-                            />
+                              items={authors?.map((author) => ({
+                                key: author.id.toString(),
+                                label: author.name
+                              }))}
+                            >
+                              {authors?.map((author) => (
+                                <AutocompleteItem key={author.id.toString()}>
+                                  {author.name}
+                                </AutocompleteItem>
+                              )) || []}
+                            </CustomAutocomplete>
                           )}
                         />
                       </div>
@@ -596,7 +632,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                                 isIconOnly
                                 size="sm"
                                 variant="light"
-                                onClick={() => {
+                                onPress={() => {
                                   detailedForm.setValue(`meanings.${meaningIndex}.imageFile`, null);
                                 }}
                               >
@@ -606,13 +642,28 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                           )}
                         </div>
                       </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onPress={() => appendMeaning({
+                          partOfSpeechId: "",
+                          meaning: "",
+                          attributes: [],
+                          example: { sentence: "", author: "" },
+                          imageFile: null,
+                        })}
+                        className="text-primary"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        {t("addMeaning")}
+                      </Button>
                     </CustomCard>
                   ))}
                 </div>
 
                 {/* Submit Note */}
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <p className="text-sm text-secondary-600 dark:text-secondary-200">
                     {t("submitNote")}
                   </p>
                 </div>

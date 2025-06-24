@@ -35,5 +35,16 @@ export const paramsRouter = createTRPCRouter({
             attribute: wordAttributes.attribute
         }).from(wordAttributes)
         return attributesData
+    }),
+    getAuthors: protectedProcedure.query(async ({ ctx: { db } }) => {
+        const authorsData = await db.select({
+            id: authors.id,
+            name: authors.name
+        }).from(authors)
+        const filteredAuthors = authorsData.map((author) => ({
+            ...author,
+            id: author.id.toString()
+        }))
+        return filteredAuthors
     })
 })

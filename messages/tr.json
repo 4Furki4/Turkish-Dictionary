@@ -1085,7 +1085,7 @@
     "exampleSentence": "Örnek Cümle",
     "exampleSentencePlaceholder": "Örnek cümle girin",
     "exampleAuthor": "Örnek Yazarı",
-    "exampleAuthorPlaceholder": "Yazar adını girin (isteğe bağlı)",
+    "exampleAuthorPlaceholder": "Yazar adını seçin (isteğe bağlı)",
     "image": "Resim",
     "uploadImage": "Resim Yükle",
     "imageUploaded": "Resim başarıyla yüklendi",
@@ -1097,6 +1097,10 @@
     "requestFailed": "Katkınız gönderilemedi. Lütfen tekrar deneyin.",
     "captchaFailed": "reCAPTCHA doğrulaması başarısız. Lütfen tekrar deneyin.",
     "wordAlreadyRequested": "Bu kelimeyi zaten talep ettiniz. Lütfen yönetici incelemesini bekleyin.",
-    "backToSearch": "Aramaya Dön"
+    "backToSearch": "Aramaya Dön",
+    "noAttributesFound": "Özellik bulunamadı",
+    "noLanguagesFound": "Dil bulunamadı",
+    "noPartsOfSpeechFound": "Kelime Türü bulunamadı",
+    "noMeaningAttributesFound": "Anlam Özellikleri bulunamadı"
   }
 }

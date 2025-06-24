@@ -24,7 +24,11 @@ export default function NewWordAttributeRequestModal({
     const addWordAttributeMutation = api.request.newWordAttribute.useMutation({
         onError(error, variables, context) {
             console.log(error)
-            toast.error(t("Requests.ErrorSubmittingRequest"))
+            if (error.message === "captchaFailed") {
+                toast.error(t("Errors.captchaFailed"))
+            } else {
+                toast.error(t("Requests.ErrorSubmittingRequest"))
+            }
         },
         onSuccess(data) {
             reset()
