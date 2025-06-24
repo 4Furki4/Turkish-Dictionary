@@ -35,6 +35,10 @@ export const routing = defineRouting({
       "en": "/saved-words",
       "tr": "/kaydedilen-kelimeler",
     },
+    "/contribute-word": {
+      "en": "/contribute-word",
+      "tr": "/kelime-katkisi",
+    },
     "/dashboard": {
       "en": "/dashboard",
       "tr": "/panel",

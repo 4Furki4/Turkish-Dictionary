@@ -1,5 +1,5 @@
 "use client"
-import { BellIcon, HistoryIcon, HomeIcon, LayoutDashboard, ListTree, StarIcon, UserIcon } from 'lucide-react'
+import { BellIcon, HeartHandshake, HistoryIcon, HomeIcon, LayoutDashboard, ListTree, StarIcon, UserIcon } from 'lucide-react'
 import React from 'react'
 import { Link as NextIntlLink } from "@/src/i18n/routing";
 import { Session } from 'next-auth';
@@ -44,6 +44,11 @@ export default function Sidebar(
                             <li>
                                 <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={'/word-list'}>
                                     <ListTree className="h-6 w-6" /> <span className={`text-nowrap`}>{t("Navbar.Word List")}</span>
+                                </NextIntlLink>
+                            </li>
+                            <li>
+                                <NextIntlLink className='flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 rounded-sm' href={'/contribute-word'}>
+                                    <HeartHandshake className="h-6 w-6" /> <span className={`text-nowrap`}>{t("Navbar.ContributeWord")}</span>
                                 </NextIntlLink>
                             </li>
                             <li>

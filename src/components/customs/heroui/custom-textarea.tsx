@@ -1,14 +1,14 @@
 "use client";
 
 import React from 'react';
-import { Input, type InputProps } from "@heroui/react";
+import { type TextAreaProps, Textarea } from "@heroui/react";
 import { cn } from '@/lib/utils';
 import { tv } from 'tailwind-variants';
 import { useSnapshot } from 'valtio';
 import { preferencesState } from '@/src/store/preferences';
 
 // Define the default styles for the input slots.
-const customInputStyles = tv({
+const customTextareaStyles = tv({
     slots: {
         inputWrapper: [
             "rounded-sm",
@@ -32,23 +32,24 @@ const customInputStyles = tv({
     }
 });
 
-// We accept all of HeroUI's InputProps so we can override anything we need.
-export interface CustomInputProps extends InputProps { }
+// We accept all of HeroUI's TextAreaProps so we can override anything we need.
+export interface CustomTextareaProps extends TextAreaProps { }
 
-export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
+export const CustomTextarea = React.forwardRef<HTMLTextAreaElement, CustomTextareaProps>(
     ({ className, classNames, ...props }, ref) => {
         const { isBlurEnabled } = useSnapshot(preferencesState);
         // Get the styles, applying the blur variant based on user preference.
-        const styles = customInputStyles({ isBlurred: isBlurEnabled });
+        const styles = customTextareaStyles({ isBlurred: isBlurEnabled });
 
         return (
-            <Input
+            <Textarea
                 ref={ref}
                 color="primary"
                 variant="bordered"
                 size="lg"
                 // Deeply merge our default styles with any custom ones passed in.
                 classNames={{
+
                     inputWrapper: cn(styles.inputWrapper(), classNames?.inputWrapper),
                     input: cn(styles.input(), classNames?.input),
                     ...classNames,
@@ -60,4 +61,4 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
     }
 );
 
-CustomInput.displayName = "CustomInput";
+CustomTextarea.displayName = "CustomTextarea";

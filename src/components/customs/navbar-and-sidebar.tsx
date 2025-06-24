@@ -16,6 +16,7 @@ export default function NavbarAndSidebar({
     SearchHistoryIntl,
     LogoutIntl,
     AnnouncementsIntl,
+    ContributeWordIntl,
     ariaAvatar,
     ariaMenu,
     ariaLanguages,
@@ -33,6 +34,7 @@ export default function NavbarAndSidebar({
     SearchHistoryIntl: string
     LogoutIntl: string
     AnnouncementsIntl: string
+    ContributeWordIntl: string
     ariaAvatar: string,
     ariaMenu: string,
     ariaLanguages: string,
@@ -55,6 +57,7 @@ export default function NavbarAndSidebar({
                 SearchHistoryIntl={SearchHistoryIntl}
                 LogoutIntl={LogoutIntl}
                 AnnouncementsIntl={AnnouncementsIntl}
+                ContributeWordIntl={ContributeWordIntl}
                 setIsSidebarOpen={setIsSidebarOpen}
                 ariaAvatar={ariaAvatar}
                 ariaMenu={ariaMenu}

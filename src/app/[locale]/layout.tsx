@@ -129,6 +129,7 @@ export default async function RootLayout({
                       SearchHistoryIntl={t("SearchHistory")}
                       LogoutIntl={t("Logout")}
                       AnnouncementsIntl={t("Announcements")}
+                      ContributeWordIntl={t("ContributeWord")}
                       ariaAvatar={t("ariaAvatar")}
                       ariaMenu={t("ariaMenu")}
                       ariaLanguages={t("ariaLanguages")}

@@ -29,13 +29,6 @@ export default function WordNotFoundCard({ session }: WordNotFoundCardProps) {
         base: "p-0",
       }}>
         <CardBody className="text-center space-y-6">
-          {/* Icon */}
-          {/* <div className="flex justify-center">
-            <div className="p-4 rounded-full bg-default-100">
-              <Search className="w-8 h-8 text-default-400" />
-            </div>
-          </div> */}
-
           {/* Main Message */}
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold text-default-700">
@@ -71,7 +64,12 @@ export default function WordNotFoundCard({ session }: WordNotFoundCardProps) {
             )}
 
             <NextIntlLink
-              href={`/contribute-word?word=${encodeURIComponent(wordName)}` as any}
+              href={{
+                pathname: "/contribute-word",
+                query: {
+                  word: wordName
+                }
+              }}
             >
               <Button
                 color="secondary"
