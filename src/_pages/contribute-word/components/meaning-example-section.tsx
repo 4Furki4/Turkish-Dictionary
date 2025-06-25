@@ -76,7 +76,7 @@ export default function MeaningExampleSection({
               placeholder={t("exampleAuthorPlaceholder")}
               isInvalid={!!error}
               errorMessage={error?.message}
-              items={sortedAuthors.map((author) => ({
+              defaultItems={sortedAuthors.map((author) => ({
                 key: author.id.toString(),
                 label: author.name
               }))}

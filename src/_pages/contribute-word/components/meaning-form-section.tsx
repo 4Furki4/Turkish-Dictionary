@@ -2,14 +2,14 @@
 
 import React from "react";
 import { Controller, Control, FieldErrors } from "react-hook-form";
-import { Button, AutocompleteItem, Tooltip, Divider } from "@heroui/react";
+import { Button, SelectItem, Select, Tooltip } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { Plus, Trash2, FileClock } from "lucide-react";
 
-import { CustomAutocomplete } from "@/src/components/customs/heroui/custom-autocomplete";
 import { CustomTextarea } from "@/src/components/customs/heroui/custom-textarea";
 import MeaningExampleSection from "./meaning-example-section";
 import ImageUploadSection from "./image-upload-section";
+import { CustomSelect } from "@/src/components/customs/heroui/custom-flexable-select";
 
 export interface PartOfSpeech {
   id: number;
@@ -82,9 +82,12 @@ export default function MeaningFormSection({
     : [];
 
   // Sort meaning attributes alphabetically
-  const sortedMeaningAttributes = meaningAttributesWithRequested
-    ? [...meaningAttributesWithRequested].sort((a, b) => a.attribute.localeCompare(b.attribute))
-    : [];
+  const sortedMeaningAttributes = React.useMemo(
+    () => meaningAttributesWithRequested
+      ? [...meaningAttributesWithRequested].sort((a, b) => a.attribute.localeCompare(b.attribute))
+      : [],
+    [meaningAttributesWithRequested]
+  );
 
   // Sort authors alphabetically
   const sortedAuthors = authorsWithRequested
@@ -108,8 +111,6 @@ export default function MeaningFormSection({
         )}
       </div>
 
-
-
       {/* Meaning Text */}
       <Controller
         name={`meanings.${meaningIndex}.meaning`}
@@ -131,7 +132,7 @@ export default function MeaningFormSection({
           name={`meanings.${meaningIndex}.partOfSpeechId`}
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <CustomAutocomplete
+            <CustomSelect
               {...field}
               classNames={{
                 base: "w-full",
@@ -147,59 +148,62 @@ export default function MeaningFormSection({
               }))}
             >
               {sortedPartsOfSpeech.map((pos) => (
-                <AutocompleteItem key={pos.id.toString()}>
+                <SelectItem key={pos.id.toString()}>
                   {pos.name}
-                </AutocompleteItem>
+                </SelectItem>
               )) || []}
-            </CustomAutocomplete>
+            </CustomSelect>
           )}
         />
 
         {/* Meaning Attributes */}
-        <Controller
-          name={`meanings.${meaningIndex}.attributes`}
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <CustomAutocomplete
-              {...field}
-              classNames={{
-                base: "w-full",
-              }}
-              isLoading={meaningAttributesWithRequestedIsLoading}
-              label={t("meaningAttributes")}
-              placeholder={t("selectMeaningAttributes")}
-              isInvalid={!!error}
-              errorMessage={error?.message}
-              items={sortedMeaningAttributes.map((attr) => ({
-                key: attr.id.toString(),
-                label: attr.attribute
-              }))}
-              endContent={
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  onPress={onOpenMeaningAttributeModal}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              }
-            >
-              {sortedMeaningAttributes.map((attr) => (
-                <AutocompleteItem
-                  key={attr.id.toString()}
-                  endContent={Number(attr.id) < 0 ? (
-                    <Tooltip content={tRequests("RequestedAttributeByYou")}>
-                      <FileClock className="text-warning" />
-                    </Tooltip>
-                  ) : ""}
-                >
-                  {attr.attribute}
-                </AutocompleteItem>
-              )) || []}
-            </CustomAutocomplete>
-          )}
-        />
+        <div className="flex items-end gap-2">
+          <Controller
+            name={`meanings.${meaningIndex}.attributes`}
+            control={control}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <CustomSelect
+                items={sortedMeaningAttributes || []}
+                label={t("meaningAttributes")}
+                placeholder={t("selectMeaningAttributes")}
+                selectionMode="multiple"
+                selectedKeys={new Set(value)}
+                onSelectionChange={(keys) => onChange(Array.from(keys))}
+                isLoading={meaningAttributesWithRequestedIsLoading}
+                isInvalid={!!error}
+                errorMessage={error?.message}
+                classNames={{
+                  base: "w-full"
+                }}
+                as={"div"}
+                endContent={
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    onPress={onOpenMeaningAttributeModal}
+                    className="mb-4"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                }
+              >
+                {(attr) => (
+                  <SelectItem
+                    endContent={Number(attr.id) < 0 ? (
+                      <Tooltip content={tRequests("RequestedAttributeByYou")}>
+                        <FileClock className="text-warning" />
+                      </Tooltip>
+                    ) : ""}
+                    key={attr.id.toString()}
+                  >
+                    {attr.attribute}
+                  </SelectItem>
+                )}
+              </CustomSelect>
+            )}
+          />
+        </div>
       </div>
 
       {/* Example Section */}
@@ -221,10 +225,9 @@ export default function MeaningFormSection({
         onRemoveImage={onRemoveImage}
       />
 
-      {/* Add another meaning button - only show on last meaning */}
+      {/* Add/Remove Meaning Buttons */}
       {isLastMeaning && (
         <>
-          <Divider />
           <Button
             type="button"
             variant="ghost"
