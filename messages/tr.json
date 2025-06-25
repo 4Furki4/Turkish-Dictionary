@@ -1112,6 +1112,7 @@
     "imagesUploadFailed": "Resimler yüklenemedi",
     "imageTooLarge": "Resim boyutu çok büyük (azami boyut: {size}MB).",
     "imageTooLargeDescription": "Resim boyutunu azaltmak için çevrimiçi sıkıştırma araçlarını kullanabilirsiniz: ",
-    "removeImage": "Resmi kaldır"
+    "removeImage": "Resmi kaldır",
+    "contributionTabs": "Katkı Türü"
   }
 }

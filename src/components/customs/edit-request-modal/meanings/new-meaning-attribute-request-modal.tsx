@@ -1,11 +1,14 @@
 import { api } from "@/src/trpc/react";
 import { NewAttributeForm } from "@/types";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalVariantProps, Input, Button } from "@heroui/react";
+import { ModalVariantProps, ModalContent, ModalHeader, ModalBody, Button } from "@heroui/react";
 import { AriaModalOverlayProps } from '@react-aria/overlays';
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+
+import { CustomModal } from "@/src/components/customs/heroui/custom-modal";
+import { CustomInput } from "@/src/components/customs/heroui/custom-input";
 
 type AddMeaningAttributeModalProps = {
     onClose: () => void,
@@ -62,7 +65,7 @@ export default function NewMeaningAttributeRequestModal({
     }
 
     return (
-        <Modal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-meaning-attribute-modal" {...modalProps}>
+        <CustomModal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-meaning-attribute-modal" {...modalProps}>
             <ModalContent>
                 {(close) => (
                     <>
@@ -84,7 +87,7 @@ export default function NewMeaningAttributeRequestModal({
                                         value: 2
                                     }
                                 }} render={({ field, fieldState: { error } }) => (
-                                    <Input placeholder={t("EnterMeaningAttribute")} {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
+                                    <CustomInput placeholder={t("EnterMeaningAttribute")} {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
                                 )} />
                                 <div className='grid grid-cols-2 gap-2'>
                                     <Button size='sm' type='submit' color='primary' isLoading={addMeaningAttributeMutation.isPending}>
@@ -99,6 +102,6 @@ export default function NewMeaningAttributeRequestModal({
                     </>
                 )}
             </ModalContent>
-        </Modal>
+        </CustomModal>
     )
 }

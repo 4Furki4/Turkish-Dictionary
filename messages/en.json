@@ -1148,6 +1148,7 @@
     "imagesUploadFailed": "Failed to upload images",
     "imageTooLarge": "Image is too large (max {size}MB).",
     "imageTooLargeDescription": "You can compress your image using online tools like: ",
-    "removeImage": "Remove Image"
+    "removeImage": "Remove Image",
+    "contributionTabs": "Contribution Tabs"
   }
 }

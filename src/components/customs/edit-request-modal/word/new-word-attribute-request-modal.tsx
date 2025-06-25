@@ -1,16 +1,21 @@
 import { api } from "@/src/trpc/react";
 import { NewAttributeForm } from "@/types";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalVariantProps, Input, Button } from "@heroui/react";
+import { ModalVariantProps, ModalContent, ModalHeader, ModalBody, Button } from "@heroui/react";
 import { AriaModalOverlayProps } from '@react-aria/overlays';
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+
+import { CustomModal } from "@/src/components/customs/heroui/custom-modal";
+import { CustomInput } from "@/src/components/customs/heroui/custom-input";
+
 type AddWordAttributeModalProps = {
     onClose: () => void,
     isOpen: boolean,
     onOpenChange: () => void
 } & AriaModalOverlayProps & ModalVariantProps
+
 export default function NewWordAttributeRequestModal({
     isOpen,
     onOpenChange,
@@ -51,7 +56,7 @@ export default function NewWordAttributeRequestModal({
         }
     }
     return (
-        <Modal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal" {...modalProps}>
+        <CustomModal size='xs' isOpen={isOpen} onOpenChange={onOpenChange} key="create-attribute-modal" {...modalProps}>
             <ModalContent>
                 {(close) => (
                     <>
@@ -73,7 +78,7 @@ export default function NewWordAttributeRequestModal({
                                         value: 2
                                     }
                                 }} render={({ field, fieldState: { error } }) => (
-                                    <Input placeholder={t("EnterWordAttribute")} {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
+                                    <CustomInput placeholder={t("EnterWordAttribute")} {...field} isInvalid={error !== undefined} errorMessage={error?.message} />
                                 )} />
                                 <div className='grid grid-cols-2 gap-2'>
                                     <Button size='sm' type='submit' color='primary' isLoading={addWordAttributeMutation.isPending}>
@@ -88,6 +93,6 @@ export default function NewWordAttributeRequestModal({
                     </>
                 )}
             </ModalContent>
-        </Modal>
+        </CustomModal>
     )
 }
