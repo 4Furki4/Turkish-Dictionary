@@ -12,6 +12,8 @@ import { TRPCError } from "@trpc/server";
 import { relatedPhrases } from "@/db/schema/related_phrases";
 import { verifyRecaptcha } from "@/src/lib/recaptcha";
 import { wordAttributes } from "@/db/schema/word_attributes";
+import { meaningAttributes } from "@/db/schema/meaning_attributes";
+import { authors } from "@/db/schema/authors";
 
 export const requestRouter = createTRPCRouter({
     // User request management endpoints
@@ -525,11 +527,71 @@ export const requestRouter = createTRPCRouter({
             ));
 
         // Combine and return both sets
-        const pendingRequestsWithIds = pendingRequests.map(req => ({
+        const requestedAttributes = pendingRequests.map(req => ({
             id: -req.id, // Use negative IDs for pending items to avoid conflicts
             attribute: (req.newData as { attribute: string }).attribute,
         }))
-        return [...approvedAttributes, ...pendingRequestsWithIds];
+        return [...approvedAttributes, ...requestedAttributes];
+    }),
+
+    getMeaningAttributesWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
+        // Get approved attributes from the main table
+        const approvedAttributes = await db.select({
+            id: meaningAttributes.id,
+            attribute: meaningAttributes.attribute
+        }).from(meaningAttributes);
+
+        // Get pending requests from this user for new attributes
+        const pendingRequests = await db.select({
+            id: requests.id,
+            newData: requests.newData,
+            status: requests.status
+        }).from(requests)
+            .where(and(
+                eq(requests.userId, user.id),
+                eq(requests.entityType, "meaning_attributes"),
+                eq(requests.action, "create"),
+                eq(requests.status, "pending")
+            ));
+
+        // Parse the requested attributes
+        const requestedAttributes = pendingRequests.map(req => ({
+            id: -req.id, // Use negative IDs for pending items to avoid conflicts
+            attribute: (req.newData as { attribute: string }).attribute
+        }));
+
+        // Combine approved and requested attributes
+        return [...approvedAttributes, ...requestedAttributes];
+    }),
+
+    getAuthorsWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
+        // Get approved authors from the main table
+        const approvedAuthors = await db.select({
+            id: authors.id,
+            name: authors.name
+        }).from(authors);
+
+        // Get pending requests from this user for new authors
+        const pendingRequests = await db.select({
+            id: requests.id,
+            newData: requests.newData,
+            status: requests.status
+        }).from(requests)
+            .where(and(
+                eq(requests.userId, user.id),
+                eq(requests.entityType, "authors"),
+                eq(requests.action, "create"),
+                eq(requests.status, "pending")
+            ));
+
+        // Parse the requested authors
+        const requestedAuthors = pendingRequests.map(req => ({
+            id: -req.id, // Use negative IDs for pending items to avoid conflicts
+            name: (req.newData as { name: string }).name
+        }));
+
+        // Combine approved and requested authors
+        return [...approvedAuthors, ...requestedAuthors];
     }),
 
     // Simple word request for Tier-1 contribution flow
@@ -722,6 +784,7 @@ export const requestRouter = createTRPCRouter({
             })
         })
     }),
+
     requestEditMeaning: protectedProcedure.input(z.object({
         meaning_id: z.number(),
         meaning: z.string().optional(),
@@ -761,6 +824,7 @@ export const requestRouter = createTRPCRouter({
             })
         })
     }),
+
     requestDeleteMeaning: protectedProcedure.input(z.object({
         meaning_id: z.number(),
         reason: z.string().min(1, "Reason is required"),
@@ -787,6 +851,7 @@ export const requestRouter = createTRPCRouter({
             })
         })
     }),
+
     newWordAttribute: protectedProcedure.input(z.object({
         attribute: z.string().min(2),
         captchaToken: z.string(),
@@ -808,7 +873,59 @@ export const requestRouter = createTRPCRouter({
                 entityType: "word_attributes",
                 action: "create",
                 userId: user.id,
-                newData: JSON.stringify({ attribute }),
+                newData: { attribute },
+            })
+        })
+    }),
+
+    newMeaningAttribute: protectedProcedure.input(z.object({
+        attribute: z.string().min(2),
+        captchaToken: z.string(),
+    })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+        const { attribute, captchaToken } = input;
+        try {
+            const { success } = await verifyRecaptcha(captchaToken);
+            console.log('success', success)
+        } catch (error) {
+            console.log('captcha failed')
+            throw new TRPCError({
+                code: 'FORBIDDEN',
+                message: 'Error.captchaFailed',
+            });
+        }
+
+        await db.transaction(async (tx) => {
+            await tx.insert(requests).values({
+                entityType: "meaning_attributes",
+                action: "create",
+                userId: user.id,
+                newData: { attribute },
+            })
+        })
+    }),
+
+    newAuthor: protectedProcedure.input(z.object({
+        name: z.string().min(2),
+        captchaToken: z.string(),
+    })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
+        const { name, captchaToken } = input;
+        try {
+            const { success } = await verifyRecaptcha(captchaToken);
+            console.log('success', success)
+        } catch (error) {
+            console.log('captcha failed')
+            throw new TRPCError({
+                code: 'FORBIDDEN',
+                message: 'Error.captchaFailed',
+            });
+        }
+
+        await db.transaction(async (tx) => {
+            await tx.insert(requests).values({
+                entityType: "authors",
+                action: "create",
+                userId: user.id,
+                newData: { name },
             })
         })
     }),

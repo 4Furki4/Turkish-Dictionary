@@ -159,4 +159,8 @@ type EditWordForm = {
 
 type NewAttributeForm = {
   attribute: string
-}
+};
+
+type NewAuthorForm = {
+  name: string;
+};

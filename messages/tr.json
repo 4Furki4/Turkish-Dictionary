@@ -544,15 +544,16 @@
     "descriptionPlaceholder": "Bu deyim için bir açıklama girin..."
   },
   "Requests": {
-    "title": "İstek",
+    "title": "İstekler",
     "myRequests": "İsteklerim",
-    "SuggestEditForRelatedWord": "{relatedWordName} için düzenleme öner",
-    "SuggestDeletionForRelatedWord": "{relatedWordName} için silme öner",
+    "EditRequestTitle": "{word} için düzenleme isteği",
+    "SuggestEditForRelatedWord": "{relatedWordName} ilgili kelimesi için düzenleme öner",
     "CreateRelatedWordRequestTitle": "Yeni İlgili Kelime Öner",
-    "CreateRelatedPhraseRequestTitle": "Yeni İlgili Deyim Öner",
-    "RequestSubmittedSuccessfully": "İstek başarıyla gönderildi",
-    "RequestSubmissionFailed": "İstek gönderirken hata oluştu: {error}",
-    "submitRequest": "İstek Gönder",
+    "CreateRelatedPhraseRequestTitle": "Yeni İlgili İfade Öner",
+    "MeaningAttributeRequestedSuccessfully": "Anlam özelliği isteği başarıyla gönderildi! Onaylandıktan sonra listenizde görünecektir.",
+    "AuthorRequestedSuccessfully": "Yazar isteği başarıyla gönderildi! Onaylandıktan sonra listenizde görünecektir.",
+    "ErrorSubmittingRequest": "İstek gönderilirken hata oluştu. Lütfen tekrar deneyin.",
+    "CancelRequest": "İsteği İptal Et",
     "requestDetails": "İstek Detayları",
     "backToAllRequests": "Tüm İsteklere Dön",
     "entityTypes": {
@@ -648,10 +649,6 @@
     "DeleteRequestSubmittedSuccessfully": "Silme isteği başarıyla gönderildi",
     "FailedToSubmitEditRequest": "Değişiklik isteği gönderirken hata oluştu",
     "FailedToSubmitDeleteRequest": "Silme isteği gönderirken hata oluştu",
-    "SubmitRequest": "İsteği Gönder",
-    "DeleteMeaningRequest": "Anlam Silme İsteği",
-    "DeleteMeaningRequestSentence": "\"{meaning}\" anlamı için silme isteğini göndermek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
-    "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi",
     "ReasonRequired": "Lütfen değişiklik için gerekçenizi girin",
     "ReasonMinLength15": "Gerekçe en az 15 karakter uzunluğunda olmalıdır",
     "ConfirmDeleteRelatedWord": "\"{relatedWordName}\" kelimesi ile olan \"{relationType}\" ilişkisinin silinmesini talep etmek istediğinizden emin misiniz?",
@@ -696,9 +693,12 @@
   "EnterPhonetic": "Fonetik Giriniz",
   "WordAttribute": "Kelime Özelliği",
   "SelectAttributes": "Özellikleri Seçin",
-  "NewWordAttribute": "Yeni Kelime Özelliği",
-  "EnterWordAttribute": "Kelime Özelliği Giriniz",
   "AddNewWordAttribute": "Yeni Kelime Özelliği Ekle",
+  "EnterWordAttribute": "Kelime özelliği girin",
+  "AddNewMeaningAttribute": "Yeni Anlam Özelliği Ekle",
+  "EnterMeaningAttribute": "Anlam özelliği girin",
+  "AddNewAuthor": "Yeni Yazar Ekle",
+  "EnterAuthorName": "Yazar adı girin",
   "Cancel": "İptal Et",
   "Meaning": "Anlam",
   "EnterMeaning": "Anlam Giriniz",
@@ -716,10 +716,7 @@
   "RemoveMeaning": "Anlamı kaldır",
   "YouCanSelectAnAttributeForThisMeaning": "Bu anlam için özellikler seçebilirsiniz",
   "MeaningAttributesDescription": "Lütfen bir özellik seçiniz",
-  "AddNewAuthor": "Yeni Yazar Ekle",
   "ResetAllSelectedValuesButton": "Tüm Seçenekleri Sıfırla",
-  "AddNewMeaningAttribute": "Yeni Anlam Özelliği Ekle",
-  "EnterMeaningAttribute": "Anlam Özelliği Giriniz",
   "Submit": "Gönder",
   "AttributeAddedSuccessfully": "Özellik başarıyla eklendi",
   "AnErrorOccuredPleaseTryAgain": "Bir hata oluştu, lütfen tekrar deneyin.",
@@ -739,14 +736,17 @@
     "cancel": "İptal",
     "clear": "Temizle"
   },
-  "EnterAuthor": "Yazar Giriniz",
   "Forms": {
     "Word": {
       "Required": "Kelime adı gerekli, lütfen bir kelime adı giriniz."
     },
     "Attributes": {
       "Required": "Özellik gerekli, lütfen bir özellik giriniz.",
-      "MinLength2": "Özellik uzunluğu 2 karakterden uzun olmalıdır."
+      "MinLength2": "Özellik en az 2 karakter olmalıdır"
+    },
+    "Authors": {
+      "Required": "Yazar adı gerekli, lütfen bir yazar adı giriniz.",
+      "MinLength2": "Yazar adı en az 2 karakter olmalıdır"
     },
     "Meanings": {
       "Required": "Anlam gerekli, lütfen bir anlam giriniz."
@@ -760,7 +760,7 @@
       "Description": "Anlam özellikleri isteğe bağlı",
       "Select": "Lütfen bir anlam özelliği seçiniz",
       "Required": "Lütfen bir anlam özelliği seçiniz",
-      "MinLength2": "Anlam özelliği uzunluğu 2 karakterden uzun olmalıdır."
+      "MinLength2": "Anlam özelliği en az 2 karakter olmalıdır."
     },
     "ExampleSentence": {
       "Description": "Örnek cümle isteğe bağlı"
@@ -770,7 +770,7 @@
     },
     "Author": {
       "NameRequired": "Yazar adı gerekli, lütfen bir yazar adı giriniz.",
-      "MinLength2": "Yazar adı uzunluğu 2 karakterden uzun olmalıdır."
+      "MinLength2": "Yazar adı en az 2 karakter olmalıdır."
     },
     "Root": {
       "InputError": "Dil seçildiğinde köken alınan kelime girmeniz gereklidir!",

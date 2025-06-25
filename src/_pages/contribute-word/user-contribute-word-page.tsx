@@ -15,6 +15,7 @@ import {
   AutocompleteItem,
   Divider,
   Link,
+  Tooltip,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -24,7 +25,9 @@ import type { Session } from "next-auth";
 
 import { api } from "@/src/trpc/react";
 import NewWordAttributeRequestModal from "@/src/components/customs/edit-request-modal/word/new-word-attribute-request-modal";
-import { AlertCircle, Plus, Trash2, Upload, X } from "lucide-react";
+import NewMeaningAttributeRequestModal from "@/src/components/customs/edit-request-modal/meanings/new-meaning-attribute-request-modal";
+import NewAuthorRequestModal from "@/src/components/customs/edit-request-modal/meanings/new-author-request-modal";
+import { AlertCircle, Plus, Trash2, Upload, X, FileClock } from "lucide-react";
 import { CustomTabs } from "@/src/components/customs/heroui/custom-tabs";
 import CustomCard from "@/src/components/customs/heroui/custom-card";
 import { CustomInput } from "@/src/components/customs/heroui/custom-input";
@@ -72,19 +75,26 @@ interface UserContributeWordPageProps {
 
 export default function UserContributeWordPage({ session, locale, prefillWord }: UserContributeWordPageProps) {
   const t = useTranslations("ContributeWord");
+  const tRequests = useTranslations("Requests");
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const [activeTab, setActiveTab] = useState("detailed");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [isAttributeModalOpen, setIsAttributeModalOpen] = useState(false);
+  const [isMeaningAttributeModalOpen, setIsMeaningAttributeModalOpen] = useState(false);
+  const [isAuthorModalOpen, setIsAuthorModalOpen] = useState(false);
+  const [requestedAttributes, setRequestedAttributes] = useState<string[]>([]);
+  const [requestedMeaningAttributes, setRequestedMeaningAttributes] = useState<string[]>([]);
+  const [requestedAuthors, setRequestedAuthors] = useState<string[]>([]);
 
   // API queries for existing data
   const { data: languages, isLoading: languagesIsLoading } = api.params.getLanguages.useQuery();
   const { data: partsOfSpeech, isLoading: partsOfSpeechIsLoading } = api.params.getPartOfSpeeches.useQuery();
   const { data: wordAttributesWithRequested, isLoading: wordAttributesWithRequestedIsLoading } = api.request.getWordAttributesWithRequested.useQuery();
-  const { data: meaningAttributes, isLoading: meaningAttributesIsLoading } = api.params.getMeaningAttributes.useQuery();
-  const { data: authors, isLoading: authorsIsLoading } = api.params.getAuthors.useQuery();
+  const { data: meaningAttributesWithRequested, isLoading: meaningAttributesWithRequestedIsLoading } = api.request.getMeaningAttributesWithRequested.useQuery();
+  const { data: authorsWithRequested, isLoading: authorsWithRequestedIsLoading } = api.request.getAuthorsWithRequested.useQuery();
+
   // API mutations
   const createFullWordRequest = api.request.createFullWordRequest.useMutation({
     onSuccess: () => {
@@ -103,6 +113,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
       }
     },
   });
+
   const createSimpleWordRequest = api.request.createSimpleWordRequest.useMutation({
     onSuccess: () => {
       toast.success(t("requestSubmitted"));
@@ -444,7 +455,14 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                         }
                       >
                         {wordAttributesWithRequested?.map((attr: any) => (
-                          <SelectItem key={attr.id.toString()}>
+                          <SelectItem
+                            key={attr.id.toString()}
+                            endContent={Number(attr.id) < 0 ? (
+                              <Tooltip content={tRequests("RequestedAttributeByYou")}>
+                                <FileClock className="text-warning" />
+                              </Tooltip>
+                            ) : ""}
+                          >
                             {attr.attribute}
                           </SelectItem>
                         )) || []}
@@ -565,7 +583,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                           control={detailedForm.control}
                           render={({ field, fieldState: { error } }) => (
                             <CustomSelect
-                              isLoading={meaningAttributesIsLoading}
+                              isLoading={meaningAttributesWithRequestedIsLoading}
                               listboxProps={{
                                 emptyContent: t("noMeaningAttributesFound"),
                               }}
@@ -583,9 +601,26 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                               }}
                               isInvalid={!!error}
                               errorMessage={error?.message}
+                              endContent={
+                                <Button
+                                  isIconOnly
+                                  size="sm"
+                                  variant="light"
+                                  onPress={() => setIsMeaningAttributeModalOpen(true)}
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </Button>
+                              }
                             >
-                              {meaningAttributes?.map((attr: any) => (
-                                <SelectItem key={attr.id.toString()}>
+                              {meaningAttributesWithRequested?.map((attr: any) => (
+                                <SelectItem
+                                  key={attr.id.toString()}
+                                  endContent={Number(attr.id) < 0 ? (
+                                    <Tooltip content={tRequests("RequestedAttributeByYou")}>
+                                      <FileClock className="text-warning" />
+                                    </Tooltip>
+                                  ) : ""}
+                                >
                                   {attr.attribute}
                                 </SelectItem>
                               )) || []}
@@ -628,35 +663,54 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                           )}
                         />
 
-                        <Controller
-                          name={`meanings.${meaningIndex}.example.author`}
-                          control={detailedForm.control}
-                          render={({ field, fieldState: { error } }) => (
-                            <CustomAutocomplete
-                              {...field}
-                              isLoading={authorsIsLoading}
-                              as={'div'}
-                              size="lg"
-                              classNames={{
-                                base: "w-full",
-                              }}
-                              label={t("exampleAuthor")}
-                              placeholder={t("exampleAuthorPlaceholder")}
-                              isInvalid={!!error}
-                              errorMessage={error?.message}
-                              items={authors?.map((author) => ({
-                                key: author.id.toString(),
-                                label: author.name
-                              }))}
-                            >
-                              {authors?.map((author) => (
-                                <AutocompleteItem key={author.id.toString()}>
-                                  {author.name}
-                                </AutocompleteItem>
-                              )) || []}
-                            </CustomAutocomplete>
-                          )}
-                        />
+                        <div className="flex items-end gap-2">
+                          <Controller
+                            name={`meanings.${meaningIndex}.example.author`}
+                            control={detailedForm.control}
+                            render={({ field, fieldState: { error } }) => (
+                              <CustomAutocomplete
+                                {...field}
+                                isLoading={authorsWithRequestedIsLoading}
+                                as={'div'}
+                                size="lg"
+                                classNames={{
+                                  base: "w-full",
+                                }}
+                                label={t("exampleAuthor")}
+                                placeholder={t("exampleAuthorPlaceholder")}
+                                isInvalid={!!error}
+                                errorMessage={error?.message}
+                                items={authorsWithRequested?.map((author) => ({
+                                  key: author.id.toString(),
+                                  label: author.name
+                                }))}
+                                endContent={
+                                  <Button
+                                    isIconOnly
+                                    size="sm"
+                                    variant="light"
+                                    onPress={() => setIsAuthorModalOpen(true)}
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                  </Button>
+                                }
+                              >
+                                {authorsWithRequested?.map((author) => (
+                                  <AutocompleteItem
+                                    key={author.id.toString()}
+                                    endContent={Number(author.id) < 0 ? (
+                                      <Tooltip content={tRequests("RequestedAttributeByYou")}>
+                                        <FileClock className="text-warning" />
+                                      </Tooltip>
+                                    ) : ""}
+                                  >
+                                    {author.name}
+                                  </AutocompleteItem>
+                                )) || []}
+                              </CustomAutocomplete>
+                            )}
+                          />
+                        </div>
                       </div>
 
                       {/* Image Upload */}
@@ -810,6 +864,26 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
         isOpen={isAttributeModalOpen}
         onClose={() => setIsAttributeModalOpen(false)}
         onOpenChange={() => setIsAttributeModalOpen(!isAttributeModalOpen)}
+      />
+      {/* New Meaning Attribute Request Modal */}
+      <NewMeaningAttributeRequestModal
+        isOpen={isMeaningAttributeModalOpen}
+        onClose={() => setIsMeaningAttributeModalOpen(false)}
+        onOpenChange={() => setIsMeaningAttributeModalOpen(!isMeaningAttributeModalOpen)}
+        onAttributeRequested={(attribute) => {
+          // Optionally add to temporary list for immediate UI feedback
+          setRequestedMeaningAttributes(prev => [...prev, attribute]);
+        }}
+      />
+      {/* New Author Request Modal */}
+      <NewAuthorRequestModal
+        isOpen={isAuthorModalOpen}
+        onClose={() => setIsAuthorModalOpen(false)}
+        onOpenChange={() => setIsAuthorModalOpen(!isAuthorModalOpen)}
+        onAuthorRequested={(author) => {
+          // Optionally add to temporary list for immediate UI feedback
+          setRequestedAuthors(prev => [...prev, author]);
+        }}
       />
     </div>
   );
