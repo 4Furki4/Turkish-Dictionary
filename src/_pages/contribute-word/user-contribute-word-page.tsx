@@ -448,6 +448,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                             isIconOnly
                             size="sm"
                             variant="light"
+                            className="mb-5"
                             onPress={() => setIsAttributeModalOpen(true)}
                           >
                             <Plus className="h-4 w-4" />
@@ -586,6 +587,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                               isLoading={meaningAttributesWithRequestedIsLoading}
                               listboxProps={{
                                 emptyContent: t("noMeaningAttributesFound"),
+
                               }}
                               as={'div'}
                               size="lg"
@@ -606,6 +608,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                                   isIconOnly
                                   size="sm"
                                   variant="light"
+                                  className="mb-5"
                                   onPress={() => setIsMeaningAttributeModalOpen(true)}
                                 >
                                   <Plus className="h-4 w-4" />

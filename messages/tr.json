@@ -550,8 +550,8 @@
     "SuggestEditForRelatedWord": "{relatedWordName} ilgili kelimesi için düzenleme öner",
     "CreateRelatedWordRequestTitle": "Yeni İlgili Kelime Öner",
     "CreateRelatedPhraseRequestTitle": "Yeni İlgili İfade Öner",
-    "MeaningAttributeRequestedSuccessfully": "Anlam özelliği isteği başarıyla gönderildi! Onaylandıktan sonra listenizde görünecektir.",
-    "AuthorRequestedSuccessfully": "Yazar isteği başarıyla gönderildi! Onaylandıktan sonra listenizde görünecektir.",
+    "MeaningAttributeRequestedSuccessfully": "Anlam özelliği isteği başarıyla gönderildi! Onaylanana kadar sadece size görünür olacaktır.",
+    "AuthorRequestedSuccessfully": "Yazar isteği başarıyla gönderildi! Onaylanana kadar sadece size görünür olacaktır.",
     "ErrorSubmittingRequest": "İstek gönderilirken hata oluştu. Lütfen tekrar deneyin.",
     "CancelRequest": "İsteği İptal Et",
     "requestDetails": "İstek Detayları",
@@ -666,6 +666,7 @@
     "descriptionPlaceholder": "Deyim için bir açıklama girin",
     "SuggestDeletionForRelatedPhraseHeader": "İlgili Deyim Silme İsteği: {relatedPhraseName}",
     "ConfirmDeleteRelatedPhrase": "İlgili ilişkiyi silmek istediğinizden emin misiniz? Lütfen silme nedeni giriniz.",
+    "AttributeRequestedSuccessfully": "Özellik isteği başarıyla gönderildi. Onaylanana kadar sadece size görünür olacaktır.",
     "Forms": {
       "RelatedWord": {
         "Required": "İlgili kelime gerekli, lütfen bir ilgili kelime giriniz."
@@ -737,6 +738,7 @@
     "clear": "Temizle"
   },
   "Forms": {
+    "Submit": "Gönder",
     "Word": {
       "Required": "Kelime adı gerekli, lütfen bir kelime adı giriniz."
     },

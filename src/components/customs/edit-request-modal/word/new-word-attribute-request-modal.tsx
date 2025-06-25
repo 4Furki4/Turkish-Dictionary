@@ -77,7 +77,7 @@ export default function NewWordAttributeRequestModal({
                                 )} />
                                 <div className='grid grid-cols-2 gap-2'>
                                     <Button size='sm' type='submit' color='primary' isLoading={addWordAttributeMutation.isPending}>
-                                        {t("Requests.SubmitRequest")}
+                                        {t("Forms.Submit")}
                                     </Button>
                                     <Button size='sm' onPress={close}>
                                         {t("Cancel")}

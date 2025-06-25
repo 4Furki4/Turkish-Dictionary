@@ -590,8 +590,8 @@
     "SuggestEditForRelatedWord": "Suggest an edit for related word: {relatedWordName}",
     "CreateRelatedWordRequestTitle": "Suggest New Related Word",
     "CreateRelatedPhraseRequestTitle": "Suggest New Related Phrase",
-    "MeaningAttributeRequestedSuccessfully": "Meaning attribute request submitted successfully! It will appear in your list once approved.",
-    "AuthorRequestedSuccessfully": "Author request submitted successfully! It will appear in your list once approved.",
+    "MeaningAttributeRequestedSuccessfully": "Meaning attribute request submitted successfully! Only you can see it until it is approved.",
+    "AuthorRequestedSuccessfully": "Author request submitted successfully! Only you can see it until it is approved.",
     "ErrorSubmittingRequest": "Error submitting request. Please try again.",
     "SubmitRequest": "Submit Request",
     "SuggestDeletionForRelatedWord": "Suggest deletion for related word: {relatedWordName}",
@@ -697,7 +697,7 @@
     "DeleteMeaningRequest": "Delete Meaning Request",
     "DeleteMeaningRequestSentence": "Are you sure you want to request deletion of the meaning \"{meaning}\"? Please provide a reason for the deletion.",
     "AttributeIsRequired": "Attribute is required, please enter an attribute.",
-    "AttributeRequestedSuccessfully": "Attribute requested successfully",
+    "AttributeRequestedSuccessfully": "Attribute requested successfully. Only you can see it until it is approved.",
     "ReasonRequired": "Please enter your reason for the change",
     "ReasonMinLength15": "Reason must be at least 15 characters long",
     "ConfirmDeleteRelatedWord": "Are you sure you want to request the deletion of the relation \"{relationType}\" to the word \"{relatedWordName}\"?",
@@ -791,6 +791,7 @@
     "clear": "Clear"
   },
   "Forms": {
+    "Submit": "Submit",
     "Word": {
       "Required": "Word name is required, please enter a word name."
     },

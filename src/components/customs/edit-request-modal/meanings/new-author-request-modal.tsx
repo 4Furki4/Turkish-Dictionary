@@ -88,7 +88,7 @@ export default function NewAuthorRequestModal({
                                 )} />
                                 <div className='grid grid-cols-2 gap-2'>
                                     <Button size='sm' type='submit' color='primary' isLoading={addAuthorMutation.isPending}>
-                                        {t("Requests.SubmitRequest")}
+                                        {t("Forms.Submit")}
                                     </Button>
                                     <Button size='sm' onPress={close}>
                                         {t("Cancel")}
