@@ -740,7 +740,8 @@
   "Forms": {
     "Submit": "Gönder",
     "Word": {
-      "Required": "Kelime adı gerekli, lütfen bir kelime adı giriniz."
+      "Required": "Kelime adı gerekli, lütfen bir kelime adı giriniz.",
+      "MinLength2": "Kelime adı en az 2 karakter olmalıdır"
     },
     "Attributes": {
       "Required": "Özellik gerekli, lütfen bir özellik giriniz.",
@@ -751,7 +752,8 @@
       "MinLength2": "Yazar adı en az 2 karakter olmalıdır"
     },
     "Meanings": {
-      "Required": "Anlam gerekli, lütfen bir anlam giriniz."
+      "Required": "Anlam gerekli, lütfen bir anlam giriniz.",
+      "MinLength1": "Kelime en az bir anlamına sahip olmalıdır"
     },
     "PartOfSpeech": {
       "Description": "Sözcük türü isteğe bağlı.",

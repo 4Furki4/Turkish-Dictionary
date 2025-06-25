@@ -793,7 +793,8 @@
   "Forms": {
     "Submit": "Submit",
     "Word": {
-      "Required": "Word name is required, please enter a word name."
+      "Required": "Word name is required, please enter a word name.",
+      "MinLength2": "Word name must be at least 2 characters"
     },
     "Attributes": {
       "Required": "Attribute is required, please enter an attribute.",
@@ -804,7 +805,8 @@
       "MinLength2": "Author name must be at least 2 characters"
     },
     "Meanings": {
-      "Required": "Meaning is required, please enter a meaning."
+      "Required": "Meaning is required, please enter a meaning.",
+      "MinLength1": "Word must have at least one meaning"
     },
     "PartOfSpeech": {
       "Description": "Part of speech is optional",

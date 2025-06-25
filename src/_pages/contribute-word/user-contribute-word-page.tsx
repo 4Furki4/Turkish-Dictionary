@@ -59,10 +59,34 @@ const detailedFormSchema = z.object({
   })).min(1, "At least one meaning is required"),
 });
 
+const getDetailedFormSchema = (wordNameRequiredIntl: string, wordNameMinLengthIntl: string, meaningRequiredIntl: string, meaningMinLengthIntl: string) => z.object({
+  name: z.string().min(1, wordNameRequiredIntl).min(2, wordNameMinLengthIntl),
+  phonetic: z.string().optional(),
+  prefix: z.string().optional(),
+  root: z.string().optional(),
+  suffix: z.string().optional(),
+  languageCode: z.string().optional(),
+  attributes: z.array(z.string()).optional(),
+  meanings: z.array(z.object({
+    partOfSpeechId: z.string().optional(),
+    meaning: z.string().min(1, meaningRequiredIntl),
+    attributes: z.array(z.string()).optional(),
+    example: z.object({
+      sentence: z.string().optional(),
+      author: z.string().optional(),
+    }).optional(),
+    image: z.any().optional(), // Changed to handle File objects
+  })).min(1, meaningMinLengthIntl),
+});
+
 // Schema for simple form
 const simpleFormSchema = z.object({
-  name: z.string().min(1, "Word name is required"),
+  name: z.string().min(2, "Word name is required"),
 });
+
+const getSimpleFormSchema = (minLengthIntl: string) => z.object({
+  name: z.string().min(2, minLengthIntl),
+})
 
 type DetailedFormData = z.infer<typeof detailedFormSchema>;
 type SimpleFormData = z.infer<typeof simpleFormSchema>;
@@ -76,6 +100,7 @@ interface UserContributeWordPageProps {
 export default function UserContributeWordPage({ session, locale, prefillWord }: UserContributeWordPageProps) {
   const t = useTranslations("ContributeWord");
   const tRequests = useTranslations("Requests");
+  const tForms = useTranslations("Forms");
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const [activeTab, setActiveTab] = useState("detailed");
@@ -134,7 +159,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
 
   // Detailed form setup
   const detailedForm = useForm<DetailedFormData>({
-    resolver: zodResolver(detailedFormSchema),
+    resolver: zodResolver(getDetailedFormSchema(tForms("Word.Required"), tForms("Word.MinLength2"), tForms("Meanings.Required"), tForms("Meanings.MinLength1"))),
     defaultValues: {
       name: prefillWord || "",
       phonetic: "",
@@ -155,7 +180,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
 
   // Simple form setup
   const simpleForm = useForm<SimpleFormData>({
-    resolver: zodResolver(simpleFormSchema),
+    resolver: zodResolver(getSimpleFormSchema(tForms("Word.MinLength2"))),
     defaultValues: {
       name: prefillWord || "",
     },
@@ -826,7 +851,7 @@ export default function UserContributeWordPage({ session, locale, prefillWord }:
                   name="name"
                   control={simpleForm.control}
                   render={({ field, fieldState: { error } }) => (
-                    <Input
+                    <CustomInput
                       {...field}
                       label={t("wordName")}
                       placeholder={t("wordNamePlaceholder")}
