@@ -26,7 +26,7 @@ export const paramsRouter = createTRPCRouter({
         return partOfSpeechData
     }),
     getLanguages: protectedProcedure.query(async ({ ctx: { db } }) => {
-        const languageData = await db.select().from(languages)
+        const languageData = await db.select().from(languages).orderBy(languages.language_tr)
         return languageData
     }),
     getWordAttributes: protectedProcedure.query(async ({ ctx: { db } }) => {
