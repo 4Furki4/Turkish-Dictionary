@@ -512,12 +512,14 @@ export const requestRouter = createTRPCRouter({
         const approvedAttributes = await db.select({
             id: wordAttributes.id,
             attribute: wordAttributes.attribute
-        }).from(wordAttributes);
+        }).from(wordAttributes)
+        .orderBy(wordAttributes.attribute);
 
-        // Get user's pending attribute requests
+        // Get pending requests from this user for new attributes
         const pendingRequests = await db.select({
             id: requests.id,
-            newData: requests.newData
+            newData: requests.newData,
+            status: requests.status
         }).from(requests)
             .where(and(
                 eq(requests.userId, user.id),
@@ -531,7 +533,10 @@ export const requestRouter = createTRPCRouter({
             id: -req.id, // Use negative IDs for pending items to avoid conflicts
             attribute: (req.newData as { attribute: string }).attribute,
         }))
-        return [...approvedAttributes, ...requestedAttributes];
+        
+        // Sort the combined list alphabetically
+        const combined = [...approvedAttributes, ...requestedAttributes];
+        return combined.sort((a, b) => a.attribute.localeCompare(b.attribute));
     }),
 
     getMeaningAttributesWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
@@ -539,7 +544,8 @@ export const requestRouter = createTRPCRouter({
         const approvedAttributes = await db.select({
             id: meaningAttributes.id,
             attribute: meaningAttributes.attribute
-        }).from(meaningAttributes);
+        }).from(meaningAttributes)
+        .orderBy(meaningAttributes.attribute);
 
         // Get pending requests from this user for new attributes
         const pendingRequests = await db.select({
@@ -561,7 +567,8 @@ export const requestRouter = createTRPCRouter({
         }));
 
         // Combine approved and requested attributes
-        return [...approvedAttributes, ...requestedAttributes];
+        const combined = [...approvedAttributes, ...requestedAttributes];
+        return combined.sort((a, b) => a.attribute.localeCompare(b.attribute));
     }),
 
     getAuthorsWithRequested: protectedProcedure.query(async ({ ctx: { db, session: { user } } }) => {
@@ -569,7 +576,8 @@ export const requestRouter = createTRPCRouter({
         const approvedAuthors = await db.select({
             id: authors.id,
             name: authors.name
-        }).from(authors);
+        }).from(authors)
+        .orderBy(authors.name);
 
         // Get pending requests from this user for new authors
         const pendingRequests = await db.select({
@@ -591,7 +599,8 @@ export const requestRouter = createTRPCRouter({
         }));
 
         // Combine approved and requested authors
-        return [...approvedAuthors, ...requestedAuthors];
+        const combined = [...approvedAuthors, ...requestedAuthors];
+        return combined.sort((a, b) => a.name.localeCompare(b.name));
     }),
 
     // Simple word request for Tier-1 contribution flow
