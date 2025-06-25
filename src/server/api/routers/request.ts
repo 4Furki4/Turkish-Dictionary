@@ -321,8 +321,8 @@ export const requestRouter = createTRPCRouter({
 
     requestCreateRelatedWord: protectedProcedure
         .input(z.object({
-            wordId: z.number(),
-            relatedWordId: z.number(),
+            wordId: z.number(), // The ID of the main word
+            relatedWordId: z.number(), // The ID of the word it's related to
             relationType: z.string(),
             reason: z.string().optional(),
             captchaToken: z.string(),
@@ -686,10 +686,18 @@ export const requestRouter = createTRPCRouter({
                 }).optional(),
                 imageUrl: z.string().optional()
             })).min(1, "At least one meaning is required"),
+            relatedWords: z.array(z.object({
+                relatedWordId: z.number(),
+                relationType: z.string(),
+            })).optional(),
+            relatedPhrases: z.array(z.object({
+                relatedWordId: z.number(),
+                relationType: z.string(),
+            })).optional(),
             captchaToken: z.string(),
         }))
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
-            const { captchaToken, ...wordData } = input;
+            const { captchaToken, relatedWords, relatedPhrases, ...wordData } = input;
 
             // Verify reCAPTCHA
             const { success } = await verifyRecaptcha(captchaToken);
@@ -732,7 +740,9 @@ export const requestRouter = createTRPCRouter({
             const requestData = {
                 ...wordData,
                 name: wordData.name.trim(),
-                requestType: 'full' // Flag to identify full word requests
+                requestType: 'full', // Flag to identify full word requests
+                relatedWords: relatedWords || [],
+                relatedPhrases: relatedPhrases || [],
             };
 
             await db.insert(requests).values({

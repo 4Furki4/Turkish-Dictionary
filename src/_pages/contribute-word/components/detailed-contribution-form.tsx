@@ -16,11 +16,18 @@ import CustomCard from "@/src/components/customs/heroui/custom-card";
 import WordBasicInfoSection from "./word-basic-info-section";
 import WordLanguageAndAttributesSection, { type Language, type WordAttribute } from "./word-language-and-attributes-section";
 import MeaningFormSection from "./meaning-form-section";
+import RelatedItemsSection from "./related-items-section";
 import NewWordAttributeRequestModal from "@/src/components/customs/edit-request-modal/word/new-word-attribute-request-modal";
 import NewMeaningAttributeRequestModal from "@/src/components/customs/edit-request-modal/meanings/new-meaning-attribute-request-modal";
 import NewAuthorRequestModal from "@/src/components/customs/edit-request-modal/meanings/new-author-request-modal";
 import type { TRPCClientErrorLike } from "@trpc/client";
 import type { AppRouter } from "@/src/server/api/root";
+
+interface RelatedItem {
+    id: number;
+    name: string;
+    relationType: string;
+}
 
 // Schema for detailed form
 const getDetailedFormSchema = (
@@ -92,6 +99,10 @@ export default function DetailedContributionForm({
     const [requestedAttributes, setRequestedAttributes] = useState<string[]>([]);
     const [requestedMeaningAttributes, setRequestedMeaningAttributes] = useState<string[]>([]);
     const [requestedAuthors, setRequestedAuthors] = useState<string[]>([]);
+
+    // Related items state
+    const [relatedWords, setRelatedWords] = useState<RelatedItem[]>([]);
+    const [relatedPhrases, setRelatedPhrases] = useState<RelatedItem[]>([]);
 
     // API queries for existing data
     const { data: languages, isLoading: languagesIsLoading } = api.params.getLanguages.useQuery();
@@ -196,6 +207,37 @@ export default function DetailedContributionForm({
         });
     }, [detailedForm]);
 
+    // Related items handlers
+    const handleAddRelatedWord = useCallback((item: RelatedItem) => {
+        setRelatedWords(prev => {
+            // Check if item already exists
+            if (prev.some(word => word.id === item.id && word.relationType === item.relationType)) {
+                toast.error(t("itemAlreadyAdded"));
+                return prev;
+            }
+            return [...prev, item];
+        });
+    }, [t]);
+
+    const handleRemoveRelatedWord = useCallback((id: number) => {
+        setRelatedWords(prev => prev.filter(word => word.id !== id));
+    }, []);
+
+    const handleAddRelatedPhrase = useCallback((item: RelatedItem) => {
+        setRelatedPhrases(prev => {
+            // Check if item already exists
+            if (prev.some(phrase => phrase.id === item.id && phrase.relationType === item.relationType)) {
+                toast.error(t("itemAlreadyAdded"));
+                return prev;
+            }
+            return [...prev, item];
+        });
+    }, [t]);
+
+    const handleRemoveRelatedPhrase = useCallback((id: number) => {
+        setRelatedPhrases(prev => prev.filter(phrase => phrase.id !== id));
+    }, []);
+
     // Submit detailed form
     const onSubmitDetailed = async (data: DetailedFormData) => {
         if (!executeRecaptcha) {
@@ -246,6 +288,14 @@ export default function DetailedContributionForm({
                     imageUrl: meaning.image?.[0] ? uploadedImageUrls[imageIndex++] : undefined,
                 })),
                 captchaToken,
+                relatedWords: relatedWords.map(word => ({
+                    relatedWordId: word.id,
+                    relationType: word.relationType,
+                })),
+                relatedPhrases: relatedPhrases.map(phrase => ({
+                    relatedWordId: phrase.id,
+                    relationType: phrase.relationType,
+                })),
             };
 
             await createFullWordRequest.mutateAsync(formattedData);
@@ -292,6 +342,15 @@ export default function DetailedContributionForm({
                             onOpenAttributeModal={() => setIsAttributeModalOpen(true)}
                         />
 
+                        {/* Related Words and Phrases */}
+                        <RelatedItemsSection
+                            relatedWords={relatedWords}
+                            relatedPhrases={relatedPhrases}
+                            onAddRelatedWord={handleAddRelatedWord}
+                            onRemoveRelatedWord={handleRemoveRelatedWord}
+                            onAddRelatedPhrase={handleAddRelatedPhrase}
+                            onRemoveRelatedPhrase={handleRemoveRelatedPhrase}
+                        />
                         {/* Meanings Section */}
                         <div className="space-y-4">
                             <h3 className="text-lg font-semibold">{t("meanings")}</h3>
@@ -331,7 +390,6 @@ export default function DetailedContributionForm({
                                 />
                             ))}
                         </div>
-
                         <Button
                             type="submit"
                             color="primary"

@@ -2,7 +2,7 @@
 import { EntityTypes, Actions } from "@/db/schema/requests";
 import { RequestHandler } from "./types";
 import { CreateWordAttributeHandler, UpdateWordAttributeHandler } from "./word-attribute-handlers";
-import { UpdateWordHandler } from "./word-handler";
+import { CreateWordHandler, UpdateWordHandler } from "./word-handler";
 import { UpdateMeaningHandler, DeleteMeaningHandler } from "./meaning-handler";
 import { UpdateRelatedWordHandler, DeleteRelatedWordHandler } from "./related-words-handler";
 import { DeleteRelatedPhraseHandler } from "./related-phrase-handler";
@@ -20,6 +20,7 @@ const registry: HandlerRegistry = {
         update: new UpdateWordAttributeHandler(),
     },
     words: {
+        create: new CreateWordHandler(),
         update: new UpdateWordHandler(),
     },
     meanings: {

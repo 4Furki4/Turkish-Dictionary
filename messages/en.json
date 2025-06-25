@@ -540,7 +540,7 @@
     "obsolete": "Obsolete"
   },
   "Form": {
-    "noWordsFound": "No words found matching your search.",
+    "noWordsFound": "No words found matching your search",
     "relatedWordLabel": "Related Word",
     "searchWordPlaceholder": "Search for a word...",
     "relationTypeLabel": "Relation Type",
@@ -581,7 +581,8 @@
     "errorFetch": "Error fetching announcement",
     "errorUpload": "Error uploading image",
     "noAnnouncements": "No announcements found",
-    "selectLanguage": "Select Language"
+    "selectLanguage": "Select Language",
+    "itemAlreadyAdded": "This item is already added with the same relation type"
   },
   "Requests": {
     "title": "Requests",
@@ -1149,6 +1150,28 @@
     "imageTooLarge": "Image is too large (max {size}MB).",
     "imageTooLargeDescription": "You can compress your image using online tools like: ",
     "removeImage": "Remove Image",
-    "contributionTabs": "Contribution Tabs"
+    "contributionTabs": "Contribution Tabs",
+    "relatedWords": "Related Words",
+    "relatedPhrases": "Related Phrases", 
+    "relatedWordsDescription": "Add words that are related to this word (synonyms, antonyms, etc.)",
+    "relatedPhrasesDescription": "Add phrases and idioms that are related to this word",
+    "addRelatedWord": "Add Related Word",
+    "addRelatedPhrase": "Add Related Phrase",
+    "selectRelatedWord": "Select Related Word",
+    "selectRelatedPhrase": "Select Related Phrase",
+    "searchPlaceholder": "Search for a word or phrase...",
+    "relationType": "Relation Type",
+    "selectRelationType": "Select relation type",
+    "noRelatedWordsAdded": "No related words added yet",
+    "noRelatedPhrasesAdded": "No related phrases added yet",
+    "removeItem": "Remove item",
+    "fieldRequired": "This field is required",
+    "pleaseSelectBothFields": "Please select both word and relation type",
+    "selectedWordNotFound": "Selected word not found",
+    "wordAddedSuccessfully": "Related word added successfully",
+    "phraseAddedSuccessfully": "Related phrase added successfully",
+    "noWordsFound": "No words found matching your search",
+    "add": "Add",
+    "cancel": "Cancel"
   }
 }
