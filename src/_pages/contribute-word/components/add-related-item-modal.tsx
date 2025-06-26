@@ -145,6 +145,8 @@ export default function AddRelatedItemModal({
                       selectedKey={field.value !== undefined ? field.value.toString() : null}
                       onSelectionChange={(key) => {
                         field.onChange(key ? parseInt(String(key), 10) : undefined);
+                        const selectedWord = (wordOptions as WordRecommendation[])?.find(word => word.word_id.toString() === key)?.name || "";
+                        setInputValue(selectedWord);
                       }}
                       isInvalid={!!errors.relatedWordId}
                       errorMessage={errors.relatedWordId?.message}
