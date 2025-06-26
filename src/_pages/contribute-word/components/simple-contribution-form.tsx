@@ -31,12 +31,12 @@ export interface SimpleContributionFormProps {
   setIsSubmitting: (submitting: boolean) => void;
 }
 
-export default function SimpleContributionForm({ 
-  session, 
-  locale, 
-  prefillWord, 
-  isSubmitting, 
-  setIsSubmitting 
+export default function SimpleContributionForm({
+  session,
+  locale,
+  prefillWord,
+  isSubmitting,
+  setIsSubmitting
 }: SimpleContributionFormProps) {
   const t = useTranslations("ContributeWord");
   const tForms = useTranslations("Forms");
@@ -102,7 +102,7 @@ export default function SimpleContributionForm({
   };
 
   return (
-    <CustomCard className="p-6">
+    <CustomCard className="max-md:p-0">
       <CardHeader>
         <h2 className="text-lg font-bold">{t("simpleTab")}</h2>
       </CardHeader>

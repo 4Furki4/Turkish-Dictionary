@@ -311,7 +311,7 @@ export default function DetailedContributionForm({
 
     return (
         <>
-            <CustomCard className="p-0 md:p-6">
+            <CustomCard className="max-md:p-0">
                 <CardHeader>
                     <h2 className="text-lg font-bold">{t("detailedTab")}</h2>
                 </CardHeader>
