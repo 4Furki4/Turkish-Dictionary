@@ -66,7 +66,7 @@ export default function RelatedItemsSection({
 
   return (
     <div className="space-y-4">
-      <Accordion variant="bordered" className="px-0">
+      <Accordion variant="bordered" defaultExpandedKeys={["related-words"]} selectionMode="multiple">
         {/* Related Words Section */}
         <AccordionItem
           key="related-words"
@@ -81,20 +81,9 @@ export default function RelatedItemsSection({
           }
         >
           <div className="space-y-3 px-2">
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t("relatedWordsDescription")}
-              </p>
-              <Button
-                size="sm"
-                color="primary"
-                variant="flat"
-                startContent={<Plus className="h-4 w-4" />}
-                onPress={() => setIsWordModalOpen(true)}
-              >
-                {t("addRelatedWord")}
-              </Button>
-            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t("relatedWordsDescription")}
+            </p>
 
             {relatedWords.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -111,7 +100,17 @@ export default function RelatedItemsSection({
                 {t("noRelatedWordsAdded")}
               </div>
             )}
+            <Button
+              className="w-full md:w-auto"
+              color="primary"
+              variant="flat"
+              startContent={<Plus className="h-4 w-4" />}
+              onPress={() => setIsWordModalOpen(true)}
+            >
+              {t("addRelatedWord")}
+            </Button>
           </div>
+
         </AccordionItem>
 
         {/* Related Phrases Section */}
@@ -128,20 +127,9 @@ export default function RelatedItemsSection({
           }
         >
           <div className="space-y-3 px-2">
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t("relatedPhrasesDescription")}
-              </p>
-              <Button
-                size="sm"
-                color="primary"
-                variant="flat"
-                startContent={<Plus className="h-4 w-4" />}
-                onPress={() => setIsPhraseModalOpen(true)}
-              >
-                {t("addRelatedPhrase")}
-              </Button>
-            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t("relatedPhrasesDescription")}
+            </p>
 
             {relatedPhrases.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -158,6 +146,15 @@ export default function RelatedItemsSection({
                 {t("noRelatedPhrasesAdded")}
               </div>
             )}
+            <Button
+              color="primary"
+              variant="flat"
+              startContent={<Plus className="h-4 w-4" />}
+              className="w-full md:w-auto"
+              onPress={() => setIsPhraseModalOpen(true)}
+            >
+              {t("addRelatedPhrase")}
+            </Button>
           </div>
         </AccordionItem>
       </Accordion>

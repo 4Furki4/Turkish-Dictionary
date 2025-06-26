@@ -134,6 +134,9 @@ export default function AddRelatedItemModal({
                   rules={{ required: t("fieldRequired") }}
                   render={({ field }) => (
                     <CustomAutocomplete
+                      classNames={{
+                        base: "w-full",
+                      }}
                       label={itemType === "word" ? t("selectRelatedWord") : t("selectRelatedPhrase")}
                       placeholder={t("searchPlaceholder")}
                       defaultItems={(wordOptions as WordRecommendation[]) || []}
@@ -175,6 +178,9 @@ export default function AddRelatedItemModal({
 
                     return (
                       <CustomSelect
+                        classNames={{
+                          base: "w-full",
+                        }}
                         label={t("relationType")}
                         placeholder={t("selectRelationType")}
                         isInvalid={!!errors.relationType}
