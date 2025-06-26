@@ -7,7 +7,7 @@ export const MeaningSchema = z.object({
   attributes: z.array(z.number()).nullable().optional(),
   example: z.object({
     sentence: z.string().nullable().optional(),
-    author: z.string().nullable().optional(),
+    author: z.number().nullable().optional(),
   }).nullable().optional(),
   imageUrl: z.string().nullable().optional(), // This will be a URL after upload
 });

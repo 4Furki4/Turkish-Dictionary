@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import { api } from "@/src/trpc/react";
 import { EntityTypes, Actions } from "@/db/schema/requests";
+import { useTranslations } from "next-intl";
 
 interface UseRequestResolverProps {
   entityType: EntityTypes;
@@ -21,11 +22,26 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
   const { data: languages, isLoading: isLoadingLanguages } = api.params.getLanguages.useQuery();
   const { data: partsOfSpeech, isLoading: isLoadingPartsOfSpeech } = api.params.getPartOfSpeeches.useQuery();
   const { data: authors, isLoading: isLoadingAuthors } = api.request.getAuthorsWithRequested.useQuery();
+  const tRelationTypes = useTranslations("RelationTypes");
 
   // Collect all word IDs that need to be resolved for related words/phrases
   const wordIdsToResolve = useMemo(() => {
     const ids = new Set<number>();
-    if (entityType === 'related_words' || entityType === 'related_phrases') {
+    if (entityType === 'related_words' || entityType === 'related_phrases' || entityType === 'words') {
+      console.log('newData', newData)
+      console.log('oldData', oldData)
+      if (Array.isArray(newData?.relatedWords)) {
+        newData.relatedWords.forEach((word: any) => ids.add(word.relatedWordId));
+      }
+      if (Array.isArray(oldData?.relatedWords)) {
+        oldData.relatedWords.forEach((word: any) => ids.add(word.relatedWordId));
+      }
+      if (Array.isArray(newData?.relatedPhrases)) {
+        newData.relatedPhrases.forEach((phrase: any) => ids.add(phrase.relatedWordId));
+      }
+      if (Array.isArray(oldData?.relatedPhrases)) {
+        oldData.relatedPhrases.forEach((phrase: any) => ids.add(phrase.relatedWordId));
+      }
       if (newData?.relatedWordId) {
         ids.add(newData.relatedWordId);
       }
@@ -38,6 +54,7 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
       if (oldData?.relatedPhraseId) {
         ids.add(oldData.relatedPhraseId);
       }
+
     }
     return Array.from(ids);
   }, [entityType, newData, oldData]);
@@ -74,7 +91,7 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
     const beautify = (data: any, entity: EntityTypes) => {
       if (!data) return {};
       const beautifiedData = { ...data };
-
+      console.log('beautifiedData', beautifiedData);
       switch (entity) {
         case 'words':
           if (beautifiedData.language) {
@@ -92,15 +109,35 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
           if (beautifiedData.meanings && Array.isArray(beautifiedData.meanings)) {
             beautifiedData.meanings = beautifiedData.meanings.map((m: any) => beautify(m, 'meanings'));
           }
+          if (beautifiedData.relatedWords && Array.isArray(beautifiedData.relatedWords)) {
+            beautifiedData.relatedWords = beautifiedData.relatedWords.map((m: any) => {
+              if (m.relatedWordId) {
+                return {
+                  relatedWord: wordNamesMap.get(m.relatedWordId)?.name || `ID: ${m.relatedWordId}`,
+                  relationType: tRelationTypes(m.relationType),
+                }
+              }
+            });
+          }
+          if (beautifiedData.relatedPhrases && Array.isArray(beautifiedData.relatedPhrases)) {
+            beautifiedData.relatedPhrases = beautifiedData.relatedPhrases.map((m: any) => {
+              if (m.relatedWordId) {
+                return {
+                  relatedWord: wordNamesMap.get(m.relatedWordId)?.name || `ID: ${m.relatedWordId}`,
+                  relationType: tRelationTypes(m.relationType),
+                }
+              }
+            });
+          }
           break;
 
         case 'meanings':
-          if (beautifiedData.part_of_speech_id) {
-            beautifiedData.partOfSpeech = posMap.get(beautifiedData.part_of_speech_id)?.partOfSpeech || `ID: ${beautifiedData.part_of_speech_id}`;
-            delete beautifiedData.part_of_speech_id;
+          if (beautifiedData.partOfSpeechId) {
+            beautifiedData.partOfSpeech = posMap.get(beautifiedData.partOfSpeechId)?.partOfSpeech || `ID: ${beautifiedData.partOfSpeechId}`;
+            delete beautifiedData.partOfSpeechId;
           }
-          if (beautifiedData.author_id) {
-            beautifiedData.author = authorMap.get(beautifiedData.author_id)?.name || `ID: ${beautifiedData.author_id}`;
+          if (beautifiedData.authorId) {
+            beautifiedData.author = authorMap.get(beautifiedData.authorId)?.name || `ID: ${beautifiedData.authorId}`;
             delete beautifiedData.author_id;
           }
           if (beautifiedData.attributes) {
@@ -115,12 +152,18 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
             beautifiedData.relatedWord = wordNamesMap.get(beautifiedData.relatedWordId)?.name || `ID: ${beautifiedData.relatedWordId}`;
             delete beautifiedData.relatedWordId;
           }
+          if (beautifiedData.relationType) {
+            beautifiedData.relationType = tRelationTypes(beautifiedData.relationType);
+          }
           break;
 
         case 'related_phrases':
           if (beautifiedData.relatedPhraseId) {
             beautifiedData.relatedPhrase = wordNamesMap.get(beautifiedData.relatedPhraseId)?.name || `ID: ${beautifiedData.relatedPhraseId}`;
             delete beautifiedData.relatedPhraseId;
+          }
+          if (beautifiedData.relationType) {
+            beautifiedData.relationType = tRelationTypes(beautifiedData.relationType);
           }
           break;
 
@@ -137,7 +180,7 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
       new: beautify(newData, entityType),
       old: beautify(oldData, entityType),
     };
-  }, [isLoading, newData, oldData, entityType, wordAttributes, meaningAttributes, partsOfSpeech, languages, authors, resolvedWords]);
+  }, [isLoading, newData, oldData, entityType, wordAttributes, meaningAttributes, partsOfSpeech, languages, authors, resolvedWords, tRelationTypes]);
 
   return { resolvedData, isLoading };
 }

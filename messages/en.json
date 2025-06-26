@@ -699,7 +699,7 @@
     "DeleteMeaningRequest": "Delete Meaning Request",
     "DeleteMeaningRequestSentence": "Are you sure you want to request deletion of the meaning \"{meaning}\"? Please provide a reason for the deletion.",
     "AttributeIsRequired": "Attribute is required, please enter an attribute.",
-    "AttributeRequestedSuccessfully": "Attribute requested successfully. Only you can see it until it is approved.",
+    "AttributeRequestedSuccessfully": "Attribute requested successfully! Only you can see it until it is approved.",
     "ReasonRequired": "Please enter your reason for the change",
     "ReasonMinLength15": "Reason must be at least 15 characters long",
     "ConfirmDeleteRelatedWord": "Are you sure you want to request the deletion of the relation \"{relationType}\" to the word \"{relatedWordName}\"?",
@@ -907,6 +907,7 @@
     "meaning": "Meaning",
     "partOfSpeech": "Part of Speech",
     "sentence": "Sentence",
+    "example": "Example",
     "author": "Author",
     "imageUrl": "Image URL",
     "relatedWord": "Related Word",
@@ -1167,6 +1168,7 @@
     "description": "Check your email for the sign in link."
   },
   "RequestDetails": {
+    "empty": "Empty",
     "WordAttribute": {
       "attribute": "Attribute",
       "oldAttribute": "Old Attribute",

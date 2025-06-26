@@ -743,7 +743,7 @@ export const requestRouter = createTRPCRouter({
         reason: z.string().min(1, "Reason is required"),
         captchaToken: z.string(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
-        const wordAttributes = input.attributes?.map((attribute) => ({ attribute: Number(attribute) }))
+        const wordAttributes = input.attributes?.map((attribute) => Number(attribute))
         const { word_id, captchaToken, ...restInput } = input;
         const wordData = {
             attributes: wordAttributes,
@@ -788,7 +788,7 @@ export const requestRouter = createTRPCRouter({
         reason: z.string().min(1, "Reason is required"),
         captchaToken: z.string(),
     })).mutation(async ({ input, ctx: { db, session: { user } } }) => {
-        const { meaning_id, reason, captchaToken, ...restInput } = input;
+        const { meaning_id, reason, captchaToken, attributes, ...restInput } = input;
         const preparedData = Object.keys(restInput).reduce<Record<string, unknown>>((acc, key) => {
             if (restInput[key as keyof typeof restInput]) {
                 acc[key] = restInput[key as keyof typeof restInput]
@@ -796,6 +796,9 @@ export const requestRouter = createTRPCRouter({
             return acc
         }, {})
         const purifiedData = purifyObject(preparedData)
+        if (attributes) {
+            purifiedData.attributes = attributes.map(Number);
+        }
         try {
             const { success } = await verifyRecaptcha(captchaToken);
             console.log('success', success)

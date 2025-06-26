@@ -60,7 +60,11 @@ const ClientCreateWordRequestSchema = CreateWordRequestSchema.extend({
     captchaToken: z.string().optional(), // Captcha token is handled separately
 });
 
-type DetailedFormData = z.infer<typeof ClientCreateWordRequestSchema>;
+interface RelatedItem {
+    id: number;
+    name: string;
+    relationType: string;
+}
 
 export interface PartOfSpeech {
     id: number;
@@ -136,17 +140,42 @@ export default function DetailedContributionForm({
         },
     });
 
+    // Define client-side Zod schemas within the component to access tForms
+    const ClientMeaningSchema = ApiMeaningSchema.extend({
+        partOfSpeechId: z.string().optional(), // Form uses string for ID
+        attributes: z.array(z.string()).optional(), // Form uses string for ID
+        example: z.object({
+            sentence: z.string().optional(),
+            author: z.string().optional(), // Form uses string for ID
+        }).optional(),
+        image: z.array(z.instanceof(File)).optional(), // Form handles File objects
+    });
+
+    const ClientRelatedWordSchema = ApiRelatedWordSchema.extend({
+        id: z.number(), // This is the word ID from the autocomplete
+        name: z.string(), // This is the word name from the autocomplete
+    });
+
+    const ClientRelatedPhraseSchema = ApiRelatedPhraseSchema.extend({
+        id: z.number(), // This is the phrase ID from the autocomplete
+        name: z.string(), // This is the phrase name from the autocomplete
+    });
+
+    const ClientCreateWordRequestSchema = CreateWordRequestSchema.extend({
+        languageCode: z.string().optional(), // Form uses languageCode
+        attributes: z.array(z.string()).optional(), // Form uses string for ID
+        name: z.string().min(1, tForms("Word.Required")).min(2, tForms("Word.MinLength2")),
+        meanings: z.array(ClientMeaningSchema).min(1, tForms("Meanings.MinLength1")),
+        relatedWords: z.array(ClientRelatedWordSchema).optional(),
+        relatedPhrases: z.array(ClientRelatedPhraseSchema).optional(),
+        captchaToken: z.string().optional(), // Captcha token is handled separately
+    });
+
+    type DetailedFormData = z.infer<typeof ClientCreateWordRequestSchema>;
+
     // Detailed form setup
     const detailedForm = useForm<DetailedFormData>({
-        resolver: zodResolver(ClientCreateWordRequestSchema.refine(
-            (data) => data.name.length >= 2, { message: tForms("Word.MinLength2"), path: ["name"] }
-        ).refine(
-            (data) => data.name.length >= 1, { message: tForms("Word.Required"), path: ["name"] }
-        ).refine(
-            (data) => data.meanings.every(m => m.meaning.length >= 1), { message: tForms("Meanings.MinLength1"), path: ["meanings"] }
-        ).refine(
-            (data) => data.meanings.every(m => m.meaning.length >= 1), { message: tForms("Meanings.Required"), path: ["meanings"] }
-        )),
+        resolver: zodResolver(ClientCreateWordRequestSchema),
         defaultValues: {
             name: prefillWord || "",
             phonetic: "",
@@ -296,7 +325,7 @@ export default function DetailedContributionForm({
                     attributes: meaning.attributes?.map(attr => parseInt(attr)).filter(Boolean) || [],
                     example: meaning.example?.sentence?.trim() ? {
                         sentence: meaning.example.sentence.trim(),
-                        author: meaning.example.author?.trim() ? meaning.example.author.trim() : undefined,
+                        author: meaning.example.author?.trim() ? parseInt(meaning.example.author.trim()) : undefined,
                     } : undefined,
                     imageUrl: meaning.image?.[0] ? uploadedImageUrls[imageIndex++] : undefined,
                 })),

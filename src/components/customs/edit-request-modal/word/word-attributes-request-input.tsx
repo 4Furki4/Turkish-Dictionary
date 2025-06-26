@@ -49,7 +49,7 @@ export default function WordAttributesRequestInput({
                             // color='primary'
                             >
                                 <div className='sr-only'>
-                                    {t("NewWordAttribute")}
+                                    {t("AddNewWordAttribute")}
                                 </div>
                                 <Plus></Plus>
                             </Button>

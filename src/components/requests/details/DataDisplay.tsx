@@ -14,7 +14,7 @@ const DataField: FC<{ label: string; value: any }> = ({ label, value }) => {
     if (Array.isArray(val)) {
       if (val.length === 0) return <span className="text-gray-500 italic">empty array</span>;
       return (
-        <ul className="list-disc list-inside">
+        <ul className="list-none list-inside">
           {val.map((item, index) => (
             <li key={index}>{renderValue(item)}</li>
           ))}

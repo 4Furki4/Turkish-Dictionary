@@ -10,8 +10,9 @@ interface DiffTableProps {
 
 const DiffField: FC<{ label: string; oldValue: any; newValue: any }> = ({ label, oldValue, newValue }) => {
   const tDbFieldLabels = useTranslations("DbFieldLabels");
+  const tRequestDetails = useTranslations("RequestDetails");
   const renderValue = (value: any) => {
-    if (value === null || value === undefined || value === '') return <span className="text-gray-500 italic">empty</span>;
+    if (value === null || value === undefined || value === '') return <span className="text-gray-500 italic">{tRequestDetails("empty")}</span>;
     if (Array.isArray(value)) return value.join(', ');
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
@@ -30,7 +31,7 @@ const DiffField: FC<{ label: string; oldValue: any; newValue: any }> = ({ label,
 
   return (
     <div className="grid grid-cols-3 gap-4 py-2 border-b border-border">
-      <dt className="font-medium text-gray-600 dark:text-gray-400">{label}</dt>
+      <dt className="font-medium text-gray-600 dark:text-gray-400">{tDbFieldLabels(label)}</dt>
       <dd className="text-red-600 line-through">{renderValue(oldValue)}</dd>
       <dd className="text-green-600">{renderValue(newValue)}</dd>
     </div>

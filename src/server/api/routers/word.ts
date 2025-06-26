@@ -4,7 +4,7 @@ import {
   createTRPCRouter,
   publicProcedure,
 } from "../trpc";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, inArray } from "drizzle-orm";
 import { words } from "@/db/schema/words";
 import type { WordSearchResult, DashboardWordList } from "@/types";
 import DOMPurify from "isomorphic-dompurify";
@@ -448,6 +448,7 @@ export const wordRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx: { db } }) => {
+      console.log('Input IDs:', input.ids);
       if (input.ids.length === 0) {
         return [];
       }
@@ -457,7 +458,7 @@ export const wordRouter = createTRPCRouter({
           name: words.name,
         })
           .from(words)
-          .where(sql`${words.id} IN (${sql.join(input.ids, sql)})`);
+          .where(inArray(words.id, input.ids));
 
         return result;
       } catch (error) {

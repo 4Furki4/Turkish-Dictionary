@@ -557,6 +557,7 @@
     "CancelRequest": "İsteği İptal Et",
     "requestDetails": "İstek Detayları",
     "backToAllRequests": "Tüm İsteklere Dön",
+    "SubmitRequest": "İsteği Gönder",
     "entityTypes": {
       "title": "Varlık Türü",
       "all": "Tüm Türler",
@@ -861,12 +862,14 @@
     "suffix": "Sonek",
     "language": "Dil",
     "attributes": "Özellikler",
+    "attribute": "Özellik",
     "meanings": "Anlamlar",
     "relatedWords": "İlgili Kelimeler",
     "relatedPhrases": "İlgili Deyimler",
     "meaning": "Anlam",
     "partOfSpeech": "Sözcük Türü",
     "sentence": "Cümle",
+    "example": "Örnek",
     "author": "Yazar",
     "imageUrl": "Resim URL",
     "relatedWord": "İlgili Kelime",
@@ -1131,6 +1134,7 @@
     "description": "E-posta adresinize giriş bağlantısı gönderildi."
   },
   "RequestDetails": {
+    "empty": "Boş",
     "WordAttribute": {
       "attribute": "Özellik",
       "oldAttribute": "Eski Özellik",
