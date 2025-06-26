@@ -853,38 +853,25 @@
     "captchaError": "reCAPTCHA anahtarı alınamadı. Lütfen bağlantınızı kontrol edip tekrar deneyin."
   },
   "DbFieldLabels": {
-    "reason": "Değişiklik Nedeni",
+    "reason": "Gerekçe",
     "name": "Ad",
     "phonetic": "Fonetik",
-    "rootId": "Kök ID",
-    "createdAt": "Oluşturulma Tarihi",
-    "updatedAt": "Güncellenme Tarihi",
     "prefix": "Önek",
+    "root": "Kök",
     "suffix": "Sonek",
-    "viewCount": "Görülme Sayısı",
-    "variant": "Varyant",
-    "requestType": "İstek Türü",
-    "attribute": "Nitelik",
-    "value": "Değer",
     "language": "Dil",
-    "partOfSpeech": "Kelime Türü",
+    "attributes": "Özellikler",
+    "meanings": "Anlamlar",
+    "relatedWords": "İlgili Kelimeler",
+    "relatedPhrases": "İlgili Deyimler",
     "meaning": "Anlam",
-    "example": "Örnek",
+    "partOfSpeech": "Sözcük Türü",
+    "sentence": "Cümle",
     "author": "Yazar",
-    "relatedWordId": "İlgili Kelime",
-    "newRelationType": "Yeni İlişki Türü",
-    "originalRelationType": "Orijinal İlişki Türü",
-    "description": "Açıklama",
-    "wordId": "Kelime ID",
-    "meaningId": "Anlam ID",
-    "exampleId": "Örnek ID",
-    "attributeId": "Nitelik ID",
-    "type": "Tür",
-    "partOfSpeechId": "Kelime Türü ID",
     "imageUrl": "Resim URL",
-    "part_of_speech_id": "Kelime Türü ID",
-    "order": "Anlam sıralaması",
-    "phraseId": "Deyim ID"
+    "relatedWord": "İlgili Kelime",
+    "relationType": "İlişki Türü",
+    "relatedPhrase": "İlgili Deyim"
   },
   "RequestActions": {
     "create": "Oluştur",
@@ -1142,5 +1129,43 @@
   "VerifyRequest": {
     "title": "Doğrulama Talebi",
     "description": "E-posta adresinize giriş bağlantısı gönderildi."
+  },
+  "RequestDetails": {
+    "WordAttribute": {
+      "attribute": "Özellik",
+      "oldAttribute": "Eski Özellik",
+      "newAttribute": "Yeni Özellik",
+      "title": "Yeni Kelime Özelliği"
+    },
+    "Word": {
+      "name": "Kelime Adı",
+      "phonetic": "Fonetik",
+      "reason": "Gerekçe",
+      "title": "Yeni Kelime"
+    },
+    "Meaning": {
+      "deletedMeaning": "Silinen Anlam",
+      "title": "Yeni Anlam"
+    },
+    "RelatedWord": {
+      "deletedRelatedWord": "Silinen İlgili Kelime ID",
+      "title": "Yeni İlgili Kelime"
+    },
+    "RelatedPhrase": {
+      "deletedRelatedPhrase": "Silinen İlgili Deyim ID",
+      "title": "Yeni İlgili Deyim"
+    },
+    "Author": {
+      "title": "Yeni Yazar",
+      "name": "Yazar Adı"
+    },
+    "DiffTable": {
+      "field": "Alan",
+      "oldValue": "Eski Değer",
+      "newValue": "Yeni Değer"
+    },
+    "RawDataViewer": {
+      "viewRawData": "Ham Veriyi Görüntüle"
+    }
   }
 }

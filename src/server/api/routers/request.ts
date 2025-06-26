@@ -14,6 +14,7 @@ import { verifyRecaptcha } from "@/src/lib/recaptcha";
 import { wordAttributes } from "@/db/schema/word_attributes";
 import { meaningAttributes } from "@/db/schema/meaning_attributes";
 import { authors } from "@/db/schema/authors";
+import { CreateWordRequestSchema } from "../schemas/requests";
 
 export const requestRouter = createTRPCRouter({
     // User request management endpoints
@@ -513,7 +514,7 @@ export const requestRouter = createTRPCRouter({
             id: wordAttributes.id,
             attribute: wordAttributes.attribute
         }).from(wordAttributes)
-        .orderBy(wordAttributes.attribute);
+            .orderBy(wordAttributes.attribute);
 
         // Get pending requests from this user for new attributes
         const pendingRequests = await db.select({
@@ -533,7 +534,7 @@ export const requestRouter = createTRPCRouter({
             id: -req.id, // Use negative IDs for pending items to avoid conflicts
             attribute: (req.newData as { attribute: string }).attribute,
         }))
-        
+
         // Sort the combined list alphabetically
         const combined = [...approvedAttributes, ...requestedAttributes];
         return combined.sort((a, b) => a.attribute.localeCompare(b.attribute));
@@ -545,7 +546,7 @@ export const requestRouter = createTRPCRouter({
             id: meaningAttributes.id,
             attribute: meaningAttributes.attribute
         }).from(meaningAttributes)
-        .orderBy(meaningAttributes.attribute);
+            .orderBy(meaningAttributes.attribute);
 
         // Get pending requests from this user for new attributes
         const pendingRequests = await db.select({
@@ -577,7 +578,7 @@ export const requestRouter = createTRPCRouter({
             id: authors.id,
             name: authors.name
         }).from(authors)
-        .orderBy(authors.name);
+            .orderBy(authors.name);
 
         // Get pending requests from this user for new authors
         const pendingRequests = await db.select({
@@ -668,34 +669,7 @@ export const requestRouter = createTRPCRouter({
         }),
 
     createFullWordRequest: protectedProcedure
-        .input(z.object({
-            name: z.string().min(1, "Word name is required"),
-            language: z.string().optional(),
-            phonetic: z.string().optional(),
-            root: z.string().optional(),
-            prefix: z.string().optional(),
-            suffix: z.string().optional(),
-            attributes: z.number().array().optional(),
-            meanings: z.array(z.object({
-                meaning: z.string().min(1, "Meaning is required"),
-                partOfSpeechId: z.number().optional().nullable(),
-                attributes: z.array(z.number()),
-                example: z.object({
-                    sentence: z.string(),
-                    author: z.number().optional().nullable()
-                }).optional(),
-                imageUrl: z.string().optional()
-            })).min(1, "At least one meaning is required"),
-            relatedWords: z.array(z.object({
-                relatedWordId: z.number(),
-                relationType: z.string(),
-            })).optional(),
-            relatedPhrases: z.array(z.object({
-                relatedWordId: z.number(),
-                relationType: z.string(),
-            })).optional(),
-            captchaToken: z.string(),
-        }))
+        .input(CreateWordRequestSchema)
         .mutation(async ({ input, ctx: { db, session: { user } } }) => {
             const { captchaToken, relatedWords, relatedPhrases, ...wordData } = input;
 

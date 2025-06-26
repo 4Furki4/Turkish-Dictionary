@@ -896,35 +896,22 @@
     "reason": "Reason",
     "name": "Name",
     "phonetic": "Phonetic",
-    "rootId": "Root ID",
-    "createdAt": "Created At",
-    "updatedAt": "Updated At",
     "prefix": "Prefix",
+    "root": "Root",
     "suffix": "Suffix",
-    "viewCount": "View Count",
-    "variant": "Variant",
-    "requestType": "Request Type",
-    "attribute": "Attribute",
-    "value": "Value",
     "language": "Language",
-    "partOfSpeech": "Part of Speech",
+    "attributes": "Attributes",
+    "meanings": "Meanings",
+    "relatedWords": "Related Words",
+    "relatedPhrases": "Related Phrases",
     "meaning": "Meaning",
-    "example": "Example",
+    "partOfSpeech": "Part of Speech",
+    "sentence": "Sentence",
     "author": "Author",
-    "relatedWordId": "Related Word",
-    "newRelationType": "New Relation Type",
-    "originalRelationType": "Original Relation Type",
-    "description": "Description",
-    "wordId": "Word ID",
-    "meaningId": "Meaning ID",
-    "exampleId": "Example ID",
-    "attributeId": "Attribute ID",
-    "type": "Type",
-    "partOfSpeechId": "Part of Speech ID",
     "imageUrl": "Image URL",
-    "part_of_speech_id": "Part of Speech ID",
-    "order": "Order",
-    "phraseId": "Phrase ID"
+    "relatedWord": "Related Word",
+    "relationType": "Relation Type",
+    "relatedPhrase": "Related Phrase"
   },
   "RequestActions": {
     "create": "Create",
@@ -1178,5 +1165,43 @@
   "VerifyRequest": {
     "title": "Verify Request",
     "description": "Check your email for the sign in link."
+  },
+  "RequestDetails": {
+    "WordAttribute": {
+      "attribute": "Attribute",
+      "oldAttribute": "Old Attribute",
+      "newAttribute": "New Attribute",
+      "title": "New Word Attribute"
+    },
+    "Word": {
+      "name": "Word Name",
+      "phonetic": "Phonetic",
+      "reason": "Reason",
+      "title": "New Word"
+    },
+    "Meaning": {
+      "deletedMeaning": "Deleted Meaning",
+      "title": "New Meaning"
+    },
+    "RelatedWord": {
+      "deletedRelatedWord": "Deleted Related Word ID",
+      "title": "New Related Word"
+    },
+    "RelatedPhrase": {
+      "deletedRelatedPhrase": "Deleted Related Phrase ID",
+      "title": "New Related Phrase"
+    },
+    "Author": {
+      "title": "New Author",
+      "name": "Author Name"
+    },
+    "DiffTable": {
+      "field": "Field",
+      "oldValue": "Old Value",
+      "newValue": "New Value"
+    },
+    "RawDataViewer": {
+      "viewRawData": "View Raw Data"
+    }
   }
 }

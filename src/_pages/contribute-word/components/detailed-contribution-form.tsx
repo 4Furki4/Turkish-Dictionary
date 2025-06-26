@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { CreateWordRequestSchema, MeaningSchema as ApiMeaningSchema, RelatedWordSchema as ApiRelatedWordSchema, RelatedPhraseSchema as ApiRelatedPhraseSchema } from "@/src/server/api/schemas/requests";
 import { Button, CardBody, CardHeader } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -29,33 +30,37 @@ interface RelatedItem {
     relationType: string;
 }
 
-// Schema for detailed form
-const getDetailedFormSchema = (
-    wordNameRequiredIntl: string,
-    wordNameMinLengthIntl: string,
-    meaningRequiredIntl: string,
-    meaningMinLengthIntl: string
-) => z.object({
-    name: z.string().min(1, wordNameRequiredIntl).min(2, wordNameMinLengthIntl),
-    phonetic: z.string().optional(),
-    prefix: z.string().optional(),
-    root: z.string().optional(),
-    suffix: z.string().optional(),
-    languageCode: z.string().optional(),
-    attributes: z.array(z.string()).optional(),
-    meanings: z.array(z.object({
-        partOfSpeechId: z.string().optional(),
-        meaning: z.string().min(1, meaningRequiredIntl).min(1, meaningMinLengthIntl),
-        attributes: z.array(z.string()).optional(),
-        example: z.object({
-            sentence: z.string().optional(),
-            author: z.string().optional(),
-        }).optional(),
-        image: z.array(z.instanceof(File)).optional(),
-    })).min(1, "At least one meaning is required"),
+// Client-side Zod schemas for form validation
+const ClientMeaningSchema = ApiMeaningSchema.extend({
+    partOfSpeechId: z.string().optional(), // Form uses string for ID
+    attributes: z.array(z.string()).optional(), // Form uses string for ID
+    example: z.object({
+        sentence: z.string().optional(),
+        author: z.string().optional(), // Form uses string for ID
+    }).optional(),
+    image: z.array(z.instanceof(File)).optional(), // Form handles File objects
 });
 
-type DetailedFormData = z.infer<ReturnType<typeof getDetailedFormSchema>>;
+const ClientRelatedWordSchema = ApiRelatedWordSchema.extend({
+    id: z.number(), // This is the word ID from the autocomplete
+    name: z.string(), // This is the word name from the autocomplete
+});
+
+const ClientRelatedPhraseSchema = ApiRelatedPhraseSchema.extend({
+    id: z.number(), // This is the phrase ID from the autocomplete
+    name: z.string(), // This is the phrase name from the autocomplete
+});
+
+const ClientCreateWordRequestSchema = CreateWordRequestSchema.extend({
+    languageCode: z.string().optional(), // Form uses languageCode
+    attributes: z.array(z.string()).optional(), // Form uses string for ID
+    meanings: z.array(ClientMeaningSchema).min(1, "At least one meaning is required"),
+    relatedWords: z.array(ClientRelatedWordSchema).optional(),
+    relatedPhrases: z.array(ClientRelatedPhraseSchema).optional(),
+    captchaToken: z.string().optional(), // Captcha token is handled separately
+});
+
+type DetailedFormData = z.infer<typeof ClientCreateWordRequestSchema>;
 
 export interface PartOfSpeech {
     id: number;
@@ -133,7 +138,15 @@ export default function DetailedContributionForm({
 
     // Detailed form setup
     const detailedForm = useForm<DetailedFormData>({
-        resolver: zodResolver(getDetailedFormSchema(tForms("Word.Required"), tForms("Word.MinLength2"), tForms("Meanings.Required"), tForms("Meanings.MinLength1"))),
+        resolver: zodResolver(ClientCreateWordRequestSchema.refine(
+            (data) => data.name.length >= 2, { message: tForms("Word.MinLength2"), path: ["name"] }
+        ).refine(
+            (data) => data.name.length >= 1, { message: tForms("Word.Required"), path: ["name"] }
+        ).refine(
+            (data) => data.meanings.every(m => m.meaning.length >= 1), { message: tForms("Meanings.MinLength1"), path: ["meanings"] }
+        ).refine(
+            (data) => data.meanings.every(m => m.meaning.length >= 1), { message: tForms("Meanings.Required"), path: ["meanings"] }
+        )),
         defaultValues: {
             name: prefillWord || "",
             phonetic: "",
@@ -269,7 +282,7 @@ export default function DetailedContributionForm({
             // Reset imageIndex for the actual submission
             imageIndex = 0;
 
-            const formattedData = {
+            const formattedData: z.infer<typeof CreateWordRequestSchema> = {
                 name: data.name.trim(),
                 phonetic: data.phonetic?.trim() || undefined,
                 prefix: data.prefix?.trim() || undefined,
@@ -283,7 +296,7 @@ export default function DetailedContributionForm({
                     attributes: meaning.attributes?.map(attr => parseInt(attr)).filter(Boolean) || [],
                     example: meaning.example?.sentence?.trim() ? {
                         sentence: meaning.example.sentence.trim(),
-                        author: meaning.example.author?.trim() ? parseInt(meaning.example.author.trim()) : undefined,
+                        author: meaning.example.author?.trim() ? meaning.example.author.trim() : undefined,
                     } : undefined,
                     imageUrl: meaning.image?.[0] ? uploadedImageUrls[imageIndex++] : undefined,
                 })),

@@ -440,4 +440,33 @@ export const wordRouter = createTRPCRouter({
       ) as { count: number }[];
       return Number(result[0].count);
     }),
+
+  getWordsByIds: publicProcedure
+    .input(
+      z.object({
+        ids: z.array(z.number()),
+      })
+    )
+    .query(async ({ input, ctx: { db } }) => {
+      if (input.ids.length === 0) {
+        return [];
+      }
+      try {
+        const result = await db.select({
+          id: words.id,
+          name: words.name,
+        })
+          .from(words)
+          .where(sql`${words.id} IN (${sql.join(input.ids, sql)})`);
+
+        return result;
+      } catch (error) {
+        console.error("Error fetching words by IDs:", error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to fetch words by IDs.',
+          cause: error,
+        });
+      }
+    }),
 });
