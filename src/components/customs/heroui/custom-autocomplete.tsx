@@ -34,40 +34,38 @@ const customAutocompleteStyles = tv({
 // We extend the base AutocompleteProps.
 export interface CustomAutocompleteProps<T extends object> extends AutocompleteProps<T> { }
 
-export const CustomAutocomplete = React.forwardRef<HTMLInputElement, CustomAutocompleteProps<object>>(
-    ({ children, className, classNames, ...props }, ref) => {
-        const { isBlurEnabled } = useSnapshot(preferencesState);
-        const styles = customAutocompleteStyles({ isBlurred: isBlurEnabled });
+export const CustomAutocomplete = <T extends object>(
+    { children, className, classNames, ...props }: CustomAutocompleteProps<T>) => {
+    const { isBlurEnabled } = useSnapshot(preferencesState);
+    const styles = customAutocompleteStyles({ isBlurred: isBlurEnabled });
 
-        return (
-            <Autocomplete
-                ref={ref}
-                inputProps={{
-                    classNames: {
-                        inputWrapper: styles.inputWrapper(),
-                    }
-                }}
-                // Apply default props
-                color="primary"
-                variant="bordered"
-                // Pass through any other props like `label`, `items`, etc.
-                {...props}
-                className={cn("w-full", className)}
-                // Deeply merge our default classNames with any custom ones passed in.
-                classNames={{
-                    base: cn(styles.base(), classNames?.base),
-                    listboxWrapper: cn(styles.listboxWrapper(), classNames?.listboxWrapper),
-                    listbox: cn(styles.listbox(), classNames?.listbox),
-                    popoverContent: cn(styles.popoverContent(), classNames?.popoverContent),
-                    clearButton: cn(styles.clearButton(), classNames?.clearButton),
-                    selectorButton: cn(styles.selectorButton(), classNames?.selectorButton),
-                    ...classNames,
-                }}
-            >
-                {children}
-            </Autocomplete>
-        );
-    }
-);
+    return (
+        <Autocomplete
+            inputProps={{
+                classNames: {
+                    inputWrapper: styles.inputWrapper(),
+                }
+            }}
+            // Apply default props
+            color="primary"
+            variant="bordered"
+            // Pass through any other props like `label`, `items`, etc.
+            {...props}
+            className={cn("w-full", className)}
+            // Deeply merge our default classNames with any custom ones passed in.
+            classNames={{
+                base: cn(styles.base(), classNames?.base),
+                listboxWrapper: cn(styles.listboxWrapper(), classNames?.listboxWrapper),
+                listbox: cn(styles.listbox(), classNames?.listbox),
+                popoverContent: cn(styles.popoverContent(), classNames?.popoverContent),
+                clearButton: cn(styles.clearButton(), classNames?.clearButton),
+                selectorButton: cn(styles.selectorButton(), classNames?.selectorButton),
+                ...classNames,
+            }}
+        >
+            {children}
+        </Autocomplete>
+    );
+}
 
 CustomAutocomplete.displayName = "CustomAutocomplete";

@@ -1169,6 +1169,7 @@
   },
   "RequestDetails": {
     "empty": "Empty",
+    "emptyArray": "Empty Array",
     "WordAttribute": {
       "attribute": "Attribute",
       "oldAttribute": "Old Attribute",

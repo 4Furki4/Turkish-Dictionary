@@ -310,6 +310,8 @@ export default function DetailedContributionForm({
 
             // Reset imageIndex for the actual submission
             imageIndex = 0;
+            console.log(data.meanings[0].example?.author?.trim())
+            console.log(data.meanings[0].example?.author?.trim() ? parseInt(data.meanings[0].example.author.trim()) : undefined)
 
             const formattedData: z.infer<typeof CreateWordRequestSchema> = {
                 name: data.name.trim(),
@@ -350,7 +352,7 @@ export default function DetailedContributionForm({
             setIsSubmitting(false);
         }
     };
-
+    console.log('detailedForm', detailedForm.getValues())
     return (
         <>
             <CustomCard className="max-md:p-0">

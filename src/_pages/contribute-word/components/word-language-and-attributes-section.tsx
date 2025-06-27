@@ -71,7 +71,7 @@ export default function WordLanguageAndAttributesSection({
         control={control}
         render={({ field, fieldState: { error } }) => (
           <CustomAutocomplete
-            {...field}
+            onSelectionChange={(key) => field.onChange(key)}
             classNames={{
               base: "w-full",
             }}

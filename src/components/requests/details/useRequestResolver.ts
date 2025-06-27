@@ -9,6 +9,7 @@ interface UseRequestResolverProps {
   action: Actions;
   newData?: any;
   oldData?: any;
+  locale: string;
 }
 
 /**
@@ -16,7 +17,7 @@ interface UseRequestResolverProps {
  * It fetches all necessary lookup data (attributes, languages, etc.)
  * and provides a "beautified" version of the input data.
  */
-export function useRequestResolver({ entityType, action, newData, oldData }: UseRequestResolverProps) {
+export function useRequestResolver({ entityType, action, newData, oldData, locale }: UseRequestResolverProps) {
   const { data: wordAttributes, isLoading: isLoadingWordAttributes } = api.request.getWordAttributesWithRequested.useQuery();
   const { data: meaningAttributes, isLoading: isLoadingMeaningAttributes } = api.request.getMeaningAttributesWithRequested.useQuery();
   const { data: languages, isLoading: isLoadingLanguages } = api.params.getLanguages.useQuery();
@@ -28,8 +29,6 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
   const wordIdsToResolve = useMemo(() => {
     const ids = new Set<number>();
     if (entityType === 'related_words' || entityType === 'related_phrases' || entityType === 'words') {
-      console.log('newData', newData)
-      console.log('oldData', oldData)
       if (Array.isArray(newData?.relatedWords)) {
         newData.relatedWords.forEach((word: any) => ids.add(word.relatedWordId));
       }
@@ -95,7 +94,7 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
       switch (entity) {
         case 'words':
           if (beautifiedData.language) {
-            beautifiedData.language = langMap.get(beautifiedData.language)?.language_en || beautifiedData.language;
+            beautifiedData.language = locale === "en" ? langMap.get(beautifiedData.language)?.language_en : langMap.get(beautifiedData.language)?.language_tr;
           }
           if (beautifiedData.attributes) {
             beautifiedData.attributes = beautifiedData.attributes.map(
@@ -136,9 +135,8 @@ export function useRequestResolver({ entityType, action, newData, oldData }: Use
             beautifiedData.partOfSpeech = posMap.get(beautifiedData.partOfSpeechId)?.partOfSpeech || `ID: ${beautifiedData.partOfSpeechId}`;
             delete beautifiedData.partOfSpeechId;
           }
-          if (beautifiedData.authorId) {
-            beautifiedData.author = authorMap.get(beautifiedData.authorId)?.name || `ID: ${beautifiedData.authorId}`;
-            delete beautifiedData.author_id;
+          if (beautifiedData.example?.author) {
+            beautifiedData.example.author = authorMap.get(beautifiedData.example.author)?.name || `ID: ${beautifiedData.example.author}`;
           }
           if (beautifiedData.attributes) {
             beautifiedData.attributes = beautifiedData.attributes.map(

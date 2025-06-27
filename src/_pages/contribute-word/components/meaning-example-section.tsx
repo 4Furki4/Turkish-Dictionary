@@ -65,7 +65,7 @@ export default function MeaningExampleSection({
           control={control}
           render={({ field, fieldState: { error } }) => (
             <CustomAutocomplete
-              {...field}
+              onSelectionChange={(item) => field.onChange(item)}
               isLoading={authorsWithRequestedIsLoading}
               as={'div'}
               size="lg"
@@ -91,18 +91,18 @@ export default function MeaningExampleSection({
                 </Button>
               }
             >
-              {sortedAuthors.map((author) => (
+              {(author) => (
                 <AutocompleteItem
-                  key={author.id.toString()}
-                  endContent={Number(author.id) < 0 ? (
+                  key={author.key.toString()}
+                  endContent={Number(author.key) < 0 ? (
                     <Tooltip content={tRequests("RequestedAttributeByYou")}>
                       <FileClock className="text-warning" />
                     </Tooltip>
                   ) : ""}
                 >
-                  {author.name}
+                  {author.label}
                 </AutocompleteItem>
-              )) || []}
+              )}
             </CustomAutocomplete>
           )}
         />

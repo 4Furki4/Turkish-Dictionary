@@ -9,10 +9,13 @@ interface DataDisplayProps {
 
 const DataField: FC<{ label: string; value: any }> = ({ label, value }) => {
   const tDbFieldLabels = useTranslations("DbFieldLabels");
+  const tRequestDetails = useTranslations("RequestDetails");
   const renderValue = (val: any) => {
-    if (val === null || val === undefined || val === '') return <span className="text-gray-500 italic">empty</span>;
+    if (val === null || val === undefined || val === '') return <span className="text-gray-500 italic">{tRequestDetails("empty")}</span>;
     if (Array.isArray(val)) {
-      if (val.length === 0) return <span className="text-gray-500 italic">empty array</span>;
+      if (val.length === 0) return <span className="text-gray-500 italic">
+        {tRequestDetails("emptyArray")}
+      </span>;
       return (
         <ul className="list-none list-inside">
           {val.map((item, index) => (

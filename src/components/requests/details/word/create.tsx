@@ -6,15 +6,17 @@ import { useRequestResolver } from "../useRequestResolver";
 import { DataDisplay } from "../DataDisplay";
 import { RawDataViewer } from "../RawDataViewer";
 import { Spinner } from "@heroui/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CreateWordRequestSchema } from "@/src/server/api/schemas/requests";
 
 export const CreateWord: FC<RequestDetailComponentProps> = ({ newData }) => {
   const t = useTranslations("RequestDetails.Word");
+  const locale = useLocale()
   const { resolvedData, isLoading } = useRequestResolver({
     entityType: "words",
     action: "create",
     newData: CreateWordRequestSchema.omit({ captchaToken: true }).parse(newData),
+    locale,
   });
 
   if (isLoading) {

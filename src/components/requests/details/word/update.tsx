@@ -7,13 +7,16 @@ import { DiffTable } from "../DiffTable";
 import { RawDataViewer } from "../RawDataViewer";
 import { Spinner } from "@heroui/react";
 import { UpdateWordRequestSchema } from "@/src/server/api/schemas/requests";
+import { useLocale } from "next-intl";
 
 export const UpdateWord: FC<RequestDetailComponentProps> = ({ newData, oldData }) => {
+  const locale = useLocale()
   const { resolvedData, isLoading } = useRequestResolver({
     entityType: "words",
     action: "update",
     newData: UpdateWordRequestSchema.parse(newData),
     oldData: UpdateWordRequestSchema.omit({ reason: true }).parse(oldData),
+    locale,
   });
 
   if (isLoading) {

@@ -1135,6 +1135,7 @@
   },
   "RequestDetails": {
     "empty": "Boş",
+    "emptyArray": "Boş Dizi",
     "WordAttribute": {
       "attribute": "Özellik",
       "oldAttribute": "Eski Özellik",
