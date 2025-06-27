@@ -10,7 +10,7 @@ import { CreateAuthorRequestSchema } from "@/src/server/api/schemas/requests";
 
 export const CreateAuthor: FC<RequestDetailComponentProps> = ({ newData }) => {
   const t = useTranslations("RequestDetails.Author");
-  const locale = useLocale()
+  const locale = useLocale() as "en" | "tr";
   const { resolvedData, isLoading } = useRequestResolver({
     entityType: "authors", // Assuming 'authors' is the entityType for author requests
     action: "create",

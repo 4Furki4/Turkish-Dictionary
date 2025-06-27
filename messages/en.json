@@ -1205,6 +1205,10 @@
     },
     "RawDataViewer": {
       "viewRawData": "View Raw Data"
+    },
+    "SchemaError": {
+      "title": "Schema Validation Error",
+      "description": "The data for this request does not match the expected format. This might be due to an outdated request or a data integrity issue. Please review the details below:"
     }
   }
 }

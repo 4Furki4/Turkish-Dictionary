@@ -13,33 +13,22 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Divider,
-  Tabs,
-  Tab,
   CardHeader,
   CardFooter
 } from "@heroui/react";
 import { EntityTypes, Actions, Status } from "@/db/schema/requests";
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "@/src/i18n/routing";
-import RelatedWordDisplay from "@/src/components/shared/RelatedWordDisplay";
-import DisplayWordBeingModified from "@/src/components/shared/DisplayWordBeingModified";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslations } from "next-intl";
 import {
   ArrowLeft,
-  ArrowDown,
-  ArrowUp,
-  FileText,
-  Plus,
-  PenSquare,
-  Copy,
-  AlertTriangle,
   Clock
 } from "lucide-react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { toast } from "sonner";
 import RequestDetails from "@/src/components/requests/details/RequestDetails";
+import DisplayWordBeingModified from "@/src/components/shared/DisplayWordBeingModified";
 
 
 export interface RequestDetailProps {
@@ -51,14 +40,11 @@ type EntityData = Record<string, any>;
 export default function RequestDetail({ requestId }: RequestDetailProps) {
   console.log('[RequestDetail] Props:', requestId);
   const t = useTranslations("Requests");
-  const tDbFieldLabels = useTranslations("DbFieldLabels");
-  const tRelationTypes = useTranslations("RelationTypes");
   const router = useRouter();
   const [reason, setReason] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState<Record<string, any>>({});
-  const [activeTab, setActiveTab] = useState<string>("current");
   const { executeRecaptcha } = useGoogleReCaptcha()
   const entityTypeLabels = useMemo<Record<EntityTypes, string>>(() => ({
     words: t("entityTypes.words"),
@@ -156,9 +142,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
 
   if (isLoading) {
     return (
-      <div className="flex h-40 items-center justify-center">
-        <Spinner />
-      </div>
+
+      <Spinner className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
     );
   }
 

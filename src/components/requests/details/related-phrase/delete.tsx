@@ -4,29 +4,36 @@ import { FC } from "react";
 import { RequestDetailComponentProps } from "../registry";
 import { useRequestResolver } from "../useRequestResolver";
 import { DataDisplay } from "../DataDisplay";
-import { RawDataViewer } from "../RawDataViewer";
-import { Spinner } from "@heroui/react";
-import { useLocale, useTranslations } from "next-intl";
 import { DeleteRelatedPhraseRequestSchema } from "@/src/server/api/schemas/requests";
+import { RawDataViewer } from "../RawDataViewer";
+import SchemaErrorDisplay from "../SchemaErrorDisplay";
+import { useLocale, useTranslations } from "next-intl";
 
-export const DeleteRelatedPhrase: FC<RequestDetailComponentProps> = ({ newData }) => {
-  const t = useTranslations("RequestDetails.RelatedPhrase");
-  const locale = useLocale()
+export const DeleteRelatedPhrase: FC<RequestDetailComponentProps> = ({ oldData }) => {
+  const t = useTranslations("RequestDetails");
+  const locale = useLocale() as "en" | "tr";
+  const safeParsedData = DeleteRelatedPhraseRequestSchema.safeParse(oldData);
+
   const { resolvedData, isLoading } = useRequestResolver({
     entityType: "related_phrases",
     action: "delete",
-    newData: DeleteRelatedPhraseRequestSchema.parse(newData), // For delete, newData contains the ID of the item to be deleted,
     locale,
+    oldData: safeParsedData.data,
   });
 
+  if (!safeParsedData.success) {
+    return <SchemaErrorDisplay error={safeParsedData.error} />;
+  }
+
+
   if (isLoading) {
-    return <Spinner />;
+    return <div>Loading...</div>;
   }
 
   return (
-    <>
-      <DataDisplay data={resolvedData.new} title={t('deletedRelatedPhrase')} />
-      <RawDataViewer data={{ newData }} />
-    </>
+    <div className="space-y-4">
+      <DataDisplay data={resolvedData.old} title={t("RelatedPhrase.deletedRelatedPhrase")} />
+      <RawDataViewer data={{ oldData }} />
+    </div>
   );
 };

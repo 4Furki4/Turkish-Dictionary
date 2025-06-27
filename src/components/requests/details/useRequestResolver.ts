@@ -7,17 +7,18 @@ import { useTranslations } from "next-intl";
 interface UseRequestResolverProps {
   entityType: EntityTypes;
   action: Actions;
+  locale: "en" | "tr";
   newData?: any;
   oldData?: any;
-  locale: string;
 }
 
-/**
- * A hook to resolve IDs in request data to human-readable names.
- * It fetches all necessary lookup data (attributes, languages, etc.)
- * and provides a "beautified" version of the input data.
- */
-export function useRequestResolver({ entityType, action, newData, oldData, locale }: UseRequestResolverProps) {
+export const useRequestResolver = ({
+  entityType,
+  action,
+  locale,
+  newData,
+  oldData,
+}: UseRequestResolverProps) => {
   const { data: wordAttributes, isLoading: isLoadingWordAttributes } = api.request.getWordAttributesWithRequested.useQuery();
   const { data: meaningAttributes, isLoading: isLoadingMeaningAttributes } = api.request.getMeaningAttributesWithRequested.useQuery();
   const { data: languages, isLoading: isLoadingLanguages } = api.params.getLanguages.useQuery();
@@ -131,12 +132,16 @@ export function useRequestResolver({ entityType, action, newData, oldData, local
           break;
 
         case 'meanings':
-          if (beautifiedData.partOfSpeechId) {
-            beautifiedData.partOfSpeech = posMap.get(beautifiedData.partOfSpeechId)?.partOfSpeech || `ID: ${beautifiedData.partOfSpeechId}`;
+          if (beautifiedData.partOfSpeechId || beautifiedData.part_of_speech_id) {
+            beautifiedData.partOfSpeech = posMap.get(beautifiedData.partOfSpeechId || beautifiedData.part_of_speech_id)?.partOfSpeech || `ID: ${beautifiedData.partOfSpeechId}`;
             delete beautifiedData.partOfSpeechId;
+            delete beautifiedData.part_of_speech_id;
           }
-          if (beautifiedData.example?.author) {
-            beautifiedData.example.author = authorMap.get(beautifiedData.example.author)?.name || `ID: ${beautifiedData.example.author}`;
+          if (beautifiedData.example?.author || beautifiedData.example?.authorId || beautifiedData.authorId || beautifiedData.author_id) {
+            beautifiedData.author = authorMap.get(beautifiedData.example?.author || beautifiedData.authorId || beautifiedData.author_id)?.name || `ID: ${beautifiedData.example?.author}`;
+            delete beautifiedData.example?.authorId;
+            delete beautifiedData.authorId;
+            delete beautifiedData.author_id;
           }
           if (beautifiedData.attributes) {
             beautifiedData.attributes = beautifiedData.attributes.map(

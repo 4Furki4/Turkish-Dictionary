@@ -1171,6 +1171,10 @@
     },
     "RawDataViewer": {
       "viewRawData": "Ham Veriyi Görüntüle"
+    },
+    "SchemaError": {
+      "title": "Şema Doğrulama Hatası",
+      "description": "Bu isteğe ait veriler beklenen formatla eşleşmiyor. Bu, güncel olmayan bir istek veya veri bütünlüğü sorunundan kaynaklanıyor olabilir. Lütfen aşağıdaki ayrıntıları inceleyin:"
     }
   }
 }
