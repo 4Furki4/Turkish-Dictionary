@@ -14,7 +14,7 @@ export const UpdateWord: FC<RequestDetailComponentProps> = ({ newData, oldData }
   const { resolvedData, isLoading } = useRequestResolver({
     entityType: "words",
     action: "update",
-    newData: UpdateWordRequestSchema.parse(newData),
+    newData: UpdateWordRequestSchema.omit({ reason: true }).parse(newData),
     oldData: UpdateWordRequestSchema.omit({ reason: true }).parse(oldData),
     locale,
   });

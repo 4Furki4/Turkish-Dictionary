@@ -98,7 +98,7 @@ export function useRequestResolver({ entityType, action, newData, oldData, local
           }
           if (beautifiedData.attributes) {
             beautifiedData.attributes = beautifiedData.attributes.map(
-              (id: number) => wordAttrMap.get(id)?.attribute || `ID: ${id}`
+              (id: number | string) => wordAttrMap.get(Number(id))?.attribute || `ID: ${id}`
             );
           }
           if (beautifiedData.wordName) {
