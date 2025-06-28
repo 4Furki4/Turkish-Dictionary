@@ -558,6 +558,8 @@
     "requestDetails": "İstek Detayları",
     "backToAllRequests": "Tüm İsteklere Dön",
     "SubmitRequest": "İsteği Gönder",
+    "DeleteMeaningRequest": "Anlam silme isteği",
+    "DeleteMeaningRequestSentence": "Bu anlamı silme isteğini gönderiyorsunuz, lütfen bir neden belirtin.",
     "entityTypes": {
       "title": "Varlık Türü",
       "all": "Tüm Türler",

@@ -20,20 +20,20 @@ import { preferencesState } from "@/src/store/preferences"
 const meaningSchema = z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, "Meaning is required"),
-  part_of_speech_id: z.string().optional().nullable(),
+  partOfSpeechId: z.string().optional().nullable(),
   attributes: z.array(z.string()).optional(),
   sentence: z.string().optional(),
-  author_id: z.string().optional(),
+  authorId: z.string().optional(),
   reason: z.string().min(1, "Reason is required"),
 })
 
 const getMeaningIntlSchema = (meaningRequired: string, reasonRequired: string, reasonMinLength: string) => z.object({
   meaning_id: z.number(),
   meaning: z.string().min(1, meaningRequired),
-  part_of_speech_id: z.string().optional().nullable(),
+  partOfSpeechId: z.string().optional().nullable(),
   attributes: z.array(z.string()).optional(),
   sentence: z.string().optional(),
-  author_id: z.string().optional(),
+  authorId: z.string().optional(),
   reason: z.string().min(1, reasonRequired).min(15, reasonMinLength),
 })
 
@@ -247,10 +247,10 @@ function MeaningEditRequestForm({
     defaultValues: {
       meaning_id: meaning.meaning_id,
       meaning: meaning.meaning,
-      part_of_speech_id: meaning.part_of_speech_id?.toString(),
+      partOfSpeechId: meaning.part_of_speech_id?.toString(),
       attributes: meaning.attributes?.map(at => at.attribute_id.toString()) ?? [],
       sentence: meaning.sentence ?? "",
-      author_id: meaning.author_id?.toString() ?? "",
+      authorId: meaning.author_id?.toString() ?? "",
       reason: "",
     },
   })
@@ -275,7 +275,7 @@ function MeaningEditRequestForm({
         if (dirtyFields[key as keyof typeof dirtyFields] && key !== 'reason' && key !== 'meaning_id') {
           let value;
           switch (key) {
-            case 'part_of_speech_id':
+            case 'partOfSpeechId':
               value = data[key] ? parseInt(data[key]) : undefined;
               break;
             case 'attributes':
@@ -284,8 +284,8 @@ function MeaningEditRequestForm({
                 value = attrValue.map(attr => parseInt(attr));
               }
               break;
-            case 'author_id':
-              value = data.author_id ? parseInt(data.author_id) : undefined;
+            case 'authorId':
+              value = data.authorId ? parseInt(data.authorId) : undefined;
               break;
             default:
               value = data[key as keyof typeof data];
@@ -295,10 +295,11 @@ function MeaningEditRequestForm({
         return acc;
       }, {})
     }
+    console.log('preparedData.meaning', preparedData.meaning)
 
     onSubmit(preparedData);
   })
-
+  console.log('meaning', meaning.meaning)
   return (
     <Card isBlurred={isBlurEnabled} className="w-full border border-border" >
       <CardHeader className="flex flex-row justify-between items-center">
@@ -372,12 +373,6 @@ function MeaningEditRequestForm({
                   errorMessage={error?.message}
                 />
               )}
-            />
-
-            <MeaningAuthorInput
-              control={control}
-              meaningAuthors={authors?.map(author => ({ id: author.id.toString(), name: author.name })) || []}
-              meaningAuthorsIsLoading={authorsIsLoading}
             />
 
             <Controller

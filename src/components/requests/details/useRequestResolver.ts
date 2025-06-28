@@ -91,7 +91,7 @@ export const useRequestResolver = ({
     const beautify = (data: any, entity: EntityTypes) => {
       if (!data) return {};
       const beautifiedData = { ...data };
-      console.log('beautifiedData', beautifiedData);
+
       switch (entity) {
         case 'words':
           if (beautifiedData.language) {
@@ -183,7 +183,7 @@ export const useRequestResolver = ({
       new: beautify(newData, entityType),
       old: beautify(oldData, entityType),
     };
-  }, [isLoading, newData, oldData, entityType, wordAttributes, meaningAttributes, partsOfSpeech, languages, authors, resolvedWords, tRelationTypes]);
+  }, [isLoading, newData, oldData, entityType, wordAttributes, meaningAttributes, partsOfSpeech, languages, authors, resolvedWords, tRelationTypes, locale]);
 
   return { resolvedData, isLoading };
 }

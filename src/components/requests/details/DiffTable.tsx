@@ -40,7 +40,12 @@ const DiffField: FC<{ label: string; oldValue: any; newValue: any }> = ({ label,
 
 export const DiffTable: FC<DiffTableProps> = ({ oldData, newData, title }) => {
   const t = useTranslations("RequestDetails.DiffTable");
-  const allKeys = Array.from(new Set([...Object.keys(oldData), ...Object.keys(newData)]));
+
+  if (!newData) {
+    return <div>{t("noData")}</div>;
+  }
+
+  const allKeys = Object.keys(newData);
 
   return (
     <div className="bg-background-soft p-4 rounded-lg border border-border">
