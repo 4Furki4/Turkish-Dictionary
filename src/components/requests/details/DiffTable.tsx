@@ -1,45 +1,13 @@
-// src/components/requests/details/DiffTable.tsx
-import { FC } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 
 interface DiffTableProps {
-  oldData: Record<string, any>;
-  newData: Record<string, any>;
-  title?: string;
+  oldData?: Record<string, any>;
+  newData?: Record<string, any>;
 }
 
-const DiffField: FC<{ label: string; oldValue: any; newValue: any }> = ({ label, oldValue, newValue }) => {
-  const tDbFieldLabels = useTranslations("DbFieldLabels");
-  const tRequestDetails = useTranslations("RequestDetails");
-  const renderValue = (value: any) => {
-    if (value === null || value === undefined || value === '') return <span className="text-gray-500 italic">{tRequestDetails("empty")}</span>;
-    if (Array.isArray(value)) return value.join(', ');
-    if (typeof value === 'object') return JSON.stringify(value);
-    return String(value);
-  };
-
-  const hasChanged = JSON.stringify(oldValue) !== JSON.stringify(newValue);
-
-  if (!hasChanged) {
-    return (
-      <div className="grid grid-cols-3 gap-4 py-2 border-b border-border">
-        <dt className="font-medium text-gray-600 dark:text-gray-400">{tDbFieldLabels(label)}</dt>
-        <dd className="col-span-2 text-gray-800 dark:text-gray-200">{renderValue(newValue)}</dd>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-3 gap-4 py-2 border-b border-border">
-      <dt className="font-medium text-gray-600 dark:text-gray-400">{tDbFieldLabels(label)}</dt>
-      <dd className="text-red-600 line-through">{renderValue(oldValue)}</dd>
-      <dd className="text-green-600">{renderValue(newValue)}</dd>
-    </div>
-  );
-};
-
-export const DiffTable: FC<DiffTableProps> = ({ oldData, newData, title }) => {
+const DiffTable: React.FC<DiffTableProps> = ({ oldData, newData }) => {
   const t = useTranslations("RequestDetails.DiffTable");
+  const tDb = useTranslations("DbFieldLabels");
 
   if (!newData) {
     return <div>{t("noData")}</div>;
@@ -47,19 +15,63 @@ export const DiffTable: FC<DiffTableProps> = ({ oldData, newData, title }) => {
 
   const allKeys = Object.keys(newData);
 
+  const renderValue = (value: any) => {
+    if (value === undefined || value === null) {
+      return <span className="text-muted-foreground">N/A</span>;
+    }
+    if (Array.isArray(value)) {
+      return value.length > 0 ? value.join(', ') : <span className="text-muted-foreground">-</span>;
+    }
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+    return String(value);
+  };
+
   return (
-    <div className="bg-background-soft p-4 rounded-lg border border-border">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
-      <div className="grid grid-cols-3 gap-4 font-semibold text-sm text-gray-500 dark:text-gray-400 border-b-2 border-border pb-2 mb-2">
-        <span>{t('field')}</span>
-        <span>{t('oldValue')}</span>
-        <span>{t('newValue')}</span>
+    <div className="border rounded-lg">
+      {/* Desktop Header */}
+      <div className="hidden md:grid md:grid-cols-3 gap-4 px-4 py-2 bg-muted/50 font-semibold text-sm border-b border-border">
+        <div>{t("field")}</div>
+        <div>{t("oldValue")}</div>
+        <div>{t("newValue")}</div>
       </div>
-      <dl>
-        {allKeys.map(key => (
-          <DiffField key={key} label={key} oldValue={oldData[key]} newValue={newData[key]} />
-        ))}
-      </dl>
+
+      {/* Data Rows */}
+      <div className="divide-y divide-border">
+        {allKeys.map((key) => {
+          const oldValue = oldData?.[key];
+          const newValue = newData?.[key];
+          const isChanged = JSON.stringify(oldValue) !== JSON.stringify(newValue);
+          const isNewField = oldValue === undefined;
+
+          return (
+            <div key={key} className="grid grid-cols-1 md:grid-cols-3 gap-x-4 px-4 py-3 text-sm items-start">
+              {/* Field Label */}
+              <div className="font-semibold md:font-medium mb-1 md:mb-0">{tDb(key as any)}</div>
+
+              {/* Values */}
+              <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
+                {/* Old Value */}
+                <div className={isChanged && !isNewField ? "p-2 rounded bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400" : ""}>
+                  <span className="font-bold text-xs text-muted-foreground md:hidden">OLD: </span>
+                  <span className={isChanged && !isNewField ? "line-through" : ""}>
+                    {isNewField ? <span className="text-muted-foreground">-</span> : renderValue(oldValue)}
+                  </span>
+                </div>
+
+                {/* New Value */}
+                <div className={isChanged ? "p-2 rounded bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400" : ""}>
+                  <span className="font-bold text-xs text-muted-foreground md:hidden">NEW: </span>
+                  {isChanged ? renderValue(newValue) : <span className="text-muted-foreground">-</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
+
+export { DiffTable };
