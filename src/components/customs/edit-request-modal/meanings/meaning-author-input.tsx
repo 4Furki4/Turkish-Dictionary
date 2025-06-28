@@ -14,7 +14,7 @@ export default function MeaningAuthorInput({ control, meaningAuthors, meaningAut
     const t = useTranslations()
     return (
         <Controller
-            name={`author_id`}
+            name={`authorId`}
             control={control}
             render={({ field, fieldState: { error } }) => (
                 <Select

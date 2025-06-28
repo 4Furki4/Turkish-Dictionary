@@ -16,7 +16,7 @@ export default function PartOfSpeechInput({ control, partOfSpeeches, meaningPart
     const t = useTranslations()
     return (
         <Controller
-            name="part_of_speech_id"
+            name="partOfSpeechId"
             control={control}
             render={({ field, fieldState: { error } }) => {
                 const { value, ...fieldProps } = field;
