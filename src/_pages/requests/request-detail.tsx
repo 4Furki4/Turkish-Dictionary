@@ -224,12 +224,14 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
               <div className="flex flex-wrap items-center gap-3">
                 <Chip
                   color={statusColors[request.status]}
+                  radius="sm"
                 >
                   {statusLabels[request.status]}
                 </Chip>
                 <Chip
                   color={actionColors[request.action]}
                   variant="flat"
+                  radius="sm"
                   classNames={{
                     base: "px-3 py-1",
                     content: "font-medium"
@@ -262,7 +264,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
 
         {/* Actions */}
         {isPending && (
-          <CardFooter className="border-t border-default bg-default-50 px-6 py-4">
+          <CardFooter className="border-t border-default px-6 py-4">
             <div className="flex justify-end gap-3">
               {!isEditing ? (
                 <>
