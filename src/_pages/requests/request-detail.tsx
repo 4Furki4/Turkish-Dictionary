@@ -1,7 +1,6 @@
 "use client"
 import { api } from "@/src/trpc/react";
 import {
-  Card,
   CardBody,
   Chip,
   Spinner,
@@ -29,6 +28,7 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { toast } from "sonner";
 import RequestDetails from "@/src/components/requests/details/RequestDetails";
 import DisplayWordBeingModified from "@/src/components/shared/DisplayWordBeingModified";
+import CustomCard from "@/src/components/customs/heroui/custom-card";
 
 
 export interface RequestDetailProps {
@@ -198,11 +198,11 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
         </Button>
       </div>
 
-      <Card className="border-default shadow-xs">
-        <CardHeader className="border-b border-default bg-default-50 px-6 py-5">
+      <CustomCard className="border-default shadow-xs">
+        <CardHeader className="border-b border-default px-6 py-5">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <h2 className="text-2xl font-semibold text-foreground">
+              <h2 className="text-2xl font-semibold text-foreground ">
                 {t("title")}{` #${request.id}: ${entityTypeLabels[request.entityType]} - ${actionLabels[request.action]}`}
               </h2>
               {request.entityType === "words" && (request.action === "update" || request.action === "delete") && request.entityId && (
@@ -212,7 +212,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm">
               <div className="text-default-500 flex items-center gap-1">
                 <Clock className="h-4 w-4" />
                 {request.requestDate
@@ -245,7 +245,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
         <CardBody className="px-6 py-5">
           {/* Request Reason */}
           {request.reason && (
-            <div className="mb-8 rounded-lg border border-default bg-default-50 p-4">
+            <div className="mb-8 rounded-lg border border-default p-4">
               <h3 className="mb-2 text-sm uppercase text-default-500">{t("details.reason")}</h3>
               <p className="text-foreground">{request.reason}</p>
             </div>
@@ -300,7 +300,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
             </div>
           </CardFooter>
         )}
-      </Card>
+      </CustomCard>
 
       {/* Modal for cancel confirmation or edit updates */}
       <Modal isOpen={isOpen} onClose={onClose}>

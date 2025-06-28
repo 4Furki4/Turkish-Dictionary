@@ -1,54 +1,55 @@
-// src/components/requests/details/DataDisplay.tsx
-import { FC } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 
 interface DataDisplayProps {
   data: Record<string, any>;
   title?: string;
 }
 
-const DataField: FC<{ label: string; value: any }> = ({ label, value }) => {
-  const tDbFieldLabels = useTranslations("DbFieldLabels");
+const DataDisplay: React.FC<DataDisplayProps> = ({ data, title }) => {
+  const tDb = useTranslations("DbFieldLabels");
   const tRequestDetails = useTranslations("RequestDetails");
-  const renderValue = (val: any) => {
-    if (val === null || val === undefined || val === '') return <span className="text-gray-500 italic">{tRequestDetails("empty")}</span>;
-    if (Array.isArray(val)) {
-      if (val.length === 0) return <span className="text-gray-500 italic">
-        {tRequestDetails("emptyArray")}
-      </span>;
+
+  const renderValue = (value: any): React.ReactNode => {
+    if (value === null || value === undefined || value === '') {
+      return <span className="text-muted-foreground italic">{tRequestDetails("empty")}</span>;
+    }
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return <span className="text-muted-foreground italic">{tRequestDetails("emptyArray")}</span>;
+      }
       return (
-        <ul className="list-none list-inside">
-          {val.map((item, index) => (
+        <ul className="list-none list-inside space-y-1">
+          {value.map((item, index) => (
             <li key={index}>{renderValue(item)}</li>
           ))}
         </ul>
       );
     }
-    if (typeof val === 'object') {
-      return <DataDisplay data={val} />;
+    if (typeof value === 'object') {
+      return <DataDisplay data={value} />;
     }
-    return String(val);
+    return String(value);
   };
 
-  return (
-    <div className="grid grid-cols-3 gap-4 py-2 border-b border-border">
-      <dt className="font-medium text-gray-600 dark:text-gray-400">{tDbFieldLabels(label)}</dt>
-      <dd className="col-span-2 text-gray-800 dark:text-gray-200">{renderValue(value)}</dd>
-    </div>
-  );
-};
-
-export const DataDisplay: FC<DataDisplayProps> = ({ data, title }) => {
   const allKeys = Object.keys(data);
 
   return (
-    <div className="bg-background-soft p-4 rounded-lg border border-border">
-      {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
-      <dl>
-        {allKeys.map(key => (
-          <DataField key={key} label={key} value={data[key]} />
+    <div className="border rounded-lg">
+      {title && (
+        <div className="px-4 py-2 bg-muted/50 border-b border-border">
+          <h3 className="text-lg font-semibold">{title}</h3>
+        </div>
+      )}
+      <div className="divide-y divide-border">
+        {allKeys.map((key) => (
+          <div key={key} className="px-4 py-3 md:grid md:grid-cols-3 md:gap-4 text-sm">
+            <dt className="font-semibold md:font-medium text-foreground">{tDb(key as any)}</dt>
+            <dd className="mt-1 md:mt-0 md:col-span-2 text-muted-foreground">{renderValue(data[key])}</dd>
+          </div>
         ))}
-      </dl>
+      </div>
     </div>
   );
 };
+
+export { DataDisplay };
