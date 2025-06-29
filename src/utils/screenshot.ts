@@ -132,10 +132,11 @@ export const captureElementScreenshot = async (
         }
         
         [data-screenshot-svg] {
-          display: block !important;
-          width: 20px !important;
-          height: 20px !important;
-        }
+        display: none !important;
+      }
+      [data-screenshot-watermark] {
+        display: block !important;
+      }
         
         .card-header {
           display: flex !important;
