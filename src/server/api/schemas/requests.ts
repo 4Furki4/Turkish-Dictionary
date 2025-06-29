@@ -96,3 +96,7 @@ export const DeleteRelatedPhraseRequestSchema = z.object({
 export const CreateAuthorRequestSchema = z.object({
   name: z.string(),
 });
+
+export const CreateMeaningAttributeRequestSchema = z.object({
+  attribute: z.string(),
+});

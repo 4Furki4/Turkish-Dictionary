@@ -8,6 +8,7 @@ import { UpdateWordRequestSchema } from "@/src/server/api/schemas/requests";
 import { RawDataViewer } from "../RawDataViewer";
 import SchemaErrorDisplay from "../SchemaErrorDisplay";
 import { useLocale, useTranslations } from "next-intl";
+import { Spinner } from "@heroui/react";
 
 export const UpdateWord: FC<RequestDetailComponentProps> = ({ newData, oldData }) => {
   const t = useTranslations("RequestDetails");
@@ -33,7 +34,7 @@ export const UpdateWord: FC<RequestDetailComponentProps> = ({ newData, oldData }
 
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
 
   return (

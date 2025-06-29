@@ -1198,6 +1198,9 @@
       "title": "New Author",
       "name": "Author Name"
     },
+    "MeaningAttribute": {
+      "title": "New Meaning Attribute Request"
+    },
     "DiffTable": {
       "field": "Field",
       "oldValue": "Old Value",

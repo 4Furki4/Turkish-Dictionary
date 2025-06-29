@@ -12,6 +12,106 @@ interface UseRequestResolverProps {
   oldData?: any;
 }
 
+const createMap = <T extends { id: number | string }>(arr: T[] | undefined, key: keyof T = 'id') => {
+  return new Map(arr?.map(item => [item[key], item]));
+};
+
+const beautify = (data: any, entity: EntityTypes, maps: any, locale: string, tRelationTypes: any) => {
+  if (!data) return {};
+  const beautifiedData = { ...data };
+
+  const { wordAttrMap, meaningAttrMap, posMap, langMap, authorMap, wordNamesMap } = maps;
+
+  switch (entity) {
+    case 'words':
+      if (beautifiedData.language) {
+        beautifiedData.language = locale === "en" ? langMap.get(beautifiedData.language)?.language_en : langMap.get(beautifiedData.language)?.language_tr;
+      }
+      if (beautifiedData.attributes) {
+        beautifiedData.attributes = beautifiedData.attributes.map(
+          (id: number | string) => wordAttrMap.get(Number(id))?.attribute || `ID: ${id}`
+        );
+      }
+      if (beautifiedData.wordName) {
+        beautifiedData.name = beautifiedData.wordName;
+        delete beautifiedData.wordName;
+      }
+      if (beautifiedData.meanings && Array.isArray(beautifiedData.meanings)) {
+        beautifiedData.meanings = beautifiedData.meanings.map((m: any) => beautify(m, 'meanings', maps, locale, tRelationTypes));
+      }
+      if (beautifiedData.relatedWords && Array.isArray(beautifiedData.relatedWords)) {
+        beautifiedData.relatedWords = beautifiedData.relatedWords.map((m: any) => {
+          if (m.relatedWordId) {
+            return {
+              relatedWord: wordNamesMap.get(m.relatedWordId)?.name || `ID: ${m.relatedWordId}`,
+              relationType: tRelationTypes(m.relationType),
+            }
+          }
+        });
+      }
+      if (beautifiedData.relatedPhrases && Array.isArray(beautifiedData.relatedPhrases)) {
+        beautifiedData.relatedPhrases = beautifiedData.relatedPhrases.map((m: any) => {
+          if (m.relatedWordId) {
+            return {
+              relatedWord: wordNamesMap.get(m.relatedWordId)?.name || `ID: ${m.relatedWordId}`,
+              relationType: tRelationTypes(m.relationType),
+            }
+          }
+        });
+      }
+      break;
+
+    case 'meanings':
+      if (beautifiedData.partOfSpeechId || beautifiedData.part_of_speech_id) {
+        beautifiedData.partOfSpeech = posMap.get(beautifiedData.partOfSpeechId || beautifiedData.part_of_speech_id)?.partOfSpeech || `ID: ${beautifiedData.partOfSpeechId}`;
+        delete beautifiedData.partOfSpeechId;
+        delete beautifiedData.part_of_speech_id;
+      }
+
+      if (beautifiedData.example && (beautifiedData.example.author || beautifiedData.example.author_id)) {
+        const authorId = beautifiedData.example.author || beautifiedData.example.author_id;
+        beautifiedData.example.author = authorMap.get(authorId)?.name || `ID: ${authorId}`;
+        delete beautifiedData.example.author_id;
+      }
+      // This handles cases where authorId is directly on the meaning, but we should prioritize the one in example.
+      if (beautifiedData.authorId || beautifiedData.author_id) {
+        if (!beautifiedData.example) beautifiedData.example = {}; // Create example object if it doesn't exist
+        const authorId = beautifiedData.authorId || beautifiedData.author_id;
+        beautifiedData.example.author = authorMap.get(authorId)?.name || `ID: ${authorId}`;
+        delete beautifiedData.authorId;
+        delete beautifiedData.author_id;
+      }
+      if (beautifiedData.attributes) {
+        beautifiedData.attributes = beautifiedData.attributes.map(
+          (id: number) => meaningAttrMap.get(id)?.attribute || `ID: ${id}`
+        );
+      }
+      break;
+
+    case 'related_words':
+      if (beautifiedData.relatedWordId) {
+        beautifiedData.relatedWord = wordNamesMap.get(beautifiedData.relatedWordId)?.name || `ID: ${beautifiedData.relatedWordId}`;
+        delete beautifiedData.relatedWordId;
+      }
+      if (beautifiedData.relationType) {
+        beautifiedData.relationType = tRelationTypes(beautifiedData.relationType);
+      }
+      break;
+
+    case 'related_phrases':
+      if (beautifiedData.relatedPhraseId) {
+        beautifiedData.relatedPhrase = wordNamesMap.get(beautifiedData.relatedPhraseId)?.name || `ID: ${beautifiedData.relatedPhraseId}`;
+        delete beautifiedData.relatedPhraseId;
+      }
+      if (beautifiedData.relationType) {
+        beautifiedData.relationType = tRelationTypes(beautifiedData.relationType);
+      }
+      break;
+  }
+
+  return beautifiedData;
+};
+
 export const useRequestResolver = ({
   entityType,
   action,
@@ -26,7 +126,6 @@ export const useRequestResolver = ({
   const { data: authors, isLoading: isLoadingAuthors } = api.request.getAuthorsWithRequested.useQuery();
   const tRelationTypes = useTranslations("RelationTypes");
 
-  // Collect all word IDs that need to be resolved for related words/phrases
   const wordIdsToResolve = useMemo(() => {
     const ids = new Set<number>();
     if (entityType === 'related_words' || entityType === 'related_phrases' || entityType === 'words') {
@@ -54,7 +153,6 @@ export const useRequestResolver = ({
       if (oldData?.relatedPhraseId) {
         ids.add(oldData.relatedPhraseId);
       }
-
     }
     return Array.from(ids);
   }, [entityType, newData, oldData]);
@@ -72,118 +170,28 @@ export const useRequestResolver = ({
     isLoadingAuthors ||
     isLoadingResolvedWords;
 
+  const maps = useMemo(() => ({
+    wordAttrMap: createMap(wordAttributes, 'id'),
+    meaningAttrMap: createMap(meaningAttributes, 'id'),
+    posMap: createMap(partsOfSpeech, 'id'),
+    langMap: createMap(languages, 'language_code'),
+    authorMap: createMap(authors, 'id'),
+    wordNamesMap: createMap(resolvedWords, 'id'),
+  }), [wordAttributes, meaningAttributes, partsOfSpeech, languages, authors, resolvedWords]);
+
   const resolvedData = useMemo(() => {
     if (isLoading) {
       return { new: {}, old: {} };
     }
 
-    const createMap = <T extends { id: number | string }>(arr: T[] | undefined, key: keyof T = 'id') => {
-      return new Map(arr?.map(item => [item[key], item]));
-    };
-
-    const wordAttrMap = createMap(wordAttributes, 'id');
-    const meaningAttrMap = createMap(meaningAttributes, 'id');
-    const posMap = createMap(partsOfSpeech, 'id');
-    const langMap = createMap(languages, 'language_code');
-    const authorMap = createMap(authors, 'id');
-    const wordNamesMap = createMap(resolvedWords, 'id');
-
-    const beautify = (data: any, entity: EntityTypes) => {
-      if (!data) return {};
-      const beautifiedData = { ...data };
-
-      switch (entity) {
-        case 'words':
-          if (beautifiedData.language) {
-            beautifiedData.language = locale === "en" ? langMap.get(beautifiedData.language)?.language_en : langMap.get(beautifiedData.language)?.language_tr;
-          }
-          if (beautifiedData.attributes) {
-            beautifiedData.attributes = beautifiedData.attributes.map(
-              (id: number | string) => wordAttrMap.get(Number(id))?.attribute || `ID: ${id}`
-            );
-          }
-          if (beautifiedData.wordName) {
-            beautifiedData.name = beautifiedData.wordName;
-            delete beautifiedData.wordName;
-          }
-          if (beautifiedData.meanings && Array.isArray(beautifiedData.meanings)) {
-            beautifiedData.meanings = beautifiedData.meanings.map((m: any) => beautify(m, 'meanings'));
-          }
-          if (beautifiedData.relatedWords && Array.isArray(beautifiedData.relatedWords)) {
-            beautifiedData.relatedWords = beautifiedData.relatedWords.map((m: any) => {
-              if (m.relatedWordId) {
-                return {
-                  relatedWord: wordNamesMap.get(m.relatedWordId)?.name || `ID: ${m.relatedWordId}`,
-                  relationType: tRelationTypes(m.relationType),
-                }
-              }
-            });
-          }
-          if (beautifiedData.relatedPhrases && Array.isArray(beautifiedData.relatedPhrases)) {
-            beautifiedData.relatedPhrases = beautifiedData.relatedPhrases.map((m: any) => {
-              if (m.relatedWordId) {
-                return {
-                  relatedWord: wordNamesMap.get(m.relatedWordId)?.name || `ID: ${m.relatedWordId}`,
-                  relationType: tRelationTypes(m.relationType),
-                }
-              }
-            });
-          }
-          break;
-
-        case 'meanings':
-          if (beautifiedData.partOfSpeechId || beautifiedData.part_of_speech_id) {
-            beautifiedData.partOfSpeech = posMap.get(beautifiedData.partOfSpeechId || beautifiedData.part_of_speech_id)?.partOfSpeech || `ID: ${beautifiedData.partOfSpeechId}`;
-            delete beautifiedData.partOfSpeechId;
-            delete beautifiedData.part_of_speech_id;
-          }
-          if (beautifiedData.example?.author || beautifiedData.example?.authorId || beautifiedData.authorId || beautifiedData.author_id) {
-            beautifiedData.author = authorMap.get(beautifiedData.example?.author || beautifiedData.authorId || beautifiedData.author_id)?.name || `ID: ${beautifiedData.example?.author}`;
-            delete beautifiedData.example?.authorId;
-            delete beautifiedData.authorId;
-            delete beautifiedData.author_id;
-          }
-          if (beautifiedData.attributes) {
-            beautifiedData.attributes = beautifiedData.attributes.map(
-              (id: number) => meaningAttrMap.get(id)?.attribute || `ID: ${id}`
-            );
-          }
-          break;
-
-        case 'related_words':
-          if (beautifiedData.relatedWordId) {
-            beautifiedData.relatedWord = wordNamesMap.get(beautifiedData.relatedWordId)?.name || `ID: ${beautifiedData.relatedWordId}`;
-            delete beautifiedData.relatedWordId;
-          }
-          if (beautifiedData.relationType) {
-            beautifiedData.relationType = tRelationTypes(beautifiedData.relationType);
-          }
-          break;
-
-        case 'related_phrases':
-          if (beautifiedData.relatedPhraseId) {
-            beautifiedData.relatedPhrase = wordNamesMap.get(beautifiedData.relatedPhraseId)?.name || `ID: ${beautifiedData.relatedPhraseId}`;
-            delete beautifiedData.relatedPhraseId;
-          }
-          if (beautifiedData.relationType) {
-            beautifiedData.relationType = tRelationTypes(beautifiedData.relationType);
-          }
-          break;
-
-        case 'word_attributes':
-        case 'authors':
-        default:
-          break;
-      }
-
-      return beautifiedData;
-    };
+    const newResult = action === 'delete' ? {} : beautify(newData, entityType, maps, locale, tRelationTypes);
+    const oldResult = action === 'create' ? {} : beautify(oldData, entityType, maps, locale, tRelationTypes);
 
     return {
-      new: beautify(newData, entityType),
-      old: beautify(oldData, entityType),
+      new: newResult,
+      old: oldResult,
     };
-  }, [isLoading, newData, oldData, entityType, wordAttributes, meaningAttributes, partsOfSpeech, languages, authors, resolvedWords, tRelationTypes, locale]);
+  }, [isLoading, newData, oldData, entityType, action, maps, locale, tRelationTypes]);
 
   return { resolvedData, isLoading };
 }

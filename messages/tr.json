@@ -1166,6 +1166,9 @@
       "title": "Yeni Yazar",
       "name": "Yazar Adı"
     },
+    "MeaningAttribute": {
+      "title": "Yeni Anlam Özelliği Talebi"
+    },
     "DiffTable": {
       "field": "Alan",
       "oldValue": "Eski Değer",

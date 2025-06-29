@@ -11,6 +11,7 @@ import { DeleteMeaning } from "./meaning/delete";
 import { UpdateRelatedWord } from "./related-word/update";
 import { DeleteRelatedWord } from "./related-word/delete";
 import { DeleteRelatedPhrase } from "./related-phrase/delete";
+import { CreateMeaningAttribute } from "./meaning-attribute/create";
 import { CreateAuthor } from "./author/create";
 
 export type RequestDetailComponentProps = {
@@ -43,6 +44,9 @@ const registry: ComponentRegistry = {
   },
   related_phrases: {
     delete: DeleteRelatedPhrase,
+  },
+  meaning_attributes: {
+    create: CreateMeaningAttribute,
   },
   authors: {
     create: CreateAuthor,
