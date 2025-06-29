@@ -11,6 +11,7 @@ import { and, asc } from "drizzle-orm";
 import { meanings } from "@/db/schema/meanings";
 import { examples } from "@/db/schema/examples";
 import { requests as requestsTable, type EntityTypes } from "@/db/schema/requests";
+import { contributionLogs } from "@/db/schema/contribution_logs";
 
 export const userRouter = createTRPCRouter({
   /**
@@ -325,6 +326,35 @@ export const userRouter = createTRPCRouter({
         return acc;
       }, {} as Record<EntityTypes, number>);
 
+      const pendingRequestsStatsRaw = await db
+        .select({
+          entityType: requestsTable.entityType,
+          count: count(requestsTable.id),
+        })
+        .from(requestsTable)
+        .where(and(eq(requestsTable.userId, targetUserId), eq(requestsTable.status, "pending")))
+        .groupBy(requestsTable.entityType);
+
+      const totalPendingContributions = pendingRequestsStatsRaw.reduce((sum, stat) => sum + stat.count, 0);
+
+      const rejectedRequestsStatsRaw = await db
+        .select({
+          entityType: requestsTable.entityType,
+          count: count(requestsTable.id),
+        })
+        .from(requestsTable)
+        .where(and(eq(requestsTable.userId, targetUserId), eq(requestsTable.status, "rejected")))
+        .groupBy(requestsTable.entityType);
+
+      const totalRejectedContributions = rejectedRequestsStatsRaw.reduce((sum, stat) => sum + stat.count, 0);
+
+      // Calculate total contribution points
+      const totalPointsResult = await db
+        .select({ total: sql<number>`sum(${contributionLogs.points})` })
+        .from(contributionLogs)
+        .where(eq(contributionLogs.userId, targetUserId));
+      const totalContributionPoints = totalPointsResult[0]?.total ?? 0;
+
       // 3. Fetch Recent Contributions (last 10 approved)
       const recentContributionsRaw = await db
         .select({
@@ -369,8 +399,12 @@ export const userRouter = createTRPCRouter({
             }
           }
           return {
-            ...req,
-            wordName,
+            id: req.id.toString(),
+            entityType: req.entityType,
+            word: wordName ? { word: wordName } : null,
+            requestType: req.action,
+            createdAt: req.requestDate,
+            status: "approved",
           };
         })
       );
@@ -422,6 +456,9 @@ export const userRouter = createTRPCRouter({
         contributionStats: {
           totalApproved: totalApprovedContributions,
           byType: contributionsByType,
+          totalPoints: totalContributionPoints,
+          totalPending: totalPendingContributions,
+          totalRejected: totalRejectedContributions,
         },
         recentContributions,
         savedWords: isOwnProfile ? userSavedWordsData : undefined,

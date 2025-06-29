@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Link as NextIntlLink } from '@/src/i18n/routing'
-import { Link as HeroUILink } from '@heroui/react'
+import { CardFooter, Link as HeroUILink } from '@heroui/react'
 import { useTranslations } from 'next-intl';
 import { type Session } from 'next-auth';
 import { type RouterOutputs } from '@/src/trpc/shared';
@@ -13,6 +13,18 @@ import { useSnapshot } from 'valtio';
 import { preferencesState } from '@/src/store/preferences';
 
 export type ProfileDataUser = RouterOutputs['user']['getPublicProfileData'];
+
+interface ContributionStats {
+    totalApproved: number;
+    byType: Record<string, number>;
+    totalPoints: number;
+    totalPending: number;
+    totalRejected: number;
+}
+
+interface ProfileDataWithContributionPoints extends ProfileDataUser {
+    contributionStats: ContributionStats;
+}
 
 // Define ContributionData based on expected structure from profileData.contributions
 export type ContributionData = {
@@ -40,6 +52,9 @@ interface UserProfilePageClientProps {
 
 export function UserProfilePageClient({ profileData, session, locale }: UserProfilePageClientProps) {
     const t = useTranslations('ProfilePage');
+    const tEntity = useTranslations('EntityTypes');
+    const tAction = useTranslations('RequestActions');
+    const tStatus = useTranslations('RequestStatuses');
     const { isBlurEnabled } = useSnapshot(preferencesState);
 
     if (!profileData) {
@@ -53,13 +68,13 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
     const isOwnProfile = session?.user?.id === profileData.id;
 
     // Safely access contributions and savedWords, defaulting to empty arrays
-    const contributionsToRender: ContributionData[] = (profileData as any).contributions || [];
+    const contributionsToRender: ContributionData[] = profileData.recentContributions || [];
     const savedWordsToRender: SavedWordData[] = (profileData as any).savedWords || [];
 
     // Safely access contributionStats, defaulting counts to 0
     const rawStats = profileData.contributionStats;
     const totalApprovedCount = rawStats?.totalApproved ?? 0;
-    // Ensure totalPending and totalRejected are also accessed safely, as they might not be on the type
+    const totalPoints = (rawStats as any)?.totalPoints ?? 0;
     const totalPendingCount = (rawStats as any)?.totalPending ?? 0;
     const totalRejectedCount = (rawStats as any)?.totalRejected ?? 0;
 
@@ -74,7 +89,13 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
                     <h3 className="text-lg font-semibold">{t('contributionStatsTitle')}</h3>
                 </CardHeader>
                 <CardBody>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="p-4 bg-background/50 rounded-md shadow-sm text-center border">
+                            <p className="text-2xl font-bold">{totalPoints}</p>
+                            <div className="w-full flex items-center justify-center gap-1">
+                                <p className=" text-muted-foreground">{t('totalContributionPointsLabel')}</p>
+                            </div>
+                        </div>
                         <div className="p-4 bg-background/50 rounded-md shadow-sm text-center border">
                             <p className="text-2xl font-bold">{totalApprovedCount}</p>
                             <div className="w-full flex items-center justify-center gap-1">
@@ -125,22 +146,15 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
                         ) : (
                             <p className="text-muted-foreground">{t('noSavedWords')}</p>
                         )}
-                        {/* Link to all saved words if more than 5 exist */}
-                        {(profileData.totalSavedWordsCount ?? 0) > 5 && (
-                            <div className="mt-4 text-right">
-                                <NextIntlLink href={{
-                                    pathname: '/saved-words',
-                                }}>
-                                    <HeroUILink
-                                        as={'div'}
-                                        className="hover:underline"
-                                    >
-                                        {t('seeAllSavedWords', { count: profileData.totalSavedWordsCount ?? 0 })}
-                                    </HeroUILink>
-                                </NextIntlLink>
-                            </div>
-                        )}
                     </CardBody>
+                    <CardFooter>
+
+                        <NextIntlLink href={{
+                            pathname: '/saved-words',
+                        }} className='text-primary hover:underline'>
+                            {t('seeAllSavedWords', { count: profileData.totalSavedWordsCount ?? 0 })}
+                        </NextIntlLink>
+                    </CardFooter>
                 </Card>
             )}
 
@@ -155,15 +169,23 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
                     {contributionsToRender.length > 0 ? (
                         <ul className="space-y-3">
                             {contributionsToRender.map((contribution) => {
-                                let displayText = `${contribution.requestType} - ${contribution.entityType}`;
+
+                                let displayText = `${tAction(contribution.requestType)} - ${tEntity(contribution.entityType)}`;
                                 if (contribution.word?.word) {
-                                    displayText = `${contribution.word.word} (${contribution.entityType} - ${contribution.requestType})`;
+                                    displayText = `${contribution.word.word} (${tEntity(contribution.entityType)} - ${tAction(contribution.requestType)})`;
                                 }
                                 return (
                                     <li key={contribution.id} className="p-3 bg-background rounded-md shadow-sm border">
-                                        <p className="font-medium">{displayText}</p>
+                                        <NextIntlLink className='text-primary hover:underline' href={{
+                                            pathname: '/my-requests/[id]',
+                                            params: {
+                                                id: contribution.id
+                                            }
+                                        }}>
+                                            {displayText}
+                                        </NextIntlLink>
                                         <p className="text-xs text-muted-foreground">
-                                            {new Date(contribution.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })} - {contribution.status}
+                                            {new Date(contribution.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })} - {tStatus(contribution.status)}
                                         </p>
                                     </li>
                                 );
@@ -172,8 +194,17 @@ export function UserProfilePageClient({ profileData, session, locale }: UserProf
                     ) : (
                         <p className="text-muted-foreground">{t('noContributions')}</p>
                     )}
-                    {/* TODO: Add link to full contributions page/tab */}
                 </CardBody>
+                <CardFooter>
+                    <NextIntlLink href={{
+                        pathname: '/my-requests',
+                        query: {
+                            status: 'approved'
+                        }
+                    }} className="text-primary hover:underline">
+                        {t('seeAllContributions')} ({profileData.contributionStats.totalApproved})
+                    </NextIntlLink>
+                </CardFooter>
             </Card>
         </div>
     );

@@ -821,6 +821,7 @@
     "pendingContributionsLabel": "Bekleyen",
     "rejectedContributionsLabel": "Reddedilen",
     "totalContributionsLabel": "Toplam Onaylanmış Katkı",
+    "totalContributionPointsLabel": "Toplam Katkı Puanı",
     "savedWordsTitle": "Kaydedilen Kelimeler",
     "noSavedWords": "Henüz kaydedilmiş kelime yok.",
     "savedOnLabel": "Kaydedilme Tarihi",
@@ -828,6 +829,7 @@
     "noContributions": "Henüz katkı yapılmamış.",
     "editProfileButton": "Profili Düzenle",
     "seeAllSavedWords": "Tüm kayıtlı kelimeleri gör ({count})",
+    "seeAllContributions": "Tüm katkıları gör",
     "editProfileModal": {
       "title": "Profili Düzenle",
       "nameLabel": "Ad Soyad",
@@ -892,7 +894,8 @@
     "examples": "Örnek",
     "authors": "Yazar",
     "word_attributes": "Kelime Özelliği",
-    "meaning_attributes": "Anlam Özelliği"
+    "meaning_attributes": "Anlam Özelliği",
+    "related_phrases": "İlgili Deyim"
   },
   "RequestStatuses": {
     "pending": "Beklemede",

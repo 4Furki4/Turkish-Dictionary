@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import {
+  integer,
   pgEnum,
   pgTable,
   text,
@@ -10,6 +11,7 @@ import { words } from "./words";
 import { pronounciations } from "./pronounciations";
 import { savedWords } from "./saved_words";
 import { requests } from "./requests";
+import { contributionLogs } from "./contribution_logs";
 
 export const rolesEnum = pgEnum("role", ["user", "moderator", "admin"]);
 
@@ -33,6 +35,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   saved_words: many(savedWords),
   pronounciations: many(pronounciations),
   requests: many(requests),
+  contributionLogs: many(contributionLogs),
 }));
 
 export const usersToWordsRelations = relations(savedWords, ({ one }) => ({

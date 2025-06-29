@@ -15,6 +15,7 @@ import { wordAttributes } from "@/db/schema/word_attributes";
 import { meaningAttributes } from "@/db/schema/meaning_attributes";
 import { authors } from "@/db/schema/authors";
 import { CreateWordRequestSchema } from "../schemas/requests";
+import { contributionLogs } from "@/db/schema/contribution_logs";
 
 export const requestRouter = createTRPCRouter({
     // User request management endpoints
@@ -1076,6 +1077,13 @@ export const requestRouter = createTRPCRouter({
 
                 // Process the request with the handler
                 await handler.handle({ tx, request });
+
+                // Award contribution points
+                await tx.insert(contributionLogs).values({
+                    userId: request.userId,
+                    requestId: request.id,
+                    points: 10, // Award 10 points for each approved request
+                });
 
                 // Update the request status to approved
                 await tx.update(requests)

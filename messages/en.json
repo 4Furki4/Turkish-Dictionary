@@ -858,6 +858,7 @@
     "pendingContributionsLabel": "Pending",
     "rejectedContributionsLabel": "Rejected",
     "totalContributionsLabel": "Total Approved Contributions",
+    "totalContributionPointsLabel": "Total Contribution Points",
     "savedWordsTitle": "Saved Words",
     "noSavedWords": "No words saved yet.",
     "savedOnLabel": "Saved on",
@@ -867,6 +868,7 @@
     "notSet": "Not set",
     "editProfileButton": "Edit Profile",
     "seeAllSavedWords": "See all saved words ({count})",
+    "seeAllContributions": "See all contributions",
     "editProfileModal": {
       "title": "Edit Profile",
       "nameLabel": "Name",
@@ -928,7 +930,8 @@
     "examples": "Example",
     "authors": "Author",
     "word_attributes": "Word Attribute",
-    "meaning_attributes": "Meaning Attribute"
+    "meaning_attributes": "Meaning Attribute",
+    "related_phrases": "Related Phrase"
   },
   "RequestStatuses": {
     "pending": "Pending",

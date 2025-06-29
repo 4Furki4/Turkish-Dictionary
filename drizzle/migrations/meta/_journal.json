@@ -197,6 +197,13 @@
       "when": 1750369948612,
       "tag": "0027_sudden_kitty_pryde",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1751238064498,
+      "tag": "0028_freezing_magneto",
+      "breakpoints": true
     }
   ]
 }

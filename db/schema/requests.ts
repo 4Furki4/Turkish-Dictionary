@@ -1,12 +1,4 @@
-import {
-  integer,
-  jsonb,
-  pgEnum,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { integer, jsonb, pgEnum, pgTable, serial, text, timestamp, } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
 import { words } from "./words";
@@ -15,6 +7,7 @@ import { partOfSpeechs } from "./part_of_speechs";
 import { roots } from "./roots";
 import { authors } from "./authors";
 import { examples } from "./examples";
+import { contributionLogs } from "./contribution_logs";
 
 export const actionsEnum = pgEnum("action", ["create", "update", "delete"]);
 
@@ -82,6 +75,7 @@ export const requestsRelations = relations(requests, ({ one }) => ({
     fields: [requests.entityId, requests.entityType],
     references: [examples.id, examples.requestType],
   }),
+  contributionLogs: many(contributionLogs),
 }));
 
 export type SelectRequest = {
