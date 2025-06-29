@@ -338,6 +338,9 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
         </>
         <WordCardRequestModal word={{ word_data }} session={session} isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
       </CardFooter>
+      <div data-screenshot-watermark className="w-full text-center text-xs text-muted-foreground pt-2">
+        turkce-sozluk.com
+      </div>
     </Card>
   );
 }
