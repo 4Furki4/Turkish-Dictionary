@@ -8,6 +8,7 @@ import { roots } from "./roots";
 import { authors } from "./authors";
 import { examples } from "./examples";
 import { contributionLogs } from "./contribution_logs";
+import { request_votes } from "./request_votes";
 
 export const actionsEnum = pgEnum("action", ["create", "update", "delete"]);
 
@@ -22,6 +23,7 @@ export const entityTypesEnum = pgEnum("entity_type", [
   "word_attributes",
   "meaning_attributes",
   "related_phrases",
+  "pronunciations",
 ]);
 
 export const statusEnum = pgEnum("status", ["pending", "approved", "rejected"]);
@@ -76,6 +78,7 @@ export const requestsRelations = relations(requests, ({ one, many }) => ({
     references: [examples.id, examples.requestType],
   }),
   contributionLogs: many(contributionLogs),
+  votes: many(request_votes),
 }));
 
 export type SelectRequest = {

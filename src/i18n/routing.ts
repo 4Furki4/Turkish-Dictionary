@@ -159,6 +159,10 @@ export const routing = defineRouting({
       "en": "/privacy-policy",
       "tr": "/gizlilik-politikasi",
     },
+    "/pronunciation-voting": {
+      "en": "/pronunciation-voting",
+      "tr": "/telaffuz-oylama",
+    },
   }
 
 })

@@ -204,6 +204,13 @@
       "when": 1751238064498,
       "tag": "0028_freezing_magneto",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1751298107614,
+      "tag": "0029_neat_quasar",
+      "breakpoints": true
     }
   ]
 }

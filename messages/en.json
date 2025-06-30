@@ -588,6 +588,7 @@
   "Requests": {
     "title": "Requests",
     "myRequests": "My Requests",
+    "EditWord": "Edit Word",
     "EditRequestTitle": "Edit Request for: {word}",
     "SuggestEditForRelatedWord": "Suggest an edit for related word: {relatedWordName}",
     "CreateRelatedWordRequestTitle": "Suggest New Related Word",
@@ -1216,5 +1217,21 @@
       "title": "Schema Validation Error",
       "description": "The data for this request does not match the expected format. This might be due to an outdated request or a data integrity issue. Please review the details below:"
     }
+  },
+  "Pronunciation": {
+    "title": "Pronunciation Requests",
+    "loading": "Loading...",
+    "word": "Word",
+    "submittedBy": "Submitted by",
+    "votes": "{count, plural, =0 {No votes} =1 {1 vote} other {# votes}}",
+    "vote": "Vote",
+    "record": "Record Pronunciation",
+    "stop": "Stop Recording",
+    "submit": "Submit",
+    "uploading": "Uploading...",
+    "recordAgain": "Record Again",
+    "recordingInProgress": "Recording in progress...",
+    "submitSuccess": "Pronunciation contribution submitted successfully!",
+    "uploadFailed": "Upload failed: {error}"
   }
 }

@@ -16,8 +16,54 @@ import { meaningAttributes } from "@/db/schema/meaning_attributes";
 import { authors } from "@/db/schema/authors";
 import { CreateWordRequestSchema } from "../schemas/requests";
 import { contributionLogs } from "@/db/schema/contribution_logs";
+import { request_votes } from "@/db/schema/request_votes";
 
 export const requestRouter = createTRPCRouter({
+    createPronunciationRequest: protectedProcedure
+        .input(z.object({
+            word_id: z.number(),
+            audio_url: z.string().url(),
+            reason: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            return ctx.db.insert(requests).values({
+                entityType: "pronunciations",
+                action: "create",
+                userId: ctx.session.user.id,
+                newData: {
+                    audio_url: input.audio_url,
+                },
+                reason: input.reason,
+                entityId: input.word_id,
+            });
+        }),
+    getVotablePronunciationRequests: protectedProcedure
+        .query(async ({ ctx }) => {
+            const pendingRequests = await ctx.db
+                .select({
+                    request: requests,
+                    user: {
+                        id: users.id,
+                        name: users.name,
+                    },
+                    word: {
+                        id: words.id,
+                        name: words.name,
+                    },
+                    vote_count: sql<number>`count(${request_votes.request_id})`.as("vote_count"),
+                })
+                .from(requests)
+                .where(and(
+                    eq(requests.status, "pending"),
+                    eq(requests.entityType, "pronunciations")
+                ))
+                .leftJoin(users, eq(requests.userId, users.id))
+                .leftJoin(words, eq(requests.entityId, words.id))
+                .leftJoin(request_votes, eq(requests.id, request_votes.request_id))
+                .groupBy(requests.id, users.id, words.id);
+
+            return pendingRequests;
+        }),
     // User request management endpoints
     getUserRequests: protectedProcedure
         .input(z.object({
@@ -27,7 +73,7 @@ export const requestRouter = createTRPCRouter({
                 "words", "meanings", "roots", "related_words",
                 "related_phrases",
                 "part_of_speechs", "examples", "authors",
-                "word_attributes", "meaning_attributes"
+                "word_attributes", "meaning_attributes", "pronunciations"
             ]).optional(),
             action: z.enum(["create", "update", "delete"]).optional(),
             status: z.enum(["pending", "approved", "rejected"]).optional(),
@@ -936,7 +982,7 @@ export const requestRouter = createTRPCRouter({
                 "words", "meanings", "roots", "related_words",
                 "related_phrases",
                 "part_of_speechs", "examples", "authors",
-                "word_attributes", "meaning_attributes"
+                "word_attributes", "meaning_attributes", "pronunciations"
             ]).optional(),
             action: z.enum(["create", "update", "delete"]).optional()
         }))

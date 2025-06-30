@@ -1,9 +1,10 @@
-import { Button, Select, SelectItem, Tooltip, useDisclosure } from "@heroui/react";
+import { Button, SelectItem, Tooltip, useDisclosure } from "@heroui/react";
 import { Control, Controller } from "react-hook-form";
 import { WordEditRequestForm } from "../word-edit-request";
 import { FileClock, Plus } from "lucide-react";
 import NewWordAttributeRequestModal from "./new-word-attribute-request-modal";
 import { useTranslations } from "next-intl";
+import { CustomSelect } from "../../heroui/custom-flexable-select";
 export default function WordAttributesRequestInput({
     control,
     wordAttributes,
@@ -28,7 +29,7 @@ export default function WordAttributesRequestInput({
                 name="attributes"
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
-                    <Select
+                    <CustomSelect
                         items={wordAttributes || []}
                         label={t("WordAttribute")}
                         placeholder={t("SelectAttributes")}
@@ -63,7 +64,7 @@ export default function WordAttributesRequestInput({
                                 {attr.attribute}
                             </SelectItem>
                         )}
-                    </Select>
+                    </CustomSelect>
                 )}
             />
         </>

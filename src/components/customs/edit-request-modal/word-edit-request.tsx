@@ -5,13 +5,19 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { api } from "@/src/trpc/react"
 import { toast } from "sonner"
-import { Input } from "@heroui/input"
-import { Autocomplete, AutocompleteItem } from "@heroui/react"
-import { Textarea } from "@heroui/input"
+import { CustomInput } from "@/src/components/customs/heroui/custom-input"
+import { CustomAutocomplete } from "@/src/components/customs/heroui/custom-autocomplete"
+import { AutocompleteItem } from "@heroui/react"
+import { CustomTextarea } from "@/src/components/customs/heroui/custom-textarea"
 import { WordSearchResult } from "@/types"
 import WordAttributesRequestInput from "./word/word-attributes-request-input"
 import { useTranslations, useLocale } from "next-intl";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { AudioRecorder } from "@/src/components/customs/audio-recorder";
+import { CustomTabs } from "@/src/components/customs/heroui/custom-tabs"
+import { Tab } from "@heroui/react"
+import CustomCard from "@/src/components/customs/heroui/custom-card"
+import { CardBody } from "@heroui/react"
 
 const wordEditRequestSchema = z.object({
   language: z.string().optional(),
@@ -112,145 +118,162 @@ export default function WordEditRequest({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      <Controller
-        name="name"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <Input
-            {...field}
-            label={t("WordName")}
-            labelPlacement="outside"
-            placeholder={t("EnterWordName")}
-            isInvalid={!!error}
-            errorMessage={error?.message}
-          />
-        )}
-      />
+    <div className="flex w-full flex-col">
+      <CustomTabs disableAnimation aria-label="Word Edit Options">
+        <Tab key="edit" title={t("Requests.EditWord")}>
+          <CustomCard>
+            <CardBody>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <CustomInput
+                      {...field}
+                      label={t("WordName")}
+                      labelPlacement="outside"
+                      placeholder={t("EnterWordName")}
+                      isInvalid={!!error}
+                      errorMessage={error?.message}
+                    />
+                  )}
+                />
 
 
 
-      <div className="grid grid-cols-2 gap-4">
-        <Controller
-          name="prefix"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label={t("Prefix")}
-              labelPlacement="outside"
-              placeholder={t("EnterPrefix")}
-              isInvalid={!!error}
-              errorMessage={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="suffix"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label={t("Suffix")}
-              labelPlacement="outside"
-              placeholder={t("EnterSuffix")}
-              isInvalid={!!error}
-              errorMessage={error?.message}
-            />
-          )}
-        />
-      </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="prefix"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomInput
+                        {...field}
+                        label={t("Prefix")}
+                        labelPlacement="outside"
+                        placeholder={t("EnterPrefix")}
+                        isInvalid={!!error}
+                        errorMessage={error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="suffix"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomInput
+                        {...field}
+                        label={t("Suffix")}
+                        labelPlacement="outside"
+                        placeholder={t("EnterSuffix")}
+                        isInvalid={!!error}
+                        errorMessage={error?.message}
+                      />
+                    )}
+                  />
+                </div>
 
-      <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
 
-        <Controller
-          name="language"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Autocomplete
-              radius='sm'
-              {...field}
-              label={t("Language")}
-              isLoading={languagesIsLoading}
-              labelPlacement='outside'
-              defaultItems={languages || []}
-              placeholder={t("EnterLanguage")}
-              defaultSelectedKey={word_data.root.language_code}
-              onSelectionChange={(item) => {
-                field.onChange(item);
-                setValue("language", item as string)
-              }}
-              isInvalid={error !== undefined}
-              errorMessage={error?.message}
-            >
-              {(language) => (
-                <AutocompleteItem key={language.language_code} >
-                  {locale === "en" ? language.language_en : language.language_tr}
-                </AutocompleteItem>
-              )}
-            </Autocomplete>
-          )}
-        />
+                  <Controller
+                    name="language"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomAutocomplete
+                        radius='sm'
+                        {...field}
+                        label={t("Language")}
+                        isLoading={languagesIsLoading}
+                        labelPlacement='outside'
+                        defaultItems={languages || []}
+                        placeholder={t("EnterLanguage")}
+                        defaultSelectedKey={word_data.root.language_code}
+                        onSelectionChange={(item) => {
+                          field.onChange(item);
+                          setValue("language", item as string)
+                        }}
+                        isInvalid={error !== undefined}
+                        errorMessage={error?.message}
+                      >
+                        {(language) => (
+                          <AutocompleteItem key={language.language_code} >
+                            {locale === "en" ? language.language_en : language.language_tr}
+                          </AutocompleteItem>
+                        )}
+                      </CustomAutocomplete>
+                    )}
+                  />
 
-        <Controller
-          name="root"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label={t("Root")}
-              labelPlacement="outside"
-              placeholder={t("EnterRoot")}
-              isInvalid={!!error}
-              errorMessage={error?.message}
-            />
-          )}
-        />
-      </div>
+                  <Controller
+                    name="root"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomInput
+                        {...field}
+                        label={t("Root")}
+                        labelPlacement="outside"
+                        placeholder={t("EnterRoot")}
+                        isInvalid={!!error}
+                        errorMessage={error?.message}
+                      />
+                    )}
+                  />
+                </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <WordAttributesRequestInput
-          wordAttributes={wordAttributesWithRequested}
-          wordAttributesIsLoading={wordAttributesWithRequestedIsLoading}
-          control={control}
-        />
-        <Controller
-          name="phonetic"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              {...field}
-              label={t("Phonetic")}
-              labelPlacement="outside"
-              placeholder={t("EnterPhonetic")}
-              isInvalid={!!error}
-              errorMessage={error?.message}
-            />
-          )}
-        />
-      </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <WordAttributesRequestInput
+                    wordAttributes={wordAttributesWithRequested}
+                    wordAttributesIsLoading={wordAttributesWithRequestedIsLoading}
+                    control={control}
+                  />
+                  <Controller
+                    name="phonetic"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <CustomInput
+                        {...field}
+                        label={t("Phonetic")}
+                        labelPlacement="outside"
+                        placeholder={t("EnterPhonetic")}
+                        isInvalid={!!error}
+                        errorMessage={error?.message}
+                      />
+                    )}
+                  />
+                </div>
 
-      <Controller
-        name="reason"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <Textarea
-            {...field}
-            label={tRequests("Reason")}
-            placeholder={tRequests("EnterReason")}
-            labelPlacement="outside"
-            isInvalid={!!error}
-            errorMessage={error?.message}
-            className="w-full"
-          />
-        )}
-      />
+                <Controller
+                  name="reason"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <CustomTextarea
+                      {...field}
+                      label={tRequests("Reason")}
+                      placeholder={tRequests("EnterReason")}
+                      labelPlacement="outside"
+                      isInvalid={!!error}
+                      errorMessage={error?.message}
+                      className="w-full"
+                    />
+                  )}
+                />
 
-      <div className="flex justify-end space-x-2">
-        <Button color="secondary" variant="flat" type="submit" isLoading={isPending}>
-          {t("Requests.SubmitRequest")}
-        </Button>
-      </div>
-    </form>
+                <div className="flex justify-end space-x-2">
+                  <Button color="secondary" variant="flat" type="submit" isLoading={isPending}>
+                    {t("Requests.SubmitRequest")}
+                  </Button>
+                </div>
+              </form>
+            </CardBody>
+          </CustomCard>
+        </Tab>
+        <Tab key="pronunciation" title={t("Pronunciation.title")}>
+          <CustomCard>
+            <CardBody>
+              <AudioRecorder wordId={word_data.word_id} onUploadComplete={onClose} />
+            </CardBody>
+          </CustomCard>
+        </Tab>
+      </CustomTabs>
+    </div>
   )
 }

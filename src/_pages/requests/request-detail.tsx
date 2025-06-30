@@ -57,6 +57,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
     word_attributes: t("entityTypes.word_attributes"),
     meaning_attributes: t("entityTypes.meaning_attributes"),
     related_phrases: t("entityTypes.related_phrases"),
+    pronunciations: t("entityTypes.pronunciations"),
   }), [t]);
 
   const actionLabels = useMemo<Record<Actions, string>>(() => ({

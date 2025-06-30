@@ -1,4 +1,19 @@
 import { z } from "zod";
+
+export const RequestTypeSchema = z.enum([
+    "words",
+    "meanings",
+    "roots",
+    "related_words",
+    "part_of_speechs",
+    "examples",
+    "authors",
+    "word_attributes",
+    "meaning_attributes",
+    "related_phrases",
+    "pronunciation_create",
+]);
+
 export const createWordSchema = z.object({
   word: z.object({
     name: z.string(),

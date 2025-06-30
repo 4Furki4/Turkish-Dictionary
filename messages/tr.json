@@ -546,6 +546,7 @@
   },
   "Requests": {
     "title": "İstekler",
+    "EditWord": "Kelime Düzenleme",
     "myRequests": "İsteklerim",
     "EditRequestTitle": "{word} için düzenleme isteği",
     "SuggestEditForRelatedWord": "{relatedWordName} ilgili kelimesi için düzenleme öner",
@@ -1184,5 +1185,21 @@
       "title": "Şema Doğrulama Hatası",
       "description": "Bu isteğe ait veriler beklenen formatla eşleşmiyor. Bu, güncel olmayan bir istek veya veri bütünlüğü sorunundan kaynaklanıyor olabilir. Lütfen aşağıdaki ayrıntıları inceleyin:"
     }
+  },
+  "Pronunciation": {
+    "title": "Telaffuz İstekleri",
+    "loading": "Yükleniyor...",
+    "word": "Kelime",
+    "submittedBy": "Gönderen",
+    "votes": "{count, plural, =0 {Oy yok} =1 {1 oy} other {# oy}}",
+    "vote": "Oy Ver",
+    "record": "Telaffuz Kaydet",
+    "stop": "Kaydı Durdur",
+    "submit": "Gönder",
+    "uploading": "Yükleniyor...",
+    "recordAgain": "Tekrar Kaydet",
+    "recordingInProgress": "Kayıt devam ediyor...",
+    "submitSuccess": "Telaffuz katkısı başarıyla gönderildi!",
+    "uploadFailed": "Yükleme başarısız: {error}"
   }
 }

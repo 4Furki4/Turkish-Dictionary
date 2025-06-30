@@ -31,6 +31,7 @@ const entityTypeLabels: Record<EntityTypes, string> = {
   authors: "Authors",
   word_attributes: "Word Attributes",
   meaning_attributes: "Meaning Attributes",
+  pronunciations: "Pronunciations",
 };
 
 const actionLabels: Record<Actions, string> = {

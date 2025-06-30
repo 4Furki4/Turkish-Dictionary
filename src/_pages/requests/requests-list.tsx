@@ -34,6 +34,7 @@ export default function RequestsList() {
     authors: t("entityTypes.authors"),
     word_attributes: t("entityTypes.word_attributes"),
     meaning_attributes: t("entityTypes.meaning_attributes"),
+    pronunciations: t("entityTypes.pronunciations"),
   }), [t]);
 
   const actionLabels = useMemo<Record<Actions, string>>(() => ({
