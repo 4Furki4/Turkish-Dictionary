@@ -46,7 +46,7 @@ export const requests = pgTable("requests", {
   reason: text("reason"),
 });
 
-export const requestsRelations = relations(requests, ({ one }) => ({
+export const requestsRelations = relations(requests, ({ one, many }) => ({
   user: one(users, {
     fields: [requests.userId],
     references: [users.id],
