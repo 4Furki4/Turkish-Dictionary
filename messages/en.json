@@ -1310,5 +1310,9 @@
       "FILE_LIMIT_EXCEEDED": "File limit exceeded. Please contact support."
     },
     "uploading": "Uploading..."
+  },
+  "VerifyRequest": {
+    "title": "Verify Request",
+    "description": "Check your email for the sign in link."
   }
 }

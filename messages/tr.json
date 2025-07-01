@@ -1276,5 +1276,9 @@
       "FILE_LIMIT_EXCEEDED": "Dosya limiti aşıldı. Lütfen destek ekibi ile iletişime geçin."
     },
     "uploading": "Dosya karşıya yükleniyor..."
+  },
+  "VerifyRequest": {
+    "title": "Doğrulama Talebi",
+    "description": "E-posta adresinize giriş bağlantısı gönderildi."
   }
 }
