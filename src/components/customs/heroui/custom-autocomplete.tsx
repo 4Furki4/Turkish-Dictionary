@@ -14,6 +14,8 @@ const customAutocompleteStyles = tv({
         listboxWrapper: "max-h-[320px]",
         listbox: "bg-background/90",
         inputWrapper: "border-primary/40",
+        input: "text-base",
+        label: "pb-1",
         popoverContent: "bg-background/80 backdrop-blur-sm",
         clearButton: "text-foreground",
         selectorButton: "text-foreground",
@@ -44,6 +46,8 @@ export const CustomAutocomplete = <T extends object>(
             inputProps={{
                 classNames: {
                     inputWrapper: styles.inputWrapper(),
+                    input: styles.input(),
+                    label: styles.label(),
                 }
             }}
             // Apply default props
