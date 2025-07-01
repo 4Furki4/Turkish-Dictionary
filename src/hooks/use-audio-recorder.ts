@@ -21,7 +21,7 @@ export const useAudioRecorder = () => {
             };
 
             mediaRecorderRef.current.onstop = () => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+                const audioBlob = new Blob(audioChunksRef.current, { type: "audio/mpeg" });
                 setAudioBlob(audioBlob);
                 // Stop all tracks on the stream to turn off the microphone indicator
                 stream.getTracks().forEach((track) => track.stop());

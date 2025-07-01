@@ -51,7 +51,7 @@ export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete
 
   const handleUpload = () => {
     if (audioBlob) {
-      const file = new File([audioBlob], "pronunciation.webm", { type: "audio/webm" });
+      const file = new File([audioBlob], "pronunciation.mp3", { type: "audio/mpeg" });
       startUpload([file]);
     }
   };
