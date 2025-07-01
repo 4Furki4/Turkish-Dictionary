@@ -24,7 +24,7 @@ export const RequestPronunciationModal: FC<RequestPronunciationModalProps> = ({ 
     const t = useTranslations("PronunciationVoting");
     const [wordId, setWordId] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
-
+    const utils = api.useUtils()
     const { refetch } = api.search.getWordId.useQuery(
         { name: searchTerm },
         { enabled: false } // Initially disable this query
@@ -48,6 +48,9 @@ export const RequestPronunciationModal: FC<RequestPronunciationModalProps> = ({ 
 
     const handleUploadComplete = () => {
         toast.success(t("uploadComplete"));
+        utils.request.getVotablePronunciationRequests.refetch({
+            search: searchTerm,
+        })
         onClose();
     };
 

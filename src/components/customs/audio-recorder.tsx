@@ -22,7 +22,6 @@ export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete
 
   const createPronunciation = api.request.createPronunciationRequest.useMutation({
     onSuccess: () => {
-      toast.success(t("submitSuccess"));
       resetRecording();
       onUploadComplete();
     },
