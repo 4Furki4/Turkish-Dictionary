@@ -38,8 +38,8 @@ export interface RequestDetailProps {
 type EntityData = Record<string, any>;
 
 export default function RequestDetail({ requestId }: RequestDetailProps) {
-  console.log('[RequestDetail] Props:', requestId);
   const t = useTranslations("Requests");
+  const tDetails = useTranslations("RequestDetails");
   const router = useRouter();
   const [reason, setReason] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -165,7 +165,6 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
   }
 
   const request = data.request;
-  console.log('[RequestDetail] Full request object:', request);
   let newData: Record<string, any> = {};
 
   // Extract new data from request
@@ -181,7 +180,6 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
 
   // Get entity data from the API response
   const entityData = data.entityData as EntityData | null;
-  console.log('[RequestDetail] Memoized entityData:', entityData, 'Memoized newData:', newData);
 
   const isPending = request.status === "pending";
   const isCreateRequest = data.request.action === "create";
@@ -266,7 +264,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
         {/* Actions */}
         {isPending && (
           <CardFooter className="border-t border-default px-6 py-4">
-            <div className="flex justify-end gap-3">
+            {/* <div className="flex justify-end gap-3">
               {!isEditing ? (
                 <>
                   <Button
@@ -300,7 +298,13 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                   </Button>
                 </>
               )}
-            </div>
+            </div> */}
+            <Button
+              color="danger"
+              onPress={onOpen} // Opens modal for cancel confirmation
+            >
+              {t("buttons.cancelRequest")}
+            </Button>
           </CardFooter>
         )}
       </CustomCard>
@@ -311,7 +315,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
           {(modalClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                {isEditing ? t("details.updateRequestModalTitle") : t("details.cancelRequestModalTitle")}
+                {isEditing ? t("details.updateRequestModalTitle") : tDetails("modals.cancel.title")}
               </ModalHeader>
               <ModalBody>
                 {isEditing ? (
@@ -326,12 +330,12 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                     />
                   </>
                 ) : (
-                  <p>{t("prompts.confirmCancelRequest")}</p>
+                  <p>{tDetails("modals.cancel.description")}</p>
                 )}
               </ModalBody>
               <ModalFooter>
                 <Button color="default" variant="flat" onPress={modalClose}>
-                  {t("buttons.close")}
+                  {tDetails("modals.cancel.cancel")}
                 </Button>
                 <Button
                   color={isEditing ? "primary" : "danger"}
@@ -344,7 +348,7 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
                     modalClose(); // Close modal after action
                   }}
                 >
-                  {isEditing ? t("buttons.confirmUpdate") : t("buttons.confirmCancel")}
+                  {isEditing ? t("buttons.confirmUpdate") : tDetails("modals.cancel.confirm")}
                 </Button>
               </ModalFooter>
             </>

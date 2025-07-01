@@ -200,6 +200,9 @@ export const requestRouter = createTRPCRouter({
                     case "words":
                         entityData = await db.select().from(words).where(eq(words.id, request.entityId));
                         break;
+                    case "pronunciations":
+                        entityData = await db.select().from(words).where(eq(words.id, request.entityId));
+                        break;
                     case "meanings":
                         entityData = await db.select().from(meanings).where(eq(meanings.id, request.entityId));
                         break;

@@ -574,7 +574,8 @@
       "examples": "Örnekler",
       "authors": "Yazarlar",
       "word_attributes": "Kelime Özellikleri",
-      "meaning_attributes": "Anlam Özellikleri"
+      "meaning_attributes": "Anlam Özellikleri",
+      "pronunciations": "Telaffuzlar"
     },
     "actions": {
       "title": "İşlem",
@@ -1176,6 +1177,12 @@
     "MeaningAttribute": {
       "title": "Yeni Anlam Özelliği Talebi"
     },
+    "Pronunciation": {
+      "title": "Yeni Telaffuz Talebi",
+      "audioRecording": "Telaffuz Kaydı",
+      "relatedWord": "İlgili Kelime",
+      "reason": "Gerekçe"
+    },
     "DiffTable": {
       "field": "Alan",
       "oldValue": "Eski Değer",
@@ -1187,6 +1194,20 @@
     "SchemaError": {
       "title": "Şema Doğrulama Hatası",
       "description": "Bu isteğe ait veriler beklenen formatla eşleşmiyor. Bu, güncel olmayan bir istek veya veri bütünlüğü sorunundan kaynaklanıyor olabilir. Lütfen aşağıdaki ayrıntıları inceleyin:"
+    },
+    "modals": {
+      "cancel": {
+        "title": "İsteği İptal Et",
+        "description": "Bu isteği iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "confirm": "Evet, İsteği İptal Et",
+        "cancel": "Hayır, İstek Kalsın"
+      },
+      "update": {
+        "title": "İsteği Güncelle",
+        "description": "Bu isteği güncellemek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "confirm": "Evet, İsteği Güncelle",
+        "cancel": "Hayır, Eskisi Gibi Kalsın"
+      }
     }
   },
   "Pronunciation": {

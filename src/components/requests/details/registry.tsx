@@ -13,6 +13,7 @@ import { DeleteRelatedWord } from "./related-word/delete";
 import { DeleteRelatedPhrase } from "./related-phrase/delete";
 import { CreateMeaningAttribute } from "./meaning-attribute/create";
 import { CreateAuthor } from "./author/create";
+import CreatePronunciation from "./pronunciation/create";
 
 export type RequestDetailComponentProps = {
   newData?: any;
@@ -50,6 +51,9 @@ const registry: ComponentRegistry = {
   },
   authors: {
     create: CreateAuthor,
+  },
+  pronunciations: {
+    create: CreatePronunciation,
   },
 };
 
