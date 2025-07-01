@@ -1242,6 +1242,9 @@
         "confirm": "Yes, Update Request",
         "cancel": "No, Keep The Request"
       }
+    },
+    "errors": {
+      "requestNotFound": "Request not found"
     }
   },
   "Pronunciation": {

@@ -150,8 +150,8 @@ export default function RequestDetail({ requestId }: RequestDetailProps) {
 
   if (isError || !data) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-danger">{t("errors.requestNotFound")}</p>
+      <div className="container mx-auto p-6 text-center">
+        <p className="text-danger">{tDetails("errors.requestNotFound")}</p>
         <Button
           color="primary"
           variant="flat"
