@@ -51,7 +51,9 @@ export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete
 
   const handleUpload = () => {
     if (audioBlob) {
-      const file = new File([audioBlob], "pronunciation.mp3", { type: "audio/mpeg" });
+      const fileExtension = audioBlob.type.split('/')[1];
+      const fileName = `pronunciation.${fileExtension}`;
+      const file = new File([audioBlob], fileName, { type: audioBlob.type });
       startUpload([file]);
     }
   };
