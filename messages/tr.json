@@ -1237,7 +1237,8 @@
       "searchPlaceholder": "Önce Kelime arayın ve seçin...",
       "cancel": "İptal",
       "submit": "Gönder",
-      "noResults": "Arama sonucu bulunamadı"
+      "noResults": "Arama sonucu bulunamadı",
+      "wordNotFoundMessage": "Telaffuz edilecek kelime sözlükte bulunamadı."
     }
   },
   "PronunciationVoting": {

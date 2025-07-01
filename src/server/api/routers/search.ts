@@ -1,7 +1,7 @@
 import { createTRPCRouter, publicProcedure } from "@/src/server/api/trpc";
 import { z } from "zod";
 import { words } from "@/db/schema/words";
-import { eq, ilike } from "drizzle-orm";
+import { eq, ilike, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const searchRouter = createTRPCRouter({
@@ -9,7 +9,7 @@ export const searchRouter = createTRPCRouter({
     .input(z.object({ name: z.string() }))
     .query(async ({ ctx, input }) => {
       const word = await ctx.db.query.words.findFirst({
-        where: eq(words.name, input.name),
+        where: or(eq(words.name, input.name), eq(words.name, input.name.toLowerCase())),
         columns: {
           id: true,
         },

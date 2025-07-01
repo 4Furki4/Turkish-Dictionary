@@ -1271,7 +1271,8 @@
       "searchPlaceholder": "Search for a word...",
       "cancel": "Cancel",
       "submit": "Submit",
-      "noResults": "No results found"
+      "noResults": "No results found",
+      "wordNotFoundMessage": "Word to request pronunciation for not found in the dictionary."
     }
   },
   "PronunciationVoting": {

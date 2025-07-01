@@ -25,7 +25,7 @@ export const RequestPronunciationModal: FC<RequestPronunciationModalProps> = ({ 
     const utils = api.useUtils()
     const { data, isLoading, isError } = api.search.getWordId.useQuery(
         { name: searchTerm },
-        { enabled: isOpen, retry: 0 } // Initially disable this query
+        { enabled: isOpen, retry: 0 }
     );
 
     const handleUploadComplete = () => {
@@ -42,7 +42,7 @@ export const RequestPronunciationModal: FC<RequestPronunciationModalProps> = ({ 
                 <ModalHeader>{t("new.title")}</ModalHeader>
                 <ModalBody className="flex items-center justify-center flex-wrap">
                     {isLoading && <Button color="primary">{t("loading")}</Button>}
-                    {isError && <p className="text-danger">{t("new.noResults")}</p>}
+                    {isError && <p className="text-danger">{t("new.wordNotFoundMessage")}</p>}
                     {data && data.wordId !== null && (
                         <AudioRecorder
                             wrapperClassName="w-full flex flex-wrap justify-center items-center"
