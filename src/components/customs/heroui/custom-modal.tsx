@@ -21,6 +21,9 @@ export function CustomModal({
 
     return (
         <Modal
+            placement="center"
+            scrollBehavior="inside"
+            size="lg"
             // Pass all props like isOpen, onOpenChange, size, etc., directly.
             {...props}
             // Define the default animations and styles here.
