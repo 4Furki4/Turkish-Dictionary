@@ -142,7 +142,7 @@ export default async function RootLayout({
                       <BackgroundGradient />
                       {children}
                     </main>
-                    <Footer />
+                    <Footer session={session} />
                   </div>
                   <SpeedInsights />
                   <Analytics />

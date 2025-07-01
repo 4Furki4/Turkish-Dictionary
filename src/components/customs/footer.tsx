@@ -1,21 +1,21 @@
 import React from 'react'
 import { getTranslations } from 'next-intl/server'
-import { auth } from '@/src/server/auth/auth'
 import { FeedbackModal } from "@/src/components/customs/modals/add-feedback";
 import { Link } from '@heroui/react';
 import { Github } from 'lucide-react'; // Example icon
+import { Session } from 'next-auth';
 
-export default async function Footer() {
+export default async function Footer({ session }: { session: Session | null }) {
     const t = await getTranslations("Footer");
     const tFeedback = await getTranslations("Feedback");
-    const session = await auth();
-
     const footerLinks = {
         dictionary: [
             { href: "/word-list", label: t("links.wordList") },
             { href: "/announcements", label: t("links.announcements") },
         ],
         community: [
+            { href: "/contribute-word", label: t("links.contributeWord") },
+            { href: "/pronunciation-voting", label: t("links.pronunciations") },
             { href: "/feedback", label: t("links.seeFeedback") },
         ],
         legal: [

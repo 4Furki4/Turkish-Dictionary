@@ -1,3 +1,4 @@
+"use client"
 import { Card, type CardProps } from '@heroui/react'
 import React from 'react'
 import { useSnapshot } from 'valtio'
