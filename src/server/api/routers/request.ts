@@ -1,6 +1,6 @@
 import { requests } from "@/db/schema/requests";
-import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
-import { and, eq, SQL, sql } from "drizzle-orm";
+import { createTRPCRouter, protectedProcedure, adminProcedure, publicProcedure } from "../trpc";
+import { and, eq, ilike, SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import { purifyObject } from "@/src/lib/utils";
 import { users } from "@/db/schema/users";
@@ -37,32 +37,67 @@ export const requestRouter = createTRPCRouter({
                 entityId: input.word_id,
             });
         }),
-    getVotablePronunciationRequests: protectedProcedure
-        .query(async ({ ctx }) => {
+    getVotablePronunciationRequests: publicProcedure
+        .input(z.object({
+            search: z.string().optional(),
+            sortBy: z.enum(['createdAt', 'voteCount']).default('createdAt'),
+            sortOrder: z.enum(['asc', 'desc']).default('desc'),
+            page: z.number().min(1).default(1),
+            limit: z.number().min(1).max(50).default(10),
+        }))
+        .query(async ({ ctx, input }) => {
+            const { search, sortBy, sortOrder, page, limit } = input;
+            const offset = (page - 1) * limit;
+
+            const whereClause = and(
+                eq(requests.status, "pending"),
+                eq(requests.entityType, "pronunciations"),
+                search ? ilike(words.name, `%${search}%`) : undefined
+            );
+
+            const totalCountResult = await ctx.db
+                .select({ count: sql<number>`count(*)` })
+                .from(requests)
+                .leftJoin(words, eq(requests.entityId, words.id))
+                .where(whereClause);
+
+            const totalCount = totalCountResult[0]?.count || 0;
+
             const pendingRequests = await ctx.db
                 .select({
                     request: requests,
                     user: {
                         id: users.id,
                         name: users.name,
+                        image: users.image,
                     },
                     word: {
                         id: words.id,
                         name: words.name,
                     },
-                    vote_count: sql<number>`count(${request_votes.request_id})`.as("vote_count"),
+                    voteCount: sql<number>`sum(${request_votes.vote_type})`.as("voteCount"),
+                    hasVoted: ctx.session?.user ? sql<boolean>`EXISTS(SELECT 1 FROM ${request_votes} WHERE ${request_votes.request_id} = ${requests.id} AND ${request_votes.user_id} = ${ctx.session.user.id})`.as("hasVoted") : sql<boolean>`false`.as("hasVoted"),
+                    userVote: ctx.session?.user ? sql<number>`(SELECT vote_type FROM ${request_votes} WHERE ${request_votes.request_id} = ${requests.id} AND ${request_votes.user_id} = ${ctx.session.user.id})`.as("userVote") : sql<number>`0`.as("userVote"),
                 })
                 .from(requests)
-                .where(and(
-                    eq(requests.status, "pending"),
-                    eq(requests.entityType, "pronunciations")
-                ))
+                .where(whereClause)
                 .leftJoin(users, eq(requests.userId, users.id))
                 .leftJoin(words, eq(requests.entityId, words.id))
                 .leftJoin(request_votes, eq(requests.id, request_votes.request_id))
-                .groupBy(requests.id, users.id, words.id);
+                .groupBy(requests.id, users.id, words.id)
+                .orderBy(sortBy === 'voteCount'
+                    ? sql`"voteCount" ${sql.raw(sortOrder)}`
+                    : sql`${requests.requestDate} ${sql.raw(sortOrder)}`)
+                .limit(limit)
+                .offset(offset);
 
-            return pendingRequests;
+            const result = {
+                requests: pendingRequests,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limit),
+            };
+
+            return result;
         }),
     // User request management endpoints
     getUserRequests: protectedProcedure
@@ -805,9 +840,7 @@ export const requestRouter = createTRPCRouter({
         const purifiedData = purifyObject(preparedData)
         try {
             const { success } = await verifyRecaptcha(captchaToken);
-            console.log('success', success)
         } catch (error) {
-            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -848,9 +881,7 @@ export const requestRouter = createTRPCRouter({
         }
         try {
             const { success } = await verifyRecaptcha(captchaToken);
-            console.log('success', success)
         } catch (error) {
-            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -876,9 +907,7 @@ export const requestRouter = createTRPCRouter({
         const { meaning_id, reason, captchaToken } = input;
         try {
             const { success } = await verifyRecaptcha(captchaToken);
-            console.log('success', success)
         } catch (error) {
-            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -902,9 +931,7 @@ export const requestRouter = createTRPCRouter({
         const { attribute, captchaToken } = input;
         try {
             const { success } = await verifyRecaptcha(captchaToken);
-            console.log('success', success)
         } catch (error) {
-            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -928,9 +955,7 @@ export const requestRouter = createTRPCRouter({
         const { attribute, captchaToken } = input;
         try {
             const { success } = await verifyRecaptcha(captchaToken);
-            console.log('success', success)
         } catch (error) {
-            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',
@@ -954,9 +979,7 @@ export const requestRouter = createTRPCRouter({
         const { name, captchaToken } = input;
         try {
             const { success } = await verifyRecaptcha(captchaToken);
-            console.log('success', success)
         } catch (error) {
-            console.log('captcha failed')
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'Error.captchaFailed',

@@ -14,6 +14,7 @@ export const request_votes = pgTable(
     user_id: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    vote_type: integer("vote_type").notNull(),
   }
 );
 

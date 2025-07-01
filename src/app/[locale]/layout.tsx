@@ -130,6 +130,7 @@ export default async function RootLayout({
                       LogoutIntl={t("Logout")}
                       AnnouncementsIntl={t("Announcements")}
                       ContributeWordIntl={t("ContributeWord")}
+                      PronunciationsIntl={t("Pronunciations")}
                       ariaAvatar={t("ariaAvatar")}
                       ariaMenu={t("ariaMenu")}
                       ariaLanguages={t("ariaLanguages")}

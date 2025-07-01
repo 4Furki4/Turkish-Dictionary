@@ -12,6 +12,7 @@
     "Dashboard": "Dashboard",
     "Announcements": "Announcements",
     "ContributeWord": "Contribute Word",
+    "Pronunciations": "Pronunciations",
     "ariaAvatar": "Profile Picture Avatar",
     "ariaMenu": "Menu",
     "ariaLanguages": "Languages",
@@ -656,7 +657,9 @@
     "reasonPlaceholderForUpdate": "Why are you updating this request?",
     "messages": {
       "noRequests": "No requests found",
-      "itemsPerPage": "Items per page"
+      "itemsPerPage": "Items per page",
+      "previous": "Previous",
+      "next": "Next"
     },
     "details": {
       "modifyingWordLabel": "Modifying Word Name",
@@ -1233,5 +1236,24 @@
     "recordingInProgress": "Recording in progress...",
     "submitSuccess": "Pronunciation contribution submitted successfully!",
     "uploadFailed": "Upload failed: {error}"
+  },
+  "PronunciationVoting": {
+    "pageTitle": "Pronunciation Voting",
+    "title": "Pronunciation Voting",
+    "searchPlaceholder": "Search for a word...",
+    "sortByDate": "Sort by Date",
+    "sortByVotes": "Sort by Votes",
+    "loading": "Loading requests...",
+    "error": "An error occurred while fetching requests.",
+    "noResults": "No pronunciation requests found for \"{searchTerm}\".",
+    "requestPronunciation": "Request Pronunciation",
+    "requestPronunciationFor": "Request Pronunciation for \"{searchTerm}",
+    "userDetails": "User Details",
+    "reasonLabel": "Reason:",
+    "noReasonProvided": "No reason provided.",
+    "voteError": "Failed to cast vote. Please try again.",
+    "wordNotFound": "Could not find the word \"{searchTerm}\" in the dictionary.",
+    "uploadComplete": "Your pronunciation has been submitted for review.",
+    "cancel": "Cancel"
   }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "request_votes" ADD COLUMN "vote_type" integer NOT NULL;

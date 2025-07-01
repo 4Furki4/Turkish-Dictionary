@@ -7,13 +7,15 @@ import { api } from "@/src/trpc/react";
 import { Button } from "@heroui/react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 interface AudioRecorderProps {
   wordId: number;
   onUploadComplete: () => void;
+  wrapperClassName?: string;
 }
 
-export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete }) => {
+export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete, wrapperClassName }) => {
   const t = useTranslations("Pronunciation");
   const { isRecording, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder();
   const [isUploading, setIsUploading] = useState(false);
@@ -66,7 +68,7 @@ export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete
         )}
 
         {audioBlob && !isRecording && (
-          <div className="flex items-center gap-2">
+          <div className={cn("flex items-center gap-2", wrapperClassName)}>
             <audio src={URL.createObjectURL(audioBlob)} controls />
             <Button onPress={handleUpload} disabled={isUploading} color="primary">
               {isUploading ? t("uploading") : t("submit")}

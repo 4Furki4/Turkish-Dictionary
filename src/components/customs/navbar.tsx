@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl" | "ContributeWordIntl" | "ariaAvatar" | "ariaMenu" | "ariaLanguages" | "ariaSwitchTheme" | "ariaBlur", string>;
+} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl" | "ContributeWordIntl" | "PronunciationsIntl" | "ariaAvatar" | "ariaMenu" | "ariaLanguages" | "ariaSwitchTheme" | "ariaBlur", string>;
 
 export default function Navbar({
   session,
@@ -41,6 +41,7 @@ export default function Navbar({
   LogoutIntl,
   AnnouncementsIntl,
   ContributeWordIntl,
+  PronunciationsIntl,
   ariaAvatar,
   setIsSidebarOpen,
   ariaMenu,
@@ -114,6 +115,11 @@ export default function Navbar({
         <NavbarItem className="hidden md:flex" isActive={pathName === "/announcements"}>
           <NextIntlLink href={'/announcements'} as={Link as any} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
             <span className={`text-nowrap`}>{AnnouncementsIntl}</span>
+          </NextIntlLink>
+        </NavbarItem>
+        <NavbarItem className="hidden md:flex" isActive={pathName === "/pronunciation-voting"}>
+          <NextIntlLink href={"/pronunciation-voting"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
+            <span className={`text-nowrap`}>{PronunciationsIntl}</span>
           </NextIntlLink>
         </NavbarItem>
         <NavbarItem>

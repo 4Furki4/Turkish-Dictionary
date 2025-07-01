@@ -12,6 +12,7 @@
     "Dashboard": "Panel",
     "Announcements": "Duyurular",
     "ContributeWord": "Kelime Katkısı",
+    "Pronunciations": "Telaffuzlar",
     "ariaAvatar": "Profil Resmi Avatarı",
     "ariaMenu": "Menü Butonu",
     "ariaLanguages": "Dil Değiştirme Butonu",
@@ -617,7 +618,9 @@
     "reasonPlaceholderForUpdate": "Bu isteği neden güncelliyorsunuz?",
     "messages": {
       "noRequests": "İstek bulunamadı",
-      "itemsPerPage": "Sayfa başına öğe"
+      "itemsPerPage": "Sayfa başına öğe",
+      "previous": "Önceki",
+      "next": "Sonraki"
     },
     "details": {
       "modifyingWordLabel": "Değiştirilen Kelime",
@@ -1201,5 +1204,24 @@
     "recordingInProgress": "Kayıt devam ediyor...",
     "submitSuccess": "Telaffuz katkısı başarıyla gönderildi!",
     "uploadFailed": "Yükleme başarısız: {error}"
+  },
+  "PronunciationVoting": {
+    "pageTitle": "Telaffuz Oylama",
+    "title": "Telaffuz Oylama",
+    "searchPlaceholder": "Kelime ara...",
+    "sortByDate": "Tarihe Göre Sırala",
+    "sortByVotes": "Oylara Göre Sırala",
+    "loading": "İstekler yükleniyor...",
+    "error": "İstekler getirilirken bir hata oluştu.",
+    "noResults": "\"{searchTerm}\" için telaffuz isteği bulunamadı.",
+    "requestPronunciation": "Telaffuz İste",
+    "requestPronunciationFor": "\"{searchTerm}\" için Telaffuz İste",
+    "userDetails": "Kullanıcı Detayları",
+    "reasonLabel": "Sebep:",
+    "noReasonProvided": "Sebep belirtilmemiş.",
+    "voteError": "Oy kullanılamadı. Lütfen tekrar deneyin.",
+    "wordNotFound": "Sözlükte \"{searchTerm}\" kelimesi bulunamadı.",
+    "uploadComplete": "Telaffuzunuz incelenmek üzere gönderildi.",
+    "cancel": "İptal"
   }
 }
