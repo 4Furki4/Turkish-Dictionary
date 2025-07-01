@@ -38,7 +38,7 @@ export const ourFileRouter = {
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };
     }),
-  audioUploader: f({ audio: { maxFileSize: "1MB" } })
+  audioUploader: f({ audio: { maxFileSize: "1MB", maxFileCount: 1 } })
     .middleware(async ({ req }) => {
       // This code runs on your server before upload
       const user = await auth(req);
@@ -53,7 +53,7 @@ export const ourFileRouter = {
       // This code RUNS ON YOUR SERVER after upload
       console.log("Upload complete for userId:", metadata.userId);
 
-      console.log("file url", file.url);
+      console.log("file url", file.ufsUrl);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };

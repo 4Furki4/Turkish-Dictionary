@@ -21,7 +21,7 @@ export const useAudioRecorder = () => {
             };
 
             mediaRecorderRef.current.onstop = () => {
-                const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mpeg";
+                const mimeType = MediaRecorder.isTypeSupported("audio/opus") ? "audio/opus" : "audio/aac";
                 const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
                 setAudioBlob(audioBlob);
                 // Stop all tracks on the stream to turn off the microphone indicator
