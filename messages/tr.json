@@ -1252,7 +1252,7 @@
   },
   "Upload": {
     "errors": {
-      "BAD_REQUEST": "Gönderilen dosyada bir sorun var. Lütfen tekrar deneyin.",
+      "BAD_REQUEST": "Dosya boyutu çok büyük veya dosya tipi uyumsuz. Lütfen tekrar deneyin.",
       "INTERNAL_SERVER_ERROR": "Sunucu tarafında bir hata oluştu. Lütfen tekrar deneyin.",
       "FORBIDDEN": "Dosya yükleme izniniz yok. Sorun olduğunu düşünüyorsanız lütfen destek ekibi ile iletişime geçin.",
       "NOT_FOUND": "Dosya bulunamadı. Lütfen tekrar deneyin.",

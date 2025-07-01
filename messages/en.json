@@ -1286,7 +1286,7 @@
   },
   "Upload": {
     "errors": {
-      "BAD_REQUEST": "A problem occurred with the uploaded file. Please try again.",
+      "BAD_REQUEST": "File size is too large or file type is not supported. Please try again.",
       "INTERNAL_SERVER_ERROR": "An error occurred on the server. Please try again.",
       "FORBIDDEN": "You do not have permission to upload files. If you think this is an error, please contact support.",
       "NOT_FOUND": "File not found. Please try again.",
