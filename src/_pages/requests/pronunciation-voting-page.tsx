@@ -7,12 +7,16 @@ import { useDebounce } from "@/src/hooks/use-debounce";
 import { useTranslations } from "next-intl";
 import { Button, CardHeader, CardFooter } from "@heroui/react";
 import { PronunciationCard } from "@/src/components/requests/pronunciation-card";
-import { RequestPronunciationModal } from "@/src/components/requests/request-pronunciation-modal";
+import { NewPronunciationRequestModal } from "@/src/components/requests/new-pronunciation-request-modal";
+import { Mic } from "lucide-react";
+import { useDisclosure } from "@heroui/react";
+import { Link } from "@/src/i18n/routing";
 import { Pagination } from "@/src/components/shared/pagination";
 import { PronunciationCardSkeleton } from "@/src/components/requests/pronunciation-card-skeleton";
 import { keepPreviousData } from "@tanstack/react-query";
 import { CustomInput } from "@/src/components/customs/heroui/custom-input";
 import CustomCard from "@/src/components/customs/heroui/custom-card";
+import { RequestPronunciationModal } from "@/src/components/requests/request-pronunciation-modal";
 
 export function PronunciationVotingPage() {
     const t = useTranslations("PronunciationVoting");
@@ -22,7 +26,8 @@ export function PronunciationVotingPage() {
     const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
     const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "createdAt");
     const [sortOrder, setSortOrder] = useState(searchParams.get("sortOrder") || "desc");
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { isOpen: isNewRequestModalOpen, onOpen: openNewRequestModal, onClose: closeNewRequestModal } = useDisclosure();
+    const { isOpen: isQuickRequestModalOpen, onOpen: openQuickRequestModal, onClose: closeQuickRequestModal } = useDisclosure();
 
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
     const page = parseInt(searchParams.get("page") || "1", 10);
@@ -70,7 +75,13 @@ export function PronunciationVotingPage() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">{t("title")}</h1>
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">{t("title")}</h1>
+                <Button color="primary" onPress={openNewRequestModal} className="ml-auto">
+                    <Mic className="h-5 w-5 md:mr-2" />
+                    <span className="hidden md:inline">{t("requestPronunciation")}</span>
+                </Button>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-2 lg:flex lg:flex-row items-center mb-4 gap-4">
                 <CustomInput
                     placeholder={t("searchPlaceholder")}
@@ -116,7 +127,7 @@ export function PronunciationVotingPage() {
                         {t("noResults", { searchTerm: debouncedSearchTerm })}
                     </CardHeader>
                     <CardFooter className="flex justify-center">
-                        <Button color="primary" onPress={() => setIsModalOpen(true)}>
+                        <Button color="primary" onPress={openQuickRequestModal}>
                             {t("requestPronunciation")}
                         </Button>
                     </CardFooter>
@@ -141,10 +152,13 @@ export function PronunciationVotingPage() {
                     />
                 </div>
             )}
-
+            <NewPronunciationRequestModal
+                isOpen={isNewRequestModalOpen}
+                onClose={closeNewRequestModal}
+            />
             <RequestPronunciationModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                isOpen={isQuickRequestModalOpen}
+                onClose={closeQuickRequestModal}
                 searchTerm={debouncedSearchTerm}
             />
         </div>

@@ -1229,7 +1229,16 @@
     "recordAgain": "Tekrar Kaydet",
     "recordingInProgress": "Kayıt devam ediyor...",
     "submitSuccess": "Telaffuz katkısı başarıyla gönderildi!",
-    "uploadFailed": "Yükleme başarısız: {error}"
+    "uploadFailed": "Yükleme başarısız: {error}",
+    "new": {
+      "title": "Yeni Telaffuz İste",
+      "description": "Yeni bir telaffuz isteği oluşturun",
+      "searchLabel": "Kelime arayın",
+      "searchPlaceholder": "Önce Kelime arayın ve seçin...",
+      "cancel": "İptal",
+      "submit": "Gönder",
+      "noResults": "Arama sonucu bulunamadı"
+    }
   },
   "PronunciationVoting": {
     "pageTitle": "Telaffuz Oylama",

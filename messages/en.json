@@ -1263,7 +1263,16 @@
     "recordAgain": "Record Again",
     "recordingInProgress": "Recording in progress...",
     "submitSuccess": "Pronunciation contribution submitted successfully!",
-    "uploadFailed": "Upload failed: {error}"
+    "uploadFailed": "Upload failed: {error}",
+    "new": {
+      "title": "New Pronunciation Request",
+      "description": "New pronunciation request",
+      "searchLabel": "Search for a word",
+      "searchPlaceholder": "Search for a word...",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "noResults": "No results found"
+    }
   },
   "PronunciationVoting": {
     "pageTitle": "Pronunciation Voting",

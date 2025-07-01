@@ -1,7 +1,7 @@
 import { createTRPCRouter, publicProcedure } from "@/src/server/api/trpc";
 import { z } from "zod";
 import { words } from "@/db/schema/words";
-import { eq } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const searchRouter = createTRPCRouter({
@@ -23,5 +23,21 @@ export const searchRouter = createTRPCRouter({
       }
 
       return { wordId: word.id };
+    }),
+  getWords: publicProcedure
+    .input(z.object({ query: z.string() }))
+    .query(async ({ ctx, input }) => {
+      if (input.query.length < 2) {
+        return [];
+      }
+      const results = await ctx.db.query.words.findMany({
+        where: ilike(words.name, `%${input.query}%`),
+        limit: 10,
+        columns: {
+          id: true,
+          name: true,
+        },
+      });
+      return results;
     }),
 });
