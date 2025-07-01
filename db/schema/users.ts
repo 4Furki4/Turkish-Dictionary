@@ -8,7 +8,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { words } from "./words";
-import { pronounciations } from "./pronounciations";
+import { pronunciations } from "./pronunciations";
 import { savedWords } from "./saved_words";
 import { requests } from "./requests";
 import { contributionLogs } from "./contribution_logs";
@@ -33,7 +33,7 @@ export const users = pgTable("users", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   saved_words: many(savedWords),
-  pronounciations: many(pronounciations),
+  pronounciations: many(pronunciations),
   requests: many(requests),
   contributionLogs: many(contributionLogs),
 }));

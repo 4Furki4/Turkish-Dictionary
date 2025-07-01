@@ -218,6 +218,13 @@
       "when": 1751327962907,
       "tag": "0030_true_radioactive_man",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1751376423680,
+      "tag": "0031_strong_sebastian_shaw",
+      "breakpoints": true
     }
   ]
 }

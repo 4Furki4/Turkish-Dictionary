@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, relations, sql } from "drizzle-orm";
 import { SelectMeaning, meanings } from "./meanings";
-import { pronounciations } from "./pronounciations";
+import { pronunciations } from "./pronunciations";
 import { savedWords } from "./saved_words";
 import { roots } from "./roots";
 export const words = pgTable("words", {
@@ -30,7 +30,7 @@ export const words = pgTable("words", {
 export const wordsRelations = relations(words, ({ many, one }) => ({
   meanings: many(meanings),
   saved_words: many(savedWords),
-  pronounciations: many(pronounciations),
+  pronounciations: many(pronunciations),
   root: one(roots, {
     fields: [words.rootId],
     references: [roots.id],

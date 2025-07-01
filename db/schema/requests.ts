@@ -9,6 +9,7 @@ import { authors } from "./authors";
 import { examples } from "./examples";
 import { contributionLogs } from "./contribution_logs";
 import { request_votes } from "./request_votes";
+import { pronunciations } from "./pronunciations";
 
 export const actionsEnum = pgEnum("action", ["create", "update", "delete"]);
 
@@ -54,8 +55,8 @@ export const requestsRelations = relations(requests, ({ one, many }) => ({
     references: [users.id],
   }),
   word: one(words, {
-    fields: [requests.entityId, requests.entityType],
-    references: [words.id, words.requestType],
+    fields: [requests.entityId],
+    references: [words.id],
   }),
   meaning: one(meanings, {
     fields: [requests.entityId, requests.entityType],
@@ -76,6 +77,10 @@ export const requestsRelations = relations(requests, ({ one, many }) => ({
   example: one(examples, {
     fields: [requests.entityId, requests.entityType],
     references: [examples.id, examples.requestType],
+  }),
+  pronunciation: one(pronunciations, {
+    fields: [requests.entityId],
+    references: [pronunciations.wordId],
   }),
   contributionLogs: many(contributionLogs),
   votes: many(request_votes),
