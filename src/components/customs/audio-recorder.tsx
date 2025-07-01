@@ -16,7 +16,8 @@ interface AudioRecorderProps {
 }
 
 export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete, wrapperClassName }) => {
-  const t = useTranslations("Pronunciation");
+  const tPronunciation = useTranslations("Pronunciation");
+  const tUpload = useTranslations("Upload")
   const { isRecording, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -35,13 +36,13 @@ export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete
       setIsUploading(false);
       if (res && res[0]) {
         createPronunciation.mutate(
-          { word_id: wordId, audio_url: res[0].url },
+          { word_id: wordId, audio_url: res[0].ufsUrl },
         );
       }
     },
-    onUploadError: (error: Error) => {
+    onUploadError: (error) => {
       setIsUploading(false);
-      toast.error(t("uploadFailed", { error: error.message }));
+      toast.error(tUpload(`errors.${error.code}`));
     },
     onUploadBegin: () => {
       setIsUploading(true);
@@ -60,11 +61,11 @@ export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
-        {!isRecording && !audioBlob && <Button color="primary" onPress={startRecording}>{t("record")}</Button>}
+        {!isRecording && !audioBlob && <Button color="primary" onPress={startRecording}>{tPronunciation("record")}</Button>}
 
         {isRecording && (
           <Button onPress={stopRecording} color="danger">
-            {t("stop")}
+            {tPronunciation("stop")}
           </Button>
         )}
 
@@ -72,15 +73,15 @@ export const AudioRecorder: FC<AudioRecorderProps> = ({ wordId, onUploadComplete
           <div className={cn("flex items-center gap-2", wrapperClassName)}>
             <audio src={URL.createObjectURL(audioBlob)} controls />
             <Button onPress={handleUpload} disabled={isUploading} color="primary">
-              {isUploading ? t("uploading") : t("submit")}
+              {isUploading ? tUpload("uploading") : tPronunciation("submit")}
             </Button>
             <Button onPress={resetRecording} variant="bordered" color="danger">
-              {t("recordAgain")}
+              {tPronunciation("recordAgain")}
             </Button>
           </div>
         )}
       </div>
-      {isRecording && <div className="text-sm text-danger">{t("recordingInProgress")}</div>}
+      {isRecording && <div className="text-sm text-danger">{tPronunciation("recordingInProgress")}</div>}
     </div>
   );
 };

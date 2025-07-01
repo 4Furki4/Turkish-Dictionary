@@ -1283,5 +1283,22 @@
     "wordNotFound": "Could not find the word \"{searchTerm}\" in the dictionary.",
     "uploadComplete": "Your pronunciation has been submitted for review.",
     "cancel": "Cancel"
+  },
+  "Upload": {
+    "errors": {
+      "BAD_REQUEST": "A problem occurred with the uploaded file. Please try again.",
+      "INTERNAL_SERVER_ERROR": "An error occurred on the server. Please try again.",
+      "FORBIDDEN": "You do not have permission to upload files. If you think this is an error, please contact support.",
+      "NOT_FOUND": "File not found. Please try again.",
+      "INTERNAL_CLIENT_ERROR": "An error occurred. Please try again.",
+      "TOO_LARGE": "File size is too large. Please try again.",
+      "TOO_SMALL": "File size is too small. Please try again.",
+      "TOO_MANY_FILES": "Too many files. Please try again.",
+      "KEY_TOO_LONG": "Key is too long. Please try again.",
+      "URL_GENERATION_FAILED": "URL generation failed. Please try again.",
+      "UPLOAD_FAILED": "Upload failed. Please try again.",
+      "FILE_LIMIT_EXCEEDED": "File limit exceeded. Please contact support."
+    },
+    "uploading": "Uploading..."
   }
 }

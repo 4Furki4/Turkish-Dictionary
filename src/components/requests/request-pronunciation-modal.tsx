@@ -13,6 +13,8 @@ import {
 import { AudioRecorder } from "@/src/components/customs/audio-recorder";
 import { toast } from "sonner";
 import { CustomModal } from "../customs/heroui/custom-modal";
+import { TRPCClientErrorLike } from "@trpc/client";
+import { AppRouter } from "@/src/server/api/root";
 
 interface RequestPronunciationModalProps {
     isOpen: boolean;

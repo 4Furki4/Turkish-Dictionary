@@ -1249,5 +1249,22 @@
     "wordNotFound": "Sözlükte \"{searchTerm}\" kelimesi bulunamadı.",
     "uploadComplete": "Telaffuzunuz incelenmek üzere gönderildi.",
     "cancel": "İptal"
+  },
+  "Upload": {
+    "errors": {
+      "BAD_REQUEST": "Gönderilen dosyada bir sorun var. Lütfen tekrar deneyin.",
+      "INTERNAL_SERVER_ERROR": "Sunucu tarafında bir hata oluştu. Lütfen tekrar deneyin.",
+      "FORBIDDEN": "Dosya yükleme izniniz yok. Sorun olduğunu düşünüyorsanız lütfen destek ekibi ile iletişime geçin.",
+      "NOT_FOUND": "Dosya bulunamadı. Lütfen tekrar deneyin.",
+      "INTERNAL_CLIENT_ERROR": "Bir hata oluştu. Lütfen tekrar deneyin.",
+      "TOO_LARGE": "Dosya boyutu çok büyük. Lütfen tekrar deneyin.",
+      "TOO_SMALL": "Dosya boyutu çok küçük. Lütfen tekrar deneyin.",
+      "TOO_MANY_FILES": "Dosya sayısı çok fazla. Lütfen tekrar deneyin.",
+      "KEY_TOO_LONG": "Anahtar uzunluğu çok uzun. Lütfen tekrar deneyin.",
+      "URL_GENERATION_FAILED": "URL oluşturulamadı. Lütfen tekrar deneyin.",
+      "UPLOAD_FAILED": "Yükleme başarısız. Lütfen tekrar deneyin.",
+      "FILE_LIMIT_EXCEEDED": "Dosya limiti aşıldı. Lütfen destek ekibi ile iletişime geçin."
+    },
+    "uploading": "Dosya karşıya yükleniyor..."
   }
 }
