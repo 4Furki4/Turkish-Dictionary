@@ -39,3 +39,6 @@ next-env.d.ts
 .windsurfrules
 .cursor
 
+# Serwist
+public/sw*
+public/swe-worker*

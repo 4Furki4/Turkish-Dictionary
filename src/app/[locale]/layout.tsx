@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import "@/app/globals.css";
 import { TRPCReactProvider } from "@/src/trpc/react";
 import { GeistSans } from "geist/font/sans";
@@ -23,9 +23,6 @@ export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "tr" }];
 }
 
-// Assuming Params is defined elsewhere, if not, define it.
-// type Params = { locale: string };
-
 export async function generateMetadata({
   params,
 }: {
@@ -49,11 +46,21 @@ export async function generateMetadata({
     : ['türkçe', 'sözlük', 'türkçe sözlük', 'online sözlük', 'türkçe öğren', 'kelime anlamları', 'tdk', 'çağdaş türkçe sözlük', 'modern', 'açık kaynak', 'toplulukla gelişen'];
 
   return {
+    applicationName: isEnglish ? "Turkish Dictionary" : "Türkçe Sözlük",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: isEnglish ? "Modern Turkish Dictionary" : "Çağdaş Türkçe Sözlük",
+      // startUpImage: [],
+    },
+    formatDetection: {
+      telephone: false,
+    },
     metadataBase: new URL('https://turkce-sozluk.com'),
     // --- Title ---
     // The title structure is excellent. No changes needed.
     title: {
-      template: isEnglish ? "%s | Modern Turkish Dictionary" : "%s | Çağdaş Türkçe Sözlük",
+      template: isEnglish ? "%s | Modern Turkish Dictionary" : "%s | Modern Türkçe Sözlük",
       default: isEnglish
         ? "Turkish Dictionary - The Modern, Open-Source and Community-Driven Dictionary"
         : "Türkçe Sözlük - Toplulukla Gelişen, Çağdaş ve Açık Kaynak Sözlük",
@@ -90,6 +97,10 @@ export async function generateMetadata({
   };
 }
 
+export const viewport: Viewport = {
+  themeColor: "#a91011",
+}
+
 export default async function RootLayout({
   children,
   params
@@ -108,6 +119,9 @@ export default async function RootLayout({
 
   return (
     <html suppressHydrationWarning lang={locale} className="dark">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className={`${GeistSans.className} relative`}>
         <TRPCReactProvider>
           <NextIntlClientProvider messages={messages}>

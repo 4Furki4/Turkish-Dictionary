@@ -1,0 +1,22 @@
+{
+    "name": "Çağdaş Türkçe Sözlük",
+    "short_name": "Türkçe Sözlük",
+    "description": "Topluluk ile gelişen, açık kaynak ve çağdaş Türkçe sözlüğü.",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#000000",
+    "theme_color": "#a91011",
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

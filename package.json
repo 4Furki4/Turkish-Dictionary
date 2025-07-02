@@ -32,6 +32,7 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@react-email/components": "^0.0.19",
     "@react-email/render": "^0.0.15",
+    "@serwist/next": "^9.0.15",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tailwindcss/postcss": "^4.1.10",
     "@tanstack/react-query": "^5.80.7",
@@ -83,6 +84,7 @@
     "typescript": "^5.8.3",
     "uploadthing": "^7.7.2",
     "valtio": "^2.1.5",
+    "web-push": "^3.6.7",
     "zod": "^3.25.64"
   },
   "devDependencies": {
@@ -90,13 +92,14 @@
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.5.1",
     "@types/bcrypt": "^5.0.2",
+    "@types/crypto-js": "^4.2.2",
+    "@types/eslint": "^9.6.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^24.0.1",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19.1.8",
-    "@types/eslint": "^9.6.1",
     "@types/react-dom": "^19.1.6",
-    "@types/crypto-js": "^4.2.2",
+    "@types/web-push": "^3.6.4",
     "critters": "^0.0.23",
     "drizzle-kit": "^0.31.0",
     "eslint-plugin-jest-dom": "^5.1.0",
@@ -104,6 +107,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "jest-environment-jsdom": "^29.7.0",
     "pg": "^8.16.0",
+    "serwist": "^9.0.15",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2"
   }
