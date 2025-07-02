@@ -1310,5 +1310,9 @@
       "FILE_LIMIT_EXCEEDED": "File limit exceeded. Please contact support."
     },
     "uploading": "Uploading..."
+  },
+  "Offline": {
+    "title": "You are offline",
+    "description": "Please check your connection."
   }
 }

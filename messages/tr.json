@@ -1276,5 +1276,9 @@
       "FILE_LIMIT_EXCEEDED": "Dosya limiti aşıldı. Lütfen destek ekibi ile iletişime geçin."
     },
     "uploading": "Dosya karşıya yükleniyor..."
+  },
+  "Offline": {
+    "title": "Çevrim Dışısınız.",
+    "description": "Ağ bağlantınız yok. Lütfen bağlantınızı kontrol edin."
   }
 }

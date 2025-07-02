@@ -163,6 +163,10 @@ export const routing = defineRouting({
       "en": "/pronunciation-voting",
       "tr": "/telaffuz-oylama",
     },
+    "/~offline": {
+      "en": "/~offline",
+      "tr": "/~çevrim-dışı",
+    },
   }
 
 })
