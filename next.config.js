@@ -36,7 +36,12 @@ module.exports = async (phase) => {
             swSrc: "src/app/sw.ts",
             swDest: "public/sw.js",
             cacheOnNavigation: true,
-            additionalPrecacheEntries: [{ url: "/~offline", revision }],
+            additionalPrecacheEntries: [
+                { url: "/~offline", revision },
+                // Precache the main entry points to avoid the redirect issue
+                { url: "/tr", revision },
+                { url: "/en", revision },
+            ],
 
         });
         return withSerwist(nextIntlConfig);

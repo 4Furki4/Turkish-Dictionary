@@ -44,7 +44,15 @@ export async function generateMetadata({
   const keywords = isEnglish
     ? ['turkish', 'dictionary', 'turkish language', 'online dictionary', 'learn turkish', 'sozluk', 'modern', 'open source', 'community driven']
     : ['türkçe', 'sözlük', 'türkçe sözlük', 'online sözlük', 'türkçe öğren', 'kelime anlamları', 'tdk', 'çağdaş türkçe sözlük', 'modern', 'açık kaynak', 'toplulukla gelişen'];
-
+  // --- Dynamic URL Logic ---
+  let siteUrl;
+  if (process.env.VERCEL_ENV === 'production') {
+    siteUrl = 'https://turkce-sozluk.com'; // canonical production URL
+  } else if (process.env.VERCEL_URL) {
+    siteUrl = `https://${process.env.VERCEL_URL}`; // Preview URLs
+  } else {
+    siteUrl = 'http://localhost:3000'; // Local development
+  }
   return {
     applicationName: isEnglish ? "Turkish Dictionary" : "Türkçe Sözlük",
 
@@ -236,7 +244,8 @@ export async function generateMetadata({
     formatDetection: {
       telephone: false,
     },
-    metadataBase: new URL('https://turkce-sozluk.com'),
+    metadataBase: new URL(siteUrl),
+    manifest: '/manifest.json',
     // --- Title ---
     // The title structure is excellent. No changes needed.
     title: {
