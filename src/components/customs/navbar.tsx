@@ -9,6 +9,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   NavbarBrand,
+  DropdownSection,
 } from "@heroui/react";
 import { ChevronDown, GitPullRequestArrow, HandHeart, HeartHandshake, HistoryIcon, Languages, LogOut, Menu, Mic, Moon, Sparkle, Sparkles, StarIcon, Sun, UserIcon } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
@@ -104,20 +105,20 @@ export default function Navbar({
             </NextIntlLink>
           </NavbarItem>
         ) : null}
-        <NavbarItem className="hidden md:flex" isActive={pathName === "/word-list"}>
-          <NextIntlLink href={"/word-list"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
-            <span className={`text-nowrap`}>{WordListIntl}</span>
-          </NextIntlLink>
-        </NavbarItem>
         <NavbarItem className="hidden md:flex" isActive={pathName === "/announcements"}>
           <NextIntlLink href={'/announcements'} as={Link as any} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
             <span className={`text-nowrap`}>{AnnouncementsIntl}</span>
           </NextIntlLink>
         </NavbarItem>
+        <NavbarItem className="hidden md:flex" isActive={pathName === "/word-list"}>
+          <NextIntlLink href={"/word-list"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
+            <span className={`text-nowrap`}>{WordListIntl}</span>
+          </NextIntlLink>
+        </NavbarItem>
         <CustomDropdown>
           <NavbarItem className="hidden md:flex">
             <DropdownTrigger>
-              <Button color="primary" disableRipple className="capitalize p-0 bg-transparent data-[hover=true]:bg-transparent text-base max-h-6" radius="sm" variant="flat" endContent={<ChevronDown aria-label={ContributeIntl} className="w-4 h-4" />}>
+              <Button color="primary" disableRipple className="capitalize p-0 bg-transparent data-[hover=true]:bg-transparent text-base max-h-6 font-bold" radius="sm" variant="flat" endContent={<ChevronDown aria-label={ContributeIntl} className="w-4 h-4" />}>
                 {ContributeIntl}
               </Button>
             </DropdownTrigger>
@@ -266,26 +267,33 @@ export default function Navbar({
                   }
                 }}
               >
-                <DropdownItem key={"profile"} className="rounded-sm" startContent={<UserIcon className="h-6 w-6" />}>
-                  <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
-                    {ProfileIntl}
-                  </Link>
-                </DropdownItem>
-                <DropdownItem key={"saved-words"} startContent={<StarIcon className="h-6 w-6" />} className="text-center rounded-sm">
-                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
-                    {SavedWordsIntl}
-                  </Link>
-                </DropdownItem>
-                <DropdownItem key={"requests"} startContent={<GitPullRequestArrow className="h-6 w-6" />} className="text-center rounded-sm">
-                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/my-requests">
-                    {MyRequestsIntl}
-                  </Link>
-                </DropdownItem>
-                <DropdownItem startContent={<HistoryIcon className="h-6 w-6" />} key={"search-history"} className="text-center rounded-sm">
-                  <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
-                    {SearchHistoryIntl}
-                  </Link>
-                </DropdownItem>
+                <DropdownSection showDivider>
+                  <DropdownItem key={"profile"} className="rounded-sm" startContent={<UserIcon className="h-6 w-6" />}>
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
+                      {ProfileIntl}
+                    </Link>
+                  </DropdownItem>
+                </DropdownSection>
+                <DropdownSection showDivider>
+                  <DropdownItem key={"saved-words"} startContent={<StarIcon className="h-6 w-6" />} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full min-h-full" href="/saved-words">
+                      {SavedWordsIntl}
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem key={"requests"} startContent={<GitPullRequestArrow className="h-6 w-6" />} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/my-requests">
+                      {MyRequestsIntl}
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem startContent={<HistoryIcon className="h-6 w-6" />} key={"search-history"} className="text-center rounded-sm">
+                    <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
+                      {SearchHistoryIntl}
+                    </Link>
+                  </DropdownItem>
+                </DropdownSection>
+
+
+
                 <DropdownItem
                   startContent={<LogOut className="h-6 w-6" />}
                   classNames={{
