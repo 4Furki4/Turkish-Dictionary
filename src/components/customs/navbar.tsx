@@ -249,9 +249,7 @@ export default function Navbar({
         ) : (
           <>
             {/* <NavbarItem className="cursor-pointer"> */}
-            <Dropdown classNames={{
-              content: ["rounded-sm"],
-            }}>
+            <CustomDropdown>
               <DropdownTrigger>
                 <Button isIconOnly disableAnimation disableRipple
                   className="bg-transparent"
@@ -265,6 +263,12 @@ export default function Navbar({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
+                itemClasses={{
+                  base: [
+                    "data-[hover=true]:bg-primary/30",
+                    "dark:data-[hover=true]:bg-primary/30",
+                  ]
+                }}
                 onAction={(key) => {
                   switch (key) {
                     case "sign-out":
@@ -294,6 +298,13 @@ export default function Navbar({
                   </Link>
                 </DropdownItem>
                 <DropdownItem
+                  classNames={{
+                    base: [
+                      "data-[hover=true]:bg-primary/60",
+                      "dark:data-[hover=true]:bg-primary/60",
+                      "data-[hover=true]:text-foreground",
+                    ]
+                  }}
                   className="rounded-sm text-destructive"
                   key={"sign-out"}
                   color="danger"
@@ -302,7 +313,7 @@ export default function Navbar({
                   {LogoutIntl}
                 </DropdownItem>
               </DropdownMenu>
-            </Dropdown>
+            </CustomDropdown>
             {/* </NavbarItem> */}
           </>
         )}
