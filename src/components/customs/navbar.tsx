@@ -117,7 +117,7 @@ export default function Navbar({
         <CustomDropdown>
           <NavbarItem className="hidden md:flex">
             <DropdownTrigger>
-              <Button color="primary" disableRipple className="capitalize p-0 bg-transparent data-[hover=true]:bg-transparent text-base" radius="sm" variant="flat" endContent={<ChevronDown aria-label={ContributeIntl} className="w-4 h-4" />}>
+              <Button color="primary" disableRipple className="capitalize p-0 bg-transparent data-[hover=true]:bg-transparent text-base max-h-6" radius="sm" variant="flat" endContent={<ChevronDown aria-label={ContributeIntl} className="w-4 h-4" />}>
                 {ContributeIntl}
               </Button>
             </DropdownTrigger>
