@@ -10,7 +10,7 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@heroui/react";
-import { ChevronDown, HandHeart, HeartHandshake, Languages, Menu, Mic, Moon, Sparkle, Sparkles, Sun } from "lucide-react";
+import { ChevronDown, GitPullRequestArrow, HandHeart, HeartHandshake, HistoryIcon, Languages, LogOut, Menu, Mic, Moon, Sparkle, Sparkles, StarIcon, Sun, UserIcon } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
@@ -266,27 +266,28 @@ export default function Navbar({
                   }
                 }}
               >
-                <DropdownItem key={"profile"} className="rounded-sm">
+                <DropdownItem key={"profile"} className="rounded-sm" startContent={<UserIcon className="h-6 w-6" />}>
                   <Link color="foreground" as={NextIntlLink} className="w-full" href={`/profile/${session.user.id}`}>
                     {ProfileIntl}
                   </Link>
                 </DropdownItem>
-                <DropdownItem key={"saved-words"} className="text-center rounded-sm">
+                <DropdownItem key={"saved-words"} startContent={<StarIcon className="h-6 w-6" />} className="text-center rounded-sm">
                   <Link color="foreground" as={NextIntlLink} className="w-full" href="/saved-words">
                     {SavedWordsIntl}
                   </Link>
                 </DropdownItem>
-                <DropdownItem key={"requests"} className="text-center rounded-sm">
+                <DropdownItem key={"requests"} startContent={<GitPullRequestArrow className="h-6 w-6" />} className="text-center rounded-sm">
                   <Link color="foreground" as={NextIntlLink} className="w-full" href="/my-requests">
                     {MyRequestsIntl}
                   </Link>
                 </DropdownItem>
-                <DropdownItem key={"search-history"} className="text-center rounded-sm">
+                <DropdownItem startContent={<HistoryIcon className="h-6 w-6" />} key={"search-history"} className="text-center rounded-sm">
                   <Link color="foreground" as={NextIntlLink} className="w-full" href="/search-history">
                     {SearchHistoryIntl}
                   </Link>
                 </DropdownItem>
                 <DropdownItem
+                  startContent={<LogOut className="h-6 w-6" />}
                   classNames={{
                     base: [
                       "data-[hover=true]:bg-primary/60",
