@@ -5,7 +5,6 @@ import {
   Button,
   Avatar,
   Link,
-  Dropdown,
   DropdownItem,
   DropdownTrigger,
   DropdownMenu,
@@ -116,7 +115,7 @@ export default function Navbar({
           </NextIntlLink>
         </NavbarItem>
         <CustomDropdown>
-          <NavbarItem>
+          <NavbarItem className="hidden md:flex">
             <DropdownTrigger>
               <Button color="primary" disableRipple className="capitalize p-0 bg-transparent data-[hover=true]:bg-transparent text-base" radius="sm" variant="flat" endContent={<ChevronDown aria-label={ContributeIntl} className="w-4 h-4" />}>
                 {ContributeIntl}
@@ -147,16 +146,6 @@ export default function Navbar({
             </DropdownItem>
           </DropdownMenu>
         </CustomDropdown>
-        {/* <NavbarItem className="hidden md:flex" isActive={pathName === "/contribute-word"}>
-          <NextIntlLink href={"/contribute-word"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
-            <span className={`text-nowrap`}>{ContributeWordIntl}</span>
-          </NextIntlLink>
-        </NavbarItem>
-        <NavbarItem className="hidden md:flex" isActive={pathName === "/pronunciation-voting"}>
-          <NextIntlLink href={"/pronunciation-voting"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
-            <span className={`text-nowrap`}>{PronunciationsIntl}</span>
-          </NextIntlLink>
-        </NavbarItem> */}
         <NavbarItem>
           {locale === "en" ? (
             <NextIntlLink
