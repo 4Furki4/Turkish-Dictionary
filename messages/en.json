@@ -17,7 +17,9 @@
     "ariaMenu": "Menu",
     "ariaLanguages": "Languages",
     "ariaSwitchTheme": "Switch Theme",
-    "ariaBlur": "Toggle Blur Efects"
+    "ariaBlur": "Toggle Blur Efects",
+    "Contribute": "Contribute",
+    "Feedback": "Feedback"
   },
   "Footer": {
     "description": "Community-driven, open source and modern Turkish dictionary.",

@@ -22,7 +22,9 @@ export default function NavbarAndSidebar({
     ariaMenu,
     ariaLanguages,
     ariaSwitchTheme,
-    ariaBlur
+    ariaBlur,
+    ContributeIntl,
+    FeedbackIntl
 }: {
     session: Session | null
     HomeIntl: string
@@ -42,6 +44,8 @@ export default function NavbarAndSidebar({
     ariaLanguages: string,
     ariaSwitchTheme: string,
     ariaBlur: string,
+    ContributeIntl: string,
+    FeedbackIntl: string
 }) {
     // Render children if on client side, otherwise return null
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -67,6 +71,8 @@ export default function NavbarAndSidebar({
                 ariaLanguages={ariaLanguages}
                 ariaSwitchTheme={ariaSwitchTheme}
                 ariaBlur={ariaBlur}
+                ContributeIntl={ContributeIntl}
+                FeedbackIntl={FeedbackIntl}
             />
             <Sidebar session={session} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
         </>

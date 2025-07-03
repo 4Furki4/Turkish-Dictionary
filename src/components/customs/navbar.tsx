@@ -11,7 +11,7 @@ import {
   DropdownMenu,
   NavbarBrand,
 } from "@heroui/react";
-import { Languages, Menu, Moon, Sparkle, Sparkles, Sun } from "lucide-react";
+import { ChevronDown, HandHeart, HeartHandshake, Languages, Menu, Mic, Moon, Sparkle, Sparkles, Sun } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useLocale } from "next-intl";
@@ -23,10 +23,11 @@ import Image from "next/image";
 import { useSnapshot } from "valtio";
 import { preferencesState, toggleBlur } from "@/src/store/preferences";
 import { cn } from "@/lib/utils";
+import CustomDropdown from "./heroui/custom-dropdown";
 type NavbarProps = {
   session: Session | null;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl" | "ContributeWordIntl" | "PronunciationsIntl" | "ariaAvatar" | "ariaMenu" | "ariaLanguages" | "ariaSwitchTheme" | "ariaBlur", string>;
+} & Record<"TitleIntl" | "WordListIntl" | "SignInIntl" | "HomeIntl" | "ProfileIntl" | "SavedWordsIntl" | "MyRequestsIntl" | "SearchHistoryIntl" | "LogoutIntl" | "AnnouncementsIntl" | "ContributeWordIntl" | "PronunciationsIntl" | "ariaAvatar" | "ariaMenu" | "ariaLanguages" | "ariaSwitchTheme" | "ariaBlur" | "ContributeIntl" | "FeedbackIntl", string>;
 
 export default function Navbar({
   session,
@@ -48,6 +49,8 @@ export default function Navbar({
   ariaLanguages,
   ariaSwitchTheme,
   ariaBlur,
+  ContributeIntl,
+  FeedbackIntl
 }: NavbarProps) {
   const { theme, setTheme } = useTheme();
   const pathName = usePathname();
@@ -107,21 +110,53 @@ export default function Navbar({
             <span className={`text-nowrap`}>{WordListIntl}</span>
           </NextIntlLink>
         </NavbarItem>
-        <NavbarItem className="hidden md:flex" isActive={pathName === "/contribute-word"}>
-          <NextIntlLink href={"/contribute-word"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
-            <span className={`text-nowrap`}>{ContributeWordIntl}</span>
-          </NextIntlLink>
-        </NavbarItem>
         <NavbarItem className="hidden md:flex" isActive={pathName === "/announcements"}>
           <NextIntlLink href={'/announcements'} as={Link as any} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
             <span className={`text-nowrap`}>{AnnouncementsIntl}</span>
+          </NextIntlLink>
+        </NavbarItem>
+        <CustomDropdown>
+          <NavbarItem>
+            <DropdownTrigger>
+              <Button color="primary" disableRipple className="capitalize p-0 bg-transparent data-[hover=true]:bg-transparent text-base" radius="sm" variant="flat" endContent={<ChevronDown aria-label={ContributeIntl} className="w-4 h-4" />}>
+                {ContributeIntl}
+              </Button>
+            </DropdownTrigger>
+          </NavbarItem>
+          <DropdownMenu aria-label={ContributeIntl}
+            itemClasses={{
+              base: [
+                "data-[hover=true]:bg-primary/30",
+                "dark:data-[hover=true]:bg-primary/30",
+              ]
+            }}>
+            <DropdownItem key="contribute-word" startContent={<HeartHandshake aria-label={ContributeWordIntl} className="w-4 h-4" />}>
+              <NextIntlLink href="/contribute-word" className="flex items-center gap-2">
+                {ContributeWordIntl}
+              </NextIntlLink>
+            </DropdownItem>
+            <DropdownItem key="pronunciation-voting" startContent={<Mic aria-label={PronunciationsIntl} className="w-4 h-4" />}>
+              <NextIntlLink href="/pronunciation-voting" className="flex items-center gap-2">
+                {PronunciationsIntl}
+              </NextIntlLink>
+            </DropdownItem>
+            <DropdownItem key={'feedback'} startContent={<HandHeart aria-label={FeedbackIntl} className="w-4 h-4" />}>
+              <NextIntlLink href="/feedback" className="flex items-center gap-2">
+                {FeedbackIntl}
+              </NextIntlLink>
+            </DropdownItem>
+          </DropdownMenu>
+        </CustomDropdown>
+        {/* <NavbarItem className="hidden md:flex" isActive={pathName === "/contribute-word"}>
+          <NextIntlLink href={"/contribute-word"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
+            <span className={`text-nowrap`}>{ContributeWordIntl}</span>
           </NextIntlLink>
         </NavbarItem>
         <NavbarItem className="hidden md:flex" isActive={pathName === "/pronunciation-voting"}>
           <NextIntlLink href={"/pronunciation-voting"} className='flex items-center gap-2 hover:text-primary text-gray-900 dark:hover:text-primary dark:text-gray-50 hover:underline rounded-sm'>
             <span className={`text-nowrap`}>{PronunciationsIntl}</span>
           </NextIntlLink>
-        </NavbarItem>
+        </NavbarItem> */}
         <NavbarItem>
           {locale === "en" ? (
             <NextIntlLink

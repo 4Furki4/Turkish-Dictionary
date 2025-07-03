@@ -17,7 +17,9 @@
     "ariaMenu": "Menü Butonu",
     "ariaLanguages": "Dil Değiştirme Butonu",
     "ariaSwitchTheme": "Tema Değiştirme Butonu",
-    "ariaBlur": "Blur Etkilerini Açma/Kapatma Butonu"
+    "ariaBlur": "Blur Etkilerini Açma/Kapatma Butonu",
+    "Contribute": "Katkıda Bulun",
+    "Feedback": "Geri Bildirim"
   },
   "Footer": {
     "description": "Topluluk ile gelişen, açık kaynak ve modern Türkçe sözlüğü.",
