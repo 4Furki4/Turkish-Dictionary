@@ -19,7 +19,7 @@ export function BackgroundGradient() {
     return (
         <div
             className={cn(
-                'pointer-events-none transition-opacity duration-500', // pointer-events-none to ensure it's not interactive
+                'min-h-max pointer-events-none transition-opacity duration-500 ', // pointer-events-none to ensure it's not interactive
                 isMounted && isBlurEnabled ? 'opacity-100' : 'opacity-0'
             )}
             aria-hidden={!isMounted || !isBlurEnabled}

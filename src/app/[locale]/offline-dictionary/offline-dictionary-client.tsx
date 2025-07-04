@@ -2,17 +2,17 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { CardContent, CardFooter } from "@/components/ui/card";
+import { Button, CardBody, CardFooter } from "@heroui/react";
+
 import { Progress } from "@heroui/react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert } from "@heroui/react";
 import {
     getLocalVersion,
     setLocalVersion,
     clearOfflineData,
     processWordFile,
 } from "@/src/lib/offline-db";
-import { Download, CheckCircle, AlertTriangle, Trash2, RefreshCw } from "lucide-react";
+import { Download, Trash2, RefreshCw } from "lucide-react";
 
 type Status =
     | "idle"
@@ -29,6 +29,10 @@ type Metadata = {
     files: string[];
 };
 
+// The base URL for your dictionary data is now read from environment variables.
+const DATA_BASE_URL = process.env.NEXT_PUBLIC_R2_CUSTOM_URL;
+const FOLDER_NAME = "turkce-sozluk/offline-data";
+
 export default function OfflineDictionaryClient() {
     const t = useTranslations("OfflineDictionary");
     const [status, setStatus] = useState<Status>("idle");
@@ -41,9 +45,16 @@ export default function OfflineDictionaryClient() {
     const checkStatus = useCallback(async () => {
         setStatus("checking");
         setError(null);
+
+        if (!DATA_BASE_URL) {
+            setError(t("error.r2_url_missing"));
+            setStatus("error");
+            return;
+        }
+
         try {
-            // Fetch remote metadata
-            const response = await fetch("/offline-data/metadata.json");
+            // Fetch remote metadata from the R2 public URL
+            const response = await fetch(`${DATA_BASE_URL}/${FOLDER_NAME}/metadata.json`);
             if (!response.ok) throw new Error(t("error.metadata_fetch_failed"));
             const remoteMeta: Metadata = await response.json();
             setRemoteVersion(remoteMeta.version);
@@ -72,7 +83,7 @@ export default function OfflineDictionaryClient() {
     }, [checkStatus]);
 
     const handleDownloadOrUpdate = async () => {
-        if (!metadata) {
+        if (!metadata || !DATA_BASE_URL) {
             setError(t("error.no_metadata"));
             setStatus("error");
             return;
@@ -83,18 +94,18 @@ export default function OfflineDictionaryClient() {
         setError(null);
 
         try {
-            // It's safer to clear old data before downloading new data
             await clearOfflineData();
 
             const filesToDownload = metadata.files;
             for (let i = 0; i < filesToDownload.length; i++) {
                 const file = filesToDownload[i];
-                await processWordFile(`/offline-data/${file}`);
+                // Process each file from its full R2 URL
+                await processWordFile(`${DATA_BASE_URL}/${FOLDER_NAME}/${file}`);
                 setProgress(((i + 1) / filesToDownload.length) * 100);
             }
 
             await setLocalVersion(metadata.version);
-            await checkStatus(); // Re-check status to confirm it's up-to-date
+            await checkStatus();
         } catch (err) {
             console.error(err);
             setError(err instanceof Error ? err.message : String(err));
@@ -107,7 +118,7 @@ export default function OfflineDictionaryClient() {
         setError(null);
         try {
             await clearOfflineData();
-            await checkStatus(); // Re-check status
+            await checkStatus();
         } catch (err) {
             console.error(err);
             setError(err instanceof Error ? err.message : String(err));
@@ -116,53 +127,45 @@ export default function OfflineDictionaryClient() {
     };
 
     const renderStatus = () => {
+        // ... (The renderStatus function remains the same)
         switch (status) {
             case "checking":
-                return <p>{t("status.checking")}...</p>;
+                return (
+                    <Alert color="default" title={t("status.checking")} description={t("status.checking_desc")} />
+                );
             case "up-to-date":
                 return (
-                    <Alert variant="default" className="dark:bg-green-500 dark:border-green-200 dark:text-green-50 bg-green-50 border-green-200">
-                        <CheckCircle className="h-4 w-4 text-green-50" />
-                        <AlertTitle>{t("status.up_to_date_title")}</AlertTitle>
-                        <AlertDescription>{t("status.up_to_date_desc")}</AlertDescription>
-                    </Alert>
+                    <Alert color="success" title={t("status.up_to_date_title")} description={t("status.up_to_date_desc")} />
                 );
             case "update-available":
                 return (
-                    <Alert variant="default" className="bg-yellow-50 border-yellow-200">
-                        <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                        <AlertTitle>{t("status.update_available_title")}</AlertTitle>
-                        <AlertDescription>{t("status.update_available_desc", { local: new Date(localVersion!).toLocaleString(), remote: new Date(remoteVersion!).toLocaleString() })}</AlertDescription>
-                    </Alert>
+                    <Alert color="warning" title={t("status.update_available_title")} description={t("status.update_available_desc", { local: new Date(localVersion!).toLocaleString(), remote: new Date(remoteVersion!).toLocaleString() })} />
                 );
             case "not-downloaded":
                 return (
-                    <Alert variant="destructive">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>{t("status.not_downloaded_title")}</AlertTitle>
-                        <AlertDescription>{t("status.not_downloaded_desc")}</AlertDescription>
-                    </Alert>
+                    <Alert color="warning" title={t("status.not_downloaded_title")} description={t("status.not_downloaded_desc")} />
                 );
             case "downloading":
                 return (
-                    <div>
-                        <p>{t("status.downloading")}...</p>
-                        <Progress value={progress} className="w-full mt-2" />
-                        <p className="text-sm text-center mt-1">{Math.round(progress)}%</p>
-                    </div>
+                    <>
+                        <div>
+                            <p>{t("status.downloading")}...</p>
+                            <Progress value={progress} className="w-full mt-2" />
+                            <p className="text-sm text-center mt-1">{Math.round(progress)}%</p>
+                        </div>
+                        <Alert color="default" title={t("status.downloading_title")} description={t("status.downloading_desc")} />
+                    </>
                 );
             case "deleting":
-                return <p>{t("status.deleting")}...</p>;
+                return (
+                    <Alert color="default" title={t("status.deleting_title")} description={t("status.deleting_desc")} />
+                );
             case "error":
                 return (
-                    <Alert variant="destructive">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>{t("status.error_title")}</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
+                    <Alert color="danger" title={t("status.error_title")} description={error} />
                 );
             default:
-                return null;
+                return null
         }
     };
 
@@ -170,29 +173,28 @@ export default function OfflineDictionaryClient() {
 
     return (
         <>
-            <CardContent className="space-y-4">
-                {renderStatus()}
-            </CardContent>
-            <CardFooter className="flex justify-between">
+            <CardBody className="space-y-4">
+                <div>
+                    {renderStatus()}
+                </div>
+            </CardBody>
+            <CardFooter className="flex justify-between ">
                 <Button
-                    onClick={handleDelete}
-                    variant="destructive"
+                    onPress={handleDelete}
+                    color="danger"
+                    variant="flat"
                     disabled={isLoading || !localVersion}
                 >
                     <Trash2 className="mr-2 h-4 w-4" /> {t("buttons.delete")}
                 </Button>
                 <div>
-                    <Button onClick={checkStatus} variant="ghost" disabled={isLoading} className="mr-2">
+                    <Button onPress={checkStatus} variant="ghost" disabled={isLoading} className="mr-2">
                         <RefreshCw className="mr-2 h-4 w-4" /> {t("buttons.check_status")}
                     </Button>
-                    {status === "not-downloaded" && (
-                        <Button onClick={handleDownloadOrUpdate} disabled={isLoading}>
-                            <Download className="mr-2 h-4 w-4" /> {t("buttons.download")}
-                        </Button>
-                    )}
-                    {status === "update-available" && (
-                        <Button onClick={handleDownloadOrUpdate} disabled={isLoading}>
-                            <Download className="mr-2 h-4 w-4" /> {t("buttons.update")}
+                    {(status === "not-downloaded" || status === "update-available") && (
+                        <Button onPress={handleDownloadOrUpdate} disabled={isLoading} color="primary">
+                            <Download className="mr-2 h-4 w-4" />
+                            {status === "not-downloaded" ? t("buttons.download") : t("buttons.update")}
                         </Button>
                     )}
                 </div>

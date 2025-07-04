@@ -33,6 +33,7 @@
     },
     "links": {
       "wordList": "Word List",
+      "offlineDictionary": "Offline Dictionary",
       "announcements": "Announcements",
       "seeFeedback": "See Feedback",
       "contributeWord": "Contribute Word",
@@ -1322,6 +1323,7 @@
     "description": "Download the dictionary to your device to search for words even without an internet connection. This is ideal for learning on the go.",
     "status": {
       "checking": "Checking status",
+      "checking_desc": "Checking the status of your offline dictionary.",
       "up_to_date_title": "Up to Date",
       "up_to_date_desc": "Your offline dictionary is current.",
       "update_available_title": "Update Available",
@@ -1329,6 +1331,10 @@
       "not_downloaded_title": "Not Downloaded",
       "not_downloaded_desc": "The offline dictionary has not been downloaded yet.",
       "downloading": "Downloading data",
+      "downloading_title": "Downloading...",
+      "downloading_desc": "Your offline dictionary is being downloaded.",
+      "deleting_title": "Deleting...",
+      "deleting_desc": "Your offline dictionary is being deleted.",
       "deleting": "Deleting data",
       "error_title": "An Error Occurred"
     },
@@ -1340,7 +1346,8 @@
     },
     "error": {
       "metadata_fetch_failed": "Could not fetch version information from the server.",
-      "no_metadata": "Could not start download. Version information is missing."
+      "no_metadata": "Could not start download. Version information is missing.",
+      "r2_url_missing": "Configuration error: The data source URL is not set."
     }
   }
 }

@@ -1,19 +1,20 @@
 import { useTranslations } from "next-intl";
 import OfflineDictionaryClient from "./offline-dictionary-client";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import CustomCard from "@/src/components/customs/heroui/custom-card";
+import { CardHeader } from "@heroui/react";
 
 export default function OfflineDictionaryPage() {
     const t = useTranslations("OfflineDictionary");
 
     return (
-        <div className="container mx-auto max-w-2xl py-8">
-            <Card>
+        <div className="container flex flex-col justify-center max-w-3xl">
+
+            <CustomCard >
                 <CardHeader>
-                    <CardTitle>{t("title")}</CardTitle>
-                    <CardDescription>{t("description")}</CardDescription>
+                    {t("title")}
                 </CardHeader>
                 <OfflineDictionaryClient />
-            </Card>
+            </CustomCard>
         </div>
     );
 }

@@ -12,10 +12,21 @@ import "dotenv/config";
 import { db } from "@/db";
 import { words } from "@/db/schema/words";
 import { encode } from "@msgpack/msgpack";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { sql } from "drizzle-orm";
 import os from "os";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+// --- Configuration ---
+const FOLDER_NAME = "offline-data";
+
+const s3 = new S3Client({
+  region: "auto",
+  endpoint: process.env.S3_API_URL!,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  },
+});
 
 console.log("Starting optimized offline data preparation script...");
 
@@ -66,12 +77,8 @@ async function main() {
     }
     console.log(`Words grouped into ${Object.keys(groupedWords).length} chunks.`);
 
-    // 3. Create output directory
-    const outputDir = path.join(process.cwd(), "public", "offline-data");
-    await mkdir(outputDir, { recursive: true });
-    console.log(`Output directory is ready at: ${outputDir}`);
 
-    // 4. Process each group in parallel
+    // 3. Process each group in parallel
     const concurrencyLimit = os.cpus().length; // Limit concurrency to number of CPU cores
     console.log(`Processing chunks with a concurrency limit of ${concurrencyLimit}...`);
     const allLetters = Object.keys(groupedWords);
@@ -107,25 +114,36 @@ async function main() {
         const fullWordData = result.map((row) => row.word_data);
 
         const encodedData = encode(fullWordData);
-        const filePath = path.join(outputDir, fileName);
-        await writeFile(filePath, encodedData);
-        console.log(`[Done] Group '${letter}' written to ${fileName}`);
+
+
+        console.log(`[Uploading] Group '${letter}' to R2 as ${FOLDER_NAME}/${fileName}...`);
+        await s3.send(new PutObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME,
+          Key: `${FOLDER_NAME}/${fileName}`,
+          Body: encodedData,
+          ContentType: "application/msgpack",
+        }));
+        console.log(`[Done] Group '${letter}' uploaded successfully.`);
       }));
     }
 
     // 5. Generate and write metadata file
+    console.log("[Uploading] metadata.json to R2...");
     const metadata = {
       version: Date.now(),
       files: fileNames.sort(),
     };
-
-    const metadataPath = path.join(outputDir, "metadata.json");
-    await writeFile(metadataPath, JSON.stringify(metadata, null, 2));
-    console.log(`Successfully wrote metadata.json with version ${metadata.version}`);
+    await s3.send(new PutObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME,
+      Key: `${FOLDER_NAME}/metadata.json`,
+      Body: JSON.stringify(metadata, null, 2),
+      ContentType: "application/json",
+    }));
+    console.log(`[Done] metadata.json uploaded with version ${metadata.version}.`);
 
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;
-    console.log(`\n✅ Offline data preparation complete in ${duration.toFixed(2)} seconds!`);
+    console.log(`\n✅ Offline data generation and upload complete in ${duration.toFixed(2)} seconds!`);
 
   } catch (error) {
     console.error("\n❌ An error occurred during data preparation:");
