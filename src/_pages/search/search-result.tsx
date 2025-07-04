@@ -9,7 +9,7 @@ export default async function SearchResult({ word, locale }: { word: string, loc
 
   return (
     <HydrateClient>
-      <WordCardWrapper name={word} session={session} locale={locale} />
+      <WordCardWrapper data={[]} session={session} locale={locale} />
     </HydrateClient>
   )
 }

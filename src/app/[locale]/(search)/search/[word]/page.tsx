@@ -1,12 +1,8 @@
-import React, { Suspense } from 'react'
-import { api } from '@/src/trpc/server';
-import { db } from '@/db';
-import SearchResult from '@/src/_pages/search/search-result';
-import Loading from '../_loading';
-import { notFound } from 'next/navigation';
-import { eq } from 'drizzle-orm';
-import { words } from '@/db/schema/words';
+import React from 'react'
+import { api, HydrateClient } from '@/src/trpc/server';
 import { Metadata } from 'next';
+import { auth } from '@/src/server/auth/auth';
+import WordResultClient from './word-result-client';
 
 // This is the updated metadata generation function
 export async function generateMetadata({
@@ -95,18 +91,22 @@ export default async function SearchResultPage(
     } = params;
 
     // Properly decode URL parameters with special characters like commas
-    const formattedWord = decodeURIComponent(word).trim()
+    const decodedWordName = decodeURIComponent(params.word);
 
-    const response = await db.query.words.findMany({
-        where: eq(words.name, formattedWord)
-    })
+    const session = await auth()
 
-    if (response.length === 0) {
-        notFound()
+    // 1. Fetch data on the server for SEO and initial load.
+    try {
+        void api.word.getWord.prefetch({ name: decodedWordName, });
+    } catch (error) {
+        console.error("Failed to prefetch word data:", error);
+        return <WordResultClient session={session} wordName={decodedWordName} />
     }
+
+    // 3. Pass the server-fetched data to the new Client Component.
     return (
-        <Suspense fallback={<Loading />}>
-            <SearchResult word={formattedWord} locale={locale as "en" | "tr"} />
-        </Suspense>
+        <HydrateClient>
+            <WordResultClient session={session} wordName={decodedWordName} />
+        </HydrateClient>
     )
 }

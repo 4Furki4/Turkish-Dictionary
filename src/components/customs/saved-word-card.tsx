@@ -79,7 +79,7 @@ export default function SavedWordCard({ wordData, onUnsave, session, locale }: S
           {loadingDetails ? (
             <Loading />
           ) : fullData ? (
-            <WordCard word={fullData} session={session} locale={locale} />
+            <WordCard word_data={fullData.word_data} session={session} locale={locale} />
           ) : null}
         </ModalContent>
       </Modal>
