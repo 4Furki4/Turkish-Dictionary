@@ -178,26 +178,28 @@ export default function OfflineDictionaryClient() {
                     {renderStatus()}
                 </div>
             </CardBody>
-            <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-2">
-                <Button
-                    onPress={handleDelete}
-                    color="danger"
-                    variant="flat"
-                    className="w-full"
-                    disabled={isLoading || !localVersion}
-                >
-                    <Trash2 className="mr-2 h-4 w-4" /> {t("buttons.delete")}
-                </Button>
-                <div className="w-full flex items-center gap-2">
-                    <Button onPress={checkStatus} variant="ghost" disabled={isLoading} className="w-full">
-                        <RefreshCw className="mr-2 h-4 w-4" /> {t("buttons.check_status")}
+            <CardFooter className="flex flex-col sm:grid-cols-2  justify-between items-center gap-2">
+                {(status === "not-downloaded" || status === "update-available") && (
+                    <Button onPress={handleDownloadOrUpdate} disabled={isLoading} color="primary" className="w-full" startContent={<Download className="mr-2 h-4 w-4" />}>
+                        {status === "not-downloaded" ? t("buttons.download") : t("buttons.update")}
                     </Button>
-                    {(status === "not-downloaded" || status === "update-available") && (
-                        <Button onPress={handleDownloadOrUpdate} disabled={isLoading} color="primary" className="w-full">
-                            <Download className="mr-2 h-4 w-4" />
-                            {status === "not-downloaded" ? t("buttons.download") : t("buttons.update")}
-                        </Button>
-                    )}
+                )}
+
+
+                <div className="w-full flex flex-col sm:flex-row items-center gap-2">
+                    <Button
+                        onPress={handleDelete}
+                        color="danger"
+                        variant="flat"
+                        className="w-full"
+                        disabled={isLoading || !localVersion}
+                        startContent={<Trash2 className="mr-2 h-4 w-4" />}
+                    >
+                        {t("buttons.delete")}
+                    </Button>
+                    <Button onPress={checkStatus} variant="ghost" disabled={isLoading} className="w-full" startContent={<RefreshCw className="mr-2 h-4 w-4" />}>
+                        {t("buttons.check_status")}
+                    </Button>
                 </div>
             </CardFooter>
         </>
