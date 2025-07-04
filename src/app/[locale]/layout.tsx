@@ -208,7 +208,7 @@ export default async function RootLayout({
                       ContributeIntl={t("Contribute")}
                       FeedbackIntl={t("Feedback")}
                     />
-                    <main className="relative flex-grow w-full flex">
+                    <main className="relative w-full flex-grow flex">
                       {/* ✨ Moved BackgroundGradient here */}
                       <BackgroundGradient />
                       {children}

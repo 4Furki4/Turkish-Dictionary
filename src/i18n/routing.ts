@@ -167,6 +167,10 @@ export const routing = defineRouting({
       "en": "/~offline",
       "tr": "/~çevrim-dışı",
     },
+    "/offline-dictionary": {
+      "en": "/offline-dictionary",
+      "tr": "/çevrim-dışı-sözlük",
+    },
   }
 
 })
