@@ -178,21 +178,22 @@ export default function OfflineDictionaryClient() {
                     {renderStatus()}
                 </div>
             </CardBody>
-            <CardFooter className="flex justify-between ">
+            <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-2">
                 <Button
                     onPress={handleDelete}
                     color="danger"
                     variant="flat"
+                    className="w-full"
                     disabled={isLoading || !localVersion}
                 >
                     <Trash2 className="mr-2 h-4 w-4" /> {t("buttons.delete")}
                 </Button>
-                <div>
-                    <Button onPress={checkStatus} variant="ghost" disabled={isLoading} className="mr-2">
+                <div className="w-full flex items-center gap-2">
+                    <Button onPress={checkStatus} variant="ghost" disabled={isLoading} className="w-full">
                         <RefreshCw className="mr-2 h-4 w-4" /> {t("buttons.check_status")}
                     </Button>
                     {(status === "not-downloaded" || status === "update-available") && (
-                        <Button onPress={handleDownloadOrUpdate} disabled={isLoading} color="primary">
+                        <Button onPress={handleDownloadOrUpdate} disabled={isLoading} color="primary" className="w-full">
                             <Download className="mr-2 h-4 w-4" />
                             {status === "not-downloaded" ? t("buttons.download") : t("buttons.update")}
                         </Button>
