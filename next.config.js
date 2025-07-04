@@ -36,13 +36,20 @@ module.exports = async (phase) => {
             swSrc: "src/app/sw.ts",
             swDest: "public/sw.js",
             cacheOnNavigation: true,
+            reloadOnOnline: true,
             additionalPrecacheEntries: [
                 { url: "/~offline", revision },
                 // Precache the main entry points to avoid the redirect issue
+                { url: "/", revision },
                 { url: "/tr", revision },
                 { url: "/en", revision },
+                // Precache search pages for offline functionality
+                { url: "/en/search", revision },
+                { url: "/tr/search", revision },
+                // Precache offline dictionary page
+                { url: "/en/offline-dictionary", revision },
+                { url: "/tr/offline-dictionary", revision },
             ],
-
         });
         return withSerwist(nextIntlConfig);
     }

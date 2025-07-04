@@ -4,13 +4,13 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { WordSearchResult } from "@/types";
 import SaveWord from "./save-word";
-import { Button, useDisclosure, Popover, PopoverTrigger, PopoverContent, Tabs, Tab } from "@heroui/react";
+import { Button, useDisclosure, Popover, PopoverTrigger, PopoverContent, Tabs, Tab, Badge } from "@heroui/react";
 import { Link as NextUILink } from "@heroui/react"
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/routing";
-import { Camera, Share2, Volume2 } from "lucide-react";
+import { Camera, Share2, Volume2, WifiOff } from "lucide-react";
 import Image from "next/image";
 import { useRef, } from "react";
 import { captureElementScreenshot } from "../../utils/screenshot";
@@ -20,11 +20,18 @@ import WordCardRequestModal from "./modals/word-card-request-modal";
 import { useSnapshot } from "valtio";
 import { preferencesState } from "@/src/store/preferences";
 
+type WordCardProps = {
+  word_data: WordSearchResult["word_data"] & { source?: "online" | "offline" };
+  locale: "en" | "tr";
+  session: Session | null;
+};
 
-export default function WordCard({ word: { word_data }, locale, session }: { word: WordSearchResult, locale: "en" | "tr", session: Session | null }) {
+export default function WordCard({ word_data, locale, session }: WordCardProps) {
 
   const { isOpen, onOpenChange, onClose } = useDisclosure()
   const t = useTranslations("WordCard");
+
+  const isOffline = word_data.source === "offline";
 
   const cardRef = useRef<HTMLDivElement>(null);
   const handleCameraPress = async () => {
@@ -62,6 +69,9 @@ export default function WordCard({ word: { word_data }, locale, session }: { wor
           <Button className="bg-transparent mr-auto" isIconOnly isDisabled> {/* TODO: add voice to word */}
             <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
+          {isOffline && (
+            <WifiOff className="text-amber-500 w-5 h-5 sm:w-6 sm:h-6" />
+          )}
           <SaveWord word_data={word_data} isSavedWord={!session ? false : undefined} />
           <Button disableRipple isIconOnly className="bg-transparent" onPress={(e) => {
             handleCameraPress();

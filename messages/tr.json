@@ -1282,5 +1282,31 @@
   "Offline": {
     "title": "Çevrim Dışısınız.",
     "description": "Ağ bağlantınız yok. Lütfen bağlantınızı kontrol edin."
+  },
+  "OfflineDictionary": {
+    "title": "Çevrimdışı Sözlük",
+    "description": "İnternet bağlantınız olmasa bile kelime aramak için sözlüğü cihazınıza indirin. Bu, hareket halindeyken öğrenmek için idealdir.",
+    "status": {
+      "checking": "Durum kontrol ediliyor",
+      "up_to_date_title": "Güncel",
+      "up_to_date_desc": "Çevrimdışı sözlüğünüz güncel.",
+      "update_available_title": "Güncelleme Mevcut",
+      "update_available_desc": "Sözlüğün yeni bir sürümü mevcut. Yerel sürüm: {local}, Sunucu sürümü: {remote}.",
+      "not_downloaded_title": "İndirilmedi",
+      "not_downloaded_desc": "Çevrimdışı sözlük henüz indirilmedi.",
+      "downloading": "Veri indiriliyor",
+      "deleting": "Veri siliniyor",
+      "error_title": "Bir Hata Oluştu"
+    },
+    "buttons": {
+      "download": "İndir",
+      "update": "Şimdi Güncelle",
+      "delete": "Verileri Sil",
+      "check_status": "Güncellemeleri Kontrol Et"
+    },
+    "error": {
+      "metadata_fetch_failed": "Sunucudan sürüm bilgisi alınamadı.",
+      "no_metadata": "İndirme başlatılamadı. Sürüm bilgisi eksik."
+    }
   }
 }

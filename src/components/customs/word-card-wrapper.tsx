@@ -1,30 +1,27 @@
 "use client"
-import { api } from '@/src/trpc/react'
 import React from 'react'
 import WordCard from './word-card';
 import { Session } from 'next-auth';
 import WordNotFoundCard from './word-not-found-card';
+import { WordSearchResult } from '@/types';
 
-export default function WordCardWrapper({ name, session, locale }: { name: string, session: Session | null, locale: "en" | "tr" }) {
-    const [response] = api.word.getWord.useSuspenseQuery({ name }, {
-        staleTime: 60 * 30 * 1000 // 30 minutes cache
-    })
+export default function WordCardWrapper({ session, locale, data }: { session: Session | null, locale: "en" | "tr", data?: WordSearchResult[] }) {
 
-    if (!response || response.length === 0) {
+    if (!data || data.length === 0) {
         return (
             <WordNotFoundCard
                 session={session}
             />
         );
     }
-    return response && response.length > 0 ? (
-        response.map((word, index) => {
+    return data && data.length > 0 ? (
+        data.map((word, index) => {
             // Ensure we have a valid unique key for each word card
             const uniqueKey = word.word_data?.word_id || `word-${index}`;
             return (
                 <WordCard
                     key={uniqueKey}
-                    word={word}
+                    word_data={word.word_data}
                     locale={locale}
                     session={session}
                 />
