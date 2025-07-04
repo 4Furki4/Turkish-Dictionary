@@ -42,18 +42,18 @@ const serwist = new Serwist({
                     if (request.destination !== "document") {
                         return false;
                     }
-                    
+
                     const url = new URL(request.url);
                     const pathname = url.pathname;
-                    
+
                     console.log(`[SW] Checking search fallback for: ${pathname}`);
-                    
+
                     // Match English search pages with dynamic routes
                     if (pathname.match(/^\/en\/search\/.+/)) {
                         console.log(`[SW] Serving /en/search for: ${pathname}`);
                         return true;
                     }
-                    
+
                     return false;
                 },
             },
@@ -63,18 +63,18 @@ const serwist = new Serwist({
                     if (request.destination !== "document") {
                         return false;
                     }
-                    
+
                     const url = new URL(request.url);
                     const pathname = url.pathname;
-                    
+
                     console.log(`[SW] Checking Turkish search fallback for: ${pathname}`);
-                    
+
                     // Match Turkish search pages with dynamic routes
                     if (pathname.match(/^\/tr\/search\/.+/)) {
                         console.log(`[SW] Serving /tr/search for: ${pathname}`);
                         return true;
                     }
-                    
+
                     return false;
                 },
             },
@@ -86,36 +86,40 @@ const serwist = new Serwist({
                     if (request.destination !== "document") {
                         return false;
                     }
-                    
+
                     const url = new URL(request.url);
                     const pathname = url.pathname;
-                    
+
                     console.log(`[SW] Checking offline fallback for: ${pathname}`);
-                    
+
                     // Don't redirect search pages (they're handled above)
                     if (pathname.match(/^\/(en|tr)\/search/)) {
                         console.log(`[SW] Search page handled by other fallback: ${pathname}`);
                         return false;
                     }
-                    
+
                     // Allow offline dictionary page to load
                     if (pathname.includes('/offline-dictionary')) {
                         console.log(`[SW] Allowing offline dictionary: ${pathname}`);
                         return false;
                     }
-                    
+
                     // Allow home page and locale pages to load (they're precached)
                     if (pathname === '/' || pathname === '/en' || pathname === '/tr') {
                         console.log(`[SW] Allowing home/locale page: ${pathname}`);
                         return false;
                     }
-                    
+
                     // For all other document requests, show offline page
                     console.log(`[SW] Redirecting to offline page: ${pathname}`);
                     return true;
                 },
             },
         ],
+    },
+    precacheOptions: {
+        navigateFallback: "/",
+        navigateFallbackDenylist: [/^\/api/],
     }
 });
 
