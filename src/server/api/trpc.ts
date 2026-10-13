@@ -147,8 +147,13 @@ const ratelimit = new Ratelimit({
   prefix: "@upstash/ratelimit",
 });
 
-let isRateLimitBackendDisabled = false;
-let hasLoggedRateLimitBackendDisabled = false;
+// Measurement reports must not consume the visitor's dictionary browsing quota.
+const telemetryRatelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(30, "1 m"),
+  analytics: false,
+  prefix: "@upstash/search-telemetry",
+});
 
 function isUpstashQuotaExceededError(error: unknown): boolean {
   if (!(error instanceof Error)) {
@@ -158,64 +163,73 @@ function isUpstashQuotaExceededError(error: unknown): boolean {
   return error.message.toLowerCase().includes("max requests limit exceeded");
 }
 
-const rateLimitMiddleware = t.middleware(async ({ ctx, next }) => {
-  if (process.env.NODE_ENV === "development") {
-    return next();
-  }
+function createRateLimitMiddleware(limiter: Ratelimit, allowSearchBots: boolean) {
+  // Backend failure state belongs to each bucket, not all application traffic.
+  let isRateLimitBackendDisabled = false;
+  let hasLoggedRateLimitBackendDisabled = false;
 
-  // Allow search engine bots to bypass rate limiting for SEO
-  const userAgent = ctx.headers.get("user-agent");
-  if (isSearchBot(userAgent)) {
-    return next();
-  }
-
-  let identifier = "anonymous";
-
-  // Use User ID if logged in
-  if (ctx.session?.user?.id) {
-    identifier = ctx.session.user.id;
-  } else {
-    // Use IP for anonymous users
-    identifier = ctx.headers.get("cf-connecting-ip")?.trim()
-      || ctx.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-      || "127.0.0.1";
-  }
-
-  if (isRateLimitBackendDisabled) {
-    return next();
-  }
-
-  try {
-    const { success, reset } = await ratelimit.limit(identifier);
-
-    if (!success) {
-      throw new RateLimitError(Number.isFinite(reset) && reset > 0 ? reset : Date.now() + 10_000);
-    }
-  } catch (error) {
-    if (error instanceof TRPCError) {
-      throw error;
-    }
-
-    if (isUpstashQuotaExceededError(error)) {
-      isRateLimitBackendDisabled = true;
-
-      if (!hasLoggedRateLimitBackendDisabled) {
-        hasLoggedRateLimitBackendDisabled = true;
-        console.warn(
-          "Rate limiter disabled (fail open): Upstash request quota exceeded. Requests will bypass rate limiting until the process restarts.",
-        );
-      }
-
+  return t.middleware(async ({ ctx, next }) => {
+    if (process.env.NODE_ENV === "development") {
       return next();
     }
 
-    // Fail open: Log unexpected errors and allow request to proceed
-    console.error("Rate Limiter Error (Fail Open):", error);
-    return next();
-  }
+    // Allow search engine bots to bypass rate limiting for SEO
+    const userAgent = ctx.headers.get("user-agent");
+    if (allowSearchBots && isSearchBot(userAgent)) {
+      return next();
+    }
 
-  return next();
-});
+    let identifier = "anonymous";
+
+    // Use User ID if logged in
+    if (ctx.session?.user?.id) {
+      identifier = ctx.session.user.id;
+    } else {
+      // Use IP for anonymous users
+      identifier = ctx.headers.get("cf-connecting-ip")?.trim()
+        || ctx.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+        || "127.0.0.1";
+    }
+
+    if (isRateLimitBackendDisabled) {
+      return next();
+    }
+
+    try {
+      const { success, reset } = await limiter.limit(identifier);
+
+      if (!success) {
+        throw new RateLimitError(Number.isFinite(reset) && reset > 0 ? reset : Date.now() + 10_000);
+      }
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+
+      if (isUpstashQuotaExceededError(error)) {
+        isRateLimitBackendDisabled = true;
+
+        if (!hasLoggedRateLimitBackendDisabled) {
+          hasLoggedRateLimitBackendDisabled = true;
+          console.warn(
+            "Rate limiter disabled (fail open): Upstash request quota exceeded. Requests will bypass rate limiting until the process restarts.",
+          );
+        }
+
+        return next();
+      }
+
+      // Fail open: Log unexpected errors and allow request to proceed
+      console.error("Rate Limiter Error (Fail Open):", error);
+      return next();
+    }
+
+    return next();
+  });
+}
+
+const rateLimitMiddleware = createRateLimitMiddleware(ratelimit, true);
+const telemetryRateLimitMiddleware = createRateLimitMiddleware(telemetryRatelimit, false);
 
 /**
  * Create a server-side caller.
@@ -274,6 +288,9 @@ export const publicProcedure = t.procedure
   .use(timingMiddleware)
   .use(dictionaryCacheInvalidation)
   .use(rateLimitMiddleware);
+
+/** Anonymous measurement ingestion has its own quota and no SEO bot exemption. */
+export const telemetryProcedure = t.procedure.use(telemetryRateLimitMiddleware);
 
 /**
  * Protected (authenticated) procedure

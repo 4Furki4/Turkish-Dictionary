@@ -6,6 +6,7 @@ import { users, usersRelations } from "./schema/users";
 import { words, wordsRelations } from "./schema/words";
 import { relatedWords, relatedWordsToWordsRelations } from "./schema/related_words";
 import { wordRelationSuggestions } from "./schema/word_relation_suggestions";
+import { wordQueryLatencies } from "./schema/word_query_latencies";
 import { roots, rootsRelations } from "./schema/roots";
 import { savedWords } from "./schema/saved_words";
 import { meanings, meaningsRelations } from "./schema/meanings";
@@ -60,6 +61,7 @@ export const schema = {
   wordsRelations,
   relatedWords,
   wordRelationSuggestions,
+  wordQueryLatencies,
   roots,
   rootsRelations,
   savedWords,

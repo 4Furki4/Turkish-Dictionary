@@ -31,6 +31,7 @@ import { useState } from "react";
 import { startNavigationProgress } from "@/src/lib/navigation-progress";
 import { getPlainSearchAction, getSearchQueryHref, getWordSearchHref } from "@/src/lib/search-route";
 import { useQueryClient } from "@tanstack/react-query";
+import { beginWordQueryLatency } from "@/src/lib/word-query-latency";
 
 type NavbarProps = {
   session: Session | null;
@@ -97,6 +98,7 @@ export default function Navbar({
     e.preventDefault();
     const input = navbarSearchQuery.trim();
     if (!input) return;
+    beginWordQueryLatency(input, { waitForDocument: true });
     setNavbarSearchQuery("");
     startNavigationProgress();
     if (input.includes("_")) {

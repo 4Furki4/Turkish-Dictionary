@@ -704,6 +704,25 @@
         "openFeedback": "Open feedback",
         "openFeedbackDescription": "Feedback items currently marked open"
       },
+      "queryLatency": {
+        "title": "Word query latency",
+        "description": "Browser estimates from search submission until the word result appears. Daily timings over the last 30 days (UTC).",
+        "average": "Average",
+        "p95": "95th percentile",
+        "samples": "Measured searches",
+        "duration": "{value} ms",
+        "p95Description": "95% of measured searches completed within the 95th percentile time. Days without measurements appear as gaps.",
+        "coverage": "Includes successful searches submitted through the search box and navbar, including cached and local dictionary results reported while connected. Direct visits, background refreshes and failed searches are excluded. Updates every minute.",
+        "chartLabel": "Daily average and 95th percentile word search latency in milliseconds",
+        "viewData": "View daily measurements",
+        "date": "Date",
+        "loading": "Loading search timings…",
+        "empty": "No search timings yet. Completed searches will appear here after collection starts.",
+        "error": "Search timings could not be loaded.",
+        "retry": "Retry",
+        "refreshError": "Refresh failed. Showing the last loaded measurements.",
+        "updatedAt": "Updated {date}"
+      },
       "searchTrend": {
         "title": "Search trend",
         "description": "Daily resolved searches over the last 14 days.",

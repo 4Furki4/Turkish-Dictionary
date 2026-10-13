@@ -28,6 +28,7 @@ import {
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { Link } from "@/src/i18n/routing";
 import { api } from "@/src/trpc/react";
+import { WordQueryLatencyChart } from "./word-query-latency-chart";
 
 type MetricCardProps = {
   label: string;
@@ -234,6 +235,8 @@ export function DashboardOverview() {
           </CardBody>
         </Card>
       </div>
+
+      <WordQueryLatencyChart />
 
       <Card isBlurred className="bg-background/40">
         <CardBody className="space-y-4">

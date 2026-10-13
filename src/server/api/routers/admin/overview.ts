@@ -5,6 +5,7 @@ import { users } from "@/db/schema/users";
 import { words } from "@/db/schema/words";
 import { adminProcedure, createTRPCRouter } from "@/src/server/api/trpc";
 import { count, desc, eq, gte, sql } from "drizzle-orm";
+import { getWordQueryLatency } from "@/src/server/word-query-latency";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -23,6 +24,7 @@ function toDateKey(date: Date) {
 }
 
 export const overviewAdminRouter = createTRPCRouter({
+  getWordQueryLatency: adminProcedure.query(({ ctx }) => getWordQueryLatency(ctx.db)),
   getDashboardOverview: adminProcedure.query(async ({ ctx }) => {
     const todayStart = startOfDay(new Date());
     const last7DaysStart = addDays(todayStart, -6);

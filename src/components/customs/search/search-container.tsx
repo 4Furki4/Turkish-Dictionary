@@ -19,6 +19,7 @@ import { Link, useRouter } from "@/src/i18n/routing";
 import { getOfflineWordSearchQueryKey, toOfflineWordSearchResult } from "@/src/hooks/useWordSearch";
 import { getPlainSearchAction, getSearchQueryHref, getWordSearchHref } from "@/src/lib/search-route";
 import type { RouterOutputs } from "@/src/trpc/shared";
+import { beginWordQueryLatency } from "@/src/lib/word-query-latency";
 import {
     AUTOCOMPLETE_SYNC_STATUS_EVENT,
     type AutocompleteSyncStatusDetail,
@@ -54,6 +55,7 @@ export default function SearchContainer({
     const locale = useLocale();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const latestWordNavigation = useRef(0);
     const [wordInput, setWordInput] = useState<string>("");
     const [inputError, setInputError] = useState<string>("");
     const [showRecommendations, setShowRecommendations] = useState(false);
@@ -235,6 +237,8 @@ export default function SearchContainer({
             return;
         }
 
+        const navigationVersion = ++latestWordNavigation.current;
+        beginWordQueryLatency(input, { waitForDocument: !isOnline });
         setWordInput("");
         setInputError("");
         setShowRecommendations(false);
@@ -242,6 +246,7 @@ export default function SearchContainer({
         startNavigationProgress();
 
         await primeOfflineWordCache(input);
+        if (navigationVersion !== latestWordNavigation.current) return;
 
         if (input.includes("_")) {
             window.location.assign(getSearchQueryHref(locale, input));
