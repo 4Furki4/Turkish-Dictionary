@@ -23,6 +23,7 @@
 
 @layer base {
   :root {
+    --ease-content-out: cubic-bezier(0.16, 1, 0.3, 1);
     /* Fluid Typography Variables remain unchanged */
     --navbar-height: 0rem;
     --sidebar-width: 16rem;
@@ -198,7 +199,7 @@
 
 /* The default state stays visible, including before hydration. */
 .search-word-results-arrival {
-  animation: search-word-results-arrive 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: search-word-results-arrive 240ms var(--ease-content-out);
 }
 
 @keyframes search-word-results-arrive {
