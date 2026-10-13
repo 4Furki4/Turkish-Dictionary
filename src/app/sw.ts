@@ -1,4 +1,4 @@
-import { defaultCache } from "@serwist/next/worker";
+import { defaultCache, PAGES_CACHE_NAME } from "@serwist/next/worker";
 import type {
     PrecacheEntry,
     RouteHandlerCallbackOptions,
@@ -38,7 +38,28 @@ const OFFLINE_PAGE_PREFIXES = [
     "/en/~offline",
     "/tr/~%C3%A7evrim-d%C4%B1%C5%9F%C4%B1",
 ];
-const DOCUMENT_CACHE_NAME = "document-pages";
+// The build injects a new revision for /tr into the precache manifest.
+// Runtime HTML must belong to the same release as its JavaScript assets.
+const precacheEntries = self.__SW_MANIFEST;
+const documentRevision = precacheEntries?.find((entry) =>
+    typeof entry !== "string" && entry.url === "/tr",
+);
+const RELEASE_REVISION =
+    documentRevision && typeof documentRevision !== "string"
+        ? documentRevision.revision ?? SW_VERSION
+        : SW_VERSION;
+const DOCUMENT_CACHE_NAME = `document-pages-${RELEASE_REVISION}`;
+const PAGE_CACHE_NAMES = Object.values(PAGES_CACHE_NAME);
+// Preserve the default strategies and plugins, but never share page payloads
+// across releases. Offline RSC responses must match the active app bundle.
+for (const cacheEntry of defaultCache) {
+    const handler = cacheEntry.handler;
+    if (typeof handler === "object" && handler !== null && "cacheName" in handler &&
+        typeof handler.cacheName === "string" &&
+        PAGE_CACHE_NAMES.some((name) => name === handler.cacheName)) {
+        handler.cacheName = `${handler.cacheName}-${RELEASE_REVISION}`;
+    }
+}
 const RUNTIME_CACHING = [
     {
         matcher: ({ url, sameOrigin }) => sameOrigin && (
@@ -275,13 +296,27 @@ const handleNavigationRequest = async ({
 };
 
 const serwist = new Serwist({
-    precacheEntries: self.__SW_MANIFEST,
-    skipWaiting: true,
+    precacheEntries,
+    skipWaiting: false,
     clientsClaim: true,
     // precacheOptions: {
     //     navigateFallback: "/",
     //     navigateFallbackDenylist: [/^\/api/],
     // }
+});
+
+self.addEventListener("activate", (event) => {
+    const pageCacheFamilies = ["document-pages", ...PAGE_CACHE_NAMES];
+    const currentPageCaches = new Set(pageCacheFamilies.map((name) => `${name}-${RELEASE_REVISION}`));
+    event.waitUntil(
+        caches.keys().then((names) => Promise.all(
+            names.filter((name) =>
+                !currentPageCaches.has(name) && pageCacheFamilies.some((family) =>
+                    name === family || name.startsWith(`${family}-`),
+                ),
+            ).map((name) => caches.delete(name)),
+        )),
+    );
 });
 
 serwist.registerRoute(

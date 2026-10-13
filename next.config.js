@@ -35,7 +35,7 @@ module.exports = async (phase) => {
             swDest: "public/sw.js",
             register: false,
             cacheOnNavigation: false,
-            reloadOnOnline: true,
+            reloadOnOnline: false,
             additionalPrecacheEntries: [
                 { url: "/~offline", revision },
                 { url: "/en/~offline", revision },

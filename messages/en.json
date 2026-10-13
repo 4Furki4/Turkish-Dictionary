@@ -1,4 +1,14 @@
 {
+  "PwaUpdate": {
+    "title": "A new version is available",
+    "description": "Update to get the latest improvements. This page will reload, so save any unfinished work first.",
+    "update": "Update now",
+    "later": "Later",
+    "updating": "Updating…",
+    "offline": "Connect to the internet to update.",
+    "error": "The update could not finish. Please try again.",
+    "retry": "Try again"
+  },
   "Navigation": {
     "loading": "Loading…"
   },
