@@ -24,7 +24,9 @@ measured.
 
 A single pending marker in sessionStorage survives full navbar navigations. It
 contains the requested word locally to match the result, then is removed before
-reporting. The report contains only a random event ID, integer milliseconds and
+reporting. Full-document navigation markers also identify the source document;
+only a destination document can finish them, even when the requested word is
+already displayed. The report contains only a random event ID, integer milliseconds and
 online/offline result source. Storage or reporting failure cannot block search.
 
 ## Storage and rollout

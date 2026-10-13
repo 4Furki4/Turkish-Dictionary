@@ -171,3 +171,27 @@ it("a superseded navigation committing cannot cancel the latest search", () => {
   paint();
   expect(mockReport).toHaveBeenCalledWith(expect.objectContaining({ durationMs: 500 }));
 });
+
+it("a departing card cannot complete a full navigation to the same word", () => {
+  renderHook(() => useWordQueryLatency(["kitap"], "online"));
+  beginWordQueryLatency("kitap", { waitForDocument: true });
+  elapsed = 203;
+  paint();
+  expect(mockReport).not.toHaveBeenCalled();
+  expect(sessionStorage.length).toBe(1);
+});
+
+it("the destination includes the full document wait before reporting its result", () => {
+  beginWordQueryLatency("kitap", { waitForDocument: true });
+  const origin = performance.timeOrigin;
+  Object.defineProperty(performance, "timeOrigin", { configurable: true, value: origin + 1000 });
+  try {
+    elapsed = 250;
+    renderHook(() => useWordQueryLatency(["kitap"], "online"));
+    paint();
+    expect(mockReport).toHaveBeenCalledWith(expect.objectContaining({ durationMs: 1250 }));
+    expect(sessionStorage.length).toBe(0);
+  } finally {
+    Object.defineProperty(performance, "timeOrigin", { configurable: true, value: origin });
+  }
+});

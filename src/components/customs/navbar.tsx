@@ -98,7 +98,7 @@ export default function Navbar({
     e.preventDefault();
     const input = navbarSearchQuery.trim();
     if (!input) return;
-    beginWordQueryLatency(input);
+    beginWordQueryLatency(input, { waitForDocument: true });
     setNavbarSearchQuery("");
     startNavigationProgress();
     if (input.includes("_")) {

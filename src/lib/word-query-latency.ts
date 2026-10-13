@@ -4,7 +4,7 @@ export const WORD_QUERY_LATENCY_STARTED = "word-query-latency-started";
 const STORAGE_KEY = "word-query-latency:pending";
 import { MAX_WORD_QUERY_LATENCY_MS } from "./word-query-latency-schema";
 
-type PendingSearch = { id: string; word: string; startedAt: number; origin: string; arrived?: boolean; supersededWords?: string[] };
+type PendingSearch = { id: string; word: string; startedAt: number; origin: string; arrived?: boolean; supersededWords?: string[]; documentTimeOrigin?: number };
 let memoryPending: PendingSearch | null = null;
 let observingVisibility = false;
 const normalize = (word: string) => word.normalize("NFC").trim().replace(/\s+/g, " ").toLocaleLowerCase("tr");
@@ -19,6 +19,7 @@ function readPending(): PendingSearch | null {
     const value = parsed as Partial<PendingSearch>;
     if (typeof value.id !== "string" || typeof value.word !== "string" || typeof value.origin !== "string" || typeof value.startedAt !== "number" || !Number.isFinite(value.startedAt)) return null;
     if (value.supersededWords !== undefined && (!Array.isArray(value.supersededWords) || !value.supersededWords.every(word => typeof word === "string"))) return null;
+    if (value.documentTimeOrigin !== undefined && (typeof value.documentTimeOrigin !== "number" || !Number.isFinite(value.documentTimeOrigin))) return null;
     if (now() - value.startedAt > MAX_WORD_QUERY_LATENCY_MS) { clearPending(); return null; }
     return value as PendingSearch;
   } catch {
@@ -63,7 +64,7 @@ export function trackWordQueryRoute(routeWord: string, route: string) {
   }
 }
 
-export function beginWordQueryLatency(word: string) {
+export function beginWordQueryLatency(word: string, options: { waitForDocument?: boolean } = {}) {
   const previous = readPending();
   clearPending();
   if (!word.trim() || word.includes("_") || typeof crypto.randomUUID !== "function") return;
@@ -71,6 +72,7 @@ export function beginWordQueryLatency(word: string) {
   const event: PendingSearch = {
     id: crypto.randomUUID(), word: normalize(word), startedAt: now(),
     origin: window.location.pathname + window.location.search,
+    documentTimeOrigin: options.waitForDocument ? performance.timeOrigin : undefined,
     // A previously requested RSC navigation can still commit while this one
     // primes its cache. Only those known superseded destinations are tolerated.
     supersededWords: previous ? [...new Set([previous.word, ...(previous.supersededWords ?? [])])].slice(0, 8) : [],
@@ -82,13 +84,13 @@ export function beginWordQueryLatency(word: string) {
 
 export function getPendingWordQueryLatency(routeWord: string, resultWords: string[]) {
   const pending = readPending();
-  if (!pending || pending.word !== normalize(routeWord) || !resultWords.some(word => normalize(word) === pending.word)) return null;
+  if (!pending || pending.documentTimeOrigin === performance.timeOrigin || pending.word !== normalize(routeWord) || !resultWords.some(word => normalize(word) === pending.word)) return null;
   return pending;
 }
 
 export function finishWordQueryLatency(id: string, paintedAt = now()) {
   const pending = readPending();
-  if (!pending || pending.id !== id) return null;
+  if (!pending || pending.documentTimeOrigin === performance.timeOrigin || pending.id !== id) return null;
   clearPending(); // Consume before sending: refreshes and Strict Mode cannot double count.
   const durationMs = Math.round(paintedAt - pending.startedAt);
   if (document.visibilityState !== "visible" || durationMs < 0 || durationMs > MAX_WORD_QUERY_LATENCY_MS) return null;

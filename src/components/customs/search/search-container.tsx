@@ -238,7 +238,7 @@ export default function SearchContainer({
         }
 
         const navigationVersion = ++latestWordNavigation.current;
-        beginWordQueryLatency(input);
+        beginWordQueryLatency(input, { waitForDocument: !isOnline });
         setWordInput("");
         setInputError("");
         setShowRecommendations(false);
