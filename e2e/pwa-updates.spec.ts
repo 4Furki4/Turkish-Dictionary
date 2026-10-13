@@ -109,6 +109,28 @@ for (const locale of ["tr", "en"] as const) {
           const cache = await caches.open(cacheName);
           await cache.put("/__pwa_stale_component?_rsc=stale", new Response("older-release-component"));
         }
+        const expiration = await new Promise<IDBDatabase>((resolve, reject) => {
+          const request = indexedDB.open("serwist-expiration", 1);
+          request.onupgradeneeded = () => {
+            const entries = request.result.createObjectStore("cache-entries", { keyPath: "id" });
+            entries.createIndex("cacheName", "cacheName");
+            entries.createIndex("timestamp", "timestamp");
+          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+        await new Promise<void>((resolve, reject) => {
+          const transaction = expiration.transaction("cache-entries", "readwrite");
+          const url = `${location.origin}/__pwa_expiration_sentinel`;
+          for (const cacheName of ["pages-rsc", "pages-rsc-prefetch", "pwa-unrelated-cache"]) {
+            transaction.objectStore("cache-entries").put({
+              id: `${cacheName}|${url}`, cacheName, url, timestamp: Date.now(),
+            });
+          }
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error);
+        });
+        expiration.close();
       }, { name: DB_NAME, version: DB_VERSION, store: METADATA_STORE });
 
       const other = await context.newPage();
@@ -180,6 +202,22 @@ for (const locale of ["tr", "en"] as const) {
       expect(cacheNames).toContain("pwa-unrelated-cache");
       expect(cacheNames).not.toContain("pages-rsc");
       expect(cacheNames).not.toContain("pages-rsc-prefetch");
+      expect(await page.evaluate(async () => {
+        const database = await new Promise<IDBDatabase>((resolve, reject) => {
+          const request = indexedDB.open("serwist-expiration", 1);
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+        const names = await new Promise<string[]>((resolve, reject) => {
+          const request = database.transaction("cache-entries").objectStore("cache-entries").getAll();
+          request.onsuccess = () => resolve(request.result
+            .filter(entry => entry.url.endsWith("/__pwa_expiration_sentinel"))
+            .map(entry => entry.cacheName));
+          request.onerror = () => reject(request.error);
+        });
+        database.close();
+        return names;
+      })).toEqual(["pwa-unrelated-cache"]);
 
       await context.setOffline(true);
       for (const prefetch of [false, true]) {

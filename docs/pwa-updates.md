@@ -23,9 +23,9 @@ injects a new revision for the `/tr` precache entry. The document cache includes
 that revision. The default HTML, RSC and RSC-prefetch page caches use the same
 revision, so an accepted update cannot reuse old page payloads while offline.
 Activation deletes only older `document-pages`, `pages`, `pages-rsc` and
-`pages-rsc-prefetch` cache families. Offline dictionary IndexedDB data, local
-preferences and unrelated asset caches remain. The dictionary and games root
-layouts both register the update component.
+`pages-rsc-prefetch` cache families and their Serwist expiration records. Offline
+dictionary IndexedDB data, local preferences and unrelated asset caches remain.
+The dictionary and games root layouts both register the update component.
 
 The first deployment of this feature cannot add a prompt to JavaScript already
 running from an older release. Those clients acquire update notifications after

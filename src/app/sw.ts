@@ -5,7 +5,7 @@ import type {
     RuntimeCaching,
     SerwistGlobalConfig,
 } from "serwist";
-import { NavigationRoute, NetworkOnly, Serwist } from "serwist";
+import { CacheExpiration, NavigationRoute, NetworkOnly, Serwist } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -314,7 +314,13 @@ self.addEventListener("activate", (event) => {
                 !currentPageCaches.has(name) && pageCacheFamilies.some((family) =>
                     name === family || name.startsWith(`${family}-`),
                 ),
-            ).map((name) => caches.delete(name)),
+            ).map(async (name) => {
+                await caches.delete(name);
+                if (PAGE_CACHE_NAMES.some((family) => name === family || name.startsWith(`${family}-`))) {
+                    // delete() clears only this cache's expiration records.
+                    await new CacheExpiration(name, { maxEntries: 32 }).delete();
+                }
+            }),
         )),
     );
 });

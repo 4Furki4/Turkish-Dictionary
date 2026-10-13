@@ -2,6 +2,7 @@
 
 const mockOptions = jest.fn();
 const mockCapture = jest.fn();
+const mockDeleteMetadata = jest.fn().mockResolvedValue(undefined);
 const mockListeners = new Map<string, (event: { waitUntil: (promise: Promise<unknown>) => void }) => void>();
 const mockBaseCacheNames = ["pages-rsc-prefetch", "pages-rsc", "pages", "next-static-js-assets"];
 const mockHandlers = mockBaseCacheNames.map((cacheName) => ({ cacheName, plugins: [{ expiration: true }] }));
@@ -19,6 +20,10 @@ jest.mock("serwist", () => ({
   },
   NetworkOnly: class {},
   NavigationRoute: class {},
+  CacheExpiration: class {
+    constructor(private readonly cacheName: string) {}
+    delete() { return mockDeleteMetadata(this.cacheName); }
+  },
 }));
 
 describe("release-scoped page cache activation", () => {
@@ -31,6 +36,7 @@ describe("release-scoped page cache activation", () => {
     mockListeners.clear();
     mockOptions.mockClear();
     mockCapture.mockClear();
+    mockDeleteMetadata.mockClear();
     if (originalSelf) Object.defineProperty(globalThis, "self", originalSelf);
     else Reflect.deleteProperty(globalThis, "self");
     if (originalCaches) Object.defineProperty(globalThis, "caches", originalCaches);
@@ -86,6 +92,9 @@ describe("release-scoped page cache activation", () => {
     expect(deleteCache.mock.calls).toEqual([
       ["document-pages"], ["document-pages-previous-build"], ["pages-rsc"],
       ["pages-rsc-prefetch-previous-build"], ["pages-previous-build"],
+    ]);
+    expect(mockDeleteMetadata.mock.calls).toEqual([
+      ["pages-rsc"], ["pages-rsc-prefetch-previous-build"], ["pages-previous-build"],
     ]);
   });
 });
