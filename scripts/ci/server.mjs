@@ -41,7 +41,9 @@ mkdirSync("test-results", { recursive: true });
 const log = createWriteStream("test-results/server.log");
 const app = spawn("node", ["server.js"], {
   cwd: ".next/standalone",
-  env: { ...ciEnvironment(), HOSTNAME: "127.0.0.1", PORT: "3100" },
+  // Next normalizes loopback URLs to localhost. Match that origin so localized
+  // rewrites stay inside the router instead of opening extra HTTP proxy hops.
+  env: { ...ciEnvironment(), HOSTNAME: "localhost", PORT: "3100" },
   stdio: ["ignore", "pipe", "pipe"],
 });
 app.stdout.pipe(log, { end: false });

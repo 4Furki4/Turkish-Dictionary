@@ -18,10 +18,13 @@ async function releaseFixture(upstream: string) {
   if (!revision) throw new Error("Production worker has no /tr build revision");
   let release = "A";
   const server = createServer(async (request, response) => {
+    // An in-flight response belongs to the release that accepted the request,
+    // even if deploy() runs while the upstream page is rendering.
+    const requestedRelease = release;
     try {
       if (request.url === "/sw.js") {
         response.writeHead(200, { "content-type": "application/javascript", "cache-control": "no-store" });
-        response.end(worker.replaceAll(revision, `${revision}-${release}`));
+        response.end(worker.replaceAll(revision, `${revision}-${requestedRelease}`));
         return;
       }
       const chunks: Buffer[] = [];
@@ -46,7 +49,7 @@ async function releaseFixture(upstream: string) {
       }
       response.statusCode = result.status;
       if (html) {
-        response.end((await result.text()).replace("</head>", `<meta name="pwa-test-release" content="${release}"></head>`));
+        response.end((await result.text()).replace("</head>", `<meta name="pwa-test-release" content="${requestedRelease}"></head>`));
       } else {
         response.end(Buffer.from(await result.arrayBuffer()));
       }
@@ -77,7 +80,7 @@ for (const locale of ["tr", "en"] as const) {
       const url = `${fixture.origin}/${locale}?pwa-test=1#update`;
       const prompt = page.getByRole("complementary", { name: messages.PwaUpdate.title });
       const marker = page.locator('meta[name="pwa-test-release"]');
-      await page.goto(url);
+      expect((await page.goto(url))?.ok()).toBe(true);
       await page.evaluate(async () => { await navigator.serviceWorker.ready; });
       await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
       await expect(prompt).toBeHidden();
@@ -109,7 +112,7 @@ for (const locale of ["tr", "en"] as const) {
       }, { name: DB_NAME, version: DB_VERSION, store: METADATA_STORE });
 
       const other = await context.newPage();
-      await other.goto(url);
+      expect((await other.goto(url))?.ok()).toBe(true);
       const otherPrompt = other.getByRole("complementary", { name: messages.PwaUpdate.title });
       const search = other.getByRole("searchbox", { name: messages.Home.hero.searchPlaceholder, exact: true });
       await search.fill("unfinished note");
@@ -219,7 +222,7 @@ for (const locale of ["tr", "en"] as const) {
     try {
       await context.route(/^https:\/\//, route => route.abort());
       const url = `${fixture.origin}/${locale}/${locale === "tr" ? "oyna" : "play"}?pwa-test=1#update`;
-      await page.goto(url);
+      expect((await page.goto(url))?.ok()).toBe(true);
       await page.evaluate(async () => { await navigator.serviceWorker.ready; });
       await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
       const prompt = page.getByRole("complementary", { name: messages.PwaUpdate.title });
