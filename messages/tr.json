@@ -702,6 +702,25 @@
         "openFeedback": "Açık geri bildirim",
         "openFeedbackDescription": "Şu anda açık durumdaki geri bildirimler"
       },
+      "queryLatency": {
+        "title": "Kelime sorgusu gecikmesi",
+        "description": "Aramanın gönderilmesinden kelime sonucunun görünmesine kadar geçen sürenin tarayıcı ölçümleri. Son 30 günün günlük ölçümleri (UTC).",
+        "average": "Ortalama",
+        "p95": "95. yüzdelik",
+        "samples": "Ölçülen aramalar",
+        "duration": "{value} ms",
+        "p95Description": "Ölçülen aramaların %95’i, 95. yüzdelik süresi içinde tamamlandı. Ölçüm yapılmayan günler grafikte boş bırakılır.",
+        "coverage": "Arama kutusu ve gezinme çubuğundan gönderilen başarılı aramaları kapsar. Bağlantı varken bildirilen önbellek ve yerel sözlük sonuçları dahildir. Doğrudan ziyaretler, arka plan yenilemeleri ve başarısız aramalar hariçtir. Dakikada bir güncellenir.",
+        "chartLabel": "Günlük ortalama ve 95. yüzdelik kelime arama gecikmesi, milisaniye cinsinden",
+        "viewData": "Günlük ölçümleri göster",
+        "date": "Tarih",
+        "loading": "Arama süreleri yükleniyor…",
+        "empty": "Henüz arama süresi ölçümü yok. Ölçümler toplanmaya başladıktan sonra tamamlanan aramalar burada görünür.",
+        "error": "Arama süreleri yüklenemedi.",
+        "retry": "Yeniden dene",
+        "refreshError": "Yenileme başarısız. Son yüklenen ölçümler gösteriliyor.",
+        "updatedAt": "Güncellendi: {date}"
+      },
       "searchTrend": {
         "title": "Arama eğilimi",
         "description": "Son 14 gündeki günlük çözümlenen aramalar.",

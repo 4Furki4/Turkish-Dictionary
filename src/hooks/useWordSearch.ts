@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { api } from "@/src/trpc/react";
 import { OfflineInstallStatus, WordData } from "../lib/db-config";
 import { isRateLimitError } from "@/src/lib/rate-limit-error";
+import { cancelWordQueryLatency } from "@/src/lib/word-query-latency";
 
 type WordDataWithSource = WordData & { source: "online" | "offline" };
 
@@ -192,6 +193,10 @@ export function useWordSearch(
     // We are "fetching" if we are online AND the online query is running,
     // (This includes the background revalidation)
     const isFetching = isOnline && onlineQuery.isFetching;
+
+    useEffect(() => {
+        if (isError && !isLoading && !isOfflineLoading) cancelWordQueryLatency(wordName);
+    }, [isError, isLoading, isOfflineLoading, wordName]);
 
     const resolvedData = data?.data
         ? Array.isArray(data.data)

@@ -442,7 +442,7 @@ function MagazineWordCard({
                   </span>
                 ) : null}
 
-                <WordHeading {...getHeadwordProps(word_data.word_name)} lang="tr" className="dictionary-headword [--headword-max:var(--step-4)] text-fs-4 font-semibold leading-[1.1] text-foreground">
+                <WordHeading {...getHeadwordProps(word_data.word_name)} {...{ elementtiming: "dictionary-word-result" }} lang="tr" className="dictionary-headword [--headword-max:var(--step-4)] text-fs-4 font-semibold leading-[1.1] text-foreground">
                   {word_data.word_name}
                 </WordHeading>
 
@@ -550,6 +550,7 @@ function WordTitleBlock({
 
         <WordHeading
           {...getHeadwordProps(word_data.word_name)}
+          {...{ elementtiming: "dictionary-word-result" }}
           lang="tr"
           className={cn(
             "dictionary-headword font-semibold text-foreground",
