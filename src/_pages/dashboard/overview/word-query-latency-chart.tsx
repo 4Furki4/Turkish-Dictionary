@@ -31,7 +31,7 @@ export function WordQueryLatencyChart() {
             <h2 className="text-lg font-semibold text-foreground">{t("title")}</h2>
             <p className="max-w-3xl text-sm text-muted-foreground">{t("description")}</p>
           </div>
-          {query.data ? <p className="shrink-0 text-xs text-muted-foreground">{t("updatedAt", { date: new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(query.data.generatedAt) })}</p> : null}
+          {query.data ? <p className="shrink-0 text-xs text-muted-foreground">{t("updatedAt", { date: `${new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(query.data.generatedAt)} UTC` })}</p> : null}
         </div>
         {query.data && query.isError ? (
           <div role="status" className="flex flex-wrap items-center gap-3">
@@ -75,7 +75,7 @@ export function WordQueryLatencyChart() {
               role="img"
               aria-label={t("chartLabel")}
             >
-              <LineChart accessibilityLayer data={data} margin={{ left: 4, right: 12, top: 12, bottom: 0 }}>
+              <LineChart responsive style={{ width: "100%", height: "100%", minWidth: 0 }} accessibilityLayer data={data} margin={{ left: 4, right: 12, top: 12, bottom: 0 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={28} tickMargin={8} />
                 <YAxis width={76} tickLine={false} axisLine={false} tickMargin={8} domain={[0, "auto"]} tickFormatter={value => duration(Number(value))} />
