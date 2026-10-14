@@ -25,7 +25,7 @@ it("distinguishes loading from the empty collection state", () => {
   mockQuery.isPending = true;
   const { rerender } = render(<WordQueryLatencyChart />);
   expect(screen.getByRole("status")).toHaveTextContent("loading");
-  mockQuery = { ...mockQuery, isPending: false, data: { daily: [], summary: { sampleCount: 0 } } };
+  mockQuery = { ...mockQuery, isPending: false, data: { daily: [], generatedAt: new Date("2026-10-15T10:00:00Z"), summary: { sampleCount: 0, averageMs: null, p95Ms: null }, previous: { sampleCount: 0 }, comparison: { averageMs: { current: null, previous: null }, p95Ms: { current: null, previous: null } } } };
   rerender(<WordQueryLatencyChart />);
   expect(screen.getByText("empty")).toBeVisible();
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
@@ -44,6 +44,11 @@ it("keeps the last chart and daily table visible when a refresh fails", () => {
   mockQuery = { ...mockQuery, isError: true, data: {
     generatedAt: new Date("2026-10-13T10:00:00Z"),
     summary: { sampleCount: 2, averageMs: 150, p95Ms: 195 },
+    previous: { sampleCount: 0, averageMs: null, p95Ms: null },
+    comparison: {
+      averageMs: { current: 150, previous: null, difference: null, percentChange: null },
+      p95Ms: { current: 195, previous: null, difference: null, percentChange: null },
+    },
     daily: [
       { date: "2026-10-12", sampleCount: 0, averageMs: null, p95Ms: null },
       { date: "2026-10-13", sampleCount: 2, averageMs: 150, p95Ms: 195 },

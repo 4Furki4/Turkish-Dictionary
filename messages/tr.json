@@ -687,7 +687,7 @@
     "overview": {
       "title": "Panel Genel Bakış",
       "description": "Sözlük etkinliğini, moderasyon yükünü ve arama davranışını tek bir operasyon görünümünden takip edin.",
-      "generatedAt": "Güncellendi: {date}",
+      "generatedAt": "Güncelleme: {date} UTC",
       "metrics": {
         "totalWords": "Toplam kelime",
         "totalWordsDescription": "Sözlükte bulunan kelimeler",
@@ -702,9 +702,27 @@
         "openFeedback": "Açık geri bildirim",
         "openFeedbackDescription": "Şu anda açık durumdaki geri bildirimler"
       },
+      "attention": {
+        "title": "İlgilenilmesi gerekenler",
+        "description": "En eski bekleyen istekler ve açık geri bildirimler. Her listede en fazla beş kayıt gösterilir.",
+        "updatedAt": "Güncelleme: {date} UTC",
+        "requestsTitle": "Bekleyen istekler ({count, number})",
+        "feedbackTitle": "Açık geri bildirimler ({count, number})",
+        "aging": "{days} gün veya daha uzun süredir bekleyen: {count, number}",
+        "requestLabel": "İstek #{id}",
+        "waiting": "{days, plural, =0 {Bir günden az süredir bekliyor} other {# gündür bekliyor}}",
+        "requestsEmpty": "Bekleyen istek yok. Yeni katkılar incelenmek üzere burada görünür.",
+        "feedbackEmpty": "Açık geri bildirim yok. Yeni açılan bildirimler burada görünür.",
+        "viewRequests": "Tüm istekleri incele",
+        "viewFeedback": "Tüm geri bildirimleri yönet",
+        "loading": "İlgilenilmesi gereken kayıtlar yükleniyor…",
+        "error": "İlgilenilmesi gereken kayıtlar yüklenemedi.",
+        "retry": "Tekrar dene",
+        "refreshError": "Yenileme başarısız. Son yüklenen kayıtlar gösteriliyor."
+      },
       "queryLatency": {
         "title": "Kelime sorgusu gecikmesi",
-        "description": "Aramanın gönderilmesinden kelime sonucunun görünmesine kadar geçen sürenin tarayıcı ölçümleri. Son 30 günün günlük ölçümleri (UTC).",
+        "description": "Aramanın gönderilmesinden kelime sonucunun görünmesine kadar geçen sürenin tarayıcı ölçümleri. Seçilen dönemin günlük ölçümleri (UTC).",
         "average": "Ortalama",
         "p95": "95. yüzdelik",
         "samples": "Ölçülen aramalar",
@@ -715,30 +733,73 @@
         "viewData": "Günlük ölçümleri göster",
         "date": "Tarih",
         "loading": "Arama süreleri yükleniyor…",
-        "empty": "Henüz arama süresi ölçümü yok. Ölçümler toplanmaya başladıktan sonra tamamlanan aramalar burada görünür.",
+        "empty": "Bu dönemde arama süresi ölçümü kaydedilmemiş.",
         "error": "Arama süreleri yüklenemedi.",
         "retry": "Yeniden dene",
         "refreshError": "Yenileme başarısız. Son yüklenen ölçümler gösteriliyor.",
-        "updatedAt": "Güncellendi: {date}"
+        "updatedAt": "Güncelleme: {date} UTC",
+        "previousSamples": "Önceki dönem: {count, number} ölçülmüş arama."
       },
       "searchTrend": {
         "title": "Arama eğilimi",
-        "description": "Son 14 gündeki günlük çözümlenen aramalar.",
+        "description": "Seçilen dönemdeki günlük sonuçlanan aramalar (UTC).",
         "series": "Aramalar"
       },
       "actorSplit": {
         "title": "Arama kaynağı",
-        "description": "Son 7 gündeki giriş yapmış ve anonim aramalar.",
+        "description": "Seçilen dönemdeki oturum açmış ve anonim aramalar.",
         "authenticated": "Giriş yapan",
         "anonymous": "Anonim"
       },
       "topSearches": {
         "title": "En çok aranan kelimeler",
-        "description": "Son 7 günde en çok aranan çözümlenmiş sözlük kelimeleri.",
+        "description": "Seçilen dönemde en çok aranan sonuçlanmış kelimeler.",
         "series": "Aramalar",
         "viewHistory": "Arama geçmişini aç",
         "empty": "Bu zaman aralığı için arama kaydı bulunmuyor."
-      }
+      },
+      "range": {
+        "title": "Analiz dönemi (UTC)",
+        "period": "Dönem",
+        "last7Days": "Son 7 gün",
+        "last30Days": "Son 30 gün",
+        "last90Days": "Son 90 gün",
+        "custom": "Özel tarih aralığı",
+        "start": "Başlangıç tarihi",
+        "end": "Bitiş tarihi",
+        "apply": "Aralığı uygula",
+        "selected": "Seçilen dönem: {start} – {end} (UTC)",
+        "previous": "Önceki dönem: {start} – {end} UTC",
+        "partial": "{date} UTC itibarıyla henüz tamamlanmamış dönem. Önceki dönemde aynı uzunlukta geçen süre karşılaştırılır.",
+        "complete": "Tamamlanmış günler, aynı uzunluktaki bir önceki dönemle karşılaştırılır.",
+        "limit": "Özel aralıklar en fazla 90 gün olabilir. Tarihler ve grafik günleri UTC saat dilimindedir.",
+        "defaultRangeUsed": "Varsayılan 30 günlük aralık gösteriliyor.",
+        "errors": {
+          "invalidRange": "Geçerli bir dönem seçin veya geçerli başlangıç ve bitiş tarihleri girin.",
+          "reversedRange": "Bitiş tarihi başlangıç tarihinden önce olamaz.",
+          "rangeTooLong": "En fazla 90 günlük bir aralık seçin.",
+          "futureRange": "Bitiş tarihi gelecekte olamaz (UTC)."
+        }
+      },
+      "comparison": {
+        "change": "Önceki döneme göre {difference} ({baseline})",
+        "durationDifference": "{value} ms",
+        "noMeasurements": "Bu dönemde ölçüm yok",
+        "noBaseline": "Önceki dönemde ölçüm yok",
+        "zeroBaseline": "Sıfırdan farklı bir karşılaştırma değeri yok",
+        "noActivity": "Her iki dönemde de etkinlik yok",
+        "newActivity": "Yeni etkinlik",
+        "previousValue": "Önceki: {value}"
+      },
+      "period": {
+        "title": "Seçilen dönemdeki etkinlik",
+        "searches": "Sonuçlanan aramalar",
+        "newUsers": "Yeni hesaplar",
+        "submittedRequests": "Gönderilen katkılar",
+        "resolvedRequests": "Sonuçlandırılan katkılar",
+        "coverage": "Sonuçlandırılan katkılar, kayıtlı onayları ve retleri içerir. Sonuçlanma zamanı kaydedilmemiş eski kararlar hariçtir."
+      },
+      "currentSnapshot": "Tüm zamanların toplamları ve mevcut moderasyon kuyrukları"
     },
     "searchHistory": {
       "title": "Arama Geçmişi",
@@ -970,6 +1031,8 @@
     },
     "feedback": {
       "title": "Geri Bildirim Yönetimi",
+      "selectedFeedback": "Geri bildirim #{id} gösteriliyor",
+      "showAllFeedback": "Tüm geri bildirimleri göster",
       "anonymous_user": "Anonim",
       "table": {
         "user": "Kullanıcı",

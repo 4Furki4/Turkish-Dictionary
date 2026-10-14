@@ -3,6 +3,8 @@
 
 import { Key, useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { Link } from "@/src/i18n/routing";
 import { User, Chip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, DropdownSection } from "@heroui/react";
 import { EditIcon, MoreVertical, Trash2Icon, PencilRuler } from "lucide-react";
 
@@ -52,6 +54,9 @@ export const statusColorMap: Record<typeof feedbackStatusEnum.enumValues[number]
 export function FeedbackList() {
     const locale = useLocale()
     const t = useTranslations("Dashboard.feedback");
+    const searchParams = useSearchParams();
+    const requestedId = Number(searchParams.get("feedbackId"));
+    const feedbackId = Number.isInteger(requestedId) && requestedId > 0 && requestedId <= 2147483647 ? requestedId : undefined;
 
     const [page, setPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(20);
@@ -74,15 +79,17 @@ export function FeedbackList() {
     const debouncedSearchTerm = useDebounce(filters.searchTerm, 500);
 
     const { data, isLoading } = api.admin.feedback.getAll.useQuery({
-        page,
+        feedbackId,
+        page: feedbackId ? 1 : page,
         limit: itemsPerPage,
-        type: filters.types.length > 0 ? filters.types as (typeof feedbackTypeEnum.enumValues[number])[] : undefined,
-        status: filters.statuses.length > 0 ? filters.statuses as (typeof feedbackStatusEnum.enumValues[number])[] : undefined,
-        searchTerm: debouncedSearchTerm,
+        type: !feedbackId && filters.types.length > 0 ? filters.types as (typeof feedbackTypeEnum.enumValues[number])[] : undefined,
+        status: !feedbackId && filters.statuses.length > 0 ? filters.statuses as (typeof feedbackStatusEnum.enumValues[number])[] : undefined,
+        excludeStatuses: feedbackId ? [] : undefined,
+        searchTerm: feedbackId ? undefined : debouncedSearchTerm,
         sortBy: filters.sortBy,
         sortOrder: filters.sortOrder,
-        startDate: filters.startDate ?? undefined,
-        endDate: filters.endDate ?? undefined,
+        startDate: feedbackId ? undefined : filters.startDate ?? undefined,
+        endDate: feedbackId ? undefined : filters.endDate ?? undefined,
     });
 
     const handleFiltersChange = (newFilters: FeedbackFilters) => {
@@ -225,11 +232,16 @@ export function FeedbackList() {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">{t("title")}</h1>
-            <FeedbackFilterBar
+            {feedbackId ? (
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-border/60 bg-background/40 p-3">
+                    <p className="text-sm">{t("selectedFeedback", { id: feedbackId })}</p>
+                    <Link href="/dashboard/feedback" className="rounded-sm text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">{t("showAllFeedback")}</Link>
+                </div>
+            ) : <FeedbackFilterBar
                 filters={filters}
                 onFiltersChange={handleFiltersChange}
                 onClearFilters={handleClearFilters}
-            />
+            />}
             {isLoading ? (
                 <FeedbackTableSkeleton rowCount={10} />
             ) : (
@@ -239,7 +251,7 @@ export function FeedbackList() {
                     columns={columns}
                     items={data?.feedbacks ?? []}
                     renderCell={renderCell}
-                    bottomContent={
+                    bottomContent={feedbackId ? undefined :
                         <div className="flex w-full justify-center">
                             <CustomPagination
                                 page={page}

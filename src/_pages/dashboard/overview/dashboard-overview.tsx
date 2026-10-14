@@ -2,18 +2,15 @@
 
 import type { ReactNode } from "react";
 import { Card, CardBody, Chip } from "@heroui/react";
-import { format } from "date-fns";
-import { enUS, tr } from "date-fns/locale";
 import {
-  Activity,
   BarChart3,
   FileClock,
   MessageSquareWarning,
-  Search,
   Users,
   WholeWord,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import {
   Area,
   AreaChart,
@@ -29,6 +26,10 @@ import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { Link } from "@/src/i18n/routing";
 import { api } from "@/src/trpc/react";
 import { WordQueryLatencyChart } from "./word-query-latency-chart";
+import { NeedsAttention } from "./needs-attention";
+import { DashboardRangeFilter } from "./dashboard-range-filter";
+import { MetricChange } from "./metric-change";
+import { readDashboardRange } from "@/src/server/api/schemas/dashboard";
 
 type MetricCardProps = {
   label: string;
@@ -46,7 +47,7 @@ function getNumberAxisWidth(values: number[], formatter: Intl.NumberFormat) {
 }
 
 function MetricCard({ label, value, description, icon }: MetricCardProps) {
-  const numberFormatter = new Intl.NumberFormat();
+  const numberFormatter = new Intl.NumberFormat(useLocale());
 
   return (
     <Card isBlurred className="bg-background/40">
@@ -64,16 +65,19 @@ function MetricCard({ label, value, description, icon }: MetricCardProps) {
   );
 }
 
-export function DashboardOverview() {
+export function DashboardOverview({ referenceTime = new Date() }: { referenceTime?: Date }) {
   const locale = useLocale();
   const t = useTranslations("Dashboard.overview");
-  const [data] = api.admin.overview.getDashboardOverview.useSuspenseQuery();
+  const searchParams = useSearchParams();
+  const { selection, error } = readDashboardRange(searchParams, referenceTime);
+  const [data] = api.admin.overview.getDashboardOverview.useSuspenseQuery(selection, { staleTime: 60_000, refetchInterval: 60_000, retry: false });
   const numberFormatter = new Intl.NumberFormat(locale);
-  const dateLocale = locale === "tr" ? tr : enUS;
+  const dates = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone: "UTC" });
+  const timestamps = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" });
 
   const dailySearchData = data.searchAnalytics.dailySearches.map((item) => ({
     ...item,
-    label: format(new Date(`${item.date}T00:00:00`), "d MMM", { locale: dateLocale }),
+    label: dates.format(new Date(`${item.date}T00:00:00Z`)),
   }));
 
   const topSearchData = data.searchAnalytics.topSearchedWords.map((item) => ({
@@ -107,18 +111,6 @@ export function DashboardOverview() {
       icon: <Users className="h-4 w-4" />,
     },
     {
-      label: t("metrics.searchesToday"),
-      value: data.metrics.searchesToday,
-      description: t("metrics.searchesTodayDescription"),
-      icon: <Search className="h-4 w-4" />,
-    },
-    {
-      label: t("metrics.searchesLast7Days"),
-      value: data.metrics.searchesLast7Days,
-      description: t("metrics.searchesLast7DaysDescription"),
-      icon: <Activity className="h-4 w-4" />,
-    },
-    {
       label: t("metrics.pendingRequests"),
       value: data.metrics.pendingRequests,
       description: t("metrics.pendingRequestsDescription"),
@@ -141,16 +133,41 @@ export function DashboardOverview() {
         </div>
         <Chip radius="md" variant="flat" className="w-fit">
           {t("generatedAt", {
-            date: format(data.generatedAt, "PPp", { locale: dateLocale }),
+            date: timestamps.format(data.generatedAt),
           })}
         </Chip>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <DashboardRangeFilter key={searchParams.toString()} selection={selection} window={data.window} generatedAt={data.generatedAt} initialError={error} />
+
+      <section aria-labelledby="dashboard-period-metrics" className="min-w-0 rounded-xl border border-border/60 bg-background/40 p-4">
+        <h2 id="dashboard-period-metrics" className="text-lg font-semibold">{t("period.title")}</h2>
+        <dl className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {([
+            ["searches", data.periodMetrics.searches],
+            ["newUsers", data.periodMetrics.newUsers],
+            ["submittedRequests", data.periodMetrics.submittedRequests],
+            ["resolvedRequests", data.periodMetrics.resolvedRequests],
+          ] as const).map(([key, comparison]) => (
+            <div key={key} data-testid={`period-${key}`}>
+              <dt className="text-sm text-muted-foreground">{t(`period.${key}`)}</dt>
+              <dd className="mt-1 text-2xl font-semibold tabular-nums">{numberFormatter.format(comparison.current ?? 0)}</dd>
+              <MetricChange comparison={comparison} />
+              <p className="mt-1 text-xs text-muted-foreground">{t("comparison.previousValue", { value: numberFormatter.format(comparison.previous ?? 0) })}</p>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-4 text-xs text-muted-foreground">{t("period.coverage")}</p>
+      </section>
+
+      <h2 className="text-lg font-semibold">{t("currentSnapshot")}</h2>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((metric) => (
           <MetricCard key={metric.label} {...metric} />
         ))}
       </div>
+
+      <NeedsAttention />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Card isBlurred className="bg-background/40 xl:col-span-2">
@@ -166,7 +183,7 @@ export function DashboardOverview() {
               config={{ count: { label: t("searchTrend.series"), color: "hsl(var(--primary))" } }}
               className="h-72 w-full"
             >
-              <AreaChart data={dailySearchData} margin={{ left: 4, right: 8, top: 10, bottom: 0 }}>
+              <AreaChart responsive style={{ width: "100%", height: "100%" }} data={dailySearchData} margin={{ left: 4, right: 8, top: 10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="searchTrendFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.45} />
@@ -190,6 +207,7 @@ export function DashboardOverview() {
                   stroke="var(--color-count)"
                   fill="url(#searchTrendFill)"
                   strokeWidth={2}
+                  isAnimationActive={false}
                 />
               </AreaChart>
             </ChartContainer>
@@ -236,7 +254,7 @@ export function DashboardOverview() {
         </Card>
       </div>
 
-      <WordQueryLatencyChart />
+      <WordQueryLatencyChart selection={selection} asOf={data.generatedAt} />
 
       <Card isBlurred className="bg-background/40">
         <CardBody className="space-y-4">
@@ -254,7 +272,7 @@ export function DashboardOverview() {
               config={{ count: { label: t("topSearches.series"), color: "hsl(var(--primary))" } }}
               className="h-80 w-full"
             >
-              <BarChart data={topSearchData} layout="vertical" margin={{ left: 12, right: 16, top: 8, bottom: 24 }}>
+              <BarChart responsive style={{ width: "100%", height: "100%" }} data={topSearchData} layout="vertical" margin={{ left: 12, right: 16, top: 8, bottom: 24 }}>
                 <CartesianGrid horizontal={false} />
                 <XAxis
                   type="number"
@@ -274,7 +292,7 @@ export function DashboardOverview() {
                   tickMargin={8}
                 />
                 <Tooltip content={<ChartTooltipContent valueFormatter={(value) => numberFormatter.format(Number(value))} />} />
-                <Bar dataKey="count" fill="var(--color-count)" radius={[0, 6, 6, 0]} />
+                <Bar dataKey="count" fill="var(--color-count)" radius={[0, 6, 6, 0]} isAnimationActive={false} />
               </BarChart>
             </ChartContainer>
           ) : (

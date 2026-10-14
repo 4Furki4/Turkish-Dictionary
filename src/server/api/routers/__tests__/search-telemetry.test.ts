@@ -23,12 +23,14 @@ jest.mock("superjson", () => ({ __esModule: true, default: {
 jest.mock("@/src/server/dictionary-cache", () => ({ invalidateDictionaryCache: jest.fn() }));
 jest.mock("@/src/server/word-cache", () => ({ invalidateWordCache: jest.fn() }));
 jest.mock("@/src/server/word-query-latency", () => ({ getWordQueryLatency: jest.fn() }));
+jest.mock("@/src/server/dashboard-attention", () => ({ getDashboardAttention: jest.fn() }));
 
 import { wordQueryLatencies } from "@/db/schema/word_query_latencies";
 import { MAX_WORD_QUERY_LATENCY_MS } from "@/src/lib/word-query-latency-schema";
 import { invalidateDictionaryCache } from "@/src/server/dictionary-cache";
 import { invalidateWordCache } from "@/src/server/word-cache";
 import { getWordQueryLatency } from "@/src/server/word-query-latency";
+import { getDashboardAttention } from "@/src/server/dashboard-attention";
 import { Ratelimit } from "@upstash/ratelimit";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { overviewAdminRouter } from "../admin/overview";
@@ -127,6 +129,29 @@ test.each([undefined, "user", "moderator"])("latency metrics require an administ
   expect(getWordQueryLatency).not.toHaveBeenCalled();
 });
 
+test.each([
+  { range: "custom", start: "2026-01-01", end: "2026-12-31" },
+  { range: "custom", start: "2099-01-01", end: "2099-01-02" },
+  { range: "custom", start: "2026-02-30", end: "2026-03-01" },
+])("invalid overview ranges fail before database reads: %p", async input => {
+  await expect(caller("admin").admin.overview.getDashboardOverview(input as never)).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  expect(database.select).not.toHaveBeenCalled();
+});
+
+test.each([undefined, "user", "moderator"])("attention queues require an administrator: %s", async (role) => {
+  await expect(caller(role).admin.overview.getNeedsAttention()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+  expect(getDashboardAttention).not.toHaveBeenCalled();
+  expect(database.select).not.toHaveBeenCalled();
+});
+
+test("the attention query uses the request database and propagates its own failure", async () => {
+  (getDashboardAttention as jest.Mock).mockResolvedValue({ requests: [], feedback: [] });
+  await expect(caller("admin").admin.overview.getNeedsAttention()).resolves.toEqual({ requests: [], feedback: [] });
+  expect(getDashboardAttention).toHaveBeenCalledWith(database);
+  (getDashboardAttention as jest.Mock).mockRejectedValue(new Error("attention unavailable"));
+  await expect(caller("admin").admin.overview.getNeedsAttention()).rejects.toThrow("attention unavailable");
+});
+
 test("the admin latency query propagates its own failure independently of overview", async () => {
   (getWordQueryLatency as jest.Mock).mockRejectedValue(new Error("latency table unavailable"));
   await expect(caller("admin").admin.overview.getWordQueryLatency()).rejects.toThrow("latency table unavailable");
@@ -140,7 +165,8 @@ test("the admin latency query propagates its own failure independently of overvi
   };
   database.select.mockReturnValue({ from: () => query });
   await expect(caller("admin").admin.overview.getDashboardOverview()).resolves.toMatchObject({
-    metrics: { totalWords: 0, searchesToday: 0 },
+    metrics: { totalWords: 0 },
+    periodMetrics: { searches: { current: 0 } },
     searchAnalytics: { topSearchedWords: [] },
   });
   expect(getWordQueryLatency).toHaveBeenCalledTimes(1);
