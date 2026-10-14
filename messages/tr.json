@@ -653,6 +653,7 @@
     "Cancel": "İptal"
   },
   "Dashboard": {
+    "previewToggle": "Genel bakış önizlemesini aç/kapat",
     "UserList": {
       "usersPerPage": "Sayfa başına kullanıcı",
       "tableLabel": "Kullanıcılar"

@@ -658,6 +658,7 @@
     "Cancel": "Cancel"
   },
   "Dashboard": {
+    "previewToggle": "Toggle overview preview",
     "UserList": {
       "usersPerPage": "Users per page",
       "tableLabel": "Users"
