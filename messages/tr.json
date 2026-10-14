@@ -1,4 +1,14 @@
 {
+  "PwaUpdate": {
+    "title": "Yeni bir sürüm hazır",
+    "description": "Son iyileştirmeler için güncelleyin. Bu sayfa yeniden yüklenecek; önce tamamlanmamış çalışmalarınızı kaydedin.",
+    "update": "Şimdi güncelle",
+    "later": "Daha sonra",
+    "updating": "Güncelleniyor…",
+    "offline": "Güncellemek için internete bağlanın.",
+    "error": "Güncelleme tamamlanamadı. Lütfen tekrar deneyin.",
+    "retry": "Tekrar dene"
+  },
   "Navigation": {
     "loading": "Yükleniyor…"
   },

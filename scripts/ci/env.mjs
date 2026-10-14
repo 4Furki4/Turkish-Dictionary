@@ -21,6 +21,7 @@ export function ciEnvironment() {
   return {
     ...environment,
     NODE_ENV: "production",
+    TZ: "UTC",
     NEXT_TELEMETRY_DISABLED: "1",
     AUTH_SECRET: "ci-only-auth-secret-at-least-thirty-two-characters",
     AUTH_DISCORD_ID: "ci-discord-id",

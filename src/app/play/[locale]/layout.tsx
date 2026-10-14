@@ -1,5 +1,6 @@
 import "@/app/globals.css";
 import { PlayShell } from "@/src/components/play/play-shell";
+import PWAServiceWorker from "@/src/components/pwa-service-worker";
 import { auth } from "@/src/lib/auth";
 import { TRPCReactProvider } from "@/src/trpc/react";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
@@ -49,6 +50,7 @@ export default async function PlayRootLayout({
             <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} font-sans antialiased`}>
                 <TRPCReactProvider>
                     <NextIntlClientProvider messages={messages}>
+                        <PWAServiceWorker />
                         <PlayShell locale={locale} session={session}>
                             {children}
                         </PlayShell>

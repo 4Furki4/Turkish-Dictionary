@@ -5,6 +5,9 @@ import { ciEnvironment } from "../scripts/ci/env.mjs";
 import trMessages from "../messages/tr.json";
 import enMessages from "../messages/en.json";
 
+// Exercise hydration against a UTC server from a Turkish browser.
+test.use({ locale: "tr-TR", timezoneId: "Europe/Istanbul" });
+
 for (const locale of ["tr", "en"] as const) {
   test(`${locale}: submitted search is measured and admin latency chart is usable`, async ({ page }, testInfo) => {
     // Only the fixed disposable CI database is used by this suite.
@@ -69,6 +72,14 @@ for (const locale of ["tr", "en"] as const) {
         await database`INSERT INTO word_query_latencies (event_id, duration_ms, source, received_at)
           VALUES (${eventId}, ${120 + daysAgo * 16 + (daysAgo % 3) * 95}, 'online', ${date})`;
       }
+      const dashboardErrors: string[] = [];
+      const chartWarnings: string[] = [];
+      page.on("pageerror", error => dashboardErrors.push(error.message));
+      page.on("console", message => {
+        if (/width\(.*height\(.*chart should be greater than 0/.test(message.text())) {
+          chartWarnings.push(message.text());
+        }
+      });
       await page.goto(locale === "tr" ? "/tr/panel" : "/en/dashboard");
       const chart = page.getByRole("heading", { name: copy.title, exact: true }).locator("../../..");
       await expect(page.getByRole("img", { name: copy.chartLabel, exact: true })).toBeVisible();
@@ -83,6 +94,24 @@ for (const locale of ["tr", "en"] as const) {
       await page.screenshot({ path: testInfo.outputPath("dashboard.png"), fullPage: true });
       await chart.screenshot({ path: testInfo.outputPath("latency-chart.png") });
       await expect(chart).toBeVisible();
+      // Native responsive charts must fill their surfaces and shrink on resize.
+      const charts = page.locator("[data-chart]");
+      const chartsFit = () => charts.evaluateAll(elements => elements.length >= 2 && elements.every(element => {
+        const surface = element.querySelector("svg.recharts-surface");
+        if (!surface) return false;
+        const box = element.getBoundingClientRect();
+        const svg = surface.getBoundingClientRect();
+        return svg.width > 0 && svg.height > 0 && Math.abs(box.width - svg.width) <= 1 && Math.abs(box.height - svg.height) <= 1;
+      }));
+      await expect.poll(chartsFit).toBe(true);
+      const originalViewport = page.viewportSize()!;
+      await page.setViewportSize({ width: 360, height: originalViewport.height });
+      await expect.poll(chartsFit).toBe(true);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.setViewportSize(originalViewport);
+      await expect.poll(chartsFit).toBe(true);
+      expect(dashboardErrors).toEqual([]);
+      expect(chartWarnings).toEqual([]);
       if (testInfo.project.name === "desktop") {
         const navbarInput = page.locator('form input[name="word"]');
         const navbarReport = page.waitForResponse(response => response.url().includes("searchTelemetry.recordWordQueryLatency") && response.request().method() === "POST");

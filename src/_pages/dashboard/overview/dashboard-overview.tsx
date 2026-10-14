@@ -2,8 +2,6 @@
 
 import type { ReactNode } from "react";
 import { Card, CardBody, Chip } from "@heroui/react";
-import { format } from "date-fns";
-import { enUS, tr } from "date-fns/locale";
 import {
   Activity,
   BarChart3,
@@ -46,7 +44,8 @@ function getNumberAxisWidth(values: number[], formatter: Intl.NumberFormat) {
 }
 
 function MetricCard({ label, value, description, icon }: MetricCardProps) {
-  const numberFormatter = new Intl.NumberFormat();
+  const locale = useLocale();
+  const numberFormatter = new Intl.NumberFormat(locale);
 
   return (
     <Card isBlurred className="bg-background/40">
@@ -69,11 +68,12 @@ export function DashboardOverview() {
   const t = useTranslations("Dashboard.overview");
   const [data] = api.admin.overview.getDashboardOverview.useSuspenseQuery();
   const numberFormatter = new Intl.NumberFormat(locale);
-  const dateLocale = locale === "tr" ? tr : enUS;
+  const dates = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone: "UTC" });
+  const timestamps = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" });
 
   const dailySearchData = data.searchAnalytics.dailySearches.map((item) => ({
     ...item,
-    label: format(new Date(`${item.date}T00:00:00`), "d MMM", { locale: dateLocale }),
+    label: dates.format(new Date(`${item.date}T00:00:00Z`)),
   }));
 
   const topSearchData = data.searchAnalytics.topSearchedWords.map((item) => ({
@@ -141,7 +141,7 @@ export function DashboardOverview() {
         </div>
         <Chip radius="md" variant="flat" className="w-fit">
           {t("generatedAt", {
-            date: format(data.generatedAt, "PPp", { locale: dateLocale }),
+            date: `${timestamps.format(data.generatedAt)} UTC`,
           })}
         </Chip>
       </div>
@@ -166,7 +166,7 @@ export function DashboardOverview() {
               config={{ count: { label: t("searchTrend.series"), color: "hsl(var(--primary))" } }}
               className="h-72 w-full"
             >
-              <AreaChart data={dailySearchData} margin={{ left: 4, right: 8, top: 10, bottom: 0 }}>
+              <AreaChart responsive style={{ width: "100%", height: "100%", minWidth: 0 }} data={dailySearchData} margin={{ left: 4, right: 8, top: 10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="searchTrendFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.45} />
@@ -254,7 +254,7 @@ export function DashboardOverview() {
               config={{ count: { label: t("topSearches.series"), color: "hsl(var(--primary))" } }}
               className="h-80 w-full"
             >
-              <BarChart data={topSearchData} layout="vertical" margin={{ left: 12, right: 16, top: 8, bottom: 24 }}>
+              <BarChart responsive style={{ width: "100%", height: "100%", minWidth: 0 }} data={topSearchData} layout="vertical" margin={{ left: 12, right: 16, top: 8, bottom: 24 }}>
                 <CartesianGrid horizontal={false} />
                 <XAxis
                   type="number"

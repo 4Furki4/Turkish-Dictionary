@@ -17,6 +17,7 @@ import NavbarAndSidebar from "@/src/components/customs/navbar-and-sidebar";
 import { BackgroundGradient } from "@/src/components/customs/background-gradient";
 import { PreferencesInitializer } from "@/src/components/customs/preferences-initializer";
 import NavigationProgressBar from "@/src/components/customs/navigation-progress-bar";
+import PageTransition from "@/src/components/customs/page-transition";
 // import { SessionProvider } from "next-auth/react"; // Removed
 import ProfileGuard from "@/src/components/customs/profile-guard";
 import { getBaseUrl, getCanonicalPathname } from "@/src/lib/seo-utils";
@@ -229,7 +230,7 @@ export default async function RootLayout({
                   <main className="relative w-full flex-grow flex min-h-[calc(100vh-var(--navbar-height))] pt-[env(safe-area-inset-top)] md:pt-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
                     {/* ✨ Moved BackgroundGradient here */}
                     <BackgroundGradient />
-                    {children}
+                    <PageTransition>{children}</PageTransition>
                   </main>
                   <Footer session={session} />
                 </div>
