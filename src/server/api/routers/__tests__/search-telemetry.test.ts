@@ -4,6 +4,7 @@ jest.mock("@/src/lib/auth", () => ({ auth: { api: { getSession: jest.fn() } } })
 jest.mock("@upstash/redis", () => ({ Redis: { fromEnv: () => ({}) } }));
 const mockLimit = jest.fn();
 const mockTelemetryLimit = jest.fn();
+const mockOutcomeLimit = jest.fn();
 jest.mock("@upstash/ratelimit", () => ({ Ratelimit: class MockRatelimit {
   static configurations: Array<{ prefix: string; limiter: { limit: number; duration: string } }> = [];
   static slidingWindow = jest.fn((limit: number, duration: string) => ({ limit, duration }));
@@ -13,7 +14,7 @@ jest.mock("@upstash/ratelimit", () => ({ Ratelimit: class MockRatelimit {
     this.prefix = options.prefix;
   }
   limit(identifier: string) {
-    return (this.prefix === "@upstash/search-telemetry" ? mockTelemetryLimit : mockLimit)(identifier);
+    return (this.prefix === "@upstash/search-telemetry" ? mockTelemetryLimit : this.prefix === "@upstash/search-outcomes" ? mockOutcomeLimit : mockLimit)(identifier);
   }
 } }));
 jest.mock("superjson", () => ({ __esModule: true, default: {
@@ -24,6 +25,7 @@ jest.mock("@/src/server/dictionary-cache", () => ({ invalidateDictionaryCache: j
 jest.mock("@/src/server/word-cache", () => ({ invalidateWordCache: jest.fn() }));
 jest.mock("@/src/server/word-query-latency", () => ({ getWordQueryLatency: jest.fn() }));
 jest.mock("@/src/server/dashboard-attention", () => ({ getDashboardAttention: jest.fn() }));
+jest.mock("@/src/server/search-outcomes", () => ({ recordSearchOutcome: jest.fn() }));
 
 import { wordQueryLatencies } from "@/db/schema/word_query_latencies";
 import { MAX_WORD_QUERY_LATENCY_MS } from "@/src/lib/word-query-latency-schema";
@@ -31,6 +33,7 @@ import { invalidateDictionaryCache } from "@/src/server/dictionary-cache";
 import { invalidateWordCache } from "@/src/server/word-cache";
 import { getWordQueryLatency } from "@/src/server/word-query-latency";
 import { getDashboardAttention } from "@/src/server/dashboard-attention";
+import { recordSearchOutcome } from "@/src/server/search-outcomes";
 import { Ratelimit } from "@upstash/ratelimit";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { overviewAdminRouter } from "../admin/overview";
@@ -56,6 +59,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   mockLimit.mockResolvedValue({ success: true });
   mockTelemetryLimit.mockResolvedValue({ success: true });
+  mockOutcomeLimit.mockResolvedValue({ success: true });
   conflict.mockResolvedValue([]);
   log = jest.spyOn(console, "log").mockImplementation(() => {});
 });
@@ -102,6 +106,7 @@ test("telemetry has its own 30-per-minute bucket alongside the existing dictiona
   expect(configurations).toEqual(expect.arrayContaining([
     expect.objectContaining({ prefix: "@upstash/ratelimit", limiter: { limit: 120, duration: "10 s" } }),
     expect.objectContaining({ prefix: "@upstash/search-telemetry", limiter: { limit: 30, duration: "1 m" } }),
+    expect.objectContaining({ prefix: "@upstash/search-outcomes", limiter: { limit: 30, duration: "1 m" } }),
   ]));
 });
 
@@ -170,4 +175,49 @@ test("the admin latency query propagates its own failure independently of overvi
     searchAnalytics: { topSearchedWords: [] },
   });
   expect(getWordQueryLatency).toHaveBeenCalledTimes(1);
+});
+
+const outcomeEvent = { eventId: event.eventId, query: " KİTAP ", locale: "tr" as const,
+  entryPoint: "search" as const, source: "online" as const, outcome: "resolved" as const, resultCount: 1 };
+
+test("anonymous outcome ingestion normalizes terms and uses only the telemetry quota", async () => {
+  (recordSearchOutcome as jest.Mock).mockResolvedValue({ accepted: true });
+  await expect(caller().searchTelemetry.recordSearchOutcome(outcomeEvent)).resolves.toEqual({ accepted: true });
+  expect(recordSearchOutcome).toHaveBeenCalledWith(database, { ...outcomeEvent, query: "kitap" });
+  expect(mockOutcomeLimit).toHaveBeenCalledWith("203.0.113.7");
+  expect(mockTelemetryLimit).not.toHaveBeenCalled();
+  expect(mockLimit).not.toHaveBeenCalled();
+  expect(invalidateDictionaryCache).not.toHaveBeenCalled();
+});
+
+test.each([
+  { query: "test@example.com" }, { query: "https://example.com" }, { query: "a".repeat(101) },
+  { query: "123456789" }, { query: "kitap\nkalem" }, { resultCount: -1 },
+  { outcome: "no_result", resultCount: 1 }, { outcome: "resolved", resultCount: 0 },
+  { userId: "person" }, { receivedAt: new Date() }, { locale: "de" }, { eventId: "invalid" },
+])("invalid outcome reports fail before storage: %p", async invalid => {
+  await expect(caller().searchTelemetry.recordSearchOutcome({ ...outcomeEvent, ...invalid } as never))
+    .rejects.toMatchObject({ code: "BAD_REQUEST" });
+  expect(recordSearchOutcome).not.toHaveBeenCalled();
+});
+
+test("known crawler outcome reports are ignored and never bypass the telemetry limiter", async () => {
+  await expect(caller(undefined, "Googlebot").searchTelemetry.recordSearchOutcome(outcomeEvent)).resolves.toEqual({ accepted: false });
+  expect(recordSearchOutcome).not.toHaveBeenCalled();
+  expect(mockOutcomeLimit).toHaveBeenCalled();
+});
+
+test("outcome quota exhaustion prevents writes without reducing dictionary availability", async () => {
+  mockOutcomeLimit.mockResolvedValue({ success: false, reset: Date.now() + 60_000 });
+  await expect(caller().searchTelemetry.recordSearchOutcome(outcomeEvent)).rejects.toMatchObject({ code: "TOO_MANY_REQUESTS" });
+  expect(recordSearchOutcome).not.toHaveBeenCalled();
+  await expect(caller().dictionaryRead()).resolves.toBe("dictionary result");
+  await expect(caller().searchTelemetry.recordWordQueryLatency(event)).resolves.toEqual({ accepted: true });
+});
+
+test("latency quota exhaustion cannot prevent outcome collection", async () => {
+  mockTelemetryLimit.mockResolvedValue({ success: false, reset: Date.now() + 60_000 });
+  (recordSearchOutcome as jest.Mock).mockResolvedValue({ accepted: true });
+  await expect(caller().searchTelemetry.recordSearchOutcome(outcomeEvent)).resolves.toEqual({ accepted: true });
+  expect(mockTelemetryLimit).not.toHaveBeenCalled();
 });

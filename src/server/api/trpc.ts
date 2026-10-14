@@ -133,7 +133,7 @@ const BOT_USER_AGENTS = [
 /**
  * Check if the user-agent belongs to a known search engine bot
  */
-function isSearchBot(userAgent: string | null): boolean {
+export function isSearchBot(userAgent: string | null): boolean {
   if (!userAgent) return false;
   const lowerUA = userAgent.toLowerCase();
   return BOT_USER_AGENTS.some(bot => lowerUA.includes(bot));
@@ -153,6 +153,15 @@ const telemetryRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(30, "1 m"),
   analytics: false,
   prefix: "@upstash/search-telemetry",
+});
+
+// A resolved search emits both reports. Keep outcome collection from consuming
+// the existing latency-sample budget or biasing outcomes toward single reports.
+const outcomeRatelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(30, "1 m"),
+  analytics: false,
+  prefix: "@upstash/search-outcomes",
 });
 
 function isUpstashQuotaExceededError(error: unknown): boolean {
@@ -230,6 +239,7 @@ function createRateLimitMiddleware(limiter: Ratelimit, allowSearchBots: boolean)
 
 const rateLimitMiddleware = createRateLimitMiddleware(ratelimit, true);
 const telemetryRateLimitMiddleware = createRateLimitMiddleware(telemetryRatelimit, false);
+const outcomeRateLimitMiddleware = createRateLimitMiddleware(outcomeRatelimit, false);
 
 /**
  * Create a server-side caller.
@@ -291,6 +301,7 @@ export const publicProcedure = t.procedure
 
 /** Anonymous measurement ingestion has its own quota and no SEO bot exemption. */
 export const telemetryProcedure = t.procedure.use(telemetryRateLimitMiddleware);
+export const outcomeTelemetryProcedure = t.procedure.use(outcomeRateLimitMiddleware);
 
 /**
  * Protected (authenticated) procedure

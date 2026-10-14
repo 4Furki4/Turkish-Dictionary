@@ -4,12 +4,14 @@ import postgres from "postgres";
 import { ciEnvironment } from "../scripts/ci/env.mjs";
 import trMessages from "../messages/tr.json";
 import enMessages from "../messages/en.json";
+import { cleanupSearchOutcomeEvents, observeSearchOutcomeEvents } from "./helpers/search-outcomes";
 
 for (const locale of ["tr", "en"] as const) {
   test(`${locale}: submitted search is measured and admin latency chart is usable`, async ({ page }, testInfo) => {
     // Only the fixed disposable CI database is used by this suite.
     const database = postgres(ciEnvironment().DATABASE_URL, { max: 1 });
     const sampleIds: string[] = [];
+    const outcomeIds = observeSearchOutcomeEvents(page);
     let userId: string | undefined;
     await page.route(/^https:\/\//, route => route.abort());
     const messages = locale === "tr" ? trMessages : enMessages;
@@ -95,6 +97,7 @@ for (const locale of ["tr", "en"] as const) {
         sampleIds.push((body["0"]?.json ?? body.json).eventId);
       }
     } finally {
+      await cleanupSearchOutcomeEvents(database, outcomeIds);
       if (sampleIds.length) await database`DELETE FROM word_query_latencies WHERE event_id IN ${database(sampleIds)}`;
       if (userId) await database`DELETE FROM users WHERE id = ${userId}`;
       await database.end({ timeout: 5 });
