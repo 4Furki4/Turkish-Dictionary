@@ -20,6 +20,7 @@ import { getOfflineWordSearchQueryKey, toOfflineWordSearchResult } from "@/src/h
 import { getPlainSearchAction, getSearchQueryHref, getWordSearchHref } from "@/src/lib/search-route";
 import type { RouterOutputs } from "@/src/trpc/shared";
 import { beginWordQueryLatency } from "@/src/lib/word-query-latency";
+import { beginSearchOutcome } from "@/src/lib/search-outcome";
 import {
     AUTOCOMPLETE_SYNC_STATUS_EVENT,
     type AutocompleteSyncStatusDetail,
@@ -238,6 +239,7 @@ export default function SearchContainer({
         }
 
         const navigationVersion = ++latestWordNavigation.current;
+        beginSearchOutcome(input, { locale, entryPoint: "search", waitForDocument: !isOnline || input.includes("_") });
         beginWordQueryLatency(input, { waitForDocument: !isOnline });
         setWordInput("");
         setInputError("");

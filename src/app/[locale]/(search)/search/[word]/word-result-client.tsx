@@ -10,6 +10,7 @@ import OfflineSearchStateCard from "@/src/components/customs/search/offline-sear
 import { getRateLimitRetryAt, isRateLimitError } from "@/src/lib/rate-limit-error";
 import { RateLimitRetry } from "@/src/components/customs/rate-limit-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSearchOutcomeResult } from "@/src/hooks/use-search-outcome";
 
 type WordResultClientProps = {
     session: Session | null;
@@ -32,7 +33,10 @@ export default function WordResultClient({ session, wordName }: WordResultClient
         offlineStatus,
         offlineError,
         error,
+        searchOutcome,
+        searchOutcomeSource,
     } = useWordSearch(wordName);
+    useSearchOutcomeResult({ word: wordName, outcome: searchOutcome, source: searchOutcomeSource });
 
     // The loading skeleton will only be shown on subsequent client-side navigation.
     if (isLoading) {

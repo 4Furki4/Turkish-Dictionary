@@ -5,13 +5,15 @@ import { useLocale, useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { api } from "@/src/trpc/react";
+import type { DashboardRange } from "@/src/server/api/schemas/dashboard";
+import { MetricChange } from "./metric-change";
 
-export function WordQueryLatencyChart() {
+export function WordQueryLatencyChart({ selection, asOf }: { selection?: DashboardRange; asOf?: Date }) {
   const locale = useLocale();
   const t = useTranslations("Dashboard.overview.queryLatency");
-  const query = api.admin.overview.getWordQueryLatency.useQuery(undefined, {
+  const query = api.admin.overview.getWordQueryLatency.useQuery(selection || asOf ? { selection, asOf } : undefined, {
     staleTime: 60_000,
-    refetchInterval: 60_000,
+    refetchInterval: asOf ? false : 60_000,
     retry: false,
   });
   const numbers = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
@@ -39,6 +41,22 @@ export function WordQueryLatencyChart() {
             <Button size="sm" variant="flat" onPress={() => { void query.refetch(); }}>{t("retry")}</Button>
           </div>
         ) : null}
+        {summary ? <>
+            <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+              {[
+                { label: t("average"), value: duration(summary.averageMs), comparison: query.data?.comparison.averageMs },
+                { label: t("p95"), value: duration(summary.p95Ms), comparison: query.data?.comparison.p95Ms },
+                { label: t("samples"), value: numbers.format(summary.sampleCount) },
+              ].map(item => (
+                <div key={item.label}>
+                  <dt className="text-muted-foreground">{item.label}</dt>
+                  <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{item.value}</dd>
+                  {"comparison" in item && item.comparison ? <MetricChange comparison={item.comparison} duration /> : null}
+                </div>
+              ))}
+            </dl>
+            <p className="text-xs text-muted-foreground">{t("previousSamples", { count: query.data?.previous.sampleCount ?? 0 })}</p>
+        </> : null}
         {!query.data && query.isPending ? (
           <div role="status" className="flex min-h-60 items-center justify-center text-sm text-muted-foreground">{t("loading")}</div>
         ) : !query.data && query.isError ? (
@@ -50,18 +68,6 @@ export function WordQueryLatencyChart() {
           <div className="flex min-h-60 items-center justify-center rounded-md border border-dashed border-border/80 p-6 text-center text-sm text-muted-foreground">{t("empty")}</div>
         ) : (
           <>
-            <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
-              {[
-                { label: t("average"), value: duration(summary.averageMs) },
-                { label: t("p95"), value: duration(summary.p95Ms) },
-                { label: t("samples"), value: numbers.format(summary.sampleCount) },
-              ].map(item => (
-                <div key={item.label}>
-                  <dt className="text-muted-foreground">{item.label}</dt>
-                  <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{item.value}</dd>
-                </div>
-              ))}
-            </dl>
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground" aria-hidden="true">
               <span className="inline-flex items-center gap-2"><span className="w-5 border-t-2 border-primary" />{t("average")}</span>
               <span className="inline-flex items-center gap-2"><span className="w-5 border-t-2 border-dashed border-foreground" />{t("p95")}</span>

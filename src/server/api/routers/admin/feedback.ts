@@ -9,6 +9,7 @@ import { feedbackVotes } from "@/db/schema/feedback_votes";
 export const feedbackAdminRouter = createTRPCRouter({
     getAll: protectedProcedure
         .input(z.object({
+            feedbackId: z.number().int().positive().max(2147483647).optional(),
             page: z.number().min(1).default(1),
             limit: z.number().min(1).max(100).default(20),
             status: z.array(z.enum(feedbackStatusEnum.enumValues)).optional(),
@@ -31,6 +32,7 @@ export const feedbackAdminRouter = createTRPCRouter({
             const offset = (page - 1) * limit;
 
             const whereConditions = and(
+                input.feedbackId !== undefined ? eq(feedbacks.id, input.feedbackId) : undefined,
                 // Apply status filters
                 status && status.length > 0 
                     ? or(...status.map(s => eq(feedbacks.status, s)))
