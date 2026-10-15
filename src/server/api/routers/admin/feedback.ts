@@ -1,5 +1,4 @@
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/src/server/api/trpc";
-import { db } from "@/db";
 import { feedbacks, feedbackStatusEnum, feedbackTypeEnum } from "@/db/schema/feedbacks";
 import { users } from "@/db/schema/users";
 import { and, eq, ilike, or, sql, desc, asc, notInArray, gte, lte } from "drizzle-orm";
@@ -60,7 +59,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 ? (sortOrder === "desc" ? desc(sql<number>`count(${feedbackVotes.id})`) : asc(sql<number>`count(${feedbackVotes.id})`))
                 : (sortOrder === "desc" ? desc(feedbacks.createdAt) : asc(feedbacks.createdAt));
 
-            const feedbackEntries = await db
+            const feedbackEntries = await ctx.db
                 .select({
                     id: feedbacks.id,
                     title: feedbacks.title,
@@ -84,7 +83,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 .limit(limit)
                 .offset(offset);
 
-            const totalFeedbacksResult = await db.select({
+            const totalFeedbacksResult = await ctx.db.select({
                 count: sql<number>`count(*)`.mapWith(Number),
             }).from(feedbacks).where(whereConditions);
 
@@ -106,7 +105,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 throw new Error("Unauthorized");
             }
 
-            await db.update(feedbacks)
+            await ctx.db.update(feedbacks)
                 .set({ status: input.status, updatedAt: new Date() })
                 .where(eq(feedbacks.id, input.id));
 
@@ -121,7 +120,7 @@ export const feedbackAdminRouter = createTRPCRouter({
             if (ctx.session.user.role !== 'admin') {
                 throw new Error("Unauthorized");
             }
-            await db
+            await ctx.db
                 .update(feedbacks)
                 .set({ type: input.type, updatedAt: new Date() })
                 .where(eq(feedbacks.id, input.id));
@@ -134,7 +133,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 throw new Error("Unauthorized");
             }
 
-            await db.delete(feedbacks).where(eq(feedbacks.id, input.id));
+            await ctx.db.delete(feedbacks).where(eq(feedbacks.id, input.id));
 
             return { success: true };
         }),
