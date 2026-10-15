@@ -1,5 +1,6 @@
 import type { db } from "@/db";
 import { searchOutcomes, searchOutcomeDailyTotals } from "@/db/schema/search_outcomes";
+import { searchGapReviews } from "@/db/schema/search_gap_reviews";
 import { lt, sql } from "drizzle-orm";
 import { SEARCH_OUTCOME_RETENTION_DAYS, type SearchOutcomeInput } from "@/src/lib/search-outcome-schema";
 
@@ -30,6 +31,7 @@ export async function pruneSearchOutcomes(database: Pick<typeof db, "transaction
     await tx.execute(sql`SET LOCAL statement_timeout = '30s'`);
     await tx.execute(sql`SET LOCAL lock_timeout = '1s'`);
     const deleted = await tx.delete(searchOutcomes).where(lt(searchOutcomes.receivedAt, cutoff));
-    return { deleted: deleted.count };
+    const reviewsDeleted = await tx.delete(searchGapReviews).where(lt(searchGapReviews.updatedAt, cutoff));
+    return { deleted: deleted.count, reviewsDeleted: reviewsDeleted.count };
   });
 }

@@ -26,6 +26,8 @@ Known search-engine user agents are ignored by outcome ingestion. Every report u
 
 The authenticated existing `/api/update-view-counts` daily cron now prunes events older than 90 elapsed days **before** view aggregation, including runs with no view logs. It retains events exactly at the cutoff until the next pass. A successful daily cadence therefore gives a maximum retention of approximately 91 days; cron failures extend it and must be resolved through the existing monitor. Daily totals remain after raw event deletion. The cron response includes its deleted count; a retention failure fails the job visibly. Query-level gap analysis is limited to the retained event window, while older totals cannot reconstruct query text. Duplicate IDs can be accepted again after their raw row expires; there is no indefinite identifier tombstone.
 
+Stage 4 adds query-bearing current triage decisions in `search_gap_reviews`. The same job removes decisions whose update is older than the cutoff and reports `reviewsDeleted`; decisions already become inactive at read time after 90 days. Apply migration `0053_search_gap_reviews` before deploying the updated job. See [the search-gap contract](dashboard-search-gaps.md) for the stored fields, purpose, access and deletion behavior.
+
 ## Rollout and validation
 
 Generate `0052_search_outcomes` from `db/schema/search_outcomes.ts` and apply it before deploying the new ingestion/cron code. Follow the database runbook for environment migrations, including ledger verification and the production backup requirement. The existing scheduled view-count job supplies retention; confirm its authenticated run and monitor after deployment. This change does not install or modify an environment's cron schedule.

@@ -86,7 +86,7 @@ export default function MisspellingsManagement({
     return (
         <>
             <ModalHeader className="flex flex-col gap-1">
-                {initialData ? t("modalTitleEdit") : t("modalTitleAdd")}
+                {initialData?.id ? t("modalTitleEdit") : t("modalTitleAdd")}
             </ModalHeader>
             <ModalBody>
                 <div className="flex flex-col gap-4">

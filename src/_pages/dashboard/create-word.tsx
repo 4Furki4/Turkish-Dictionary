@@ -33,8 +33,9 @@ const meaningDefaultValues: MeaningInputs = {
     sentence: undefined,
   },
 };
-export default function CreateWord({ locale }: {
+export default function CreateWord({ locale, initialName = "" }: {
   locale: string;
+  initialName?: string;
 }) {
   const t = useTranslations();
   const {
@@ -49,7 +50,7 @@ export default function CreateWord({ locale }: {
     getValues,
   } = useForm<WordForm>({
     defaultValues: {
-      name: '',
+      name: initialName,
       language: '',
       phonetic: '',
       root: '',

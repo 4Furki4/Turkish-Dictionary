@@ -22,11 +22,13 @@ export const dashboardRangeSchema = z.discriminatedUnion("range", [
 
 export type DashboardRange = z.infer<typeof dashboardRangeSchema>;
 
+export const dashboardSnapshotSchema = z.date().min(new Date("1970-01-01T00:00:00Z"), "invalidSnapshot")
+  .refine(value => value.getTime() <= Date.now(), "futureSnapshot");
+
 export const dashboardLatencyInputSchema = z.object({
   selection: dashboardRangeSchema.default(DEFAULT_DASHBOARD_RANGE),
   // Reuse the overview snapshot so the separate latency request has identical bounds.
-  asOf: z.date().min(new Date("1970-01-01T00:00:00Z"), "invalidSnapshot")
-    .refine(value => value.getTime() <= Date.now(), "futureSnapshot").optional(),
+  asOf: dashboardSnapshotSchema.optional(),
 }).strict().optional();
 
 export function readDashboardRange(params: { get(name: string): string | null }, referenceTime: Date) {
