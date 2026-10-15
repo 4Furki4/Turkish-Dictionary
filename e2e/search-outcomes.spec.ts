@@ -44,8 +44,11 @@ for (const locale of ["tr", "en"] as const) {
       const event = reportFrom(resolved);
       expect(event).toMatchObject({ query: "kitap", locale, entryPoint: "search", source: "online", outcome: "resolved", resultCount: 1 });
       expect(Object.keys(event).sort()).toEqual(["entryPoint", "eventId", "locale", "outcome", "query", "resultCount", "source"]);
-      const [stored] = await sql`SELECT query, kind, outcome, result_count FROM search_outcomes WHERE event_id = ${event.eventId}`;
-      expect(stored).toMatchObject({ query: "kitap", kind: "word", outcome: "resolved", result_count: 1 });
+      // Streaming tRPC headers can arrive before the mutation commits.
+      await expect.poll(async () => {
+        const [stored] = await sql`SELECT query, kind, outcome, result_count FROM search_outcomes WHERE event_id = ${event.eventId}`;
+        return stored;
+      }).toEqual({ query: "kitap", kind: "word", outcome: "resolved", result_count: 1 });
 
       const beforeRefresh = ids.size;
       await page.reload();
