@@ -1,6 +1,6 @@
 # Dashboard roadmap
 
-Updated: 2026-10-15. Audience: dictionary administrators. Deliver one independently reviewable stage at a time.
+Updated: 2026-10-16. Audience: dictionary administrators. Deliver one independently reviewable stage at a time.
 
 ## Outcomes
 
@@ -25,8 +25,8 @@ Current `search_logs` require an existing `word_id`. They cannot establish the r
 | 2 | Shared date ranges and previous-period comparisons | Existing analytics | None | Deployed to development |
 | 3 | Search-outcome collection | Defined search attempt/outcome contract | New event storage and retention | Deployed to development |
 | 4 | Search gaps and spelling opportunities | Stage 3, stage 2 filters | Current-decision table; existing read indexes | Deployed to development |
-| 5 | Content quality queue, ordered by demand | Existing content and search logs; stage 2 filters | None | Completed locally on `codex/dashboard-content-quality` |
-| 6 | Administrative history and change inspection | Inventory of administrative mutations | New audit storage | Planned |
+| 5 | Content quality queue, ordered by demand | Existing content and search logs; stage 2 filters | None | Deployed to development |
+| 6 | Administrative history and change inspection | Inventory of administrative mutations | New audit storage | Completed locally on `codex/dashboard-admin-history` |
 
 Stages 1 and 2 provide immediate improvements. Stage 3 must collect data before stage 4 can tell us which gaps matter. Stage 5 can proceed while those events accumulate. Keep these as separate changes, each with its own validation evidence.
 
@@ -200,6 +200,14 @@ Acceptance:
 - Given a non-admin user, when history is requested, access is denied server-side.
 - Given pre-collection changes, when browsing history, the UI clearly states its start date rather than implying full historic coverage.
 
+Implemented contract:
+
+- A registry covers 58 administrative procedures across content, parameters, moderation, feedback, accounts, announcements, scheduling, relationships and badges. A root-router inventory test requires every administrative mutation to have a registered writer or explicit exclusion. The [coverage and data contract](dashboard-admin-history.md) lists retained fields and limits, including the separate search-gap triage policy.
+- Covered writes and their allowlisted before/after event share a database transaction. Existing targets are locked before the change; validation, resolver or audit-storage failure rolls back the transaction. Request decisions cannot be repeated. Word edits preserve other entries' shared attributes and reject meanings belonging to another word.
+- Actor attribution survives account/target deletion. Events expire after 365 days; reads enforce expiry independently of the daily prune. The first-recorded-action marker survives retention and never claims pre-collection coverage. Values, related rows and final diff size are bounded; truncation is visible.
+- The admin-only localized history page has URL-backed actor/entity/action/UTC-date filters, stable ordering, bounded pagination, snapshot cutoffs, independent inline detail inspection and existing request/content links. Loading, initial error, cached refresh error, no recorded history, no matches and unavailable details remain distinct.
+- Migration `0054_admin_audit_history` is generated and validated against the disposable CI database. It must be applied through the migration runbook before this stage is deployed to development.
+
 ## Validation and rollout
 
 - For every stage: focused logic/permission tests, `bun run test`, `bun run build`, and desktop/mobile checks in Turkish and English for the affected UI. Check keyboard operation, loading/error/empty states, and long labels/titles.
@@ -209,6 +217,12 @@ Acceptance:
 - Keep later stages planned until implemented and validated; do not build all six in one change.
 
 ## Progress log
+
+- 2026-10-16: Stage 6 completed locally on `codex/dashboard-admin-history`. The final production build passed through `bun run ci:build`; the full Jest suite passed (103 suites, 645 tests; 1 suite/15 existing tests skipped). TypeScript checks passed. Full ESLint reported zero errors and 127 existing warnings; the final changed-file check was clean.
+- Stage 6 browser validation: all 58 integrated cases passed across Turkish/English and desktop/mobile. After the final server-only Unicode clipping fix, both additional content-integrity cases passed against the rebuilt production app. Coverage includes real administrator sessions, permission rejection, atomic writes and rollback, concurrent target updates, deletion attribution, retention boundaries, URL history/pagination, request links, shared-attribute ownership and long emoji values. Sixteen final UI captures were inspected; the single detector pass returned no findings and a fresh reviewer returned `ship`. Generic fresh agents substituted for the named Impeccable review/documentation roles; the documentation pass confirmed the incumbent system and made no global design changes.
+- Stage 6 database/query validation: migration 0054 was inspected and applied transactionally only to the fixed disposable CI schema, whose legacy migration history is bootstrapped separately; seven constraints and five valid indexes were verified. A rolled-back 100,000-event fixture used three bounded reads and returned ten rows in 12.1 ms; the actor/time index served count/list reads. These local measurements are not production guarantees. Final checks found no audit events, coverage marker or audit content/account fixtures. Eight identified samples left by the existing smoke tests and their matching outcome aggregates were removed by exact event IDs; the ten pre-existing latency samples were verified unchanged. Development migration/deployment of Stage 6 remains pending.
+- 2026-10-15: Stage 5 merged and pushed to `develop` as `5d4bd29`. [CI run 38793560234](https://github.com/4Furki4/Turkce-Sozluk/actions/runs/38793560234) passed all checks and image publication. The running development ARM64 image matches the published `develop-5d4bd29` digest, `sha256:c1a460c116213cd5de21b8d5251a766b4ebe8028840751b6a9fe3f761ba28826`; app/database health returned `ok`. No migration was required.
+- 2026-10-15: Stage 6 started locally. The [coverage inventory and data contract](dashboard-admin-history.md) names instrumented mutations, excluded entry points, transactional failure behavior, bounded field snapshots, deletion attribution and retention. Migration 0054 is generated for local validation; no environment rollout is authorized by this implementation step.
 
 - 2026-10-15: Roadmap written from the current checkout. Stage 1 implementation started.
 - 2026-10-15: Stage 1 completed locally. The overview shows bounded oldest-first queues, full totals, seven-day aging counts, response-snapshot ages, independent loading/retry/refresh-error states, and localized review links. Feedback ID links survive resolution, support Back/reload, and handle deletion as an empty result. Returning to the overview rechecks the queue even within its normal one-minute freshness window.

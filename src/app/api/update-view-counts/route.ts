@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { env } from "@/src/env.mjs";
 import { db } from "@/db";
 import { pruneSearchOutcomes } from "@/src/server/search-outcomes";
+import { pruneAdminAudit } from "@/src/server/admin-audit";
 
 export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
@@ -18,9 +19,10 @@ export async function GET(request: Request) {
     console.log("Authorized cron job request received. Running update...");
     // Run retention even when there are no dictionary view logs to aggregate.
     const retention = await pruneSearchOutcomes(db);
+    const auditRetention = await pruneAdminAudit(db);
     await runUpdateViewCounts();
     console.log("Cron job runUpdateViewCounts completed successfully.");
-    return NextResponse.json({ success: true, searchOutcomeRetention: retention });
+    return NextResponse.json({ success: true, searchOutcomeRetention: retention, adminAuditRetention: auditRetention });
   } catch (error) {
     console.error("Cron job runUpdateViewCounts failed:", error);
     return NextResponse.json({ success: false, error: (error as Error).message }, { status: 500 });

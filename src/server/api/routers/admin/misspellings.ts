@@ -40,10 +40,10 @@ export const misspellingsAdminRouter = createTRPCRouter({
         .input(MisspellingSchema)
         .mutation(async ({ ctx: { db }, input }) => {
             try {
-                await db.insert(misspellings).values({
+                return await db.insert(misspellings).values({
                     correctWordId: input.correctWordId,
                     incorrectSpelling: input.incorrectSpelling,
-                });
+                }).returning();
             } catch (error) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

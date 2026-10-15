@@ -146,6 +146,7 @@ export const adminHandlers = {
                 }
 
                 const request = requestData[0];
+                if (request.status !== "pending") throw new TRPCError({ code: "CONFLICT", message: "Request already resolved" });
 
                 const handler = getHandler(request.entityType, request.action);
                 if (!handler) {
@@ -255,6 +256,10 @@ export const adminHandlers = {
         .mutation(async ({ input, ctx }) => {
             const { requestId, reason } = input;
             const { db, session } = ctx;
+
+            const [request] = await db.select({ status: requests.status }).from(requests).where(eq(requests.id, requestId)).limit(1);
+            if (!request) throw new TRPCError({ code: "NOT_FOUND", message: "Request not found" });
+            if (request.status !== "pending") throw new TRPCError({ code: "CONFLICT", message: "Request already resolved" });
 
             await db.update(requests)
                 .set({

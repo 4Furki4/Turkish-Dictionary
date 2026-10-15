@@ -21,6 +21,8 @@ import { oauthAccessTokens } from "@/db/schema/oauth";
 import { users } from "@/db/schema/users";
 import { RateLimitError } from "./rate-limit-error";
 import { getRateLimitRetryAt } from "@/src/lib/rate-limit-error";
+import { auditAdminMutation } from "@/src/server/admin-audit";
+import { ADMIN_AUDIT_REGISTRY } from "@/src/server/admin-audit-registry";
 
 type AuthSession = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
 
@@ -100,7 +102,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<typeof createTRPCContext>().meta<{ administrative?: boolean }>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
@@ -338,6 +340,17 @@ const forceAdminMiddleware = t.middleware(async ({ ctx: { session }, next }) => 
   });
 })
 export const adminProcedure = t.procedure
+  .meta({ administrative: true })
   .use(dictionaryCacheInvalidation)
   .use(rateLimitMiddleware)
-  .use(forceAdminMiddleware);
+  .use(forceAdminMiddleware)
+  .use(async ({ ctx, path, type, getRawInput, next }) => {
+    if (type !== "mutation" || !ADMIN_AUDIT_REGISTRY[path]) return next();
+    return auditAdminMutation(ctx.db, path, await getRawInput(), ctx.session.user, async tx => {
+      const result = await next({ ctx: { db: tx as unknown as typeof db } });
+      // tRPC returns errors as values from next(); throwing is essential so the
+      // transaction rolls back rather than committing a failed resolver.
+      if (!result.ok) throw result.error;
+      return { result, output: result.data };
+    });
+  });
