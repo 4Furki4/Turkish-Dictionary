@@ -9,6 +9,7 @@ import { wordRelationSuggestions } from "./schema/word_relation_suggestions";
 import { wordQueryLatencies } from "./schema/word_query_latencies";
 import { searchOutcomes, searchOutcomeDailyTotals } from "./schema/search_outcomes";
 import { searchGapReviews } from "./schema/search_gap_reviews";
+import { adminAuditEvents, adminAuditCoverage } from "./schema/admin_audit";
 import { roots, rootsRelations } from "./schema/roots";
 import { savedWords } from "./schema/saved_words";
 import { meanings, meaningsRelations } from "./schema/meanings";
@@ -67,6 +68,8 @@ export const schema = {
   searchOutcomes,
   searchOutcomeDailyTotals,
   searchGapReviews,
+  adminAuditEvents,
+  adminAuditCoverage,
   roots,
   rootsRelations,
   savedWords,

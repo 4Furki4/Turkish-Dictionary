@@ -52,6 +52,10 @@ export const pathnames = {
     en: "/dashboard/content-quality",
     tr: "/panel/icerik-kalitesi",
   },
+  "/dashboard/history": {
+    en: "/dashboard/history",
+    tr: "/panel/islem-gecmisi",
+  },
   "/dashboard/search-gaps": {
     en: "/dashboard/search-gaps",
     tr: "/panel/sonucsuz-aramalar",

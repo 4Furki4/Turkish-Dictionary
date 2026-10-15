@@ -112,7 +112,7 @@ export const feedbackAdminRouter = createTRPCRouter({
 
             return { success: true };
         }),
-    updateType: protectedProcedure
+    updateType: adminProcedure
         .input(z.object({
             id: z.number(),
             type: z.enum(feedbackTypeEnum.enumValues),

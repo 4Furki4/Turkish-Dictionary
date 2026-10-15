@@ -11,13 +11,15 @@ import { getPathname } from "@/src/i18n/routing";
 import { readDashboardRange, type DashboardRange } from "@/src/server/api/schemas/dashboard";
 import type { DashboardWindow } from "@/src/server/dashboard-window";
 
-export function DashboardRangeFilter({ selection, window, generatedAt, initialError, pathname = "/dashboard", showComparison = true }: {
+export function DashboardRangeFilter({ selection, window, generatedAt, initialError, pathname = "/dashboard", showComparison = true, title, embedded = false }: {
   selection: DashboardRange;
   window: DashboardWindow;
   generatedAt: Date;
   initialError: string | null;
-  pathname?: "/dashboard" | "/dashboard/search-gaps" | "/dashboard/content-quality";
+  pathname?: "/dashboard" | "/dashboard/search-gaps" | "/dashboard/content-quality" | "/dashboard/history";
   showComparison?: boolean;
+  title?: string;
+  embedded?: boolean;
 }) {
   const locale = useLocale();
   const t = useTranslations("Dashboard.overview.range");
@@ -35,6 +37,7 @@ export function DashboardRangeFilter({ selection, window, generatedAt, initialEr
     event.preventDefault();
     const params = new URLSearchParams(searchParams.toString());
     if (pathname !== "/dashboard") params.delete("page");
+    if (pathname === "/dashboard/history") params.delete("asOf");
     params.set("range", range);
     if (range === "custom") { params.set("start", start); params.set("end", end); }
     else { params.delete("start"); params.delete("end"); }
@@ -45,8 +48,8 @@ export function DashboardRangeFilter({ selection, window, generatedAt, initialEr
   }
 
   return (
-    <section aria-labelledby="dashboard-range-title" className="min-w-0 rounded-xl border border-border/60 bg-background/40 p-4">
-      <h2 id="dashboard-range-title" className="text-lg font-semibold">{t("title")}</h2>
+    <section aria-labelledby="dashboard-range-title" className={embedded ? "min-w-0" : "min-w-0 rounded-xl border border-border/60 bg-background/40 p-4"}>
+      <h2 id="dashboard-range-title" className="text-lg font-semibold">{title ?? t("title")}</h2>
       <form onSubmit={apply} noValidate className="mt-4 grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 xl:flex">
         <div className="min-w-0 xl:w-56">
           <p id="dashboard-range-label" className="mb-2 text-sm font-medium">{t("period")}</p>
@@ -83,7 +86,7 @@ export function DashboardRangeFilter({ selection, window, generatedAt, initialEr
         data-window-start={window.start.toISOString()} data-window-end={window.end.toISOString()}>
         <p>{t("selected", { start: date.format(window.start), end: date.format(new Date(`${window.endDate}T00:00:00Z`)) })}</p>
         {showComparison ? <p>{t("previous", { start: timestamp.format(window.previousStart), end: timestamp.format(window.previousEnd) })}</p> : null}
-        {window.partial ? <p>{t("partial", { date: timestamp.format(window.end) })}</p> : showComparison ? <p>{t("complete")}</p> : null}
+        {window.partial ? <p>{t(showComparison ? "partial" : "partialOnly", { date: timestamp.format(window.end) })}</p> : showComparison ? <p>{t("complete")}</p> : null}
         <p>{t("limit")}</p>
       </div>
     </section>
