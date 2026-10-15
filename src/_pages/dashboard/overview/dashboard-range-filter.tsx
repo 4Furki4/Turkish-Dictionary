@@ -16,7 +16,7 @@ export function DashboardRangeFilter({ selection, window, generatedAt, initialEr
   window: DashboardWindow;
   generatedAt: Date;
   initialError: string | null;
-  pathname?: "/dashboard" | "/dashboard/search-gaps";
+  pathname?: "/dashboard" | "/dashboard/search-gaps" | "/dashboard/content-quality";
   showComparison?: boolean;
 }) {
   const locale = useLocale();
@@ -34,7 +34,7 @@ export function DashboardRangeFilter({ selection, window, generatedAt, initialEr
   function apply(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const params = new URLSearchParams(searchParams.toString());
-    if (pathname === "/dashboard/search-gaps") params.delete("page");
+    if (pathname !== "/dashboard") params.delete("page");
     params.set("range", range);
     if (range === "custom") { params.set("start", start); params.set("end", end); }
     else { params.delete("start"); params.delete("end"); }

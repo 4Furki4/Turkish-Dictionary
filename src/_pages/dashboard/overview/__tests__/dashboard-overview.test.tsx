@@ -39,6 +39,7 @@ jest.mock("../word-query-latency-chart", () => ({ WordQueryLatencyChart: () => n
 jest.mock("../dashboard-range-filter", () => ({ DashboardRangeFilter: () => null }));
 jest.mock("../needs-attention", () => ({ NeedsAttention: () => null }));
 jest.mock("../../search-gaps/search-gap-preview", () => ({ SearchGapPreview: () => null }));
+jest.mock("../../content-quality/content-quality-preview", () => ({ ContentQualityPreview: () => null }));
 
 it.each([
   ["tr", "123.456", "1.234", "10:00 UTC"],

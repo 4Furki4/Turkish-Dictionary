@@ -668,6 +668,80 @@
     "Cancel": "Cancel"
   },
   "Dashboard": {
+    "contentQuality": {
+      "title": "Content quality",
+      "description": "Find incomplete entries and prioritize the ones readers look up. Quality reflects current content; the selected dates measure recorded demand.",
+      "loading": "Checking current entries…",
+      "empty": "No entries match these quality and demand filters.",
+      "results": "{count} matching entries",
+      "checkedAt": "Content checked at {date} UTC",
+      "preview": {
+        "title": "Content to improve",
+        "viewAll": "View quality queue"
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "retry": "Retry",
+        "manage": "Manage in word list",
+        "entry": "Open entry and contributions"
+      },
+      "filters": {
+        "title": "Filters and dates",
+        "query": "Word contains",
+        "gap": "Content check",
+        "demand": "Recorded demand",
+        "sort": "Order",
+        "pageSize": "Entries per page",
+        "apply": "Apply filters"
+      },
+      "gaps": {
+        "any": "Any required content gap",
+        "meaning": "No meaning",
+        "pronunciation": "No published audio",
+        "examples": "Meanings without examples",
+        "source": "No source attribution",
+        "etymology": "Optional: etymology enrichment"
+      },
+      "demand": {
+        "all": "Include all entries",
+        "searched": "With recorded lookups",
+        "unsearched": "No recorded lookups"
+      },
+      "sort": {
+        "demand_desc": "Most recorded lookups first",
+        "demand_asc": "Fewest recorded lookups first",
+        "name": "Word name"
+      },
+      "summary": {
+        "title": "Current content checks",
+        "distinct": "{count} of {total} entries need required content work.",
+        "overlap": "Categories overlap; the total counts each entry once.",
+        "enrichment": "Optional etymology: {count} entries."
+      },
+      "row": {
+        "identity": "ID {id} · variant {variant}",
+        "searches": "{count} recorded lookups",
+        "missing": "Content opportunities",
+        "examples": "{count, plural, one {# meaning without an example} other {# meanings without examples}}"
+      },
+      "coverage": {
+        "summary": "Counts use the word and demand filters across all content checks. The selected check further limits the result list.",
+        "current": "Content checks reflect the current dictionary. The date range scopes lookup demand, not when entries were created or edited.",
+        "demand": "Demand counts recorded existing-word lookups, including browsing. Zero reports do not prove no reader interest.",
+        "audio": "Audio checks use published URL metadata and current headword associations. Remote file and playback health are not measured."
+      },
+      "errors": {
+        "invalidFilters": "Some URL filters are invalid. Default filters are shown; apply your selection again.",
+        "load": "The content checks could not load. Retry to check the dictionary.",
+        "refresh": "The latest check failed. Previously loaded entries remain visible; retry to update them."
+      },
+      "pagination": {
+        "label": "Quality queue pages",
+        "page": "Page {page} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      }
+    },
     "searchGaps": {
       "title": "Search gaps",
       "description": "Turn reported searches without results into dictionary and spelling work. Historical misses remain visible even when the live dictionary now has a match.",

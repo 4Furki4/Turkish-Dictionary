@@ -31,6 +31,7 @@ type DashboardHref =
   | "/dashboard/user-list"
   | "/dashboard/search-history"
   | "/dashboard/search-gaps"
+  | "/dashboard/content-quality"
   | "/dashboard/badges"
   | "/dashboard/word-relations"
   | "/dashboard/announcements"
@@ -56,7 +57,7 @@ type DashboardLinkGroup = {
 
 const iconClassName = "h-4 w-4";
 
-const getLinkGroups: (locale: string, searchGapsLabel: string) => DashboardLinkGroup[] = (locale, searchGapsLabel) => [
+const getLinkGroups: (locale: string, searchGapsLabel: string, qualityLabel: string) => DashboardLinkGroup[] = (locale, searchGapsLabel, qualityLabel) => [
   {
     key: "content",
     label: locale === "en" ? "Content" : "İçerik",
@@ -70,6 +71,11 @@ const getLinkGroups: (locale: string, searchGapsLabel: string) => DashboardLinkG
       {
         href: "/dashboard/word-list",
         label: locale === "en" ? "Word List" : "Kelimeler",
+        icon: <ListChecks className={iconClassName} />,
+      },
+      {
+        href: "/dashboard/content-quality",
+        label: qualityLabel,
         icon: <ListChecks className={iconClassName} />,
       },
       {
@@ -151,12 +157,13 @@ const getLinkGroups: (locale: string, searchGapsLabel: string) => DashboardLinkG
 ];
 
 
-export default function DashboardLinks({ showSearchGaps = false }: { showSearchGaps?: boolean }) {
+export default function DashboardLinks({ showAdminTools = false }: { showAdminTools?: boolean }) {
   const pathname = usePathname()
   const locale = useLocale()
   const searchGapsLabel = useTranslations("Dashboard.searchGaps")("title");
-  const groups = getLinkGroups(locale, searchGapsLabel).map(group => ({ ...group,
-    links: group.links.filter(link => showSearchGaps || link.href !== "/dashboard/search-gaps"),
+  const qualityLabel = useTranslations("Dashboard.contentQuality")("title");
+  const groups = getLinkGroups(locale, searchGapsLabel, qualityLabel).map(group => ({ ...group,
+    links: group.links.filter(link => showAdminTools || (link.href !== "/dashboard/search-gaps" && link.href !== "/dashboard/content-quality")),
   }));
   const currentLink = groups.flatMap((group) => group.links).find((link) => link.href === pathname);
 
