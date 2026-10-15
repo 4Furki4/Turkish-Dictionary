@@ -43,8 +43,10 @@ for (const locale of ["tr", "en"] as const) {
       expect(Object.keys(sample).sort()).toEqual(["durationMs", "eventId", "source"]);
       expect(sample.durationMs).toBeGreaterThanOrEqual(350);
       sampleIds.push(sample.eventId);
-      const [persisted] = await database`SELECT duration_ms FROM word_query_latencies WHERE event_id = ${sample.eventId}`;
-      expect(persisted.duration_ms).toBe(sample.durationMs);
+      await expect.poll(async () => {
+        const [persisted] = await database`SELECT duration_ms FROM word_query_latencies WHERE event_id = ${sample.eventId}`;
+        return persisted?.duration_ms ?? null;
+      }).toBe(sample.durationMs);
       let repeatReports = 0;
       page.on("request", request => { if (request.url().includes("searchTelemetry.recordWordQueryLatency")) repeatReports++; });
       await page.reload();
