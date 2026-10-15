@@ -20,7 +20,8 @@ English: `/dashboard/content-quality`. Turkish: `/panel/icerik-kalitesi`.
   meanings, so one example cannot hide another incomplete meaning.
 - **No source attribution:** no existing `word_sources` association. Any supported
   source type counts; attribution accuracy is not inferred automatically.
-- **Optional etymology:** no linked root with nonblank text. This is a separate
+- **Optional etymology:** no root owned by the entry (`roots.word_id`) has nonblank
+  text. Multiple roots still count as one word. This is a separate
   enrichment view and count; it does not make an otherwise complete entry a
   member of the default required-work queue.
 

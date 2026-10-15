@@ -42,8 +42,11 @@ test("SQL quality checks distinguish published audio, overlapping gaps, enrichme
         await sql`INSERT INTO examples (meaning_id, sentence) VALUES (${second.id}, E' \t\n')`;
       }
     }
-    const [root] = await sql`INSERT INTO roots (word_id, root) VALUES (${ids[2]}, 'root') RETURNING id`;
-    await sql`UPDATE words SET root_id = ${root.id} WHERE id = ${ids[2]}`;
+    // Editors and the reader associate roots by word_id; root_id stays null.
+    // Multiple owned roots must still count as one word, and blank roots do not
+    // satisfy optional enrichment.
+    await sql`INSERT INTO roots (word_id, root) VALUES (${ids[2]}, 'root'), (${ids[2]}, 'second root'), (${ids[2]}, E' \t\n'), (${ids[3]}, E' \t\n')`;
+    expect((await sql`SELECT root_id FROM words WHERE id = ${ids[2]}`)[0].root_id).toBeNull();
     for (const index of [1, 3, 4, 5]) await published(ids[index]!, prefix + ["a empty", "b partial", "c complete", "d enrich", "e stale", "f blank"][index], index === 4 ? "old headword" : prefix + ["a empty", "b partial", "c complete", "d enrich", "e stale", "f blank"][index]);
     for (const index of [2, 5, 6]) await sql`INSERT INTO pronunciations (word_id, user_id, audio_url) VALUES (${ids[index]}, ${actor}, 'https://example.invalid/reviewed.wav')`;
     await sql`INSERT INTO pronunciations (word_id, user_id, audio_url) VALUES (${ids[5]}, ${actor}, E' \t\n')`;
@@ -54,7 +57,10 @@ test("SQL quality checks distinguish published audio, overlapping gaps, enrichme
     expect(result.items.map(row => row.id)).toEqual([ids[0], ids[1], ids[6], ids[4], ids[5]]);
     expect(result.items.find(row => row.id === ids[1])).toMatchObject({ meaning: false, pronunciation: false, examples: true, withoutExamples: 1 });
     expect(result.items.find(row => row.id === ids[5])).toMatchObject({ meaning: true, examples: false, pronunciation: true });
-    expect((await list({ gap: "etymology" })).items.map(row => row.id)).toContain(ids[3]);
+    const enrichment = await list({ gap: "etymology" });
+    expect(enrichment.total).toBe(6);
+    expect(enrichment.items.map(row => row.id)).toContain(ids[3]);
+    expect(enrichment.items.map(row => row.id)).not.toContain(ids[2]);
     expect((await list({ gap: "source" })).total).toBe(1);
     expect((await list({ demand: "unsearched", sort: "demand_asc" })).items.map(row => row.id)).toEqual([ids[4], ids[5]]);
     expect((await list({ demand: "searched" })).summary.words).toBe(3);
@@ -63,6 +69,10 @@ test("SQL quality checks distinguish published audio, overlapping gaps, enrichme
     expect((await list({ q: prefix + "%" })).total).toBe(0);
     expect((await list({ q: prefix + "_" })).total).toBe(0);
     expect((await list({ q: prefix + "absent" })).summary).toMatchObject({ words: 0, needsWork: 0, matching: 0, searches: 0 });
+    await sql`INSERT INTO roots (word_id, root) VALUES (${ids[3]}, 'new etymology')`;
+    const enriched = await list({ gap: "etymology" });
+    expect(enriched.items.map(row => row.id)).not.toContain(ids[3]);
+    expect(enriched.summary).toMatchObject({ words: 7, etymology: 5 });
     const [fixed] = await sql`INSERT INTO meanings (word_id, meaning) VALUES (${ids[0]}, 'fixed') RETURNING id`;
     await sql`INSERT INTO examples (meaning_id, sentence) VALUES (${fixed.id}, 'fixed example')`;
     await sql`UPDATE words SET source_id = ${source!} WHERE id = ${ids[0]}`;

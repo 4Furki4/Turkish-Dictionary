@@ -46,12 +46,13 @@ export async function getContentQuality(database: Database, raw: ContentQualityI
     pronunciation: sql<boolean>`not coalesce(${reviewed.available}, ${generated.available}, false)`.as("missing_pronunciation"),
     examples: sql<boolean>`coalesce(${meaningStats.withoutExamples}, 0) > 0`.as("missing_examples"),
     source: sql<boolean>`${wordSources.id} is null`.as("missing_source"),
-    etymology: sql<boolean>`not coalesce(${roots.root} ~ '[^[:space:]]', false)`.as("missing_etymology"),
+    etymology: sql<boolean>`not exists (select 1 from ${roots}
+      where ${roots.wordId} = ${words.id} and ${roots.root} ~ '[^[:space:]]')`.as("missing_etymology"),
   }).from(words)
     .leftJoin(demand, eq(demand.wordId, words.id)).leftJoin(meaningStats, eq(meaningStats.wordId, words.id))
     .leftJoin(reviewed, eq(reviewed.wordId, words.id))
     .leftJoin(generated, and(eq(generated.wordId, words.id), eq(generated.headword, words.name)))
-    .leftJoin(wordSources, eq(wordSources.id, words.sourceId)).leftJoin(roots, eq(roots.id, words.rootId))
+    .leftJoin(wordSources, eq(wordSources.id, words.sourceId))
     .where(and(input.q ? ilike(words.name, `%${input.q.replace(/[\\%_]/g, "\\$&")}%`) : undefined,
       input.demand === "searched" ? sql`${searches} > 0` : input.demand === "unsearched" ? sql`${searches} = 0` : undefined)));
   const needsWork = sql<boolean>`${quality.meaning} or ${quality.pronunciation} or ${quality.examples} or ${quality.source}`;
