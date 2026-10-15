@@ -34,7 +34,7 @@ export default async function DashboardLayout(
     return <DashboardUnauthorizedMessage />;
   }
   return (
-    <Dashboard locale={params.locale}>
+    <Dashboard locale={params.locale} showAdminTools={session.user.role === "admin"}>
       {children}
     </Dashboard>
   )

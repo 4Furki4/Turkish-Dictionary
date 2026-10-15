@@ -23,13 +23,14 @@ import {
   SpellCheck,
   Users,
 } from "lucide-react";
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 type DashboardHref =
   | "/dashboard"
   | "/dashboard/word-list"
   | "/dashboard/user-list"
   | "/dashboard/search-history"
+  | "/dashboard/search-gaps"
   | "/dashboard/badges"
   | "/dashboard/word-relations"
   | "/dashboard/announcements"
@@ -55,7 +56,7 @@ type DashboardLinkGroup = {
 
 const iconClassName = "h-4 w-4";
 
-const getLinkGroups: (locale: string) => DashboardLinkGroup[] = (locale) => [
+const getLinkGroups: (locale: string, searchGapsLabel: string) => DashboardLinkGroup[] = (locale, searchGapsLabel) => [
   {
     key: "content",
     label: locale === "en" ? "Content" : "İçerik",
@@ -70,6 +71,11 @@ const getLinkGroups: (locale: string) => DashboardLinkGroup[] = (locale) => [
         href: "/dashboard/word-list",
         label: locale === "en" ? "Word List" : "Kelimeler",
         icon: <ListChecks className={iconClassName} />,
+      },
+      {
+        href: "/dashboard/search-gaps",
+        label: searchGapsLabel,
+        icon: <SpellCheck className={iconClassName} />,
       },
       {
         href: "/dashboard/word-relations",
@@ -145,10 +151,13 @@ const getLinkGroups: (locale: string) => DashboardLinkGroup[] = (locale) => [
 ];
 
 
-export default function DashboardLinks() {
+export default function DashboardLinks({ showSearchGaps = false }: { showSearchGaps?: boolean }) {
   const pathname = usePathname()
   const locale = useLocale()
-  const groups = getLinkGroups(locale);
+  const searchGapsLabel = useTranslations("Dashboard.searchGaps")("title");
+  const groups = getLinkGroups(locale, searchGapsLabel).map(group => ({ ...group,
+    links: group.links.filter(link => showSearchGaps || link.href !== "/dashboard/search-gaps"),
+  }));
   const currentLink = groups.flatMap((group) => group.links).find((link) => link.href === pathname);
 
   return (

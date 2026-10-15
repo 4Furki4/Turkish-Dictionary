@@ -663,6 +663,127 @@
     "Cancel": "İptal"
   },
   "Dashboard": {
+    "searchGaps": {
+      "title": "Sonuçsuz aramalar",
+      "description": "Sonuç vermeyen arama bildirimlerini sözlük ve yazım çalışmalarına dönüştürün. Canlı sözlükte artık eşleşme bulunsa da geçmiş sonuçsuz aramalar görünür kalır.",
+      "loading": "Kaydedilen aramalar yükleniyor…",
+      "results": "{count} sonuçsuz arama terimi",
+      "filters": {
+        "query": "Terim ara",
+        "source": "Arama kaynağı",
+        "allSources": "Tüm kaynaklar",
+        "kind": "Arama türü",
+        "allKinds": "Terimler ve kalıplar",
+        "status": "İnceleme durumu",
+        "sort": "Sıralama",
+        "apply": "Filtreleri uygula"
+      },
+      "sources": {
+        "online": "Çevrim içi",
+        "offline": "Yerel sözlük"
+      },
+      "kinds": {
+        "word": "Terim",
+        "pattern": "Kalıp"
+      },
+      "statuses": {
+        "all": "Tüm inceleme durumları",
+        "open": "İncelenmedi",
+        "reviewed": "İncelendi",
+        "dismissed": "Kapsam dışı",
+        "linked": "Çalışmaya bağlandı"
+      },
+      "sort": {
+        "frequency": "En sık aranan önce",
+        "recent": "En son görülen önce"
+      },
+      "summary": {
+        "title": "Kaydedilen sonuçlar",
+        "completed": "Tamamlanan aramalar",
+        "noResult": "Sonuç bulunamadı",
+        "rate": "Sonuçsuz arama oranı",
+        "errors": "İşletim hataları",
+        "notMeasured": "Ölçülemedi",
+        "denominator": "Dönem toplamları, seçilen kaynak ve arama türündeki tüm terimleri kapsar. Oran, sonuçsuz ÷ (sonuç bulunan + sonuçsuz) şeklinde hesaplanır. Hatalar, iptaller ve yerini yeni aramaya bırakan denemeler dışlanır; terim ve inceleme filtreleri yalnızca listeyi etkiler."
+      },
+      "coverage": {
+        "since": "İlk kaydedilen etkinlik: {date} (UTC).",
+        "notStarted": "Henüz etkinlik kaydedilmedi. Veri toplama kapsamı belirlenemedi.",
+        "limitations": "Yalnızca tarayıcı bildirimleri ölçülür; bazı botlar, engellenen bildirimler ve bağlantısız aramalar kapsanmaz. Etkinlik olmayan bir dönem, kesintisiz veri toplandığını göstermez.",
+        "retention": "Terim ayrıntıları 90 gün saklanır. Bu seçim yalnızca {date} (UTC) sonrasında alınan kayıtları kapsar; eski günler ölçülmüş sıfır değerler değildir."
+      },
+      "columns": {
+        "frequency": "Sonuçsuz deneme",
+        "firstSeen": "İlk görülme",
+        "lastSeen": "Son görülme",
+        "scope": "Sayılar ve ilk/son zamanları, seçilen dönemde saklanan geçmiş sonuçsuz arama bildirimlerine aittir. Tüm zamanlar UTC'dir. Canlı sözlük eşleşmeleri yenilemede tekrar denetlenir."
+      },
+      "current": {
+        "word": "Canlı sözlük eşleşmesi:",
+        "correction": "Yazım düzeltmesi var:",
+        "missing": "Canlı sözlükte eşleşme yok",
+        "available": "Artık sözlük eşleşmesi var",
+        "hasCorrection": "Yazım düzeltmesi var",
+        "linkUnavailable": "Bağlanan kelime artık mevcut değil."
+      },
+      "actions": {
+        "refresh": "Yenile ve tekrar denetle",
+        "retry": "Tekrar dene",
+        "inspect": "İncele",
+        "close": "İncelemeyi kapat",
+        "createWord": "Kelime ekle",
+        "correctSpelling": "Yazım düzeltmesi ekle",
+        "search": "Aramayı aç",
+        "openLinked": "Bağlanan çalışmayı aç",
+        "manual": "Bu bağlantılar mevcut formları önceden doldurur. Formu açmak kayıt oluşturmaz; mevcut doğrulama ve yetki kuralları geçerlidir."
+      },
+      "review": {
+        "status": "İnceleme kararı",
+        "targetType": "Bağlanacak kayıt",
+        "targetId": "Mevcut kayıt kimliği",
+        "save": "Kararı kaydet",
+        "saved": "İnceleme kararı kaydedildi",
+        "retention": "Bu kayıt denetim geçmişi değil, güncel inceleme kararıdır. Kararlar son güncellemeden 90 gün sonra silinir; yeniden açmak kararı kaldırır."
+      },
+      "targets": {
+        "word": "Sözlük kelimesi",
+        "correction": "Yazım düzeltmesi",
+        "request": "Katkı isteği"
+      },
+      "errors": {
+        "load": "Sonuçsuz aramalar yüklenemedi. Kaydedilen etkinliği almak için tekrar deneyin.",
+        "refresh": "Yenileme başarısız oldu. Son yüklenen sonuçlar gösteriliyor; güncel eşleşmeleri denetlemek için tekrar deneyin.",
+        "invalidFilters": "Bazı filtreler geçersizdi. Varsayılan filtreler gösteriliyor.",
+        "invalidTarget": "Bağlamak için mevcut bir kayıt türü ve pozitif kayıt kimliği seçin.",
+        "targetMissing": "Bu kayıt artık mevcut değil. Kimliği denetleyip tekrar deneyin.",
+        "gapExpired": "Bu terime ait saklanan sonuçsuz arama bildirimi kalmadı. İncelemeden önce listeyi yenileyin.",
+        "save": "Karar kaydedilemedi. Tekrar deneyin."
+      },
+      "empty": {
+        "noReports": "Bu dönem, kaynak ve arama türü için bildirim kaydedilmedi. Sonuçsuz arama oranı ölçülemiyor.",
+        "noCompleted": "Bildirim var ancak tamamlanmış arama kaydedilmedi. İşletim hataları sözlük eksiği sayılmaz.",
+        "noMatches": "Bu filtrelerle eşleşen, saklanmış sonuçsuz arama bulunamadı. Başka bir terim, inceleme durumu veya dönem deneyin."
+      },
+      "pagination": {
+        "label": "Sonuçsuz arama sayfaları",
+        "page": "Sayfa {page} / {total}",
+        "previous": "Önceki",
+        "next": "Sonraki",
+        "first": "İlk sayfaya dön"
+      },
+      "trend": {
+        "title": "Günlük sonuç bildirimleri",
+        "view": "Günlük sayıları göster",
+        "termTitle": "Bu terimin günlük sonuçsuz aramaları",
+        "day": "UTC günü"
+      },
+      "preview": {
+        "title": "İncelenmemiş sonuçsuz aramalar",
+        "description": "Bu dönemde en sık sonuçsuz kalan aramalar ve canlı sözlükteki güncel durumları.",
+        "viewAll": "Sonuçsuz aramaları göster",
+        "misses": "{count} sonuçsuz deneme"
+      }
+    },
     "previewToggle": "Genel bakış önizlemesini aç/kapat",
     "UserList": {
       "usersPerPage": "Sayfa başına kullanıcı",

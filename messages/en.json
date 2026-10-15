@@ -668,6 +668,127 @@
     "Cancel": "Cancel"
   },
   "Dashboard": {
+    "searchGaps": {
+      "title": "Search gaps",
+      "description": "Turn reported searches without results into dictionary and spelling work. Historical misses remain visible even when the live dictionary now has a match.",
+      "loading": "Loading recorded searches…",
+      "results": "{count, plural, one {# search gap} other {# search gaps}}",
+      "filters": {
+        "query": "Find a term",
+        "source": "Search source",
+        "allSources": "All sources",
+        "kind": "Search type",
+        "allKinds": "Terms and patterns",
+        "status": "Review status",
+        "sort": "Order",
+        "apply": "Apply filters"
+      },
+      "sources": {
+        "online": "Online",
+        "offline": "Local dictionary"
+      },
+      "kinds": {
+        "word": "Term",
+        "pattern": "Pattern"
+      },
+      "statuses": {
+        "all": "All review states",
+        "open": "Not reviewed",
+        "reviewed": "Reviewed",
+        "dismissed": "Dismissed",
+        "linked": "Linked to work"
+      },
+      "sort": {
+        "frequency": "Most frequent first",
+        "recent": "Most recently seen first"
+      },
+      "summary": {
+        "title": "Recorded outcomes",
+        "completed": "Completed attempts",
+        "noResult": "No result",
+        "rate": "No-result rate",
+        "errors": "Operational errors",
+        "notMeasured": "Not measured",
+        "denominator": "Period totals cover all terms for the selected source and search type. The rate is no-result ÷ (resolved + no-result). Errors, cancellations and superseded attempts are excluded; term and review filters affect only the list."
+      },
+      "coverage": {
+        "since": "First recorded activity: {date} (UTC).",
+        "notStarted": "No activity has been recorded yet. Collection coverage has not been established.",
+        "limitations": "Browser-reported activity only: some bots, blocked reports and disconnected searches are not measured. A quiet period does not establish uninterrupted collection.",
+        "retention": "Query details are retained for 90 days. This selection is limited to records received since {date} (UTC); older days are not measured zeros."
+      },
+      "columns": {
+        "frequency": "Misses",
+        "firstSeen": "First seen",
+        "lastSeen": "Last seen",
+        "scope": "Counts and first/last timestamps refer to historical no-result reports in the selected retained period. All timestamps are UTC. Current dictionary matches are checked again on refresh."
+      },
+      "current": {
+        "word": "Live dictionary match:",
+        "correction": "Spelling correction exists:",
+        "missing": "No live dictionary match",
+        "available": "Now has a dictionary match",
+        "hasCorrection": "Has a spelling correction",
+        "linkUnavailable": "The linked word is no longer available."
+      },
+      "actions": {
+        "refresh": "Refresh and recheck",
+        "retry": "Retry",
+        "inspect": "Review",
+        "close": "Close review",
+        "createWord": "Create an entry",
+        "correctSpelling": "Add a spelling correction",
+        "search": "Open search",
+        "openLinked": "Open linked work",
+        "manual": "These links prefill existing forms. Opening a form creates nothing; its existing validation and permissions still apply."
+      },
+      "review": {
+        "status": "Review decision",
+        "targetType": "Link to",
+        "targetId": "Existing item ID",
+        "save": "Save decision",
+        "saved": "Review decision saved",
+        "retention": "This is the current triage decision, not an audit history. Decisions expire 90 days after their last update; reopening removes the decision."
+      },
+      "targets": {
+        "word": "Dictionary entry",
+        "correction": "Spelling correction",
+        "request": "Contribution request"
+      },
+      "errors": {
+        "load": "Search gaps could not be loaded. Retry to fetch the recorded activity.",
+        "refresh": "Refresh failed. The last loaded results are still shown; retry to recheck current matches.",
+        "invalidFilters": "Some filters were invalid. The default filters are shown.",
+        "invalidTarget": "Choose an existing item type and a positive item ID before linking.",
+        "targetMissing": "That item no longer exists. Check the ID and try again.",
+        "gapExpired": "This term no longer has retained miss reports. Refresh the list before reviewing it.",
+        "save": "The decision could not be saved. Try again."
+      },
+      "empty": {
+        "noReports": "No reports were recorded for this period, source and search type. A no-result rate cannot be measured.",
+        "noCompleted": "Reports exist, but no completed attempts were recorded. Operational errors are not dictionary gaps.",
+        "noMatches": "No retained search gaps match these filters. Try another term, review state or period."
+      },
+      "pagination": {
+        "label": "Search-gap pages",
+        "page": "Page {page} of {total}",
+        "previous": "Previous",
+        "next": "Next",
+        "first": "Return to the first page"
+      },
+      "trend": {
+        "title": "Daily reported outcomes",
+        "view": "View daily counts",
+        "termTitle": "Daily misses for this term",
+        "day": "UTC day"
+      },
+      "preview": {
+        "title": "Unreviewed search gaps",
+        "description": "Most frequently reported misses in this period, with their current live dictionary status.",
+        "viewAll": "View search gaps",
+        "misses": "{count} misses"
+      }
+    },
     "previewToggle": "Toggle overview preview",
     "UserList": {
       "usersPerPage": "Users per page",

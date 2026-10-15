@@ -14,6 +14,8 @@ They do not need to be public Cloudflare requests.
 
 After migration `0052_search_outcomes` is applied and the corresponding app version is deployed, the view-count job first removes query-bearing search outcome events older than 90 days, including when there are no view logs. Anonymous daily totals remain. Its response includes `searchOutcomeRetention.deleted`; a cleanup failure returns HTTP 500 for the existing monitor. Keep the daily schedule below. See [the collection and retention contract](search-outcome-telemetry.md) for coverage and rollout requirements.
 
+Stage 4 also requires migration `0053_search_gap_reviews` before deployment. Its retention pass removes current search-gap decisions not updated within 90 days and includes `searchOutcomeRetention.reviewsDeleted` in the same response. No schedule change is needed. See [the search-gap contract](dashboard-search-gaps.md).
+
 Both endpoints require:
 
 ```http

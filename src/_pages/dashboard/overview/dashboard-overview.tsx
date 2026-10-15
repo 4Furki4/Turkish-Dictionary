@@ -29,6 +29,7 @@ import { WordQueryLatencyChart } from "./word-query-latency-chart";
 import { NeedsAttention } from "./needs-attention";
 import { DashboardRangeFilter } from "./dashboard-range-filter";
 import { MetricChange } from "./metric-change";
+import { SearchGapPreview } from "../search-gaps/search-gap-preview";
 import { readDashboardRange } from "@/src/server/api/schemas/dashboard";
 
 type MetricCardProps = {
@@ -169,6 +170,7 @@ export function DashboardOverview({ referenceTime = new Date() }: { referenceTim
       </div>
 
       <NeedsAttention />
+      <SearchGapPreview selection={selection} asOf={data.generatedAt} />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Card isBlurred className="bg-background/40 xl:col-span-2">

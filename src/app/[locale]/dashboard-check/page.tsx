@@ -73,6 +73,17 @@ function previewAttention(): OverviewOutputs["getNeedsAttention"] {
   };
 }
 
+function previewSearchGaps(input: RouterInputs["admin"]["searchGaps"]["list"]): RouterOutputs["admin"]["searchGaps"]["list"] {
+  const generatedAt = input.asOf ?? new Date();
+  const window = getDashboardWindow(input.selection, generatedAt);
+  return {
+    generatedAt, checkedAt: generatedAt, window,
+    coverage: { firstRecordedDay: null, retainedFrom: new Date(generatedAt.getTime() - 90 * DASHBOARD_DAY_MS), effectiveStart: window.start, truncated: false },
+    summary: { reported: 0, resolved: 0, noResult: 0, errors: 0, completed: 0, noResultRate: null },
+    items: [], daily: [], total: 0, page: 1, pageSize: 5,
+  };
+}
+
 export default function Check() {
   const locale = useLocale();
   const t = useTranslations("Dashboard");
@@ -94,6 +105,7 @@ export default function Check() {
           case "admin.overview.getWordQueryLatency":
             data = previewLatency(op.input as RouterInputs["admin"]["overview"]["getWordQueryLatency"]); break;
           case "admin.overview.getNeedsAttention": data = previewAttention(); break;
+          case "admin.searchGaps.list": data = previewSearchGaps(op.input as RouterInputs["admin"]["searchGaps"]["list"]); break;
           default:
             observer.error(new TRPCClientError("This operation is unavailable in the dashboard preview."));
             return;
@@ -108,7 +120,7 @@ export default function Check() {
   return (
     <api.Provider client={client} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <Dashboard locale={locale}>
+        <Dashboard locale={locale} showAdminTools>
           <Button className="mb-4" variant="flat" aria-pressed={showOverview} onPress={() => setShowOverview(!showOverview)}>
             {t("previewToggle")}
           </Button>

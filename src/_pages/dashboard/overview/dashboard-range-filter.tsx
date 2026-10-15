@@ -11,11 +11,13 @@ import { getPathname } from "@/src/i18n/routing";
 import { readDashboardRange, type DashboardRange } from "@/src/server/api/schemas/dashboard";
 import type { DashboardWindow } from "@/src/server/dashboard-window";
 
-export function DashboardRangeFilter({ selection, window, generatedAt, initialError }: {
+export function DashboardRangeFilter({ selection, window, generatedAt, initialError, pathname = "/dashboard", showComparison = true }: {
   selection: DashboardRange;
   window: DashboardWindow;
   generatedAt: Date;
   initialError: string | null;
+  pathname?: "/dashboard" | "/dashboard/search-gaps";
+  showComparison?: boolean;
 }) {
   const locale = useLocale();
   const t = useTranslations("Dashboard.overview.range");
@@ -32,13 +34,14 @@ export function DashboardRangeFilter({ selection, window, generatedAt, initialEr
   function apply(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const params = new URLSearchParams(searchParams.toString());
+    if (pathname === "/dashboard/search-gaps") params.delete("page");
     params.set("range", range);
     if (range === "custom") { params.set("start", start); params.set("end", end); }
     else { params.delete("start"); params.delete("end"); }
     const validation = readDashboardRange(params, generatedAt);
     if (validation.error) { setError(validation.error); return; }
     setError(null);
-    router.push(getPathname({ locale, href: { pathname: "/dashboard", query: Object.fromEntries(params) } }), { scroll: false });
+    router.push(getPathname({ locale, href: { pathname, query: Object.fromEntries(params) } }), { scroll: false });
   }
 
   return (
@@ -79,8 +82,8 @@ export function DashboardRangeFilter({ selection, window, generatedAt, initialEr
       <div className="mt-4 space-y-1 text-xs text-muted-foreground" data-testid="dashboard-window"
         data-window-start={window.start.toISOString()} data-window-end={window.end.toISOString()}>
         <p>{t("selected", { start: date.format(window.start), end: date.format(new Date(`${window.endDate}T00:00:00Z`)) })}</p>
-        <p>{t("previous", { start: timestamp.format(window.previousStart), end: timestamp.format(window.previousEnd) })}</p>
-        <p>{window.partial ? t("partial", { date: timestamp.format(window.end) }) : t("complete")}</p>
+        {showComparison ? <p>{t("previous", { start: timestamp.format(window.previousStart), end: timestamp.format(window.previousEnd) })}</p> : null}
+        {window.partial ? <p>{t("partial", { date: timestamp.format(window.end) })}</p> : showComparison ? <p>{t("complete")}</p> : null}
         <p>{t("limit")}</p>
       </div>
     </section>

@@ -69,6 +69,10 @@ export const routing = defineRouting({
       "en": "/dashboard/user-list",
       "tr": "/panel/kullanicilar",
     },
+    "/dashboard/search-gaps": {
+      en: "/dashboard/search-gaps",
+      tr: "/panel/sonucsuz-aramalar",
+    },
     "/dashboard/search-history": {
       "en": "/dashboard/search-history",
       "tr": "/panel/arama-gecmisi",

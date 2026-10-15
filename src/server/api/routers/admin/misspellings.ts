@@ -9,8 +9,9 @@ import { TRPCError } from "@trpc/server";
 export const misspellingsAdminRouter = createTRPCRouter({
     getMisspellings: adminProcedure
         .input(z.object({
-            limit: z.number().default(10),
-            offset: z.number().default(0),
+            limit: z.number().int().min(1).max(100).default(10),
+            offset: z.number().int().min(0).max(1000000).default(0),
+            id: z.number().int().positive().max(2147483647).optional(),
         }))
         .query(async ({ ctx: { db }, input }) => {
             const results = await db
@@ -22,11 +23,12 @@ export const misspellingsAdminRouter = createTRPCRouter({
                 })
                 .from(misspellings)
                 .innerJoin(words, eq(misspellings.correctWordId, words.id))
+                .where(input.id ? eq(misspellings.id, input.id) : undefined)
                 .orderBy(desc(misspellings.id))
                 .limit(input.limit)
-                .offset(input.offset);
+                .offset(input.id ? 0 : input.offset);
 
-            const total = await db.$count(misspellings);
+            const total = await db.$count(misspellings, input.id ? eq(misspellings.id, input.id) : undefined);
 
             return {
                 data: results,

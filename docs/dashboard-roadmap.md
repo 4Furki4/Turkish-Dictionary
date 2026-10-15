@@ -21,10 +21,10 @@ Current `search_logs` require an existing `word_id`. They cannot establish the r
 
 | Stage | Deliverable | Depends on | Schema work | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Needs-attention overview and precise review links | Existing requests and feedback | None | Complete locally |
-| 2 | Shared date ranges and previous-period comparisons | Existing analytics | None | Complete locally |
-| 3 | Search-outcome collection | Defined search attempt/outcome contract | New event storage and retention | Complete locally |
-| 4 | Search gaps and spelling opportunities | Stage 3, stage 2 filters | Aggregation indexes as justified | Planned |
+| 1 | Needs-attention overview and precise review links | Existing requests and feedback | None | Deployed to development |
+| 2 | Shared date ranges and previous-period comparisons | Existing analytics | None | Deployed to development |
+| 3 | Search-outcome collection | Defined search attempt/outcome contract | New event storage and retention | Deployed to development |
+| 4 | Search gaps and spelling opportunities | Stage 3, stage 2 filters | Current-decision table; existing read indexes | Complete locally |
 | 5 | Content quality queue, ordered by demand | Existing content and search logs; stage 2 filters | None expected initially | Planned |
 | 6 | Administrative history and change inspection | Inventory of administrative mutations | New audit storage | Planned |
 
@@ -143,6 +143,14 @@ Acceptance:
 - Given a spelling issue or genuine coverage gap, when an admin acts, the existing workflow receives the intended term and requires its existing review permissions.
 - Given a fresh installation or collection outage, when the dashboard loads, it distinguishes no data from a measured zero failure rate.
 
+Implemented contract:
+
+- The admin-only localized page and independent overview preview group retained, normalized `no_result` events. Source/type filters scope the completed-attempt denominator and daily trend; term/review filters scope only the list. UTC boundaries, first observed activity, browser-report coverage and the 90-day detail cutoff are explicit.
+- URL-backed filters, frequency/recency ordering and bounded pagination preserve Back/reload behavior. Stable query tie-breaking and page clamping handle a review removing the final item from a page.
+- Each displayed term rechecks the live dictionary and existing spelling corrections without recording new reader searches. Historical counts remain after content is added. Validated links prefill the existing word/spelling forms; linked requests use the existing contribution screen.
+- Migration `0053_search_gap_reviews` stores a current reviewed/dismissed/linked decision with server-owned actor/time and validated target IDs. Reopening deletes it. Expired decisions become inactive at read time; the existing retention job prunes them with raw events. This is current triage, not administrative audit history.
+- The [measurement, triage and rollout contract](dashboard-search-gaps.md) documents permissions, deletion/retention behavior, empty states and measured SQL plans. Apply migration 0053 before deploying this stage; no Pi or production rollout is included in the local implementation.
+
 ## Stage 5: Content quality
 
 **Goal:** Find incomplete entries and improve the ones readers encounter most.
@@ -208,4 +216,10 @@ Acceptance:
 - Migration validation: generated SQL was inspected and applied transactionally only to the fixed disposable CI schema, which is already bootstrapped separately from its legacy migration history. Both new tables, their checks/primary keys and the receipt-time index were verified; Playwright's health gate passed. No Pi or production migration/deployment was performed. Apply migration 0052 before deploying the ingestion/cron code, then verify the existing daily retention monitor.
 - Test environment note: an initial existing Turkish mobile dashboard case hit a local proxy `ECONNRESET`; two isolated reruns and the final full 18-case run passed. Fixture cleanup waits for accepted database writes rather than cancelled streaming responses and adjusts only each test's aggregate contributions.
 - Fixture cleanup follow-up: all six new cases passed again after adding cleanup for their latency samples. Final database checks found zero outcome events, daily buckets and latency samples in the disposable CI database.
-- Next: Stage 4, search-gap and spelling-opportunity views, using the new collection coverage and retained event window.
+- 2026-10-15: Stages 1–3 were merged into `develop` and deployed there, including migration 0052. The follow-up CI run at `b445c65` passed all 114 browser cases, and the corresponding development image and health were verified. Production was not changed.
+- 2026-10-15: Stage 4 completed locally on `codex/dashboard-search-gaps`. Added search-gap summaries, trends, current-match checks, URL filters, review decisions, and links into the existing editing workflows. The generated migration 0053 was inspected and applied only to the disposable CI database. It is still required before a development rollout of this stage.
+- Stage 4 logic/build validation: `bun run ci:build` passed using the isolated CI environment; the full Jest suite passed (97 suites, 601 tests; 1 suite/15 existing tests skipped). Full ESLint completed with zero errors and 127 existing warnings. Real PostgreSQL checks cover normalization, denominator boundaries, empty/error-only windows, current matches, decision transitions, retention and out-of-range pagination.
+- Stage 4 browser/design validation: all 24 integrated cases passed against the final production build across Turkish/English and desktop/mobile, including earlier dashboard and search telemetry regressions. The new page checks filters, Back/reload, pagination, current-match refresh, reviewed/linked decisions, existing form prefills, control heights and mobile containment. Final screenshots were inspected, the mechanical UI detector returned no findings, and a fresh-context reviewer returned `ship`. Generic fresh agents substituted for the named Impeccable review/documentation agents; the documentation pass confirmed the incumbent system and wrote no new global design artifacts. Chromium required the existing macOS test-launch exception outside the filesystem sandbox.
+- Stage 4 cleanup follow-up: the new event, daily-total and review fixtures were absent after testing. An existing latency-browser-test cleanup race was fixed by reusing the wait-for-persisted-write helper; all four latency cases passed again and left the prior 10-sample disposable-database baseline unchanged. Only identified samples from this run were removed; older test data was preserved.
+- Stage 4 query-plan validation: a rolled-back 50,000-event/100,000-word fixture measured about 201 ms for the six-read helper after reusing the existing materialized-candidate word lookup, versus about 493 ms before. Existing indexes served the measured plans; no new aggregation index was justified. These are local measurements, not production guarantees.
+- Next: Stage 5, the content-quality queue ordered by demand. Stage 4 development migration/deployment remains a separate rollout.

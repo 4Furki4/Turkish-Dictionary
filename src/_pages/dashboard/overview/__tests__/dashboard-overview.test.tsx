@@ -38,6 +38,7 @@ jest.mock("@/src/i18n/routing", () => ({ Link: ({ children, href }: { children: 
 jest.mock("../word-query-latency-chart", () => ({ WordQueryLatencyChart: () => null }));
 jest.mock("../dashboard-range-filter", () => ({ DashboardRangeFilter: () => null }));
 jest.mock("../needs-attention", () => ({ NeedsAttention: () => null }));
+jest.mock("../../search-gaps/search-gap-preview", () => ({ SearchGapPreview: () => null }));
 
 it.each([
   ["tr", "123.456", "1.234", "10:00 UTC"],

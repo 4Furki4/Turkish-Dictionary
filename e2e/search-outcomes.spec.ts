@@ -152,6 +152,7 @@ test("storage deduplicates concurrent reports atomically and retains totals afte
   const day = "2003-02-03";
   const base = { eventId: ids[0]!, query: "kitap", locale: "en" as const, entryPoint: "navbar" as const, source: "offline" as const, outcome: "resolved" as const, resultCount: 1 };
   const cutoff = new Date(`${day}T12:00:00Z`);
+  const reviewTerms = Array.from({ length: 3 }, () => "retention " + randomUUID().replace(/[^a-z]/g, ""));
   // This historical bucket is only used by this test, serialized across projects.
   const lock = postgres(ciEnvironment().DATABASE_URL, { max: 1 });
   await lock`SELECT pg_advisory_lock(20261015, 3)`;
@@ -161,12 +162,18 @@ test("storage deduplicates concurrent reports atomically and retains totals afte
     await Promise.all(Array.from({ length: 8 }, () => recordSearchOutcome(db as never, base, new Date(cutoff.getTime() - 1))));
     await recordSearchOutcome(db as never, { ...base, eventId: ids[1]! }, cutoff);
     await recordSearchOutcome(db as never, { ...base, eventId: ids[2]! }, new Date(cutoff.getTime() + 1));
+    for (const [index, offset] of [-1, 0, 1].entries()) {
+      await sql`INSERT INTO search_gap_reviews (query, status, updated_at) VALUES (${reviewTerms[index]!}, 'reviewed', ${new Date(cutoff.getTime() + offset).toISOString()})`;
+    }
     const [aggregate] = await sql`SELECT count FROM search_outcome_daily_totals WHERE day = ${day} AND outcome = 'resolved'`;
     expect(Number(aggregate.count)).toBe(3);
     const [raw] = await sql`SELECT count(*)::integer AS n FROM search_outcomes WHERE event_id IN ${sql(ids)}`;
     expect(raw.n).toBe(3);
     const result = await pruneSearchOutcomes(db as never, new Date(cutoff.getTime() + 90 * 86_400_000));
     expect(result.deleted).toBe(1);
+    expect(result.reviewsDeleted).toBe(1);
+    const reviews = await sql`SELECT query FROM search_gap_reviews WHERE query IN ${sql(reviewTerms)}`;
+    expect(reviews.map(row => row.query).sort()).toEqual(reviewTerms.slice(1).sort());
     const remaining = await sql`SELECT event_id FROM search_outcomes WHERE event_id IN ${sql(ids)}`;
     expect(remaining.map(row => row.event_id).sort()).toEqual([ids[1], ids[2]].sort());
     const [retained] = await sql`SELECT count FROM search_outcome_daily_totals WHERE day = ${day} AND outcome = 'resolved'`;
@@ -181,6 +188,7 @@ test("storage deduplicates concurrent reports atomically and retains totals afte
     await expect(sql`INSERT INTO search_outcomes (event_id, query, locale, entry_point, source, kind, outcome, result_count)
       VALUES (${ids[4]!}, 'kitap', 'en', 'navbar', 'offline', 'word', 'no_result', 1)`).rejects.toMatchObject({ code: "23514" });
   } finally {
+    await sql`DELETE FROM search_gap_reviews WHERE query IN ${sql(reviewTerms)}`;
     await sql`DELETE FROM search_outcomes WHERE event_id IN ${sql(ids)}`;
     await sql`DELETE FROM search_outcome_daily_totals WHERE day = ${day} AND locale = 'en' AND entry_point = 'navbar' AND source = 'offline' AND kind = 'word'`;
     await lock`SELECT pg_advisory_unlock(20261015, 3)`;
