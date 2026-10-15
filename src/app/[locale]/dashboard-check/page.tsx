@@ -84,6 +84,13 @@ function previewSearchGaps(input: RouterInputs["admin"]["searchGaps"]["list"]): 
   };
 }
 
+function previewContentQuality(input: RouterInputs["admin"]["contentQuality"]["list"]): RouterOutputs["admin"]["contentQuality"]["list"] {
+  const generatedAt = input.asOf ?? new Date();
+  return { generatedAt, checkedAt: generatedAt, window: getDashboardWindow(input.selection, generatedAt),
+    summary: { words: 0, needsWork: 0, meaning: 0, pronunciation: 0, examples: 0, source: 0, etymology: 0, matching: 0, searches: 0 },
+    items: [], total: 0, page: 1, pageSize: 5 };
+}
+
 export default function Check() {
   const locale = useLocale();
   const t = useTranslations("Dashboard");
@@ -105,6 +112,7 @@ export default function Check() {
           case "admin.overview.getWordQueryLatency":
             data = previewLatency(op.input as RouterInputs["admin"]["overview"]["getWordQueryLatency"]); break;
           case "admin.overview.getNeedsAttention": data = previewAttention(); break;
+          case "admin.contentQuality.list": data = previewContentQuality(op.input as RouterInputs["admin"]["contentQuality"]["list"]); break;
           case "admin.searchGaps.list": data = previewSearchGaps(op.input as RouterInputs["admin"]["searchGaps"]["list"]); break;
           default:
             observer.error(new TRPCClientError("This operation is unavailable in the dashboard preview."));

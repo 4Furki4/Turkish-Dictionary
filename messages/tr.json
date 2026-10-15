@@ -663,6 +663,80 @@
     "Cancel": "İptal"
   },
   "Dashboard": {
+    "contentQuality": {
+      "title": "İçerik kalitesi",
+      "description": "Eksik maddeleri bulun ve okuyucuların baktığı kelimelere öncelik verin. Kalite mevcut içeriği, seçilen tarihler kaydedilen talebi gösterir.",
+      "loading": "Mevcut maddeler denetleniyor…",
+      "empty": "Bu içerik ve talep filtrelerine uyan madde yok.",
+      "results": "{count} eşleşen madde",
+      "checkedAt": "İçerik denetimi: {date} UTC",
+      "preview": {
+        "title": "İyileştirilecek içerik",
+        "viewAll": "Kalite kuyruğunu aç"
+      },
+      "actions": {
+        "refresh": "Yenile",
+        "retry": "Yeniden dene",
+        "manage": "Kelime listesinde yönet",
+        "entry": "Maddeyi ve katkı araçlarını aç"
+      },
+      "filters": {
+        "title": "Filtreler ve tarihler",
+        "query": "Kelime içinde ara",
+        "gap": "İçerik denetimi",
+        "demand": "Kaydedilen talep",
+        "sort": "Sıralama",
+        "pageSize": "Sayfadaki madde sayısı",
+        "apply": "Filtreleri uygula"
+      },
+      "gaps": {
+        "any": "Herhangi bir temel içerik eksiği",
+        "meaning": "Anlam yok",
+        "pronunciation": "Yayımlanmış ses yok",
+        "examples": "Örneği olmayan anlamlar",
+        "source": "Kaynak belirtilmemiş",
+        "etymology": "İsteğe bağlı: köken zenginleştirme"
+      },
+      "demand": {
+        "all": "Tüm maddeleri dahil et",
+        "searched": "Kaydedilen bakış var",
+        "unsearched": "Kaydedilen bakış yok"
+      },
+      "sort": {
+        "demand_desc": "En çok bakılandan",
+        "demand_asc": "En az bakılandan",
+        "name": "Kelime adına göre"
+      },
+      "summary": {
+        "title": "Mevcut içerik denetimleri",
+        "distinct": "{total} maddenin {count} tanesinde temel içerik eksiği var.",
+        "overlap": "Kategoriler kesişir; toplamda her madde bir kez sayılır.",
+        "enrichment": "İsteğe bağlı köken: {count} madde."
+      },
+      "row": {
+        "identity": "Kimlik {id} · varyant {variant}",
+        "searches": "{count} kaydedilen bakış",
+        "missing": "İçerik fırsatları",
+        "examples": "Örneği olmayan {count} anlam"
+      },
+      "coverage": {
+        "summary": "Sayılar tüm içerik türlerinde kelime ve talep filtrelerini kullanır. Seçilen içerik denetimi, sonuç listesini ayrıca sınırlar.",
+        "current": "Denetimler sözlüğün mevcut içeriğini gösterir. Tarih aralığı, oluşturulma veya düzenlenme zamanını değil bakış talebini sınırlar.",
+        "demand": "Talep, gezinme dahil mevcut kelimelere kaydedilen bakışları sayar. Sıfır kayıt, okuyucu ilgisi olmadığını kanıtlamaz.",
+        "audio": "Ses denetimi, yayımlanmış bağlantı verisini ve güncel madde adı eşleşmesini kullanır. Uzak dosya ve oynatma sağlığı ölçülmez."
+      },
+      "errors": {
+        "invalidFilters": "Bazı bağlantı filtreleri geçersiz. Varsayılan filtreler gösteriliyor; seçiminizi yeniden uygulayın.",
+        "load": "İçerik denetimleri yüklenemedi. Sözlüğü denetlemek için yeniden deneyin.",
+        "refresh": "Son denetim başarısız oldu. Önceki maddeler gösteriliyor; güncellemek için yeniden deneyin."
+      },
+      "pagination": {
+        "label": "Kalite kuyruğu sayfaları",
+        "page": "Sayfa {page} / {total}",
+        "previous": "Önceki",
+        "next": "Sonraki"
+      }
+    },
     "searchGaps": {
       "title": "Sonuçsuz aramalar",
       "description": "Sonuç vermeyen arama bildirimlerini sözlük ve yazım çalışmalarına dönüştürün. Canlı sözlükte artık eşleşme bulunsa da geçmiş sonuçsuz aramalar görünür kalır.",
