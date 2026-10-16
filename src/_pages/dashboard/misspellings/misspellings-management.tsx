@@ -1,13 +1,11 @@
 "use client";
+import { CustomInput as Input } from "@/src/components/customs/heroui/custom-input";
+import { CustomAutocomplete as Autocomplete } from "@/src/components/customs/heroui/custom-autocomplete";
+import { useTaskDraft } from "@/src/hooks/use-task-draft";
 
 import React, { useState } from "react";
 import {
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     Button,
-    Input,
-    Autocomplete,
     AutocompleteItem,
 } from "@heroui/react";
 import { api } from "@/src/trpc/react";
@@ -16,8 +14,10 @@ import { useTranslations } from "next-intl";
 
 interface MisspellingsManagementProps {
     onClose: () => void;
+    onSuccess?: () => void;
     initialData?: {
         id?: number;
+        correctWordName?: string;
         correctWordId: number;
         incorrectSpelling: string;
     } | null;
@@ -25,6 +25,7 @@ interface MisspellingsManagementProps {
 
 export default function MisspellingsManagement({
     onClose,
+    onSuccess,
     initialData,
 }: MisspellingsManagementProps) {
     const t = useTranslations("Dashboard.Misspellings");
@@ -32,7 +33,7 @@ export default function MisspellingsManagement({
     const [selectedWordId, setSelectedWordId] = useState<string | number | null>(
         initialData?.correctWordId ? String(initialData.correctWordId) : null
     );
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState(initialData?.correctWordName || "");
 
     const { data: searchResults, isLoading: isSearchLoading } =
         api.word.searchWordsSimple.useQuery(
@@ -45,10 +46,12 @@ export default function MisspellingsManagement({
         { enabled: !!selectedWordId && !searchTerm }
     );
 
+  const draft = useTaskDraft("misspellings:" + (initialData?.id ?? "new"), { incorrectSpelling, selectedWordId, searchTerm }, (value) => { setIncorrectSpelling(value.incorrectSpelling); setSelectedWordId(value.selectedWordId); setSearchTerm(value.searchTerm); }, { incorrectSpelling: initialData?.incorrectSpelling || "", selectedWordId: initialData?.correctWordId ? String(initialData.correctWordId) : null, searchTerm: initialData?.correctWordName || "" });
+    React.useEffect(() => { if (initialWord && !searchTerm) setSearchTerm(initialWord.name); }, [initialWord]);
     const createMutation = api.admin.misspellings.addMisspelling.useMutation({
         onSuccess: () => {
             toast.success(t("toasts.addedSuccess"));
-            onClose();
+            (onSuccess ?? onClose)();
         },
         onError: (error) => {
             toast.error(error.message);
@@ -58,7 +61,7 @@ export default function MisspellingsManagement({
     const updateMutation = api.admin.misspellings.updateMisspelling.useMutation({
         onSuccess: () => {
             toast.success(t("toasts.updatedSuccess"));
-            onClose();
+            (onSuccess ?? onClose)();
         },
         onError: (error) => {
             toast.error(error.message);
@@ -84,11 +87,10 @@ export default function MisspellingsManagement({
     };
 
     return (
-        <>
-            <ModalHeader className="flex flex-col gap-1">
-                {initialData?.id ? t("modalTitleEdit") : t("modalTitleAdd")}
-            </ModalHeader>
-            <ModalBody>
+        <form onSubmit={(event) => { event.preventDefault(); if (!createMutation.isPending && !updateMutation.isPending) handleSubmit(); }}>
+            {draft.notice}
+
+            <div>
                 <div className="flex flex-col gap-4">
                     <Input
                         label={t("incorrectSpellingLabel")}
@@ -100,33 +102,33 @@ export default function MisspellingsManagement({
                     <Autocomplete
                         label={t("correctWordLabel")}
                         placeholder={t("correctWordPlaceholder")}
-                        defaultSelectedKey={selectedWordId ? String(selectedWordId) : undefined}
+                        selectedKey={selectedWordId ? String(selectedWordId) : null}
                         inputValue={searchTerm}
-                        onInputChange={setSearchTerm}
+                        onInputChange={(value) => { setSearchTerm(value); if (!value) setSelectedWordId(null); }}
                         onSelectionChange={(key) => setSelectedWordId(key)}
                         isLoading={isSearchLoading}
                         isRequired
                     >
-                        {(searchTerm.length > 1 ? searchResults?.words : initialWord ? [{ id: initialWord.id, word: initialWord.name }] : [])?.map((item: any) => (
+                        {(searchResults?.words?.length ? searchResults.words : initialWord ? [{ id: initialWord.id, word: initialWord.name }] : [])?.map((item: any) => (
                             <AutocompleteItem key={item.id} textValue={String(item.word)}>
                                 {item.word}
                             </AutocompleteItem>
                         )) || []}
                     </Autocomplete>
                 </div>
-            </ModalBody>
-            <ModalFooter>
+            </div>
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-6">
                 <Button color="danger" variant="light" onPress={onClose}>
                     {t("cancel")}
                 </Button>
                 <Button
                     color="primary"
-                    onPress={handleSubmit}
+                    type="submit"
                     isLoading={createMutation.isPending || updateMutation.isPending}
                 >
                     {t("save")}
                 </Button>
-            </ModalFooter>
-        </>
+            </div>
+        </form>
     );
 }

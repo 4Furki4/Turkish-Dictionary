@@ -1,4 +1,5 @@
 "use client"
+import { FormDraft } from "@/src/hooks/use-task-draft";
 import { Button } from "@heroui/button"
 import { useEffect, useState } from "react"
 import { useForm, Controller } from "react-hook-form"
@@ -14,9 +15,6 @@ import { WordSearchResult } from "@/types"
 import WordAttributesRequestInput from "./word/word-attributes-request-input"
 import { useTranslations, useLocale } from "next-intl";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { AudioRecorder } from "@/src/components/customs/audio-recorder";
-import { CustomTabs } from "@/src/components/customs/heroui/custom-tabs"
-import { Tab } from "@heroui/react"
 import CustomCard from "@/src/components/customs/heroui/custom-card"
 import { CardBody } from "@heroui/react"
 
@@ -104,7 +102,7 @@ export default function WordEditRequest({
         reason: data.reason,
         ...Object.keys(dirtyFields).reduce<Record<string, unknown>>((acc, key) => {
           if (dirtyFields[key as keyof typeof dirtyFields] && key !== 'reason') {
-            acc[key] = data[key as keyof typeof data];
+            acc[key === "name" ? "wordName" : key] = data[key as keyof typeof data];
           }
           return acc;
         }, {}),
@@ -128,16 +126,10 @@ export default function WordEditRequest({
 
   return (
     <div className="flex w-full flex-col">
-      <CustomTabs
-        disableAnimation
-        aria-label="Word Edit Options"
-        selectedKey={selectedTab}
-        onSelectionChange={(key) => setSelectedTab(String(key) as WordEditRequestInitialTab)}
-      >
-        <Tab key="edit" title={t("Requests.EditWord")}>
           <CustomCard>
             <CardBody>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                <FormDraft identity={"word-edit:" + word_data.word_id} control={control} reset={reset} baseline={{ name: word_data.word_name, phonetic: word_data.phonetic ?? "", prefix: word_data.prefix ?? "", suffix: word_data.suffix ?? "", root: word_data.root.root ?? "", language: word_data.root.language_code ?? "", attributes: word_data.attributes?.map(at => String(at.attribute_id)) ?? [], reason: "" }} />
                 <Controller
                   name="name"
                   control={control}
@@ -155,7 +147,7 @@ export default function WordEditRequest({
 
 
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-4">
                   <Controller
                     name="prefix"
                     control={control}
@@ -186,7 +178,7 @@ export default function WordEditRequest({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-4">
 
                   <Controller
                     name="language"
@@ -200,7 +192,7 @@ export default function WordEditRequest({
                         labelPlacement='outside'
                         defaultItems={languages || []}
                         placeholder={t("EnterLanguage")}
-                        defaultSelectedKey={word_data.root.language_code}
+                        selectedKey={field.value || null}
                         onSelectionChange={(item) => {
                           field.onChange(item);
                           setValue("language", item as string)
@@ -233,7 +225,7 @@ export default function WordEditRequest({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-4">
                   <WordAttributesRequestInput
                     wordAttributes={wordAttributesWithRequested}
                     wordAttributesIsLoading={wordAttributesWithRequestedIsLoading}
@@ -279,15 +271,6 @@ export default function WordEditRequest({
               </form>
             </CardBody>
           </CustomCard>
-        </Tab>
-        <Tab key="pronunciation" title={t("Pronunciation.title")}>
-          <CustomCard>
-            <CardBody>
-              <AudioRecorder wordId={word_data.word_id} onUploadComplete={onClose} />
-            </CardBody>
-          </CustomCard>
-        </Tab>
-      </CustomTabs>
     </div>
-  )
+  );
 }

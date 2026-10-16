@@ -2,7 +2,7 @@ import { Button, SelectItem, Tooltip, useDisclosure } from "@heroui/react";
 import { Control, Controller } from "react-hook-form";
 import { WordEditRequestForm } from "../word-edit-request";
 import { FileClock, Plus } from "lucide-react";
-import NewWordAttributeRequestModal from "./new-word-attribute-request-modal";
+import NewWordAttributeRequestModal from "./new-word-attribute-request-inline";
 import { useTranslations } from "next-intl";
 import { CustomSelect } from "../../heroui/custom-flexable-select";
 export default function WordAttributesRequestInput({
