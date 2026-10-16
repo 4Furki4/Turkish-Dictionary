@@ -31,11 +31,11 @@ export default async function DashboardLayout(
   const session = await auth.api.getSession({
     headers: requestHeaders
   });
-  if (!session) redirect({
+  if (!session) return redirect({
     locale: params.locale as "en" | "tr",
     href: { pathname: "/signin", query: { backTo: requestHeaders.get("x-current-url") ?? getPathname({ locale: params.locale, href: "/dashboard" }) } },
   });
-  if (!["admin", "moderator"].includes(session?.user.role!)) {
+  if (!["admin", "moderator"].includes(session.user.role ?? "")) {
     return <DashboardUnauthorizedMessage />;
   }
   return (
