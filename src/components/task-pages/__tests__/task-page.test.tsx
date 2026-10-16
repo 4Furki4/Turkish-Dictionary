@@ -7,6 +7,7 @@ import { FormDraft } from "@/src/hooks/use-task-draft";
 import { recordTaskLocation } from "@/src/lib/task-navigation";
 
 const route = "/en/contribute-word/7/edit";
+let mockPathname = route;
 const mockRouter = { replace: jest.fn(), back: jest.fn(), refresh: jest.fn() };
 const mockInvalidate = jest.fn(async () => {});
 let mockSearch = new URLSearchParams();
@@ -24,7 +25,7 @@ jest.mock("@/src/trpc/react", () => ({
   api: { useUtils: () => ({ invalidate: mockInvalidate }) },
 }));
 jest.mock("next/navigation", () => ({
-  usePathname: () => route,
+  usePathname: () => mockPathname,
   useSearchParams: () => mockSearch,
 }));
 jest.mock("next-intl", () => ({
@@ -91,6 +92,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   sessionStorage.clear();
   mockSearch = new URLSearchParams();
+  mockPathname = route;
   mockSession.data = { user: { id: "contributor", role: "user" } };
   window.history.replaceState(null, "", route);
   HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -110,6 +112,15 @@ it("offers inline discard/keep choices when leaving dirty work, including naviga
   fireEvent.click(screen.getByRole("button", { name: "discard" }));
   expect(mockRouter.replace).toHaveBeenCalledWith("/en/word-list");
   expect(sessionStorage.getItem("task-draft:v1:contributor:word:7")).toBeNull();
+});
+
+it("does not treat searching a read-only chooser as unsaved work", () => {
+  mockPathname = "/en/pronunciation-voting/new";
+  render(<TaskPage title="Choose a word" parent="/word-list" parentLabel="Words"><input aria-label="Find a word" /><TaskCancel /></TaskPage>);
+  fireEvent.change(screen.getByLabelText("Find a word"), { target: { value: "kitap" } });
+  fireEvent.click(screen.getByRole("button", { name: "cancel" }));
+  expect(mockRouter.replace).toHaveBeenCalledWith("/en/word-list");
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 });
 
 it("recovers an unfinished text draft explicitly and clears it when a submission completes", async () => {

@@ -95,6 +95,14 @@ Browser checks use real local Next.js, Better Auth, tRPC and PostgreSQL. Only ex
 
 Physical iOS/Android keyboard, browser microphone permission UI and real media-upload service behavior were not verified. These remain release follow-ups. Text drafts exclude files and recordings, with that reload limitation displayed in the relevant tasks.
 
+## Develop integration and PR review
+
+Rebased onto `develop` at `390cf00`, preserving the newer search-gap prefills, correction filters, dashboard navigation, and audited mutation returns. [PR #212](https://github.com/4Furki4/Turkce-Sozluk/pull/212) targets `develop`.
+
+The first GPT-6.1 Sol/xhigh COMMENT review identified three reproduced regressions: chooser changes triggering an unsaved-work prompt, fast search typing losing characters while route transitions were pending, and eager author validation using missing English keys. Choosers now stay clean, client filters update synchronously with native History URL persistence, and author validation uses the shared translated keys. Added unit/browser coverage checks these behaviors and reload restoration.
+
+The integrated branch passes the production build and 109 Jest suites / 690 tests (15 skipped). Repository lint has no errors; warnings remain. Browser regression checks cover both locales and desktop/mobile. The task fixture recreates its PostgreSQL connection for each hook lifecycle so reused Playwright workers remain valid. The history filter check uses its keyboard interaction after Back restoration. CI retains three browser repetitions and its flaky-test failure policy; its browser job allowance is 45 minutes for the expanded suite. A fresh current-head review and passing GitHub CI are required before merging.
+
 ## Suggested Review Order
 
 1. [Start with a direct task route](<../../../src/app/[locale]/contribute-word/[wordId]/meanings/[meaningId]/edit/page.tsx#L1>) — Independent route entry and noindex metadata.

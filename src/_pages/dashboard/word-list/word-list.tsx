@@ -16,7 +16,6 @@ import { api } from "@/src/trpc/react";
 import { Link as NextUILink } from "@heroui/react";
 import { usePathname, useSearchParams } from "next/navigation";
 import NextLink from "next/link";
-import { useProgressRouter as useRouter } from "@/src/hooks/use-progress-router";
 import WordListDeleteModal from "./word-list-delete-modal";
 import { useTaskMenuLinks, TaskButton } from "@/src/components/task-pages/task-link";
 import { keepPreviousData } from "@tanstack/react-query";
@@ -56,7 +55,6 @@ export default function WordList() {
     name: string;
   }>({ wordId: 0, name: "" });
 
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -64,13 +62,17 @@ export default function WordList() {
   const pageNumber = Number.isSafeInteger(rawPage) && rawPage > 0 ? rawPage : 1;
   const rawSize = Number(searchParams.get("per_page") ?? 10);
   const wordsPerPage = [5, 10, 20, 50].includes(rawSize) ? rawSize : 10;
-  const search = searchParams.get("search") ?? "";
+  const urlSearch = searchParams.get("search") ?? "";
+  const [search, setSearch] = React.useState(urlSearch);
+  useEffect(() => {
+    if (urlSearch === (new URLSearchParams(window.location.search).get("search") ?? "")) setSearch(urlSearch);
+  }, [urlSearch]);
   const updateQuery = useCallback((changes: Record<string, string | number>) => {
     const query = new URLSearchParams(window.location.search);
     for (const [key, value] of Object.entries(changes)) query.set(key, String(value));
     const next = `${pathname}?${query}`;
-    if (next !== window.location.pathname + window.location.search) router.replace(next, { scroll: false });
-  }, [pathname, router]);
+    if (next !== window.location.pathname + window.location.search) window.history.replaceState(null, "", next + window.location.hash);
+  }, [pathname]);
   const debouncedSearch = useDebounce(search, 500);
 
   const { data: wordCount } = api.word.getWordCount.useQuery({
@@ -193,7 +195,7 @@ export default function WordList() {
               <TaskButton href="/dashboard/create-word" className="w-fit" startContent={<Plus className="w-4 h-4" />} color="primary" size="lg">
                 {t("Dashboard.CreateWord")}
               </TaskButton>
-              <CustomInput value={search} onValueChange={value => updateQuery({ search: value, page: 1 })} aria-label={t("SearchWord")} placeholder={t("SearchWord")} size="lg" />
+              <CustomInput value={search} onValueChange={value => { setSearch(value); updateQuery({ search: value, page: 1 }); }} aria-label={t("SearchWord")} placeholder={t("SearchWord")} size="lg" />
               <CustomSelect
                 options={wordPerPageOptions.reduce((acc, option) => {
                   acc[option.key] = option.label;

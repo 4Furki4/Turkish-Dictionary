@@ -6,7 +6,7 @@ import { taskPathnames } from "../src/i18n/task-pathnames";
 import en from "../messages/en.json";
 import tr from "../messages/tr.json";
 
-const database = postgres(ciEnvironment().DATABASE_URL, { max: 1 });
+let database: ReturnType<typeof postgres>;
 const db = {
   async query(statement: string, parameters: (string | number)[] = []) {
     return { rows: Array.from(await database.unsafe(statement, parameters)) };
@@ -24,6 +24,7 @@ let userId: string;
 let cookies: Awaited<ReturnType<APIRequestContext["storageState"]>>["cookies"];
 
 test.beforeAll(async ({ playwright }, worker) => {
+  database = postgres(ciEnvironment().DATABASE_URL, { max: 1 });
   const workerIndex = worker.workerIndex;
   const identity = `task_${randomUUID().replaceAll("-", "")}`;
   const api = await playwright.request.newContext({
@@ -99,7 +100,7 @@ test.beforeAll(async ({ playwright }, worker) => {
   }
 });
 test.afterAll(async () => {
-  await database.end({ timeout: 5 });
+  await database?.end({ timeout: 5 });
 });
 
 test.beforeEach(async ({ page, context }) => {
@@ -130,6 +131,36 @@ for (const locale of ["en", "tr"] as const) {
   const daily = `/${locale}/${locale === "en" ? "dashboard/daily-words" : "panel/gundelik-kelimeler"}`;
   const contribution = `/${locale}/${locale === "en" ? "contribute-word" : "kelime-katkisi"}`;
   const editSuffix = locale === "en" ? "edit" : "duzenle";
+
+  test(`${locale}: dashboard search retains fast typing during delayed route transitions`, async ({ page }) => {
+    await page.route(url => url.searchParams.has("_rsc"), async route => {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      await route.continue();
+    });
+    const lists = [
+      { path: locale === "en" ? "dashboard/word-list" : "panel/kelimeler", label: messages.SearchWord },
+      { path: locale === "en" ? "dashboard/dynamic-parameters/authors" : "panel/dinamik-parametreler/yazarlar", label: messages.TaskPage.search },
+    ];
+    for (const list of lists) {
+      await page.goto(`/${locale}/${list.path}`);
+      const search = page.locator("main").getByPlaceholder(list.label, { exact: true });
+      await search.pressSequentially("kitap", { delay: 20 });
+      await expect(search).toHaveValue("kitap");
+      await page.reload();
+      await expect(page.locator("main").getByPlaceholder(list.label, { exact: true })).toHaveValue("kitap");
+    }
+  });
+
+  test(`${locale}: choosing a pronunciation word opens the recorder without a discard prompt`, async ({ page }) => {
+    const chooser = `/${locale}/${locale === "en" ? "pronunciation-voting/new" : "telaffuz-oylama/yeni"}`;
+    await page.goto(chooser);
+    await page.getByRole("combobox", { name: messages.TaskPage.word, exact: true }).fill(wordName);
+    await page.getByRole("option", { name: wordName, exact: true }).first().click();
+    await page.getByRole("link", { name: messages.TaskPage.pronunciation, exact: true }).last().click();
+    await expect(page).toHaveURL(new RegExp(`${contribution}/\\d+/${locale === "en" ? "pronunciations/new" : "telaffuzlar/yeni"}\\?`));
+    await expect(page.getByRole("button", { name: messages.TaskPage.discard, exact: true })).toHaveCount(0);
+    await expect(page.locator("[data-task-back]")).toHaveAttribute("href", chooser);
+  });
 
   test(`${locale}: independent daily edit saves durably and retains its source page`, async ({
     page,

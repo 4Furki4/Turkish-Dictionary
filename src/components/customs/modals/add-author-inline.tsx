@@ -46,10 +46,10 @@ export default function AddAuthorModal({
                                 <Controller control={newAttributeControl} name='attribute' rules={{
                                     required: {
                                         value: true,
-                                        message: t("Forms.Author.NameRequired")
+                                        message: t("Forms.Authors.Required")
                                     },
                                     minLength: {
-                                        message: t("Forms.Author.MinLength2"),
+                                        message: t("Forms.Authors.MinLength2"),
                                         value: 2
                                     }
                                 }} render={({ field, fieldState: { error } }) => (

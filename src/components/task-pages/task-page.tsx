@@ -18,6 +18,7 @@ import { getPathname } from "@/src/i18n/routing";
 import { useProgressRouter } from "@/src/hooks/use-progress-router";
 import {
   canReturnThroughHistory,
+  isTaskChooserPath,
   resolveTaskReturn,
 } from "@/src/lib/task-navigation";
 import { authClient } from "@/src/lib/auth-client";
@@ -228,7 +229,7 @@ export function TaskPage({
     >
       <section
         className="mx-auto w-full max-w-5xl space-y-6 px-3 py-5 sm:space-y-8 sm:px-6 sm:py-8"
-        onChangeCapture={() => setDirty(true)}
+        onChangeCapture={() => { if (!isTaskChooserPath(pathname)) setDirty(true); }}
       >
         <header className="min-w-0 space-y-5 sm:space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-divider pb-3">

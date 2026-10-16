@@ -1,28 +1,33 @@
 "use client";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
-import { useProgressRouter } from "./use-progress-router";
 import { parseListState } from "@/src/lib/list-state";
-/** One URL value for a list's coupled filters; updates preserve other query parameters. */
+/** Coupled client-side filters stay synchronous while the URL retains their state. */
 export function useListState<T extends object>(defaults: T) {
   const search = useSearchParams();
   const pathname = usePathname();
-  const router = useProgressRouter();
-  const value = parseListState(search.get("list"), defaults);
+  const raw = search.get("list");
+  const baseline = useRef(defaults);
+  useEffect(() => { baseline.current = defaults; }, [defaults]);
+  const [value, setLocalValue] = useState(() => parseListState(raw, defaults));
+  useEffect(() => {
+    // Ignore an older transition if another input already updated the URL.
+    if (raw !== new URLSearchParams(window.location.search).get("list")) return;
+    setLocalValue(parseListState(raw, baseline.current));
+  }, [raw]);
   const setValue = useCallback(
     (next: T | ((old: T) => T)) => {
-      const query = new URLSearchParams(
-        typeof window === "undefined" ? search : window.location.search,
-      );
-      const current = parseListState(query.get("list"), defaults);
-      const serialized = JSON.stringify(
-        typeof next === "function" ? next(current) : next,
-      );
+      const query = new URLSearchParams(window.location.search);
+      const current = parseListState(query.get("list"), baseline.current);
+      const updated = typeof next === "function" ? next(current) : next;
+      const serialized = JSON.stringify(updated);
+      setLocalValue(updated);
       if (query.get("list") === serialized) return;
       query.set("list", serialized);
-      router.replace(`${pathname}?${query}`, { scroll: false });
+      // Next's native History integration updates useSearchParams without fetching RSC.
+      window.history.replaceState(null, "", `${pathname}?${query}${window.location.hash}`);
     },
-    [search, pathname, router, defaults],
+    [pathname],
   );
   return [value, setValue] as const;
 }
