@@ -33,9 +33,16 @@ function Chooser() {
       <CustomAutocomplete
         label={t("word")}
         inputValue={search}
-        onInputChange={setSearch}
+        onInputChange={(value) => {
+          setSearch(value);
+          if (value !== query.data?.find(item => item.word_id === id)?.name) setId(null);
+        }}
         selectedKey={id ? String(id) : null}
-        onSelectionChange={(key) => setId(key ? Number(key) : null)}
+        onSelectionChange={(key) => {
+          setId(key ? Number(key) : null);
+          const item = query.data?.find(item => String(item.word_id) === String(key));
+          if (item) setSearch(item.name);
+        }}
         isLoading={query.isFetching}
       >
         {(query.data ?? []).map((item) => (

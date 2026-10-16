@@ -103,6 +103,8 @@ The first GPT-6.1 Sol/xhigh COMMENT review identified three reproduced regressio
 
 The integrated branch passes the production build and 109 Jest suites / 690 tests (15 skipped). Repository lint has no errors; warnings remain. Browser regression checks cover both locales and desktop/mobile. The task fixture recreates its PostgreSQL connection for each hook lifecycle so reused Playwright workers remain valid. The history filter check uses its keyboard interaction after Back restoration. CI retains three browser repetitions and its flaky-test failure policy; its browser job allowance is 45 minutes for the expanded suite. A fresh current-head review and passing GitHub CI are required before merging.
 
+A second GPT-6.1 Sol/xhigh review found a controlled-autocomplete label/ID mismatch. Existing spelling corrections could save the old ID while showing a new query. Daily, spelling, Galatımeşhur and pronunciation pickers now invalidate stale selections and synchronize canonical labels on selection. Added durable selected-ID tests for each admin family and partial-label pronunciation coverage. Twenty focused desktop/mobile cases passed, along with the production build, 690 unit tests and lint. The first full local repeated suite passed 426 cases on the preceding head; GitHub subsequently exposed two flaky menu cases caused by concurrently deleted fixture accounts. Stable menu accounts now isolate that test without relaxing CI's flaky policy.
+
 ## Suggested Review Order
 
 1. [Start with a direct task route](<../../../src/app/[locale]/contribute-word/[wordId]/meanings/[meaningId]/edit/page.tsx#L1>) — Independent route entry and noindex metadata.

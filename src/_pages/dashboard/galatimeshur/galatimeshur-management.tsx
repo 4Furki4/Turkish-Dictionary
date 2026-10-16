@@ -45,8 +45,15 @@ export default function GalatiMeshurManagement({
 
     const { data: initialWord } = api.word.getWordById.useQuery(
         { id: Number(selectedWordId) },
-        { enabled: !!selectedWordId && !searchTerm }
+        { enabled: !!selectedWordId }
     );
+
+    const selectedItem = initialWord
+        ? { id: initialWord.id, word: initialWord.name }
+        : initialData?.wordName && String(initialData.wordId) === String(selectedWordId)
+          ? { id: initialData.wordId, word: initialData.wordName }
+          : undefined;
+    const items = [...(selectedItem ? [selectedItem] : []), ...(searchResults?.words ?? []).filter(item => item.id !== selectedItem?.id)];
 
   const draft = useTaskDraft("galatimeshur:" + (initialData?.id ?? "new"), { explanation, correctUsage, selectedWordId, searchTerm }, (value) => { setExplanation(value.explanation); setCorrectUsage(value.correctUsage); setSelectedWordId(value.selectedWordId); setSearchTerm(value.searchTerm); }, { explanation: initialData?.explanation || "", correctUsage: initialData?.correctUsage || "", selectedWordId: initialData?.wordId ? String(initialData.wordId) : null, searchTerm: initialData?.wordName || "" });
     React.useEffect(() => { if (initialWord && !searchTerm) setSearchTerm(initialWord.name); }, [initialWord]);
@@ -100,12 +107,19 @@ export default function GalatiMeshurManagement({
                         placeholder={t("wordPlaceholder")}
                         selectedKey={selectedWordId ? String(selectedWordId) : null}
                         inputValue={searchTerm}
-                        onInputChange={(value) => { setSearchTerm(value); if (!value) setSelectedWordId(null); }}
-                        onSelectionChange={(key) => setSelectedWordId(key)}
+                        onInputChange={(value) => {
+                            setSearchTerm(value);
+                            if (value !== items.find(item => String(item.id) === String(selectedWordId))?.word) setSelectedWordId(null);
+                        }}
+                        onSelectionChange={(key) => {
+                            setSelectedWordId(key);
+                            const item = items.find(item => String(item.id) === String(key));
+                            if (item) setSearchTerm(item.word);
+                        }}
                         isLoading={isSearchLoading}
                         isRequired
                     >
-                        {(searchResults?.words?.length ? searchResults.words : initialWord ? [{ id: initialWord.id, word: initialWord.name }] : [])?.map((item: any) => (
+                        {items.map((item) => (
                             <AutocompleteItem key={item.id} textValue={String(item.word)}>
                                 {item.word}
                             </AutocompleteItem>

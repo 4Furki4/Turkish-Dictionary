@@ -17,6 +17,10 @@ let meaningId: number;
 let otherMeaningId: number;
 let otherWordId: number;
 let dailyId: number;
+let correctionId: number;
+let galatiId: number;
+let replacementWordId: number;
+let replacementName: string;
 let attributeId: number;
 let attributeLabel: string;
 let wordName: string;
@@ -58,6 +62,12 @@ test.beforeAll(async ({ playwright }, worker) => {
   expect(signin.ok(), await signin.text()).toBe(true);
   cookies = (await api.storageState()).cookies;
   await api.dispose();
+  // Keep stable menu rows until the disposable database is reset; other suites
+  // create and delete their own temporary accounts while this list is open.
+  for (let index = 0; index < 5; index++) {
+    const id = `0000-task_${identity}_${index}`;
+    await db.query("INSERT INTO users(id,email,name,role) VALUES($1,$2,$3,'user')", [id, `${id}@example.invalid`, "Task Menu Fixture"]);
+  }
   attributeLabel = `Attribute ${identity}`;
   attributeId = (
     await db.query(
@@ -90,6 +100,10 @@ test.beforeAll(async ({ playwright }, worker) => {
       [otherWordId, "Aynı yazılışın farklı kimlikli anlamı."],
     )
   ).rows[0].id;
+  replacementName = `replacement_${identity}`;
+  replacementWordId = (await db.query("INSERT INTO words(name,variant) VALUES($1,0) RETURNING id", [replacementName])).rows[0].id;
+  correctionId = (await db.query("INSERT INTO misspellings(correct_word_id,incorrect_spelling) VALUES($1,$2) RETURNING id", [wordId, `wrong_${identity}`])).rows[0].id;
+  galatiId = (await db.query("INSERT INTO galatimeshur(word_id,explanation,correct_usage) VALUES($1,$2,$3) RETURNING id", [wordId, "Test explanation", "Test usage"])).rows[0].id;
   for (let index = 1; index <= 31; index++) {
     const date = `${2200 + workerIndex}-01-${String(index).padStart(2, "0")}`;
     const row = await db.query(
@@ -154,13 +168,51 @@ for (const locale of ["en", "tr"] as const) {
   test(`${locale}: choosing a pronunciation word opens the recorder without a discard prompt`, async ({ page }) => {
     const chooser = `/${locale}/${locale === "en" ? "pronunciation-voting/new" : "telaffuz-oylama/yeni"}`;
     await page.goto(chooser);
-    await page.getByRole("combobox", { name: messages.TaskPage.word, exact: true }).fill(wordName);
+    const input = page.getByRole("combobox", { name: messages.TaskPage.word, exact: true });
+    await input.fill(wordName.slice(0, -6));
     await page.getByRole("option", { name: wordName, exact: true }).first().click();
+    await input.press("Tab");
+    await expect(input).toHaveValue(wordName);
+    await input.fill(replacementName.slice(0, -6));
+    await expect(page.locator('main a[id^="task-link-"]')).toHaveCount(0);
+    await page.getByRole("option", { name: replacementName, exact: true }).click();
+    await input.press("Tab");
+    await expect(input).toHaveValue(replacementName);
     await page.getByRole("link", { name: messages.TaskPage.pronunciation, exact: true }).last().click();
     await expect(page).toHaveURL(new RegExp(`${contribution}/\\d+/${locale === "en" ? "pronunciations/new" : "telaffuzlar/yeni"}\\?`));
     await expect(page.getByRole("button", { name: messages.TaskPage.discard, exact: true })).toHaveCount(0);
     await expect(page.locator("[data-task-back]")).toHaveAttribute("href", chooser);
   });
+
+  for (const family of ["daily-words", "misspellings", "galatimeshur"] as const) {
+    test(`${locale}: ${family} saves only the word explicitly selected in the picker`, async ({ page }) => {
+      const config = family === "daily-words"
+        ? { id: dailyId, path: locale === "en" ? "dashboard/daily-words" : "panel/gundelik-kelimeler", label: messages.Dashboard.DailyWords.word, save: messages.Dashboard.DailyWords.save, required: messages.Dashboard.DailyWords.required, table: "daily_words", column: "word_id" }
+        : family === "misspellings"
+          ? { id: correctionId, path: locale === "en" ? "dashboard/misspellings" : "panel/yazim-yanlislari", label: messages.Dashboard.Misspellings.correctWordLabel, save: messages.Dashboard.Misspellings.save, required: messages.Dashboard.Misspellings.toasts.fillAllFields, table: "misspellings", column: "correct_word_id" }
+          : { id: galatiId, path: locale === "en" ? "dashboard/galatimeshur" : "panel/galatimeshur", label: messages.Dashboard.GalatiMeshur.wordLabel, save: messages.Dashboard.GalatiMeshur.save, required: messages.Dashboard.GalatiMeshur.toasts.fillAllFields, table: "galatimeshur", column: "word_id" };
+      const mutations: string[] = [];
+      page.on("request", request => {
+        if (request.method() === "POST" && request.url().includes("admin.")) mutations.push(request.url());
+      });
+      await page.goto(`/${locale}/${config.path}/${config.id}/${editSuffix}`);
+      const input = page.getByRole("combobox", { name: config.label + "*", exact: true });
+      await expect(input).toHaveValue(wordName);
+      await input.fill(replacementName + " absent");
+      await input.press("Tab");
+      await page.getByRole("button", { name: config.save, exact: true }).click();
+      await expect(page.getByText(config.required, { exact: true })).toBeVisible();
+      expect(mutations).toHaveLength(0);
+      await input.fill(replacementName.slice(0, -6));
+      await page.getByRole("option", { name: replacementName, exact: true }).click();
+      await input.press("Tab");
+      await expect(input).toHaveValue(replacementName);
+      await page.getByRole("button", { name: config.save, exact: true }).click();
+      await expect.poll(async () => (await db.query(`SELECT ${config.column} AS id FROM ${config.table} WHERE id=$1`, [config.id])).rows[0]?.id).toBe(replacementWordId);
+      expect(mutations).toHaveLength(1);
+      await db.query(`UPDATE ${config.table} SET ${config.column}=$1 WHERE id=$2`, [wordId, config.id]);
+    });
+  }
 
   test(`${locale}: independent daily edit saves durably and retains its source page`, async ({
     page,

@@ -65,8 +65,8 @@ export default function DailyWordsManagement({ onClose, onSuccess, initialData }
         inputValue={searchTerm} onInputChange={(value) => {
           hasTyped.current = true;
           setSearchTerm(value);
-          // With both values controlled, keyboard clearing must also clear the selection.
-          if (!value) setSelectedWordId(null);
+          // Changing the query invalidates the selected ID until an option is chosen.
+          if (value !== items.find(item => String(item.id) === selectedWordId)?.word) setSelectedWordId(null);
         }}
         onSelectionChange={(key) => {
           setSelectedWordId(key == null ? null : String(key));
