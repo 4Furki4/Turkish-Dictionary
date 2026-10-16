@@ -16,8 +16,6 @@ import {
 import { type TaskHref } from "./task-page";
 import { button, type ButtonVariantProps } from "@heroui/theme";
 
-import { isTaskPath } from "@/src/lib/task-navigation";
-
 type Props = Omit<ComponentProps<typeof Link>, "href"> & {
   href: TaskHref;
 };
@@ -31,9 +29,7 @@ function useTaskSource() {
     window.addEventListener("hashchange", update);
     return () => window.removeEventListener("hashchange", update);
   }, [pathname]);
-  return isTaskPath(pathname) && search.get("returnTo")
-    ? search.get("returnTo")!
-    : `${pathname}${search.size ? `?${search}` : ""}${hash}`;
+  return `${pathname}${search.size ? `?${search}` : ""}${hash}`;
 }
 function targetWithSource(href: TaskHref, source: string) {
   return (
@@ -63,11 +59,14 @@ function rememberSource(event: MouseEvent<Element>, source: string) {
 export function useTaskMenuLinks() {
   const source = useTaskSource();
   const locale = useLocale() as "en" | "tr";
-  return useCallback((href: TaskHref) => ({
-    as: NextLink,
-    href: getPathname({ locale, href: targetWithSource(href, source) }),
-    onClick: (event: MouseEvent<Element>) => rememberSource(event, source),
-  }), [locale, source]);
+  return useCallback(
+    (href: TaskHref) => ({
+      as: NextLink,
+      href: getPathname({ locale, href: targetWithSource(href, source) }),
+      onClick: (event: MouseEvent<Element>) => rememberSource(event, source),
+    }),
+    [locale, source],
+  );
 }
 /** A real localized anchor. Modifier clicks and new tabs retain their normal behavior. */
 export function TaskLink({ href, onClick, ...props }: Props) {

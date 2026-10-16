@@ -446,6 +446,7 @@ function BadgeEditor({ initial }: { initial?: BadgeValues }) {
           type="submit"
           color="primary"
           isLoading={create.isPending || update.isPending}
+          className="h-auto min-h-11 min-w-0 max-w-full whitespace-normal py-3"
         >
           {t("save")}
         </Button>

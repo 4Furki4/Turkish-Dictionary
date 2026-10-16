@@ -3126,6 +3126,18 @@
     }
   },
   "TaskPage": {
+    "contribute": "Katkıda bulun",
+    "chooseContribution": "Düzenlemek istediğiniz bölümü seçin. Katkılar yayımlanmadan önce incelenir.",
+    "wordEditDescription": "Kelimenin yazımını veya bilgilerini güncelleyin, ardından değişikliğin gerekçesini açıklayın.",
+    "wordDetails": "Kelime bilgileri",
+    "editWordHint": "Yazımı, kökeni veya diğer kelime bilgilerini düzeltin.",
+    "pronunciationHint": "Bu kelime için bir telaffuz kaydı ekleyin.",
+    "meaningList": "Anlamlar",
+    "editMeaningAction": "{number}. anlamı düzenle",
+    "removeMeaningAction": "{number}. anlam için kaldırma isteği gönder",
+    "reasonHint": "Neyin, neden değişmesi gerektiğini en az 15 karakterle açıklayın. Bu not, isteğin değerlendirilmesine yardımcı olur.",
+    "noRelatedWords": "Henüz ilişkili kelime eklenmemiş.",
+    "noRelatedPhrases": "Henüz ilişkili ifade eklenmemiş.",
     "back": "{destination} sayfasına dön",
     "breadcrumbs": "Gezinti yolu",
     "dashboard": "Panel",

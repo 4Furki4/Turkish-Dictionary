@@ -3160,6 +3160,18 @@
     }
   },
   "TaskPage": {
+    "contribute": "Contribute",
+    "chooseContribution": "Choose what you would like to improve. Contributions are reviewed before publication.",
+    "wordEditDescription": "Update the spelling or word details, then explain your correction.",
+    "wordDetails": "Word details",
+    "editWordHint": "Correct spelling, origin or other word details.",
+    "pronunciationHint": "Record a pronunciation for this word.",
+    "meaningList": "Meanings",
+    "editMeaningAction": "Edit meaning {number}",
+    "removeMeaningAction": "Request removal of meaning {number}",
+    "reasonHint": "Explain what should change and why, using at least 15 characters. Your note helps reviewers evaluate the request.",
+    "noRelatedWords": "No related words have been added yet.",
+    "noRelatedPhrases": "No related phrases have been added yet.",
     "back": "Back to {destination}",
     "breadcrumbs": "Breadcrumbs",
     "dashboard": "Dashboard",

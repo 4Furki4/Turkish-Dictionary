@@ -1,16 +1,16 @@
 ---
 name: Turkish Dictionary task pages
 description: Existing Turkish Dictionary visual system applied to routed contribution and dashboard tasks.
-status: draft
+status: implemented
 updated: 2026-10-16
-source-baseline: 22d5661
+source-baseline: b6bf1a1
 sources:
   - PLAN.md
   - .memlog.md
 colors: {} # No overrides; inherit the existing light/dark theme tokens.
 typography:
   title:
-    note: Existing application page-heading typography; no font or scale change.
+    note: Existing font family; fixed text-2xl mobile and text-3xl desktop headings.
   body:
     note: Existing application body and form-label typography.
 rounded: {} # Inherit existing HeroUI wrappers and Tailwind utilities.
@@ -45,11 +45,15 @@ Use {typography.title} for one descriptive task heading and {typography.body} fo
 
 ## Layout & Spacing
 
-Follow the anatomy in [PLAN.md, Page anatomy](./PLAN.md#page-anatomy): labelled return arrow, semantic breadcrumbs, heading, optional context, task body, actions. Reuse surrounding page widths and spacing; stack fields and actions on narrow screens. Use document scrolling and a content-driven height. These drafts use that anatomy as their layout specification; future implementation requires rendered desktop/mobile QA.
+The 2026-10-16 layout refinement uses one compact navigation strip, a prominent heading with optional explanation, and a single workspace surface. The strip separates the labelled Back action from the complete breadcrumb chain. Intermediate word contribution steps remain visible and wrap on mobile; the breadcrumb leaf uses a short task label instead of repeating the entire heading.
+
+The contribution chooser uses full-width action rows, an ordered meaning list, and equivalent relationship sections that sit side by side only when there is room. Editors group word details and the reason in separate sections, with one divided action footer. No nested form card remains. Controls in the word editor align at 48px; actions have 44px minimum targets. Short field gaps and larger section gaps create the hierarchy. Mobile gutters tighten and actions wrap at enlarged text sizes.
+
+Use normal document scrolling and content-driven height. Retain the existing theme and reduced-motion behavior. No sticky action bar or new motion is introduced. Back, Cancel and successful submission return through the immediate chooser step; the chooser preserves the original reading/list context.
 
 ## Elevation & Depth
 
-Inherit existing page/form depth. Routed tasks do not add a backdrop layer or elevated modal frame.
+Use one translucent workspace surface with a quiet border and soft offset shadow. Section dividers and typography establish groups inside it. Routed tasks add no backdrop layer, elevated modal frame or nested cards.
 
 ## Shapes
 
@@ -68,4 +72,4 @@ Inherit wrapper radii and field shapes. Match visible Input `inputWrapper`, Sele
 
 ## Do's and Don'ts
 
-Preserve SSR visibility, existing route transitions, theme, and reduced-motion behavior. Keep keyboard focus visible. Do not transfer modal max-heights, nested scrolling, body locks, focus traps, or animation choreography into task pages. No visual mockups are attached to this draft; when later created, these spines govern conflicts.
+Preserve SSR visibility, existing route transitions, theme, and reduced-motion behavior. Keep keyboard focus visible. Do not transfer modal max-heights, nested scrolling, body locks, focus traps, or animation choreography into task pages. Rendered Turkish/English, light/dark, desktop/mobile checks and navigation regressions are recorded in IMPLEMENTATION.md.

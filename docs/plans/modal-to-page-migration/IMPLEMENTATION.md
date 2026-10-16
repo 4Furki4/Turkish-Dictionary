@@ -71,6 +71,8 @@ context:
 
 ## Spec Change Log
 
+- 2026-10-16 follow-up: the user clarified that a word editor's previous page is the contribution chooser. Task links now retain the immediate source URL instead of flattening it. Back, Cancel and completion return to that chooser; its own return preserves the original reading/list context. Direct and legacy editor URLs use the same parent step. Breadcrumbs show Word / Contribute / Task. Impeccable layout guidance was explicitly requested for the shared shell, chooser and word editor.
+
 ## Design Notes
 
 PLAN's route inventory defines the scope. Breadcrumb hierarchy and actual return source are separate concepts. Source state belongs in URLs; large records and credentials do not. Share extracted form bodies, not duplicate page/dialog copies. Stable IDs identify mutations even when names repeat. Route parent-child relations must be verified server-side.
@@ -80,11 +82,12 @@ PLAN's route inventory defines the scope. Breadcrumb hierarchy and actual return
 Completed against the local worktree on 2026-10-16:
 
 - `bun run ci:build` (runs `bun run build` with the sanitized CI environment): successful production build, Next.js route generation and TypeScript checks.
-- `bun run test -- --runInBand --silent` with `ciEnvironment()` and `NODE_ENV=test`: **97 suites / 527 tests passed**; one suite / 15 tests intentionally skipped.
+- `bun run test -- --runInBand --silent` with `ciEnvironment()` and `NODE_ENV=test`: **97 suites / 531 tests passed**; one suite / 15 tests intentionally skipped.
 - `bunx tsc --noEmit`: passed.
-- ESLint on every changed/new TypeScript file: **0 errors, 43 warnings**. Warnings include effect/dependency and React compiler diagnostics; they are not represented as a warning-free lint run.
-- `PLAYWRIGHT_BROWSERS_PATH=/private/tmp/dictionary-modal-browsers bun run test:e2e e2e/task-pages.spec.ts --workers=2`: **64 passed** in the final run, using desktop Chromium and Pixel 7 emulation in Turkish and English. Covered durable admin saves, moderated correction with same-name records, parent-child validation, auth resume, locale switching, normal/new-tab links and Back/Forward, failed-save retry, text/selection recovery, dirty-mode transitions, microphone denial, menu keyboard navigation and seven standalone form families.
-- Inspected rendered daily-word and badge pages at desktop/mobile widths in both languages. The suite also checks 320px width, enlarged text, dark theme and reduced motion.
+- ESLint on the navigation/layout follow-up TypeScript files: **0 errors, 0 warnings**. The earlier full migration lint run recorded 43 warnings in its wider scope; these are not represented as a warning-free repository lint run.
+- `PLAYWRIGHT_BROWSERS_PATH=/private/tmp/dictionary-modal-browsers bun run test:e2e e2e/task-pages.spec.ts --workers=2`: the layout confirmation had **68 passing cases**. Four autocomplete cases hung on an incorrect test-only `response.finished()` wait. After removing that wait, the targeted `--grep 'existing-word suggestion'` rerun had **4 passing cases**. All **72 cases** were verified across these runs; this is not a claim of one clean 72-case invocation. Coverage includes one-step chooser/editor returns, direct entry, refresh/new tabs, nested URL state, moderated and admin saves, auth, language switching, history, draft recovery, unsaved transitions and microphone denial.
+- Inspected the contribution chooser/editor in Turkish and English, light/dark themes, desktop and Pixel 7 emulation. Header hierarchy, single form surface, 48px control alignment, 44px actions and wrapping were checked in a bounded initial/confirmation visual pass. The suite also verifies 320px with 200% text and reduced motion. No additional polish loop was performed.
+- Impeccable's separate layout assessment informed the structure. Its mechanical layout detector ran once over the four principal UI files: exit 0, `[]`. The two source concerns (unbroken Back labels and fixed Select helper height) were addressed. The rendered pass additionally tightened narrow gutters and allowed action labels to wrap.
 - Graph-assisted audit found 14 remaining overlay call-site files, all accounted for in [INVENTORY.md](./INVENTORY.md) as approved confirmations, navigation/install utilities or supporting primitives. No planned substantial form/detail overlay remains.
 - Independent Blind Hunter and Edge Case Hunter reviews plus fix verification are recorded in [REVIEW.md](./REVIEW.md). `git diff --check` passed.
 
@@ -96,8 +99,8 @@ Physical iOS/Android keyboard, browser microphone permission UI and real media-u
 
 1. [Start with a direct task route](<../../../src/app/[locale]/contribute-word/[wordId]/meanings/[meaningId]/edit/page.tsx#L1>) — Independent route entry and noindex metadata.
 2. [Check navigation and source restoration](<../../../src/components/task-pages/task-page.tsx#L47>) — Breadcrumbs, guarded return, auth and completion.
-3. [Check link and return URL contracts](<../../../src/components/task-pages/task-link.tsx#L63>) — Localized anchors, modifier clicks and original source URLs.
+3. [Check link and return URL contracts](<../../../src/components/task-pages/task-link.tsx#L59>) — Localized anchors, modifier clicks and immediate source URLs with nested original context.
 4. [Inspect draft isolation and lifecycle](<../../../src/hooks/use-task-draft.tsx#L28>) — Account/entity/tab scope, explicit restore and successful-submit clearing.
 5. [Inspect protected record lookups](<../../../src/server/api/routers/task.ts#L19>) — Admin permissions and route identity; public word child validation is in word.ts.
-6. [Compare migrated forms with original mutations](<../../../src/components/task-pages/word-task.tsx#L23>) — Public correction flow; dashboard-task.tsx and dashboard-task-forms.tsx cover admin tasks.
+6. [Compare migrated forms with original mutations](<../../../src/components/task-pages/word-task.tsx#L30>) — Public correction flow; dashboard-task.tsx and dashboard-task-forms.tsx cover admin tasks.
 7. [Review journey evidence and inventory](<../../../e2e/task-pages.spec.ts#L1>) — Durable saves, moderation, auth/history, recovery, locale changes and responsive checks; see INVENTORY.md and REVIEW.md for scope and resolved findings.

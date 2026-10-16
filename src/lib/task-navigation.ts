@@ -25,9 +25,28 @@ const taskPatterns = templates.map(
     ),
 );
 export function isTaskPath(pathname: string): boolean {
-  try { pathname = decodeURI(pathname); } catch { return false; }
+  try {
+    pathname = decodeURI(pathname);
+  } catch {
+    return false;
+  }
   return taskPatterns.some((pattern) =>
     pattern.test(pathname.replace(/^\/(en|tr)(?=\/|$)/, "")),
+  );
+}
+
+/** Selection pages are safe intermediate steps; unfinished editors are not. */
+export function isTaskChooserPath(pathname: string): boolean {
+  const path = pathname.replace(/^\/(en|tr)(?=\/|$)/, "").replace(/\/$/, "");
+  return [
+    taskPathnames["/contribute-word/[wordId]"],
+    taskPathnames["/pronunciation-voting/new"],
+  ].some((route) =>
+    [route.en, route.tr].some((template) =>
+      new RegExp("^" + template.replace("[wordId]", "[1-9]\\d*") + "$").test(
+        path,
+      ),
+    ),
   );
 }
 
@@ -36,6 +55,7 @@ export function resolveTaskReturn(
   value: string | null,
   fallback: string,
   origin: string,
+  currentPath?: string,
 ): string {
   if (
     !value ||
@@ -47,8 +67,19 @@ export function resolveTaskReturn(
   const safe = getSafeAuthReturnUrl(value, origin);
   if (!safe) return fallback;
   const path = new URL(safe, origin).pathname;
-  // A return target must be a reading/list page, never another unsaved task.
-  if (isTaskPath(path) || /%(?:2f|5c|00)/i.test(path)) return fallback;
+  if (
+    (currentPath && path === new URL(currentPath, origin).pathname) ||
+    (isTaskPath(path) && !isTaskChooserPath(path)) ||
+    /%(?:2f|5c|00)/i.test(path)
+  )
+    return fallback;
+  // Old/direct editor URLs may still carry the original word/list as returnTo.
+  // Keep that context behind the parent chooser instead of skipping the step.
+  if (
+    isTaskChooserPath(new URL(fallback, origin).pathname) &&
+    !isTaskChooserPath(path)
+  )
+    return withTaskReturn(fallback, safe);
   return safe;
 }
 

@@ -49,6 +49,9 @@ export function TaskPage({
   parent,
   parentLabel,
   children,
+  ancestors,
+  breadcrumbLabel,
+  description,
   capability = "signed-in",
   media = false,
 }: {
@@ -56,6 +59,9 @@ export function TaskPage({
   parent: TaskHref;
   parentLabel: string;
   children: ReactNode;
+  ancestors?: { href: TaskHref; label: string }[];
+  breadcrumbLabel?: string;
+  description?: string;
   capability?: "public" | "signed-in" | "admin";
   media?: boolean;
 }) {
@@ -83,6 +89,7 @@ export function TaskPage({
     typeof window === "undefined"
       ? "https://task.invalid"
       : window.location.origin,
+    pathname,
   );
   const sameParent = returnTo.split(/[?#]/)[0] === fallback.split(/[?#]/)[0];
   const sourceLabel = sameParent
@@ -220,46 +227,89 @@ export function TaskPage({
       }}
     >
       <section
-        className="mx-auto w-full max-w-5xl space-y-6 p-3 sm:p-6"
+        className="mx-auto w-full max-w-5xl space-y-6 px-3 py-5 sm:space-y-8 sm:px-6 sm:py-8"
         onChangeCapture={() => setDirty(true)}
       >
-        <header className="space-y-3 min-w-0">
-          <NextLink
-            href={returnTo}
-            onClick={(event) => {
-              if (
-                event.metaKey ||
-                event.ctrlKey ||
-                event.shiftKey ||
-                event.button !== 0
-              )
-                return;
-              event.preventDefault();
-              leave(returnTo);
-            }}
-            className="inline-flex min-h-11 items-center gap-2 text-primary focus-visible:outline focus-visible:outline-2 rounded-md"
-          >
-            <ArrowLeft className="h-5 w-5 shrink-0" />
-            {t("back", { destination: sourceLabel })}
-          </NextLink>
-          <nav aria-label={t("breadcrumbs")}>
-            <ol className="flex flex-wrap items-center gap-2 text-sm break-words">
-              {fallback.startsWith(dashboard + "/") && (
-                <li className="hidden sm:flex items-center gap-2">
-                  <NextLink href={dashboard}>{t("dashboard")}</NextLink>
-                  <ChevronRight aria-hidden className="h-4 w-4" />
+        <header className="min-w-0 space-y-5 sm:space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-divider pb-3">
+            <NextLink
+              data-task-back
+              href={returnTo}
+              onClick={(event) => {
+                if (
+                  event.metaKey ||
+                  event.ctrlKey ||
+                  event.shiftKey ||
+                  event.button !== 0
+                )
+                  return;
+                event.preventDefault();
+                leave(returnTo);
+              }}
+              className="inline-flex min-h-11 min-w-0 max-w-full items-center gap-2 rounded-md text-sm font-medium text-foreground/70 transition-colors hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+            >
+              <ArrowLeft aria-hidden className="h-4 w-4 shrink-0" />
+              <span className="min-w-0 [overflow-wrap:anywhere]">
+                {t("back", { destination: sourceLabel })}
+              </span>
+            </NextLink>
+            <nav aria-label={t("breadcrumbs")} className="min-w-0 max-w-full">
+              <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-foreground/60">
+                {(
+                  ancestors ??
+                  (fallback.startsWith(dashboard + "/")
+                    ? [
+                        {
+                          href: "/dashboard" as TaskHref,
+                          label: t("dashboard"),
+                        },
+                      ]
+                    : [])
+                ).map((ancestor, index) => (
+                  <li key={index} className="flex min-w-0 items-center gap-2">
+                    <NextLink
+                      href={getPathname({ locale, href: ancestor.href })}
+                      className="inline-flex min-h-11 min-w-0 items-center rounded-sm break-words hover:text-foreground focus-visible:outline focus-visible:outline-primary [overflow-wrap:anywhere]"
+                    >
+                      {ancestor.label}
+                    </NextLink>
+                    <ChevronRight
+                      aria-hidden
+                      className="h-3.5 w-3.5 shrink-0 text-foreground/40"
+                    />
+                  </li>
+                ))}
+                <li className="flex min-w-0 items-center gap-2">
+                  <NextLink
+                    href={sameParent ? returnTo : fallback}
+                    className="inline-flex min-h-11 min-w-0 items-center rounded-sm break-words hover:text-foreground focus-visible:outline focus-visible:outline-primary [overflow-wrap:anywhere]"
+                  >
+                    {parentLabel}
+                  </NextLink>
+                  <ChevronRight
+                    aria-hidden
+                    className="h-3.5 w-3.5 shrink-0 text-foreground/40"
+                  />
                 </li>
-              )}
-              <li className="flex min-w-0 items-center gap-2">
-                <NextLink href={fallback}>{parentLabel}</NextLink>
-                <ChevronRight aria-hidden className="h-4 w-4 shrink-0" />
-              </li>
-              <li aria-current="page" className="min-w-0 break-words">
-                {title}
-              </li>
-            </ol>
-          </nav>
-          <h1 className="text-2xl font-bold break-words">{title}</h1>
+                <li
+                  aria-current="page"
+                  className="min-w-0 font-medium text-foreground/80 [overflow-wrap:anywhere]"
+                >
+                  {breadcrumbLabel ?? title}
+                </li>
+              </ol>
+            </nav>
+          </div>
+          <div className="space-y-3">
+            <h1 className="max-w-3xl text-2xl font-bold leading-tight text-foreground [overflow-wrap:anywhere] sm:text-3xl">
+              {title}
+            </h1>
+            {description && (
+              <p className="max-w-2xl text-base leading-relaxed text-foreground/70">
+                {description}
+              </p>
+            )}
+          </div>
         </header>
         {pendingTarget && (
           <div
@@ -292,7 +342,7 @@ export function TaskPage({
         <div
           key={`${session.data?.user.id ?? "guest"}:${generation}`}
           aria-busy={finishing}
-          className="rounded-md border border-divider bg-background/40 p-3 sm:p-6 space-y-4 min-w-0"
+          className="min-w-0 space-y-4 rounded-xl border border-divider bg-background/40 p-3 shadow-sm sm:p-6 lg:p-8"
         >
           <fieldset disabled={finishing} className="min-w-0 space-y-4">
             {capability !== "public" && session.isPending ? (
@@ -341,7 +391,11 @@ export function TaskCancel() {
   const t = useTranslations("TaskPage");
   const { cancel } = useTaskActions();
   return (
-    <Button variant="light" onPress={cancel}>
+    <Button
+      variant="light"
+      className="min-h-11 min-w-0 max-w-full whitespace-normal"
+      onPress={cancel}
+    >
       {t("cancel")}
     </Button>
   );

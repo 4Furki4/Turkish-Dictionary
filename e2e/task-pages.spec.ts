@@ -104,7 +104,9 @@ test.afterAll(async () => {
 
 test.beforeEach(async ({ page, context }) => {
   // Isolate browser journeys from Better Auth's shared per-IP request window.
-  await context.setExtraHTTPHeaders({ "x-forwarded-for": `10.92.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 254) + 1}` });
+  await context.setExtraHTTPHeaders({
+    "x-forwarded-for": `10.92.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 254) + 1}`,
+  });
   await context.addCookies(cookies);
   // Third-party captcha is a boundary fixture; app routes, auth, and DB are real.
   await context.route(/^https:\/\//, async (route) => {
@@ -219,7 +221,8 @@ for (const locale of ["en", "tr"] as const) {
         exact: true,
       })
       .click();
-    await expect(page).toHaveURL(source);
+    const chooser = `${contribution}/${wordId}?${new URLSearchParams({ returnTo: source })}`;
+    await expect(page).toHaveURL(chooser);
     const result = await db.query(
       "SELECT status,new_data FROM requests WHERE user_id=$1 AND entity_type='words' AND entity_id=$2 AND action='update' ORDER BY id DESC LIMIT 1",
       [userId, wordId],
@@ -355,15 +358,110 @@ for (const locale of ["en", "tr"] as const) {
     );
   });
 
-  test(`${locale}: switching language preserves task and return identities`, async ({ page, isMobile }) => {
+  test(`${locale}: contribution breadcrumbs and Back retain each navigation step`, async ({
+    page,
+  }) => {
+    const source = `/${locale}/${locale === "en" ? "search" : "arama"}/${encodeURIComponent(wordName)}?entry=${wordId}#word-${wordId}`;
+    const chooser = `${contribution}/${wordId}?${new URLSearchParams({ returnTo: source })}`;
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+    await page.goto(chooser);
+    await expect(
+      page.getByRole("heading", {
+        name: messages.TaskPage.wordTasks.replace("{word}", wordName),
+        exact: true,
+      }),
+    ).toBeVisible();
+    await page.locator("main").screenshot({
+      path: test.info().outputPath(`${locale}-contribution-chooser-dark.png`),
+    });
+    const edit = page
+      .locator(`main a[href*="/${wordId}/${editSuffix}?"]`)
+      .first();
+    const target = await edit.getAttribute("href");
+    expect(
+      new URL(target!, "http://localhost:3100").searchParams.get("returnTo"),
+    ).toBe(chooser);
+    await edit.click();
+    const breadcrumbs = page.getByRole("navigation", {
+      name: messages.TaskPage.breadcrumbs,
+    });
+    await expect(
+      breadcrumbs.getByRole("link", { name: wordName, exact: true }),
+    ).toBeVisible();
+    await expect(
+      breadcrumbs.getByRole("link", {
+        name: messages.TaskPage.contribute,
+        exact: true,
+      }),
+    ).toHaveAttribute("href", chooser);
+    await expect(breadcrumbs.locator('[aria-current="page"]')).toHaveText(
+      messages.TaskPage.edit,
+    );
+    await expect(page.locator('input[name="name"]')).toHaveValue(wordName);
+    await page.locator("main").screenshot({
+      path: test.info().outputPath(`${locale}-contribution-editor-dark.png`),
+    });
+    await page.emulateMedia({ colorScheme: "light" });
+    await expect(page.locator("html")).not.toHaveClass(/dark/);
+    await page.locator("main").screenshot({
+      path: test.info().outputPath(`${locale}-contribution-editor-light.png`),
+    });
+    expect(
+      await page
+        .locator("main")
+        .evaluate((element) => element.scrollWidth <= element.clientWidth),
+    ).toBe(true);
+    await page.locator("main [data-task-back]").click();
+    await expect(page).toHaveURL(chooser);
+    await page.locator("main").screenshot({
+      path: test.info().outputPath(`${locale}-contribution-chooser-light.png`),
+    });
+    await page.locator("main [data-task-back]").click();
+    await expect(page).toHaveURL(source);
+  });
+
+  test(`${locale}: direct and reloaded editors return to Contribute before the original source`, async ({
+    page,
+    context,
+  }) => {
+    const source = `${daily}?page=2`;
+    const task = `${contribution}/${wordId}/${editSuffix}?${new URLSearchParams({ returnTo: source })}`;
+    const chooser = `${contribution}/${wordId}?${new URLSearchParams({ returnTo: source })}`;
+    await page.goto(task);
+    await expect(page.locator('input[name="name"]')).toHaveValue(wordName);
+    await page.reload();
+    await expect(page.locator("main [data-task-back]")).toHaveAttribute(
+      "href",
+      chooser,
+    );
+    const tab = await context.newPage();
+    await tab.goto(task);
+    await expect(tab.locator('input[name="name"]')).toHaveValue(wordName);
+    await tab.locator("main [data-task-back]").click();
+    await expect(tab).toHaveURL(chooser);
+    await tab.locator("main [data-task-back]").click();
+    await expect(tab).toHaveURL(source);
+    await tab.close();
+  });
+
+  test(`${locale}: switching language preserves task and return identities`, async ({
+    page,
+    isMobile,
+  }) => {
     const source = `${daily}?page=2`;
     const key = "/contribute-word/[wordId]/meanings/[meaningId]/edit";
-    const path = (language: "en" | "tr") => `/${language}${taskPathnames[key][language].replace("[wordId]", String(wordId)).replace("[meaningId]", String(meaningId))}?${new URLSearchParams({ returnTo: source })}`;
+    const path = (language: "en" | "tr") =>
+      `/${language}${taskPathnames[key][language].replace("[wordId]", String(wordId)).replace("[meaningId]", String(meaningId))}?${new URLSearchParams({ returnTo: source })}`;
     await page.goto(path(locale));
     await expect(page.locator("main form")).toBeVisible();
-    if (isMobile) await page.getByRole("button", { name: messages.Navbar.ariaMenu, exact: true }).click();
+    if (isMobile)
+      await page
+        .getByRole("button", { name: messages.Navbar.ariaMenu, exact: true })
+        .click();
     const destination = path(locale === "en" ? "tr" : "en");
-    const switcher = page.locator(`a[href="${destination}"]`).filter({ visible: true });
+    const switcher = page
+      .locator(`a[href="${destination}"]`)
+      .filter({ visible: true });
     await expect(switcher).toHaveCount(1);
     await switcher.click();
     await expect(page).toHaveURL(destination);
@@ -397,10 +495,16 @@ for (const locale of ["en", "tr"] as const) {
     await target.focus();
     await page.locator('textarea[name="reason"]').focus();
     await expect(target).toHaveValue(wordName);
-    const searched = page.waitForResponse(response => response.url().includes("word.getRecommendations") && decodeURIComponent(response.url()).includes("unselected target"));
+    const searched = page.waitForResponse(
+      (response) =>
+        response.url().includes("word.getRecommendations") &&
+        decodeURIComponent(response.url()).includes("unselected target"),
+    );
     await target.fill("unselected target");
     await searched;
-    await expect(page.getByRole("listbox")).toContainText(messages.SharedUI.NoRows);
+    await expect(page.getByRole("listbox")).toContainText(
+      messages.SharedUI.NoRows,
+    );
     await target.press("Escape");
     await expect(page.locator('[role="dialog"]')).toHaveCount(0);
     await expect(target).toHaveValue("unselected target");
@@ -427,14 +531,26 @@ for (const locale of ["en", "tr"] as const) {
       })
       .uncheck();
     const target = page.locator('main input[role="combobox"]').last();
-    const searched = page.waitForResponse(response => response.url().includes("word.searchWordsSimple") && decodeURIComponent(response.url()).includes(wordName));
+    await target.evaluate(async (element) => {
+      element.scrollIntoView({ block: "center", behavior: "instant" });
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      );
+    });
+    const searched = page.waitForResponse(
+      (response) =>
+        response.url().includes("word.searchWordsSimple") &&
+        decodeURIComponent(response.url()).includes(wordName),
+    );
     await target.fill(wordName);
     await searched;
     await target.press("ArrowDown");
-    await expect(page
-      .getByRole("listbox")
-      .getByRole("option", { name: wordName, exact: true })
-      .first()).toBeVisible();
+    await expect(
+      page
+        .getByRole("listbox")
+        .getByRole("option", { name: wordName, exact: true })
+        .first(),
+    ).toBeVisible();
     await target.press("ArrowDown");
     await target.press("Enter");
     await expect(target).toHaveValue(wordName);
@@ -456,11 +572,19 @@ for (const locale of ["en", "tr"] as const) {
     page,
   }) => {
     const source = `/${locale}/${locale === "en" ? "dashboard/user-list" : "panel/kullanicilar"}?${new URLSearchParams({ list: JSON.stringify({ page: 1, size: 5 }) })}`;
-    const loaded = page.waitForResponse(response => response.url().includes("user.getUsers"));
+    const loaded = page.waitForResponse((response) =>
+      response.url().includes("user.getUsers"),
+    );
     await page.goto(source);
     await loaded;
     await expect(page.locator("main tbody tr")).toHaveCount(5);
-    const trigger = page.locator("main table").getByRole("button", { name: messages.Dashboard.Columns.Actions, exact: true }).first();
+    const trigger = page
+      .locator("main table")
+      .getByRole("button", {
+        name: messages.Dashboard.Columns.Actions,
+        exact: true,
+      })
+      .first();
     await trigger.scrollIntoViewIfNeeded();
     await trigger.click();
     const entry = page.getByRole("menuitem", {
@@ -495,7 +619,7 @@ for (const locale of ["en", "tr"] as const) {
     const tab = await context.newPage();
     await tab.goto(target!);
     await expect(tab.locator("input[type=date]")).toBeVisible();
-    await tab.locator("main header > a").click();
+    await tab.locator("main [data-task-back]").click();
     await expect(tab).toHaveURL(source);
     await tab.close();
     await entry.click();

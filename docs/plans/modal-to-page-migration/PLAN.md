@@ -52,7 +52,7 @@ Use the existing UI system and `bg-background/40` surfaces. On narrow screens, r
 
 ### Return context and browser history
 
-1. Entry controls are ordinary localized links, with a stable entity ID in the route and an optional encoded `returnTo` containing the source pathname, query, and meaningful fragment.
+1. Entry controls are ordinary localized links, with a stable entity ID in the route and an optional encoded `returnTo` containing the immediate source pathname, query, and meaningful fragment. A chooser retains its own original source inside that URL, so nested tasks return one step at a time.
 2. Promote relevant list state into the source URL before migrating its modal: page/cursor, page size, search, sort, filters, selected word/tab where needed. Preserve scroll and the triggering row separately as best-effort per-tab state.
 3. Breadcrumb parents are explicit semantic routes, not a list of previously visited pages. Do not derive labels or parentage only by splitting URL segments.
 4. The return arrow and Cancel resolve a validated local return target; otherwise use a stable parent fallback. Use browser Back only when the app has reliable evidence that the immediately previous entry is that source. `history.length` and `document.referrer` alone are insufficient.
@@ -61,7 +61,7 @@ Use the existing UI system and `bg-background/40` surfaces. On narrow screens, r
 7. Forward/revisiting a submitted page must never replay a mutation or restore the submitted draft as unsaved work. Intentional repeat contributions start clean.
 8. A stale or deleted source item falls back to the surrounding list. If deletion empties the last page, resolve to a valid preceding page.
 
-Normalize and validate return URLs centrally, rejecting external/protocol-relative/unsafe targets and unsupported task-to-task loops. Reuse and test the existing same-origin helper, adding flow-specific parent rules where needed. Its current implementation explicitly decodes the supplied value; test nested auth/task return URLs and names containing `%`, `&`, `+`, Unicode, and fragments before reuse so values are not decoded twice. Construct nested query strings with URL utilities. Do not pass raw query-string URLs into the router.
+Normalize and validate return URLs centrally, rejecting external/protocol-relative/unsafe targets and unfinished-editor returns and self loops. Read-only contribution and pronunciation choosers are allowed as intermediate steps. Reuse and test the existing same-origin helper, adding flow-specific parent rules where needed. Its current implementation explicitly decodes the supplied value; test nested auth/task return URLs and names containing `%`, `&`, `+`, Unicode, and fragments before reuse so values are not decoded twice. Construct nested query strings with URL utilities. Do not pass raw query-string URLs into the router.
 
 ### Form state and results
 

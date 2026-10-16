@@ -9,6 +9,7 @@ import { recordTaskLocation } from "@/src/lib/task-navigation";
 const route = "/en/contribute-word/7/edit";
 const mockRouter = { replace: jest.fn(), back: jest.fn(), refresh: jest.fn() };
 const mockInvalidate = jest.fn(async () => {});
+let mockSearch = new URLSearchParams();
 const mockSession = {
   data: { user: { id: "contributor", role: "user" } } as any,
   isPending: false,
@@ -24,7 +25,7 @@ jest.mock("@/src/trpc/react", () => ({
 }));
 jest.mock("next/navigation", () => ({
   usePathname: () => route,
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => mockSearch,
 }));
 jest.mock("next-intl", () => ({
   useLocale: () => "en",
@@ -33,7 +34,13 @@ jest.mock("next-intl", () => ({
 }));
 jest.mock("@/src/i18n/routing", () => ({
   getPathname: ({ href }: any) =>
-    "/en" + (typeof href === "string" ? href : href.pathname),
+    "/en" +
+    (typeof href === "string"
+      ? href
+      : Object.entries(href.params ?? {}).reduce(
+          (path, [key, value]) => path.replace(`[${key}]`, String(value)),
+          href.pathname,
+        )),
 }));
 jest.mock("next/link", () => ({
   __esModule: true,
@@ -83,6 +90,7 @@ function setup() {
 beforeEach(() => {
   jest.clearAllMocks();
   sessionStorage.clear();
+  mockSearch = new URLSearchParams();
   mockSession.data = { user: { id: "contributor", role: "user" } };
   window.history.replaceState(null, "", route);
   HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -157,9 +165,64 @@ it("keeps cached drafts separate from a newly signed-in account", async () => {
 
 it("continues saving new work while an older recovery notice is unanswered", async () => {
   const key = "task-draft:v1:contributor:word:7";
-  sessionStorage.setItem(key, JSON.stringify({ version: 1, savedAt: Date.now(), revision: JSON.stringify({ name: "kitap" }), values: { name: "older draft" } }));
+  sessionStorage.setItem(
+    key,
+    JSON.stringify({
+      version: 1,
+      savedAt: Date.now(),
+      revision: JSON.stringify({ name: "kitap" }),
+      values: { name: "older draft" },
+    }),
+  );
   setup();
   await screen.findByRole("button", { name: "restoreDraft" });
-  fireEvent.change(screen.getByLabelText("Word"), { target: { value: "replacement draft" } });
-  await waitFor(() => expect(JSON.parse(sessionStorage.getItem(key)!).values.name).toBe("replacement draft"));
+  fireEvent.change(screen.getByLabelText("Word"), {
+    target: { value: "replacement draft" },
+  });
+  await waitFor(() =>
+    expect(JSON.parse(sessionStorage.getItem(key)!).values.name).toBe(
+      "replacement draft",
+    ),
+  );
+});
+
+it("shows every breadcrumb level and returns one step to Contribute with the original source retained", () => {
+  const source = "/en/saved-words?page=2#word-7";
+  mockSearch = new URLSearchParams({ returnTo: source });
+  window.history.replaceState(null, "", `${route}?${mockSearch}`);
+  const chooser =
+    "/en/contribute-word/7?" + new URLSearchParams({ returnTo: source });
+  render(
+    <TaskPage
+      title="Edit kitap"
+      breadcrumbLabel="Edit"
+      parent={{
+        pathname: "/contribute-word/[wordId]",
+        params: { wordId: "7" },
+      }}
+      parentLabel="Contribute"
+      ancestors={[
+        {
+          href: { pathname: "/search/[word]", params: { word: "kitap" } },
+          label: "kitap",
+        },
+      ]}
+    >
+      <Editor />
+    </TaskPage>,
+  );
+  const back = screen.getByRole("link", { name: "Back to Contribute" });
+  expect(back).toHaveAttribute("href", chooser);
+  expect(
+    screen.getByRole("link", { name: "Contribute", exact: true }),
+  ).toHaveAttribute("href", chooser);
+  expect(
+    screen.getByRole("link", { name: "kitap", exact: true }),
+  ).toHaveAttribute("href", "/en/search/kitap");
+  expect(screen.getByText("Edit", { exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  fireEvent.click(back);
+  expect(mockRouter.replace).toHaveBeenCalledWith(chooser);
 });

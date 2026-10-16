@@ -22,3 +22,9 @@ Blind Hunter and Edge Case Hunter independently reviewed the complete tracked/un
 The apparent deletion of feedback/suggestion launchers was withdrawn by the reviewer: these files are compact link replacements and compile successfully.
 
 The remaining lint warnings are recorded in IMPLEMENTATION.md. This review does not establish physical-device keyboard/media behavior or production deployment health.
+
+## Navigation and layout follow-up
+
+The user's screenshot feedback identified that editor returns skipped the contribution chooser. The shared link contract now carries each immediate source. Only read-only choosers may be intermediate task returns, and self loops/unfinished editors remain rejected. Direct and older editor links wrap the original source behind the chooser fallback. Word / Contribute / Task breadcrumbs and Back/Cancel/completion share this behavior.
+
+Impeccable layout assessment replaced nested form frames and loose underlined links with a compact navigation strip, one heading, a single workspace, semantic field groups and a common action footer. The chooser uses action rows and divided meaning/relationship lists. Mechanical scan: no findings. Rendered confirmation covered both locales/themes/viewports and enlarged text. Navigation tests and the exact split browser-run results are recorded in IMPLEMENTATION.md.

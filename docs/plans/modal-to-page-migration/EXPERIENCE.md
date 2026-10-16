@@ -10,7 +10,7 @@ sources:
 
 ## Foundation
 
-Responsive web for desktop and mobile, including installed PWA use. Inherit HeroUI wrappers, Tailwind, localized navigation, existing authentication and moderation. [DESIGN.md](./DESIGN.md) owns visuals. [PLAN.md](./PLAN.md) owns the full source inventory, proposed routes, implementation boundaries, delivery slices, and validation; this document distills the shared experience contract. Planning only: no mobile outcome has been verified.
+Responsive web for desktop and mobile, including installed PWA use. Inherit HeroUI wrappers, Tailwind, localized navigation, existing authentication and moderation. [DESIGN.md](./DESIGN.md) owns visuals. [PLAN.md](./PLAN.md) owns the full source inventory, proposed routes, implementation boundaries, delivery slices, and validation; this document distills the shared experience contract. Rendered desktop/mobile emulation evidence is recorded in IMPLEMENTATION.md; physical-device keyboard and media verification remain separate release follow-ups.
 
 Forms and content/detail tasks are proposed for page migration. Short confirmations and navigation/install utilities remain explicit scope decisions; migration order is also provisional. No visual mock or reviewer gate is required for this discussion draft. Layout follows PLAN's page anatomy and still requires future rendered QA.
 
@@ -25,7 +25,7 @@ Routes below are internal route keys; new localized paths need both route regist
 | New word, feedback, foreign-term suggestion | `/contribute-word?mode=simple&word=...`, existing detailed contribution page, `/feedback/new`, `/foreign-term-suggestions/new` | Ece |
 | Saved-word reading and account edit | Canonical `/search/[word]`, `/profile/[id]/edit` | Can |
 
-Breadcrumbs describe explicit semantic parents; do not derive them only from URL segments or session history. For example, `Dashboard / Words / Edit “ev”` needs no intermediate dashboard word-detail page. The labelled return arrow and Cancel resolve the actual validated source. A correction begun in Saved Words can show the word's hierarchy while returning to Saved Words. Direct links retain a stable semantic-parent fallback.
+Breadcrumbs describe explicit semantic parents; do not derive them only from URL segments or session history. For example, `Dashboard / Words / Edit “ev”` needs no intermediate dashboard word-detail page. The labelled return arrow, Cancel and completion resolve the immediate validated previous step. For word corrections the full hierarchy is `Word / Contribute / Edit`: the editor returns to its contribution chooser, and the chooser retains the original word, Saved Words or other source URL. Direct links and refreshes also return through the chooser before reaching that original source. Read-only selection pages are valid intermediate returns; unfinished editors and self loops are rejected.
 
 ## Voice and Tone
 
