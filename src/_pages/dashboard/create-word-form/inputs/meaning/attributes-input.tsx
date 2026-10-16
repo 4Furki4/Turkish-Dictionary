@@ -1,5 +1,5 @@
 "use client"
-import AddMeaningAttributeModal from '@/src/components/customs/modals/add-meaning-attribute';
+import AddMeaningAttributeModal from '@/src/components/customs/modals/add-meaning-attribute-inline';
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
 import { Button, Select, Selection, SelectItem, useDisclosure } from "@heroui/react"
@@ -27,7 +27,7 @@ export default function MeaningAttributesInput({
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedAttributes = e.target.value.split(",").filter((val) => val)
         setValues(() => new Set(selectedAttributes))
-        setFieldValue(`meanings.${index}.attributes`, selectedAttributes)
+        setFieldValue(`meanings.${index}.attributes`, selectedAttributes, { shouldDirty: true, shouldValidate: true })
     };
     const { data, isLoading } = api.params.getMeaningAttributes.useQuery(undefined, {
         initialData: meaningAttributes
@@ -59,7 +59,7 @@ export default function MeaningAttributesInput({
                         selectionMode='multiple'
                         onChange={handleSelectionChange}
                         isLoading={isLoading}
-                        selectedKeys={values}
+                        selectedKeys={field.value ?? []}
                         startContent={(
                             <Button
                                 variant='light'
@@ -67,7 +67,7 @@ export default function MeaningAttributesInput({
                                 color='danger'
                                 onPress={() => {
                                     setValues(new Set([]));
-                                    setFieldValue(`meanings.${index}.attributes`, [])
+                                    setFieldValue(`meanings.${index}.attributes`, [], { shouldDirty: true, shouldValidate: true })
                                 }}
                             >
                                 <X aria-description='Reset all selected values button' />

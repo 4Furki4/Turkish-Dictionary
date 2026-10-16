@@ -30,6 +30,7 @@ export default function MeaningPartOfSpeechInput({
                     isInvalid={error !== undefined && isDirty}
                     errorMessage={isDirty && error?.message}
                     {...field}
+                    selectedKeys={field.value ? [String(field.value)] : []}
                     onChange={(e) => {
                         field.onChange(parseInt(e.target.value)) // Convert string to number to override react-hook-form behavior
                     }}
