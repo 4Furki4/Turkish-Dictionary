@@ -157,5 +157,42 @@ describe("useWordSearch offline behavior", () => {
     await waitFor(() => expect(result.current.error).toMatchObject({ data: { code: "TOO_MANY_REQUESTS" } }));
     expect(mockGetWordQuery).toHaveBeenCalledTimes(1);
     expect(result.current.isOnline).toBe(true);
+    expect(result.current.searchOutcome).toBe("error");
+  });
+
+  it("distinguishes a completed online miss from a transport failure", async () => {
+    setNavigatorOnline(true);
+    (getOfflineMetadata as jest.Mock).mockResolvedValue({ activeVersion: null, status: "not-downloaded" });
+    mockGetWordQuery.mockResolvedValue([]);
+    const { result } = renderHook(() => useWordSearch("yok"), { wrapper });
+    await waitFor(() => expect(result.current.searchOutcome).toBe("no_result"));
+    expect(result.current.error).toBeNull();
+    expect(result.current.searchOutcomeSource).toBe("online");
+  });
+
+  it("classifies a missing offline dataset as an operational error, not a content gap", async () => {
+    (getOfflineMetadata as jest.Mock).mockResolvedValue({ activeVersion: null, status: "not-downloaded" });
+    const { result } = renderHook(() => useWordSearch("k_tap", { offlineOnly: true }), { wrapper });
+    await waitFor(() => expect(result.current.searchOutcome).toBe("error"));
+    expect(result.current.searchOutcomeSource).toBe("offline");
+  });
+
+  it("reports a genuine miss in a ready offline dataset separately from read failures", async () => {
+    (getOfflineMetadata as jest.Mock).mockResolvedValue({ activeVersion: 1, status: "ready" });
+    (getWordByNameOffline as jest.Mock).mockResolvedValue(undefined);
+    const { result } = renderHook(() => useWordSearch("yok"), { wrapper });
+    await waitFor(() => expect(result.current.searchOutcome).toBe("no_result"));
+    expect(result.current.offlineError).toBeNull();
+  });
+
+  it("does not turn an online transport failure after a local miss into a content gap", async () => {
+    setNavigatorOnline(true);
+    (getOfflineMetadata as jest.Mock).mockResolvedValue({ activeVersion: 1, status: "ready" });
+    (getWordByNameOffline as jest.Mock).mockResolvedValue(undefined);
+    mockGetWordQuery.mockRejectedValue(new Error("Failed to fetch"));
+    const { result } = renderHook(() => useWordSearch("yok"), { wrapper });
+    await waitFor(() => expect(result.current.searchOutcome).toBe("error"));
+    expect(result.current.searchOutcomeSource).toBe("online");
+    expect(result.current.isOnline).toBe(false);
   });
 });

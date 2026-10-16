@@ -39,11 +39,11 @@ export const galatiMeshurAdminRouter = createTRPCRouter({
         .input(GalatiMeshurSchema)
         .mutation(async ({ ctx: { db }, input }) => {
             try {
-                await db.insert(galatiMeshur).values({
+                return await db.insert(galatiMeshur).values({
                     wordId: input.wordId,
                     explanation: input.explanation,
                     correctUsage: input.correctUsage,
-                });
+                }).returning();
             } catch (error) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

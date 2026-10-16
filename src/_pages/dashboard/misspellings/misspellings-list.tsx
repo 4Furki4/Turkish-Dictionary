@@ -14,20 +14,21 @@ import { CustomTable } from "@/src/components/customs/heroui/custom-table";
 import { CustomModal } from "@/src/components/customs/heroui/custom-modal";
 import { useTranslations } from "next-intl";
 
-export default function MisspellingsList() {
+export default function MisspellingsList({ initialTerm, correctionId }: { initialTerm?: string; correctionId?: number }) {
     const t = useTranslations("Dashboard.Misspellings");
     const [page, setPage] = useState(1);
     const limit = 10;
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure({ defaultOpen: Boolean(initialTerm) });
     const [selectedItem, setSelectedItem] = useState<{
         id?: number;
         correctWordId: number;
         incorrectSpelling: string;
-    } | null>(null);
+    } | null>(initialTerm ? { correctWordId: 0, incorrectSpelling: initialTerm } : null);
 
     const { data, isLoading, refetch } = api.admin.misspellings.getMisspellings.useQuery({
         limit,
         offset: (page - 1) * limit,
+        id: correctionId,
     });
 
     const deleteMutation = api.admin.misspellings.deleteMisspelling.useMutation({

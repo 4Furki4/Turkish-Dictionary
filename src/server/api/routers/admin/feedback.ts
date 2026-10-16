@@ -1,5 +1,4 @@
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/src/server/api/trpc";
-import { db } from "@/db";
 import { feedbacks, feedbackStatusEnum, feedbackTypeEnum } from "@/db/schema/feedbacks";
 import { users } from "@/db/schema/users";
 import { and, eq, ilike, or, sql, desc, asc, notInArray, gte, lte } from "drizzle-orm";
@@ -9,6 +8,7 @@ import { feedbackVotes } from "@/db/schema/feedback_votes";
 export const feedbackAdminRouter = createTRPCRouter({
     getAll: protectedProcedure
         .input(z.object({
+            feedbackId: z.number().int().positive().max(2147483647).optional(),
             page: z.number().min(1).default(1),
             limit: z.number().min(1).max(100).default(20),
             status: z.array(z.enum(feedbackStatusEnum.enumValues)).optional(),
@@ -31,6 +31,7 @@ export const feedbackAdminRouter = createTRPCRouter({
             const offset = (page - 1) * limit;
 
             const whereConditions = and(
+                input.feedbackId !== undefined ? eq(feedbacks.id, input.feedbackId) : undefined,
                 // Apply status filters
                 status && status.length > 0 
                     ? or(...status.map(s => eq(feedbacks.status, s)))
@@ -58,7 +59,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 ? (sortOrder === "desc" ? desc(sql<number>`count(${feedbackVotes.id})`) : asc(sql<number>`count(${feedbackVotes.id})`))
                 : (sortOrder === "desc" ? desc(feedbacks.createdAt) : asc(feedbacks.createdAt));
 
-            const feedbackEntries = await db
+            const feedbackEntries = await ctx.db
                 .select({
                     id: feedbacks.id,
                     title: feedbacks.title,
@@ -82,7 +83,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 .limit(limit)
                 .offset(offset);
 
-            const totalFeedbacksResult = await db.select({
+            const totalFeedbacksResult = await ctx.db.select({
                 count: sql<number>`count(*)`.mapWith(Number),
             }).from(feedbacks).where(whereConditions);
 
@@ -104,13 +105,13 @@ export const feedbackAdminRouter = createTRPCRouter({
                 throw new Error("Unauthorized");
             }
 
-            await db.update(feedbacks)
+            await ctx.db.update(feedbacks)
                 .set({ status: input.status, updatedAt: new Date() })
                 .where(eq(feedbacks.id, input.id));
 
             return { success: true };
         }),
-    updateType: protectedProcedure
+    updateType: adminProcedure
         .input(z.object({
             id: z.number(),
             type: z.enum(feedbackTypeEnum.enumValues),
@@ -119,7 +120,7 @@ export const feedbackAdminRouter = createTRPCRouter({
             if (ctx.session.user.role !== 'admin') {
                 throw new Error("Unauthorized");
             }
-            await db
+            await ctx.db
                 .update(feedbacks)
                 .set({ type: input.type, updatedAt: new Date() })
                 .where(eq(feedbacks.id, input.id));
@@ -132,7 +133,7 @@ export const feedbackAdminRouter = createTRPCRouter({
                 throw new Error("Unauthorized");
             }
 
-            await db.delete(feedbacks).where(eq(feedbacks.id, input.id));
+            await ctx.db.delete(feedbacks).where(eq(feedbacks.id, input.id));
 
             return { success: true };
         }),

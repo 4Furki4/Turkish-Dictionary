@@ -23,13 +23,16 @@ import {
   SpellCheck,
   Users,
 } from "lucide-react";
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 type DashboardHref =
   | "/dashboard"
   | "/dashboard/word-list"
   | "/dashboard/user-list"
   | "/dashboard/search-history"
+  | "/dashboard/search-gaps"
+  | "/dashboard/content-quality"
+  | "/dashboard/history"
   | "/dashboard/badges"
   | "/dashboard/word-relations"
   | "/dashboard/announcements"
@@ -55,7 +58,7 @@ type DashboardLinkGroup = {
 
 const iconClassName = "h-4 w-4";
 
-const getLinkGroups: (locale: string) => DashboardLinkGroup[] = (locale) => [
+const getLinkGroups: (locale: string, searchGapsLabel: string, qualityLabel: string, historyLabel: string) => DashboardLinkGroup[] = (locale, searchGapsLabel, qualityLabel, historyLabel) => [
   {
     key: "content",
     label: locale === "en" ? "Content" : "İçerik",
@@ -70,6 +73,16 @@ const getLinkGroups: (locale: string) => DashboardLinkGroup[] = (locale) => [
         href: "/dashboard/word-list",
         label: locale === "en" ? "Word List" : "Kelimeler",
         icon: <ListChecks className={iconClassName} />,
+      },
+      {
+        href: "/dashboard/content-quality",
+        label: qualityLabel,
+        icon: <ListChecks className={iconClassName} />,
+      },
+      {
+        href: "/dashboard/search-gaps",
+        label: searchGapsLabel,
+        icon: <SpellCheck className={iconClassName} />,
       },
       {
         href: "/dashboard/word-relations",
@@ -121,6 +134,11 @@ const getLinkGroups: (locale: string) => DashboardLinkGroup[] = (locale) => [
     icon: <Settings2 className={iconClassName} />,
     links: [
       {
+        href: "/dashboard/history",
+        label: historyLabel,
+        icon: <ListChecks className={iconClassName} />,
+      },
+      {
         href: "/dashboard/announcements",
         label: locale === "en" ? "Announcements" : "Duyurular",
         icon: <FileText className={iconClassName} />,
@@ -145,10 +163,15 @@ const getLinkGroups: (locale: string) => DashboardLinkGroup[] = (locale) => [
 ];
 
 
-export default function DashboardLinks() {
+export default function DashboardLinks({ showAdminTools = false }: { showAdminTools?: boolean }) {
   const pathname = usePathname()
   const locale = useLocale()
-  const groups = getLinkGroups(locale);
+  const searchGapsLabel = useTranslations("Dashboard.searchGaps")("title");
+  const qualityLabel = useTranslations("Dashboard.contentQuality")("title");
+  const historyLabel = useTranslations("Dashboard.adminHistory")("title");
+  const groups = getLinkGroups(locale, searchGapsLabel, qualityLabel, historyLabel).map(group => ({ ...group,
+    links: group.links.filter(link => showAdminTools || !["/dashboard/search-gaps", "/dashboard/content-quality", "/dashboard/history"].includes(link.href)),
+  }));
   const currentLink = groups.flatMap((group) => group.links).find((link) => link.href === pathname);
 
   return (

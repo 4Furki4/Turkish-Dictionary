@@ -4,6 +4,7 @@ import postgres from "postgres";
 import { ciEnvironment } from "../scripts/ci/env.mjs";
 import trMessages from "../messages/tr.json";
 import enMessages from "../messages/en.json";
+import { cleanupSearchOutcomeEvents, cleanupWordQueryLatencyEvents, observeSearchOutcomeEvents, observeWordQueryLatencyEvents } from "./helpers/search-outcomes";
 
 // Exercise hydration against a UTC server from a Turkish browser.
 test.use({ locale: "tr-TR", timezoneId: "Europe/Istanbul" });
@@ -13,6 +14,8 @@ for (const locale of ["tr", "en"] as const) {
     // Only the fixed disposable CI database is used by this suite.
     const database = postgres(ciEnvironment().DATABASE_URL, { max: 1 });
     const sampleIds: string[] = [];
+    const outcomeIds = observeSearchOutcomeEvents(page);
+    const latencyIds = observeWordQueryLatencyEvents(page);
     let userId: string | undefined;
     await page.route(/^https:\/\//, route => route.abort());
     const messages = locale === "tr" ? trMessages : enMessages;
@@ -40,8 +43,10 @@ for (const locale of ["tr", "en"] as const) {
       expect(Object.keys(sample).sort()).toEqual(["durationMs", "eventId", "source"]);
       expect(sample.durationMs).toBeGreaterThanOrEqual(350);
       sampleIds.push(sample.eventId);
-      const [persisted] = await database`SELECT duration_ms FROM word_query_latencies WHERE event_id = ${sample.eventId}`;
-      expect(persisted.duration_ms).toBe(sample.durationMs);
+      await expect.poll(async () => {
+        const [persisted] = await database`SELECT duration_ms FROM word_query_latencies WHERE event_id = ${sample.eventId}`;
+        return persisted?.duration_ms ?? null;
+      }).toBe(sample.durationMs);
       let repeatReports = 0;
       page.on("request", request => { if (request.url().includes("searchTelemetry.recordWordQueryLatency")) repeatReports++; });
       await page.reload();
@@ -124,6 +129,8 @@ for (const locale of ["tr", "en"] as const) {
         sampleIds.push((body["0"]?.json ?? body.json).eventId);
       }
     } finally {
+      await cleanupSearchOutcomeEvents(database, outcomeIds);
+      await cleanupWordQueryLatencyEvents(database, latencyIds);
       if (sampleIds.length) await database`DELETE FROM word_query_latencies WHERE event_id IN ${database(sampleIds)}`;
       if (userId) await database`DELETE FROM users WHERE id = ${userId}`;
       await database.end({ timeout: 5 });

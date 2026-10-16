@@ -33,6 +33,8 @@ type UseWordSearchResult = {
     isOfflineLoading: boolean;
     offlineError: Error | null;
     error: Error | null;
+    searchOutcome: "no_result" | "error" | null;
+    searchOutcomeSource: "online" | "offline";
 };
 
 type UseWordSearchOptions = {
@@ -104,14 +106,14 @@ export function useWordSearch(
     } = useQuery({
         queryKey: getOfflineWordSearchQueryKey(wordName),
         queryFn: async () => {
-            if (!wordName) return undefined;
+            if (!wordName) return null;
             if (isPatternSearch) {
                 const results = await searchByPattern(wordName);
-                return results.length > 0 ? { data: results, source: "offline" as const } : undefined;
+                return results.length > 0 ? { data: results, source: "offline" as const } : null;
             }
 
             const data = await getWordByNameOffline(wordName);
-            return data ? { data: data, source: "offline" as const } : undefined;
+            return data ? { data: data, source: "offline" as const } : null;
         },
         enabled: !!wordName && !isOfflineMetadataLoading && hasOfflineDataset,
         staleTime: Infinity,
@@ -134,9 +136,9 @@ export function useWordSearch(
     const onlineQuery = useQuery({
         queryKey: ["word-online", wordName],
         queryFn: async () => {
-            if (!wordName) return undefined;
+            if (!wordName) return null;
             if (typeof navigator !== "undefined" && !navigator.onLine) {
-                return undefined;
+                return null;
             }
 
             let onlineResult: Awaited<ReturnType<typeof trpcClient.word.getWord.query>>;
@@ -157,13 +159,16 @@ export function useWordSearch(
                 return { data: onlineResult[0].word_data, source: "online" as const };
             }
 
-            return undefined;
+            return null;
         },
         enabled: canUseOnlineSearch,
         staleTime: 15_000, // Combined with the 45s public server cache: at most 60s.
         networkMode: "online",
         retry: (failureCount, error) => {
             if (isRateLimitError(error)) return false;
+            // The catch above has already moved network failures offline. A
+            // queued retry would pause indefinitely and hide the failed lookup.
+            if (isNetworkFailure(error)) return false;
             if (typeof navigator !== "undefined" && !navigator.onLine) {
                 return false;
             }
@@ -194,6 +199,19 @@ export function useWordSearch(
     // (This includes the background revalidation)
     const isFetching = isOnline && onlineQuery.isFetching;
 
+    const usesLocalSearch = isPatternSearch || Boolean(options.offlineOnly) || !isOnline;
+    const onlineFailed = onlineQuery.isError && !isPatternSearch && !options.offlineOnly;
+    let searchOutcome: UseWordSearchResult["searchOutcome"] = null;
+    if (wordName && !data && !isLoading && !isOfflineLoading && !onlineQuery.isFetching && !onlineQuery.isPaused) {
+        if (onlineFailed) {
+            searchOutcome = "error";
+        } else if (usesLocalSearch) {
+            searchOutcome = !hasOfflineDataset || offlineWordError || offlineMetadataError ? "error" : "no_result";
+        } else if (onlineQuery.isSuccess) {
+            searchOutcome = "no_result";
+        }
+    }
+
     useEffect(() => {
         if (isError && !isLoading && !isOfflineLoading) cancelWordQueryLatency(wordName);
     }, [isError, isLoading, isOfflineLoading, wordName]);
@@ -215,5 +233,7 @@ export function useWordSearch(
         isOfflineLoading,
         offlineError: (offlineWordError ?? offlineMetadataError) as Error | null,
         error: onlineQuery.error as Error | null,
+        searchOutcome,
+        searchOutcomeSource: onlineFailed ? "online" : usesLocalSearch ? "offline" : "online",
     };
 }

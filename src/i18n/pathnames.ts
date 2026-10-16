@@ -48,6 +48,18 @@ export const pathnames = {
     en: "/dashboard/user-list",
     tr: "/panel/kullanicilar",
   },
+  "/dashboard/content-quality": {
+    en: "/dashboard/content-quality",
+    tr: "/panel/icerik-kalitesi",
+  },
+  "/dashboard/history": {
+    en: "/dashboard/history",
+    tr: "/panel/islem-gecmisi",
+  },
+  "/dashboard/search-gaps": {
+    en: "/dashboard/search-gaps",
+    tr: "/panel/sonucsuz-aramalar",
+  },
   "/dashboard/search-history": {
     en: "/dashboard/search-history",
     tr: "/panel/arama-gecmisi",

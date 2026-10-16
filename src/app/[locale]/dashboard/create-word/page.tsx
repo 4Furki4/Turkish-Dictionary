@@ -1,13 +1,18 @@
 import CreateWord from "@/src/_pages/dashboard/create-word";
 import { api, HydrateClient } from "@/src/trpc/server";
 import React from "react";
+import { outcomeQuerySchema } from "@/src/lib/search-outcome-schema";
 
 export default async function Page(
   props: {
     params: Promise<{ locale: string }>;
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
   }
 ) {
   const params = await props.params;
+  const searchParams = await props.searchParams;
+  const term = outcomeQuerySchema.safeParse(searchParams.name);
+  const initialName = term.success && !term.data.includes("_") ? term.data : "";
 
   const {
     locale
@@ -30,7 +35,7 @@ export default async function Page(
   void api.params.getLanguages.prefetch()
   return (
     <HydrateClient>
-      <CreateWord locale={locale} />
+      <CreateWord key={initialName} locale={locale} initialName={initialName} />
     </HydrateClient>
   )
 }

@@ -38,10 +38,10 @@ export const dailyWordsAdminRouter = createTRPCRouter({
         .input(DailyWordSchema)
         .mutation(async ({ ctx: { db }, input }) => {
             try {
-                await db.insert(dailyWords).values({
+                return await db.insert(dailyWords).values({
                     wordId: input.wordId,
                     date: input.date,
-                });
+                }).returning();
             } catch (error) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

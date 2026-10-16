@@ -668,6 +668,202 @@
     "Cancel": "Cancel"
   },
   "Dashboard": {
+    "contentQuality": {
+      "title": "Content quality",
+      "description": "Find incomplete entries and prioritize the ones readers look up. Quality reflects current content; the selected dates measure recorded demand.",
+      "loading": "Checking current entries…",
+      "empty": "No entries match these quality and demand filters.",
+      "results": "{count} matching entries",
+      "checkedAt": "Content checked at {date} UTC",
+      "preview": {
+        "title": "Content to improve",
+        "viewAll": "View quality queue"
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "retry": "Retry",
+        "manage": "Manage in word list",
+        "entry": "Open entry and contributions"
+      },
+      "filters": {
+        "title": "Filters and dates",
+        "query": "Word contains",
+        "gap": "Content check",
+        "demand": "Recorded demand",
+        "sort": "Order",
+        "pageSize": "Entries per page",
+        "apply": "Apply filters"
+      },
+      "gaps": {
+        "any": "Any required content gap",
+        "meaning": "No meaning",
+        "pronunciation": "No published audio",
+        "examples": "Meanings without examples",
+        "source": "No source attribution",
+        "etymology": "Optional: etymology enrichment"
+      },
+      "demand": {
+        "all": "Include all entries",
+        "searched": "With recorded lookups",
+        "unsearched": "No recorded lookups"
+      },
+      "sort": {
+        "demand_desc": "Most recorded lookups first",
+        "demand_asc": "Fewest recorded lookups first",
+        "name": "Word name"
+      },
+      "summary": {
+        "title": "Current content checks",
+        "distinct": "{count} of {total} entries need required content work.",
+        "overlap": "Categories overlap; the total counts each entry once.",
+        "enrichment": "Optional etymology: {count} entries."
+      },
+      "row": {
+        "identity": "ID {id} · variant {variant}",
+        "searches": "{count} recorded lookups",
+        "missing": "Content opportunities",
+        "examples": "{count, plural, one {# meaning without an example} other {# meanings without examples}}"
+      },
+      "coverage": {
+        "summary": "Counts use the word and demand filters across all content checks. The selected check further limits the result list.",
+        "current": "Content checks reflect the current dictionary. The date range scopes lookup demand, not when entries were created or edited.",
+        "demand": "Demand counts recorded existing-word lookups, including browsing. Zero reports do not prove no reader interest.",
+        "audio": "Audio checks use published URL metadata and current headword associations. Remote file and playback health are not measured."
+      },
+      "errors": {
+        "invalidFilters": "Some URL filters are invalid. Default filters are shown; apply your selection again.",
+        "load": "The content checks could not load. Retry to check the dictionary.",
+        "refresh": "The latest check failed. Previously loaded entries remain visible; retry to update them."
+      },
+      "pagination": {
+        "label": "Quality queue pages",
+        "page": "Page {page} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      }
+    },
+    "searchGaps": {
+      "title": "Search gaps",
+      "description": "Turn reported searches without results into dictionary and spelling work. Historical misses remain visible even when the live dictionary now has a match.",
+      "loading": "Loading recorded searches…",
+      "results": "{count, plural, one {# search gap} other {# search gaps}}",
+      "filters": {
+        "query": "Find a term",
+        "source": "Search source",
+        "allSources": "All sources",
+        "kind": "Search type",
+        "allKinds": "Terms and patterns",
+        "status": "Review status",
+        "sort": "Order",
+        "apply": "Apply filters"
+      },
+      "sources": {
+        "online": "Online",
+        "offline": "Local dictionary"
+      },
+      "kinds": {
+        "word": "Term",
+        "pattern": "Pattern"
+      },
+      "statuses": {
+        "all": "All review states",
+        "open": "Not reviewed",
+        "reviewed": "Reviewed",
+        "dismissed": "Dismissed",
+        "linked": "Linked to work"
+      },
+      "sort": {
+        "frequency": "Most frequent first",
+        "recent": "Most recently seen first"
+      },
+      "summary": {
+        "title": "Recorded outcomes",
+        "completed": "Completed attempts",
+        "noResult": "No result",
+        "rate": "No-result rate",
+        "errors": "Operational errors",
+        "notMeasured": "Not measured",
+        "denominator": "Period totals cover all terms for the selected source and search type. The rate is no-result ÷ (resolved + no-result). Errors, cancellations and superseded attempts are excluded; term and review filters affect only the list."
+      },
+      "coverage": {
+        "since": "First recorded activity: {date} (UTC).",
+        "notStarted": "No activity has been recorded yet. Collection coverage has not been established.",
+        "limitations": "Browser-reported activity only: some bots, blocked reports and disconnected searches are not measured. A quiet period does not establish uninterrupted collection.",
+        "retention": "Query details are retained for 90 days. This selection is limited to records received since {date} (UTC); older days are not measured zeros."
+      },
+      "columns": {
+        "frequency": "Misses",
+        "firstSeen": "First seen",
+        "lastSeen": "Last seen",
+        "scope": "Counts and first/last timestamps refer to historical no-result reports in the selected retained period. All timestamps are UTC. Current dictionary matches are checked again on refresh."
+      },
+      "current": {
+        "word": "Live dictionary match:",
+        "correction": "Spelling correction exists:",
+        "missing": "No live dictionary match",
+        "available": "Now has a dictionary match",
+        "hasCorrection": "Has a spelling correction",
+        "linkUnavailable": "The linked word is no longer available."
+      },
+      "actions": {
+        "refresh": "Refresh and recheck",
+        "retry": "Retry",
+        "inspect": "Review",
+        "close": "Close review",
+        "createWord": "Create an entry",
+        "correctSpelling": "Add a spelling correction",
+        "search": "Open search",
+        "openLinked": "Open linked work",
+        "manual": "These links prefill existing forms. Opening a form creates nothing; its existing validation and permissions still apply."
+      },
+      "review": {
+        "status": "Review decision",
+        "targetType": "Link to",
+        "targetId": "Existing item ID",
+        "save": "Save decision",
+        "saved": "Review decision saved",
+        "retention": "This is the current triage decision, not an audit history. Decisions expire 90 days after their last update; reopening removes the decision."
+      },
+      "targets": {
+        "word": "Dictionary entry",
+        "correction": "Spelling correction",
+        "request": "Contribution request"
+      },
+      "errors": {
+        "load": "Search gaps could not be loaded. Retry to fetch the recorded activity.",
+        "refresh": "Refresh failed. The last loaded results are still shown; retry to recheck current matches.",
+        "invalidFilters": "Some filters were invalid. The default filters are shown.",
+        "invalidTarget": "Choose an existing item type and a positive item ID before linking.",
+        "targetMissing": "That item no longer exists. Check the ID and try again.",
+        "gapExpired": "This term no longer has retained miss reports. Refresh the list before reviewing it.",
+        "save": "The decision could not be saved. Try again."
+      },
+      "empty": {
+        "noReports": "No reports were recorded for this period, source and search type. A no-result rate cannot be measured.",
+        "noCompleted": "Reports exist, but no completed attempts were recorded. Operational errors are not dictionary gaps.",
+        "noMatches": "No retained search gaps match these filters. Try another term, review state or period."
+      },
+      "pagination": {
+        "label": "Search-gap pages",
+        "page": "Page {page} of {total}",
+        "previous": "Previous",
+        "next": "Next",
+        "first": "Return to the first page"
+      },
+      "trend": {
+        "title": "Daily reported outcomes",
+        "view": "View daily counts",
+        "termTitle": "Daily misses for this term",
+        "day": "UTC day"
+      },
+      "preview": {
+        "title": "Unreviewed search gaps",
+        "description": "Most frequently reported misses in this period, with their current live dictionary status.",
+        "viewAll": "View search gaps",
+        "misses": "{count} misses"
+      }
+    },
+    "previewToggle": "Toggle overview preview",
     "UserList": {
       "usersPerPage": "Users per page",
       "tableLabel": "Users"
@@ -699,7 +895,7 @@
     "overview": {
       "title": "Dashboard Overview",
       "description": "Monitor dictionary activity, moderation workload, and search behavior from one operational view.",
-      "generatedAt": "Updated {date}",
+      "generatedAt": "Updated {date} UTC",
       "metrics": {
         "totalWords": "Total words",
         "totalWordsDescription": "Words available in the dictionary",
@@ -714,9 +910,27 @@
         "openFeedback": "Open feedback",
         "openFeedbackDescription": "Feedback items currently marked open"
       },
+      "attention": {
+        "title": "Needs attention",
+        "description": "Oldest pending requests and open feedback, oldest first. Each queue shows up to five items.",
+        "updatedAt": "Updated {date} UTC",
+        "requestsTitle": "Pending requests ({count, number})",
+        "feedbackTitle": "Open feedback ({count, number})",
+        "aging": "{count, plural, =0 {None waiting} one {# item waiting} other {# items waiting}} {days} days or more",
+        "requestLabel": "Request #{id}",
+        "waiting": "{days, plural, =0 {Waiting less than a day} one {Waiting # day} other {Waiting # days}}",
+        "requestsEmpty": "No pending requests. New contributions will appear here for review.",
+        "feedbackEmpty": "No open feedback. Newly opened reports will appear here.",
+        "viewRequests": "Review all requests",
+        "viewFeedback": "Manage all feedback",
+        "loading": "Loading items that need attention…",
+        "error": "Items that need attention could not be loaded.",
+        "retry": "Retry",
+        "refreshError": "Refresh failed. Showing the last loaded items."
+      },
       "queryLatency": {
         "title": "Word query latency",
-        "description": "Browser estimates from search submission until the word result appears. Daily timings over the last 30 days (UTC).",
+        "description": "Browser estimates from search submission until the word result appears. Daily timings for the selected period (UTC).",
         "average": "Average",
         "p95": "95th percentile",
         "samples": "Measured searches",
@@ -727,30 +941,74 @@
         "viewData": "View daily measurements",
         "date": "Date",
         "loading": "Loading search timings…",
-        "empty": "No search timings yet. Completed searches will appear here after collection starts.",
+        "empty": "No search timings were recorded in this period.",
         "error": "Search timings could not be loaded.",
         "retry": "Retry",
         "refreshError": "Refresh failed. Showing the last loaded measurements.",
-        "updatedAt": "Updated {date}"
+        "updatedAt": "Updated {date} UTC",
+        "previousSamples": "Previous period: {count, number} measured searches."
       },
       "searchTrend": {
         "title": "Search trend",
-        "description": "Daily resolved searches over the last 14 days.",
+        "description": "Daily resolved searches in the selected period (UTC).",
         "series": "Searches"
       },
       "actorSplit": {
         "title": "Search source",
-        "description": "Authenticated and anonymous searches from the last 7 days.",
+        "description": "Authenticated and anonymous searches in the selected period.",
         "authenticated": "Authenticated",
         "anonymous": "Anonymous"
       },
       "topSearches": {
         "title": "Top searched words",
-        "description": "Most searched resolved dictionary words from the last 7 days.",
+        "description": "Most searched resolved words in the selected period.",
         "series": "Searches",
         "viewHistory": "Open search history",
         "empty": "No search logs are available for this time window."
-      }
+      },
+      "range": {
+        "title": "Analytics period (UTC)",
+        "period": "Period",
+        "last7Days": "Last 7 days",
+        "last30Days": "Last 30 days",
+        "last90Days": "Last 90 days",
+        "custom": "Custom dates",
+        "start": "Start date",
+        "end": "End date",
+        "apply": "Apply range",
+        "selected": "Selected: {start} – {end} (UTC)",
+        "previous": "Previous period: {start} – {end} UTC",
+        "partial": "Partial period through {date} UTC. The previous period covers the same elapsed time.",
+        "complete": "Complete days, compared with the preceding period of equal length.",
+        "limit": "Custom ranges can include up to 90 days. Dates and chart buckets use UTC.",
+        "defaultRangeUsed": "Showing the default 30-day range.",
+        "errors": {
+          "invalidRange": "Choose a valid preset or enter valid start and end dates.",
+          "reversedRange": "The end date must be on or after the start date.",
+          "rangeTooLong": "Choose a range of 90 days or fewer.",
+          "futureRange": "The end date cannot be in the future (UTC)."
+        },
+        "partialOnly": "Partial period through {date} UTC."
+      },
+      "comparison": {
+        "change": "{difference} ({baseline}) vs previous period",
+        "durationDifference": "{value} ms",
+        "noMeasurements": "No measurements in this period",
+        "noBaseline": "No measurements in the previous period",
+        "zeroBaseline": "No nonzero baseline",
+        "noActivity": "No activity in either period",
+        "newActivity": "New activity",
+        "previousValue": "Previous: {value}"
+      },
+      "period": {
+        "title": "Activity in the selected period",
+        "searches": "Resolved searches",
+        "newUsers": "New accounts",
+        "submittedRequests": "Contributions submitted",
+        "resolvedRequests": "Contributions resolved",
+        "coverage": "Resolved contributions include recorded approvals and rejections. Older decisions without a resolution timestamp are excluded."
+      },
+      "currentSnapshot": "All-time totals and current moderation queues"
     },
     "searchHistory": {
       "title": "Search History",
@@ -995,6 +1253,8 @@
     },
     "feedback": {
       "title": "Feedback Management",
+      "selectedFeedback": "Showing feedback #{id}",
+      "showAllFeedback": "Show all feedback",
       "anonymous_user": "Anonymous",
       "table": {
         "user": "User",
@@ -1155,6 +1415,142 @@
       "confirmDelete": "Remove this word from the daily schedule?",
       "editWord": "Edit daily word: {word}",
       "deleteWord": "Remove daily word: {word}"
+    },
+    "adminHistory": {
+      "title": "Administrative history",
+      "all": "All",
+      "recording": "First recorded action: {date} UTC. Earlier changes are not included.",
+      "notStarted": "Recording starts with the first covered administrative action. Earlier changes are not included.",
+      "retention": "History is retained for 365 days.",
+      "coverage": "Covers administrative word edits, parameters, request decisions, feedback, account roles/deletion, announcements, scheduling, corrections, relations, badges and suggestion decisions.",
+      "coverageLimits": "Request decisions reference the existing submitted change; they do not capture every applied content field. Search-gap triage, account self-service, imports, publishing scripts and external administration are excluded. Deletion preserves recorded attribution.",
+      "identifiers": "Actor: {actor} · Target: {target}",
+      "loading": "Loading administrative history…",
+      "results": "{count} recorded actions",
+      "empty": "No recorded actions match these filters.",
+      "noHistory": "No administrative actions have been recorded yet.",
+      "filters": {
+        "title": "Filters and coverage",
+        "actorId": "Actor ID",
+        "targetId": "Target ID",
+        "targetType": "Entity",
+        "action": "Action",
+        "pageSize": "Rows per page",
+        "apply": "Apply filters",
+        "datesTitle": "Action dates (UTC)"
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "retry": "Retry",
+        "inspect": "Inspect change",
+        "request": "Open referenced request",
+        "word": "Find current entry",
+        "actor": "Show actions by {actor}"
+      },
+      "verbs": {
+        "create": "Created",
+        "update": "Updated",
+        "delete": "Deleted",
+        "approve": "Approved",
+        "reject": "Rejected",
+        "assign": "Assigned",
+        "revoke": "Revoked"
+      },
+      "entities": {
+        "word": "Word",
+        "word_attribute": "Word attribute",
+        "meaning_attribute": "Meaning attribute",
+        "author": "Author",
+        "part_of_speech": "Part of speech",
+        "language": "Language",
+        "root": "Etymology",
+        "user": "Account",
+        "request": "Request",
+        "feedback": "Feedback",
+        "announcement": "Announcement",
+        "daily_word": "Daily word",
+        "misspelling": "Spelling correction",
+        "galatimeshur": "Galatimeshur",
+        "badge": "Badge",
+        "badge_assignment": "Badge assignment",
+        "word_relation": "Word relation",
+        "phrase_relation": "Phrase relation",
+        "relation_suggestion": "Relation suggestion",
+        "foreign_suggestion": "Foreign-term suggestion"
+      },
+      "details": {
+        "before": "Before",
+        "after": "After",
+        "loading": "Loading change…",
+        "unavailable": "This event is no longer available. It may have expired.",
+        "truncated": "This bounded snapshot was truncated. Some content or changes are not shown.",
+        "noChanges": "No differences are visible in the retained fields. The action may have left them unchanged; truncated content cannot prove that nothing changed."
+      },
+      "errors": {
+        "filters": "Some filters are invalid. The default filters are shown.",
+        "load": "Administrative history could not be loaded. Retry to check again.",
+        "refresh": "Refresh failed. The last loaded history remains visible.",
+        "detail": "This change could not be loaded. Retry to check again."
+      },
+      "pagination": {
+        "label": "History pages",
+        "page": "Page {page} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Headword or name",
+        "variant": "Variant",
+        "phonetic": "Phonetic spelling",
+        "prefix": "Prefix",
+        "suffix": "Suffix",
+        "rootId": "Root reference",
+        "sourceId": "Source reference",
+        "meanings": "Meanings",
+        "examples": "Examples",
+        "attributes": "Word attributes",
+        "etymology": "Etymology",
+        "attribute": "Attribute",
+        "partOfSpeech": "Part of speech",
+        "language_code": "Language code",
+        "language_tr": "Turkish language name",
+        "language_en": "English language name",
+        "wordId": "Word ID",
+        "languageId": "Language ID",
+        "root": "Root",
+        "role": "Role",
+        "entityType": "Entity type",
+        "entityId": "Entity ID",
+        "action": "Requested action",
+        "status": "Status",
+        "resolvedAt": "Resolution time",
+        "resolvedBy": "Resolved by",
+        "type": "Type",
+        "slug": "Slug",
+        "publishedAt": "Publication time",
+        "actionTextKey": "Action label",
+        "translations": "Translations",
+        "date": "Date",
+        "correctWordId": "Correct word ID",
+        "incorrectSpelling": "Incorrect spelling",
+        "explanation": "Explanation",
+        "correctUsage": "Correct usage",
+        "nameTr": "Turkish name",
+        "nameEn": "English name",
+        "descriptionTr": "Turkish description",
+        "descriptionEn": "English description",
+        "icon": "Icon",
+        "requirementType": "Requirement",
+        "requirementValue": "Requirement value",
+        "category": "Category",
+        "pair": "Relationship",
+        "relatedWordId": "Related word ID",
+        "reviewedAt": "Review time",
+        "reviewedBy": "Reviewed by",
+        "createdWordId": "Created word ID"
+      },
+      "description": "Inspect recorded administrative changes and their coverage."
     }
   },
   "LanguageAndRootInput": {

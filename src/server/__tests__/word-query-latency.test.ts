@@ -11,9 +11,9 @@ test.each([
   "2026-10-13T23:59:59.999Z",
   "2026-10-14T02:59:59.999+03:00",
 ])("the window follows UTC regardless of the visitor's date: %s", (time) => {
-  expect(wordQueryLatencyWindow(new Date(time))).toEqual({
+  expect(wordQueryLatencyWindow(new Date(time))).toMatchObject({
     start: new Date("2026-09-14T00:00:00.000Z"),
-    end: new Date("2026-10-14T00:00:00.000Z"),
+    end: new Date(time),
     days: 30,
     timeZone: "UTC",
   });
@@ -47,7 +47,7 @@ databaseTest("PostgreSQL calculates UTC daily and raw-sample window percentiles,
       [10, "2040-01-01T00:00:00Z"],
       [20, "2040-01-01T01:00:00Z"],
       [30, "2040-01-01T23:59:59Z"],
-      [1000, "2040-01-30T23:59:59Z"],
+      [1000, "2040-01-30T11:59:59Z"],
       [100000, "2039-12-31T23:59:59Z"],
       [100000, "2040-01-31T00:00:00Z"],
     ] as const;

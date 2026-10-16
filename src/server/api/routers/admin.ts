@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { adminProcedure, createTRPCRouter } from "../trpc";
 import { z } from "zod";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { words } from "@/db/schema/words";
 import { meanings } from "@/db/schema/meanings";
 import { roots } from "@/db/schema/roots";
@@ -23,6 +23,9 @@ import { galatiMeshurAdminRouter } from "./admin/galatimeshur";
 import { misspellingsAdminRouter } from "./admin/misspellings";
 import { searchHistoryAdminRouter } from "./admin/search-history";
 import { overviewAdminRouter } from "./admin/overview";
+import { searchGapsAdminRouter } from "./admin/search-gaps";
+import { contentQualityAdminRouter } from "./admin/content-quality";
+import { adminHistoryRouter } from "./admin/history";
 
 export const adminRouter = createTRPCRouter({
   dynamicParameters: dynamicParametersRouter,
@@ -34,6 +37,9 @@ export const adminRouter = createTRPCRouter({
   misspellings: misspellingsAdminRouter,
   searchHistory: searchHistoryAdminRouter,
   overview: overviewAdminRouter,
+  searchGaps: searchGapsAdminRouter,
+  contentQuality: contentQualityAdminRouter,
+  history: adminHistoryRouter,
   deleteWord: adminProcedure
     .input(
       z.object({
@@ -278,7 +284,7 @@ export const adminRouter = createTRPCRouter({
         const existingWordAttributes = await db.select({ attributeId: wordsAttributes.attributeId }).from(wordsAttributes).where(eq(wordsAttributes.wordId, word.id))
         const wordAttributesToBeDeleted = existingWordAttributes.filter(val => !word.attributes?.includes(val.attributeId)).map(val => val.attributeId)
         for (const attributeId of wordAttributesToBeDeleted) {
-          await db.delete(wordsAttributes).where(eq(wordsAttributes.attributeId, attributeId))
+          await db.delete(wordsAttributes).where(and(eq(wordsAttributes.wordId, word.id), eq(wordsAttributes.attributeId, attributeId)))
         }
         for (const attributeId of word.attributes) {
           await db.insert(wordsAttributes).values({
@@ -304,6 +310,9 @@ export const adminRouter = createTRPCRouter({
       })
       const existingMeaningIds = existingMeaningIdsResponse.map((val) => val.id)
       const meaningIdsRecieved = word.meanings.map(meaning => meaning.id)
+      if (meaningIdsRecieved.some(id => id !== '' && !existingMeaningIds.includes(id as number))) {
+        throw new Error("A meaning does not belong to this word");
+      }
       brandNewMeanings = word.meanings.filter((value) => value.id === '')
       meaningIdsToBeDeleted = existingMeaningIds.filter((receivedId) => !meaningIdsRecieved.includes(receivedId as number))
       meaningsToUpdate = word.meanings.filter(meaning => meaning.id !== '')
@@ -347,7 +356,7 @@ export const adminRouter = createTRPCRouter({
             const meaningAttributeIdsToBeDeleted = existingMeaningAttributes.filter(att => !meaning.attributes?.includes(att.attributeId)).map(val => val.attributeId)
 
             for (const attributeId of meaningAttributeIdsToBeDeleted) {
-              await db.delete(meaningsAttributes).where(eq(meaningsAttributes.attributeId, attributeId))
+              await db.delete(meaningsAttributes).where(and(eq(meaningsAttributes.meaningId, meaning.id as number), eq(meaningsAttributes.attributeId, attributeId)))
             }
 
             for (const attributeId of meaning.attributes) {

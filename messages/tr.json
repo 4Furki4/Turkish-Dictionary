@@ -663,6 +663,202 @@
     "Cancel": "İptal"
   },
   "Dashboard": {
+    "contentQuality": {
+      "title": "İçerik kalitesi",
+      "description": "Eksik maddeleri bulun ve okuyucuların baktığı kelimelere öncelik verin. Kalite mevcut içeriği, seçilen tarihler kaydedilen talebi gösterir.",
+      "loading": "Mevcut maddeler denetleniyor…",
+      "empty": "Bu içerik ve talep filtrelerine uyan madde yok.",
+      "results": "{count} eşleşen madde",
+      "checkedAt": "İçerik denetimi: {date} UTC",
+      "preview": {
+        "title": "İyileştirilecek içerik",
+        "viewAll": "Kalite kuyruğunu aç"
+      },
+      "actions": {
+        "refresh": "Yenile",
+        "retry": "Yeniden dene",
+        "manage": "Kelime listesinde yönet",
+        "entry": "Maddeyi ve katkı araçlarını aç"
+      },
+      "filters": {
+        "title": "Filtreler ve tarihler",
+        "query": "Kelime içinde ara",
+        "gap": "İçerik denetimi",
+        "demand": "Kaydedilen talep",
+        "sort": "Sıralama",
+        "pageSize": "Sayfadaki madde sayısı",
+        "apply": "Filtreleri uygula"
+      },
+      "gaps": {
+        "any": "Herhangi bir temel içerik eksiği",
+        "meaning": "Anlam yok",
+        "pronunciation": "Yayımlanmış ses yok",
+        "examples": "Örneği olmayan anlamlar",
+        "source": "Kaynak belirtilmemiş",
+        "etymology": "İsteğe bağlı: köken zenginleştirme"
+      },
+      "demand": {
+        "all": "Tüm maddeleri dahil et",
+        "searched": "Kaydedilen bakış var",
+        "unsearched": "Kaydedilen bakış yok"
+      },
+      "sort": {
+        "demand_desc": "En çok bakılandan",
+        "demand_asc": "En az bakılandan",
+        "name": "Kelime adına göre"
+      },
+      "summary": {
+        "title": "Mevcut içerik denetimleri",
+        "distinct": "{total} maddenin {count} tanesinde temel içerik eksiği var.",
+        "overlap": "Kategoriler kesişir; toplamda her madde bir kez sayılır.",
+        "enrichment": "İsteğe bağlı köken: {count} madde."
+      },
+      "row": {
+        "identity": "Kimlik {id} · varyant {variant}",
+        "searches": "{count} kaydedilen bakış",
+        "missing": "İçerik fırsatları",
+        "examples": "Örneği olmayan {count} anlam"
+      },
+      "coverage": {
+        "summary": "Sayılar tüm içerik türlerinde kelime ve talep filtrelerini kullanır. Seçilen içerik denetimi, sonuç listesini ayrıca sınırlar.",
+        "current": "Denetimler sözlüğün mevcut içeriğini gösterir. Tarih aralığı, oluşturulma veya düzenlenme zamanını değil bakış talebini sınırlar.",
+        "demand": "Talep, gezinme dahil mevcut kelimelere kaydedilen bakışları sayar. Sıfır kayıt, okuyucu ilgisi olmadığını kanıtlamaz.",
+        "audio": "Ses denetimi, yayımlanmış bağlantı verisini ve güncel madde adı eşleşmesini kullanır. Uzak dosya ve oynatma sağlığı ölçülmez."
+      },
+      "errors": {
+        "invalidFilters": "Bazı bağlantı filtreleri geçersiz. Varsayılan filtreler gösteriliyor; seçiminizi yeniden uygulayın.",
+        "load": "İçerik denetimleri yüklenemedi. Sözlüğü denetlemek için yeniden deneyin.",
+        "refresh": "Son denetim başarısız oldu. Önceki maddeler gösteriliyor; güncellemek için yeniden deneyin."
+      },
+      "pagination": {
+        "label": "Kalite kuyruğu sayfaları",
+        "page": "Sayfa {page} / {total}",
+        "previous": "Önceki",
+        "next": "Sonraki"
+      }
+    },
+    "searchGaps": {
+      "title": "Sonuçsuz aramalar",
+      "description": "Sonuç vermeyen arama bildirimlerini sözlük ve yazım çalışmalarına dönüştürün. Canlı sözlükte artık eşleşme bulunsa da geçmiş sonuçsuz aramalar görünür kalır.",
+      "loading": "Kaydedilen aramalar yükleniyor…",
+      "results": "{count} sonuçsuz arama terimi",
+      "filters": {
+        "query": "Terim ara",
+        "source": "Arama kaynağı",
+        "allSources": "Tüm kaynaklar",
+        "kind": "Arama türü",
+        "allKinds": "Terimler ve kalıplar",
+        "status": "İnceleme durumu",
+        "sort": "Sıralama",
+        "apply": "Filtreleri uygula"
+      },
+      "sources": {
+        "online": "Çevrim içi",
+        "offline": "Yerel sözlük"
+      },
+      "kinds": {
+        "word": "Terim",
+        "pattern": "Kalıp"
+      },
+      "statuses": {
+        "all": "Tüm inceleme durumları",
+        "open": "İncelenmedi",
+        "reviewed": "İncelendi",
+        "dismissed": "Kapsam dışı",
+        "linked": "Çalışmaya bağlandı"
+      },
+      "sort": {
+        "frequency": "En sık aranan önce",
+        "recent": "En son görülen önce"
+      },
+      "summary": {
+        "title": "Kaydedilen sonuçlar",
+        "completed": "Tamamlanan aramalar",
+        "noResult": "Sonuç bulunamadı",
+        "rate": "Sonuçsuz arama oranı",
+        "errors": "İşletim hataları",
+        "notMeasured": "Ölçülemedi",
+        "denominator": "Dönem toplamları, seçilen kaynak ve arama türündeki tüm terimleri kapsar. Oran, sonuçsuz ÷ (sonuç bulunan + sonuçsuz) şeklinde hesaplanır. Hatalar, iptaller ve yerini yeni aramaya bırakan denemeler dışlanır; terim ve inceleme filtreleri yalnızca listeyi etkiler."
+      },
+      "coverage": {
+        "since": "İlk kaydedilen etkinlik: {date} (UTC).",
+        "notStarted": "Henüz etkinlik kaydedilmedi. Veri toplama kapsamı belirlenemedi.",
+        "limitations": "Yalnızca tarayıcı bildirimleri ölçülür; bazı botlar, engellenen bildirimler ve bağlantısız aramalar kapsanmaz. Etkinlik olmayan bir dönem, kesintisiz veri toplandığını göstermez.",
+        "retention": "Terim ayrıntıları 90 gün saklanır. Bu seçim yalnızca {date} (UTC) sonrasında alınan kayıtları kapsar; eski günler ölçülmüş sıfır değerler değildir."
+      },
+      "columns": {
+        "frequency": "Sonuçsuz deneme",
+        "firstSeen": "İlk görülme",
+        "lastSeen": "Son görülme",
+        "scope": "Sayılar ve ilk/son zamanları, seçilen dönemde saklanan geçmiş sonuçsuz arama bildirimlerine aittir. Tüm zamanlar UTC'dir. Canlı sözlük eşleşmeleri yenilemede tekrar denetlenir."
+      },
+      "current": {
+        "word": "Canlı sözlük eşleşmesi:",
+        "correction": "Yazım düzeltmesi var:",
+        "missing": "Canlı sözlükte eşleşme yok",
+        "available": "Artık sözlük eşleşmesi var",
+        "hasCorrection": "Yazım düzeltmesi var",
+        "linkUnavailable": "Bağlanan kelime artık mevcut değil."
+      },
+      "actions": {
+        "refresh": "Yenile ve tekrar denetle",
+        "retry": "Tekrar dene",
+        "inspect": "İncele",
+        "close": "İncelemeyi kapat",
+        "createWord": "Kelime ekle",
+        "correctSpelling": "Yazım düzeltmesi ekle",
+        "search": "Aramayı aç",
+        "openLinked": "Bağlanan çalışmayı aç",
+        "manual": "Bu bağlantılar mevcut formları önceden doldurur. Formu açmak kayıt oluşturmaz; mevcut doğrulama ve yetki kuralları geçerlidir."
+      },
+      "review": {
+        "status": "İnceleme kararı",
+        "targetType": "Bağlanacak kayıt",
+        "targetId": "Mevcut kayıt kimliği",
+        "save": "Kararı kaydet",
+        "saved": "İnceleme kararı kaydedildi",
+        "retention": "Bu kayıt denetim geçmişi değil, güncel inceleme kararıdır. Kararlar son güncellemeden 90 gün sonra silinir; yeniden açmak kararı kaldırır."
+      },
+      "targets": {
+        "word": "Sözlük kelimesi",
+        "correction": "Yazım düzeltmesi",
+        "request": "Katkı isteği"
+      },
+      "errors": {
+        "load": "Sonuçsuz aramalar yüklenemedi. Kaydedilen etkinliği almak için tekrar deneyin.",
+        "refresh": "Yenileme başarısız oldu. Son yüklenen sonuçlar gösteriliyor; güncel eşleşmeleri denetlemek için tekrar deneyin.",
+        "invalidFilters": "Bazı filtreler geçersizdi. Varsayılan filtreler gösteriliyor.",
+        "invalidTarget": "Bağlamak için mevcut bir kayıt türü ve pozitif kayıt kimliği seçin.",
+        "targetMissing": "Bu kayıt artık mevcut değil. Kimliği denetleyip tekrar deneyin.",
+        "gapExpired": "Bu terime ait saklanan sonuçsuz arama bildirimi kalmadı. İncelemeden önce listeyi yenileyin.",
+        "save": "Karar kaydedilemedi. Tekrar deneyin."
+      },
+      "empty": {
+        "noReports": "Bu dönem, kaynak ve arama türü için bildirim kaydedilmedi. Sonuçsuz arama oranı ölçülemiyor.",
+        "noCompleted": "Bildirim var ancak tamamlanmış arama kaydedilmedi. İşletim hataları sözlük eksiği sayılmaz.",
+        "noMatches": "Bu filtrelerle eşleşen, saklanmış sonuçsuz arama bulunamadı. Başka bir terim, inceleme durumu veya dönem deneyin."
+      },
+      "pagination": {
+        "label": "Sonuçsuz arama sayfaları",
+        "page": "Sayfa {page} / {total}",
+        "previous": "Önceki",
+        "next": "Sonraki",
+        "first": "İlk sayfaya dön"
+      },
+      "trend": {
+        "title": "Günlük sonuç bildirimleri",
+        "view": "Günlük sayıları göster",
+        "termTitle": "Bu terimin günlük sonuçsuz aramaları",
+        "day": "UTC günü"
+      },
+      "preview": {
+        "title": "İncelenmemiş sonuçsuz aramalar",
+        "description": "Bu dönemde en sık sonuçsuz kalan aramalar ve canlı sözlükteki güncel durumları.",
+        "viewAll": "Sonuçsuz aramaları göster",
+        "misses": "{count} sonuçsuz deneme"
+      }
+    },
+    "previewToggle": "Genel bakış önizlemesini aç/kapat",
     "UserList": {
       "usersPerPage": "Sayfa başına kullanıcı",
       "tableLabel": "Kullanıcılar"
@@ -697,7 +893,7 @@
     "overview": {
       "title": "Panel Genel Bakış",
       "description": "Sözlük etkinliğini, moderasyon yükünü ve arama davranışını tek bir operasyon görünümünden takip edin.",
-      "generatedAt": "Güncellendi: {date}",
+      "generatedAt": "Güncelleme: {date} UTC",
       "metrics": {
         "totalWords": "Toplam kelime",
         "totalWordsDescription": "Sözlükte bulunan kelimeler",
@@ -712,9 +908,27 @@
         "openFeedback": "Açık geri bildirim",
         "openFeedbackDescription": "Şu anda açık durumdaki geri bildirimler"
       },
+      "attention": {
+        "title": "İlgilenilmesi gerekenler",
+        "description": "En eski bekleyen istekler ve açık geri bildirimler. Her listede en fazla beş kayıt gösterilir.",
+        "updatedAt": "Güncelleme: {date} UTC",
+        "requestsTitle": "Bekleyen istekler ({count, number})",
+        "feedbackTitle": "Açık geri bildirimler ({count, number})",
+        "aging": "{days} gün veya daha uzun süredir bekleyen: {count, number}",
+        "requestLabel": "İstek #{id}",
+        "waiting": "{days, plural, =0 {Bir günden az süredir bekliyor} other {# gündür bekliyor}}",
+        "requestsEmpty": "Bekleyen istek yok. Yeni katkılar incelenmek üzere burada görünür.",
+        "feedbackEmpty": "Açık geri bildirim yok. Yeni açılan bildirimler burada görünür.",
+        "viewRequests": "Tüm istekleri incele",
+        "viewFeedback": "Tüm geri bildirimleri yönet",
+        "loading": "İlgilenilmesi gereken kayıtlar yükleniyor…",
+        "error": "İlgilenilmesi gereken kayıtlar yüklenemedi.",
+        "retry": "Tekrar dene",
+        "refreshError": "Yenileme başarısız. Son yüklenen kayıtlar gösteriliyor."
+      },
       "queryLatency": {
         "title": "Kelime sorgusu gecikmesi",
-        "description": "Aramanın gönderilmesinden kelime sonucunun görünmesine kadar geçen sürenin tarayıcı ölçümleri. Son 30 günün günlük ölçümleri (UTC).",
+        "description": "Aramanın gönderilmesinden kelime sonucunun görünmesine kadar geçen sürenin tarayıcı ölçümleri. Seçilen dönemin günlük ölçümleri (UTC).",
         "average": "Ortalama",
         "p95": "95. yüzdelik",
         "samples": "Ölçülen aramalar",
@@ -725,30 +939,74 @@
         "viewData": "Günlük ölçümleri göster",
         "date": "Tarih",
         "loading": "Arama süreleri yükleniyor…",
-        "empty": "Henüz arama süresi ölçümü yok. Ölçümler toplanmaya başladıktan sonra tamamlanan aramalar burada görünür.",
+        "empty": "Bu dönemde arama süresi ölçümü kaydedilmemiş.",
         "error": "Arama süreleri yüklenemedi.",
         "retry": "Yeniden dene",
         "refreshError": "Yenileme başarısız. Son yüklenen ölçümler gösteriliyor.",
-        "updatedAt": "Güncellendi: {date}"
+        "updatedAt": "Güncelleme: {date} UTC",
+        "previousSamples": "Önceki dönem: {count, number} ölçülmüş arama."
       },
       "searchTrend": {
         "title": "Arama eğilimi",
-        "description": "Son 14 gündeki günlük çözümlenen aramalar.",
+        "description": "Seçilen dönemdeki günlük sonuçlanan aramalar (UTC).",
         "series": "Aramalar"
       },
       "actorSplit": {
         "title": "Arama kaynağı",
-        "description": "Son 7 gündeki giriş yapmış ve anonim aramalar.",
+        "description": "Seçilen dönemdeki oturum açmış ve anonim aramalar.",
         "authenticated": "Giriş yapan",
         "anonymous": "Anonim"
       },
       "topSearches": {
         "title": "En çok aranan kelimeler",
-        "description": "Son 7 günde en çok aranan çözümlenmiş sözlük kelimeleri.",
+        "description": "Seçilen dönemde en çok aranan sonuçlanmış kelimeler.",
         "series": "Aramalar",
         "viewHistory": "Arama geçmişini aç",
         "empty": "Bu zaman aralığı için arama kaydı bulunmuyor."
-      }
+      },
+      "range": {
+        "title": "Analiz dönemi (UTC)",
+        "period": "Dönem",
+        "last7Days": "Son 7 gün",
+        "last30Days": "Son 30 gün",
+        "last90Days": "Son 90 gün",
+        "custom": "Özel tarih aralığı",
+        "start": "Başlangıç tarihi",
+        "end": "Bitiş tarihi",
+        "apply": "Aralığı uygula",
+        "selected": "Seçilen dönem: {start} – {end} (UTC)",
+        "previous": "Önceki dönem: {start} – {end} UTC",
+        "partial": "{date} UTC itibarıyla henüz tamamlanmamış dönem. Önceki dönemde aynı uzunlukta geçen süre karşılaştırılır.",
+        "complete": "Tamamlanmış günler, aynı uzunluktaki bir önceki dönemle karşılaştırılır.",
+        "limit": "Özel aralıklar en fazla 90 gün olabilir. Tarihler ve grafik günleri UTC saat dilimindedir.",
+        "defaultRangeUsed": "Varsayılan 30 günlük aralık gösteriliyor.",
+        "errors": {
+          "invalidRange": "Geçerli bir dönem seçin veya geçerli başlangıç ve bitiş tarihleri girin.",
+          "reversedRange": "Bitiş tarihi başlangıç tarihinden önce olamaz.",
+          "rangeTooLong": "En fazla 90 günlük bir aralık seçin.",
+          "futureRange": "Bitiş tarihi gelecekte olamaz (UTC)."
+        },
+        "partialOnly": "{date} UTC itibarıyla henüz tamamlanmamış dönem."
+      },
+      "comparison": {
+        "change": "Önceki döneme göre {difference} ({baseline})",
+        "durationDifference": "{value} ms",
+        "noMeasurements": "Bu dönemde ölçüm yok",
+        "noBaseline": "Önceki dönemde ölçüm yok",
+        "zeroBaseline": "Sıfırdan farklı bir karşılaştırma değeri yok",
+        "noActivity": "Her iki dönemde de etkinlik yok",
+        "newActivity": "Yeni etkinlik",
+        "previousValue": "Önceki: {value}"
+      },
+      "period": {
+        "title": "Seçilen dönemdeki etkinlik",
+        "searches": "Sonuçlanan aramalar",
+        "newUsers": "Yeni hesaplar",
+        "submittedRequests": "Gönderilen katkılar",
+        "resolvedRequests": "Sonuçlandırılan katkılar",
+        "coverage": "Sonuçlandırılan katkılar, kayıtlı onayları ve retleri içerir. Sonuçlanma zamanı kaydedilmemiş eski kararlar hariçtir."
+      },
+      "currentSnapshot": "Tüm zamanların toplamları ve mevcut moderasyon kuyrukları"
     },
     "searchHistory": {
       "title": "Arama Geçmişi",
@@ -980,6 +1238,8 @@
     },
     "feedback": {
       "title": "Geri Bildirim Yönetimi",
+      "selectedFeedback": "Geri bildirim #{id} gösteriliyor",
+      "showAllFeedback": "Tüm geri bildirimleri göster",
       "anonymous_user": "Anonim",
       "table": {
         "user": "Kullanıcı",
@@ -1144,6 +1404,142 @@
       "confirmDelete": "Bu kelime günlük takvimden kaldırılsın mı?",
       "editWord": "Günün kelimesini düzenle: {word}",
       "deleteWord": "Günün kelimesini kaldır: {word}"
+    },
+    "adminHistory": {
+      "title": "İşlem geçmişi",
+      "all": "Tümü",
+      "recording": "İlk kaydedilen işlem: {date} UTC. Önceki değişiklikler dahil değildir.",
+      "notStarted": "Kayıt, kapsama giren ilk yönetici işlemiyle başlar. Önceki değişiklikler dahil değildir.",
+      "retention": "Geçmiş 365 gün saklanır.",
+      "coverage": "Yönetici madde düzenlemeleri, parametreler, talep kararları, geri bildirimler, hesap rolleri/silme, duyurular, günün kelimeleri, düzeltmeler, ilişkiler, rozetler ve öneri kararlarını kapsar.",
+      "coverageLimits": "Talep kararları, mevcut başvurudaki değişikliğe bağlantı verir; uygulanan her içerik alanını kopyalamaz. Sonuçsuz arama incelemeleri, kişisel hesap işlemleri, içe aktarma, yayınlama betikleri ve dış yönetim kapsam dışıdır. Silme, kaydedilen işlem sahibini ortadan kaldırmaz.",
+      "identifiers": "İşlemi yapan: {actor} · Hedef: {target}",
+      "loading": "İşlem geçmişi yükleniyor…",
+      "results": "{count} kayıtlı işlem",
+      "empty": "Bu filtrelere uyan kayıtlı işlem yok.",
+      "noHistory": "Henüz kaydedilmiş yönetici işlemi yok.",
+      "filters": {
+        "title": "Filtreler ve kapsam",
+        "actorId": "İşlemi yapanın kimliği",
+        "targetId": "Hedef kimliği",
+        "targetType": "Öğe",
+        "action": "İşlem",
+        "pageSize": "Sayfadaki satır",
+        "apply": "Filtreleri uygula",
+        "datesTitle": "İşlem tarihleri (UTC)"
+      },
+      "actions": {
+        "refresh": "Yenile",
+        "retry": "Yeniden dene",
+        "inspect": "Değişikliği incele",
+        "request": "İlgili talebi aç",
+        "word": "Mevcut maddeyi bul",
+        "actor": "{actor} kullanıcısının işlemlerini göster"
+      },
+      "verbs": {
+        "create": "Oluşturuldu",
+        "update": "Güncellendi",
+        "delete": "Silindi",
+        "approve": "Onaylandı",
+        "reject": "Reddedildi",
+        "assign": "Atandı",
+        "revoke": "Geri alındı"
+      },
+      "entities": {
+        "word": "Madde",
+        "word_attribute": "Kelime özelliği",
+        "meaning_attribute": "Anlam özelliği",
+        "author": "Yazar",
+        "part_of_speech": "Sözcük türü",
+        "language": "Dil",
+        "root": "Köken",
+        "user": "Hesap",
+        "request": "Talep",
+        "feedback": "Geri bildirim",
+        "announcement": "Duyuru",
+        "daily_word": "Günün kelimesi",
+        "misspelling": "Yazım düzeltmesi",
+        "galatimeshur": "Galatımeşhur",
+        "badge": "Rozet",
+        "badge_assignment": "Rozet ataması",
+        "word_relation": "Kelime ilişkisi",
+        "phrase_relation": "Söz öbeği ilişkisi",
+        "relation_suggestion": "İlişki önerisi",
+        "foreign_suggestion": "Yabancı terim önerisi"
+      },
+      "details": {
+        "before": "Önce",
+        "after": "Sonra",
+        "loading": "Değişiklik yükleniyor…",
+        "unavailable": "Bu kayıt artık kullanılamıyor. Saklama süresi dolmuş olabilir.",
+        "truncated": "Bu sınırlı kaydın bir kısmı kısaltıldı. Bazı içerikler veya değişiklikler gösterilmiyor.",
+        "noChanges": "Saklanan alanlarda fark görünmüyor. İşlem bu alanları değiştirmemiş olabilir; kısaltılmış içerik, hiçbir şeyin değişmediğini kanıtlamaz."
+      },
+      "errors": {
+        "filters": "Bazı filtreler geçersiz. Varsayılan filtreler gösteriliyor.",
+        "load": "İşlem geçmişi yüklenemedi. Yeniden deneyin.",
+        "refresh": "Yenileme başarısız. Son yüklenen geçmiş gösterilmeye devam ediyor.",
+        "detail": "Bu değişiklik yüklenemedi. Yeniden deneyin."
+      },
+      "pagination": {
+        "label": "Geçmiş sayfaları",
+        "page": "Sayfa {page} / {total}",
+        "previous": "Önceki",
+        "next": "Sonraki"
+      },
+      "fields": {
+        "id": "Kimlik",
+        "name": "Madde veya ad",
+        "variant": "Varyant",
+        "phonetic": "Sesletim",
+        "prefix": "Ön ek",
+        "suffix": "Son ek",
+        "rootId": "Köken başvurusu",
+        "sourceId": "Kaynak başvurusu",
+        "meanings": "Anlamlar",
+        "examples": "Örnekler",
+        "attributes": "Kelime özellikleri",
+        "etymology": "Köken",
+        "attribute": "Özellik",
+        "partOfSpeech": "Sözcük türü",
+        "language_code": "Dil kodu",
+        "language_tr": "Türkçe dil adı",
+        "language_en": "İngilizce dil adı",
+        "wordId": "Kelime kimliği",
+        "languageId": "Dil kimliği",
+        "root": "Köken",
+        "role": "Rol",
+        "entityType": "Öğe türü",
+        "entityId": "Öğe kimliği",
+        "action": "İstenen işlem",
+        "status": "Durum",
+        "resolvedAt": "Sonuçlanma zamanı",
+        "resolvedBy": "Sonuçlandıran",
+        "type": "Tür",
+        "slug": "Kısa ad",
+        "publishedAt": "Yayın zamanı",
+        "actionTextKey": "Eylem etiketi",
+        "translations": "Çeviriler",
+        "date": "Tarih",
+        "correctWordId": "Doğru kelime kimliği",
+        "incorrectSpelling": "Yanlış yazım",
+        "explanation": "Açıklama",
+        "correctUsage": "Doğru kullanım",
+        "nameTr": "Türkçe ad",
+        "nameEn": "İngilizce ad",
+        "descriptionTr": "Türkçe açıklama",
+        "descriptionEn": "İngilizce açıklama",
+        "icon": "Simge",
+        "requirementType": "Koşul türü",
+        "requirementValue": "Koşul değeri",
+        "category": "Kategori",
+        "pair": "İlişki",
+        "relatedWordId": "İlişkili kelime kimliği",
+        "reviewedAt": "İnceleme zamanı",
+        "reviewedBy": "İnceleyen",
+        "createdWordId": "Oluşturulan kelime kimliği"
+      },
+      "description": "Kaydedilen yönetici işlemlerini ve kapsamını inceleyin."
     }
   },
   "LanguageAndRootInput": {

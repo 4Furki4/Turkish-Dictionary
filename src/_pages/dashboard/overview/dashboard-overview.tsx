@@ -3,15 +3,14 @@
 import type { ReactNode } from "react";
 import { Card, CardBody, Chip } from "@heroui/react";
 import {
-  Activity,
   BarChart3,
   FileClock,
   MessageSquareWarning,
-  Search,
   Users,
   WholeWord,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import {
   Area,
   AreaChart,
@@ -27,6 +26,12 @@ import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { Link } from "@/src/i18n/routing";
 import { api } from "@/src/trpc/react";
 import { WordQueryLatencyChart } from "./word-query-latency-chart";
+import { NeedsAttention } from "./needs-attention";
+import { DashboardRangeFilter } from "./dashboard-range-filter";
+import { MetricChange } from "./metric-change";
+import { SearchGapPreview } from "../search-gaps/search-gap-preview";
+import { ContentQualityPreview } from "../content-quality/content-quality-preview";
+import { readDashboardRange } from "@/src/server/api/schemas/dashboard";
 
 type MetricCardProps = {
   label: string;
@@ -63,10 +68,12 @@ function MetricCard({ label, value, description, icon }: MetricCardProps) {
   );
 }
 
-export function DashboardOverview() {
+export function DashboardOverview({ referenceTime = new Date() }: { referenceTime?: Date }) {
   const locale = useLocale();
   const t = useTranslations("Dashboard.overview");
-  const [data] = api.admin.overview.getDashboardOverview.useSuspenseQuery();
+  const searchParams = useSearchParams();
+  const { selection, error } = readDashboardRange(searchParams, referenceTime);
+  const [data] = api.admin.overview.getDashboardOverview.useSuspenseQuery(selection, { staleTime: 60_000, refetchInterval: 60_000, retry: false });
   const numberFormatter = new Intl.NumberFormat(locale);
   const dates = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone: "UTC" });
   const timestamps = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" });
@@ -107,18 +114,6 @@ export function DashboardOverview() {
       icon: <Users className="h-4 w-4" />,
     },
     {
-      label: t("metrics.searchesToday"),
-      value: data.metrics.searchesToday,
-      description: t("metrics.searchesTodayDescription"),
-      icon: <Search className="h-4 w-4" />,
-    },
-    {
-      label: t("metrics.searchesLast7Days"),
-      value: data.metrics.searchesLast7Days,
-      description: t("metrics.searchesLast7DaysDescription"),
-      icon: <Activity className="h-4 w-4" />,
-    },
-    {
       label: t("metrics.pendingRequests"),
       value: data.metrics.pendingRequests,
       description: t("metrics.pendingRequestsDescription"),
@@ -146,11 +141,38 @@ export function DashboardOverview() {
         </Chip>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <DashboardRangeFilter key={searchParams.toString()} selection={selection} window={data.window} generatedAt={data.generatedAt} initialError={error} />
+
+      <section aria-labelledby="dashboard-period-metrics" className="min-w-0 rounded-xl border border-border/60 bg-background/40 p-4">
+        <h2 id="dashboard-period-metrics" className="text-lg font-semibold">{t("period.title")}</h2>
+        <dl className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {([
+            ["searches", data.periodMetrics.searches],
+            ["newUsers", data.periodMetrics.newUsers],
+            ["submittedRequests", data.periodMetrics.submittedRequests],
+            ["resolvedRequests", data.periodMetrics.resolvedRequests],
+          ] as const).map(([key, comparison]) => (
+            <div key={key} data-testid={`period-${key}`}>
+              <dt className="text-sm text-muted-foreground">{t(`period.${key}`)}</dt>
+              <dd className="mt-1 text-2xl font-semibold tabular-nums">{numberFormatter.format(comparison.current ?? 0)}</dd>
+              <MetricChange comparison={comparison} />
+              <p className="mt-1 text-xs text-muted-foreground">{t("comparison.previousValue", { value: numberFormatter.format(comparison.previous ?? 0) })}</p>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-4 text-xs text-muted-foreground">{t("period.coverage")}</p>
+      </section>
+
+      <h2 className="text-lg font-semibold">{t("currentSnapshot")}</h2>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((metric) => (
           <MetricCard key={metric.label} {...metric} />
         ))}
       </div>
+
+      <NeedsAttention />
+      <SearchGapPreview selection={selection} asOf={data.generatedAt} />
+      <ContentQualityPreview selection={selection} asOf={data.generatedAt} />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Card isBlurred className="bg-background/40 xl:col-span-2">
@@ -190,6 +212,7 @@ export function DashboardOverview() {
                   stroke="var(--color-count)"
                   fill="url(#searchTrendFill)"
                   strokeWidth={2}
+                  isAnimationActive={false}
                 />
               </AreaChart>
             </ChartContainer>
@@ -236,7 +259,7 @@ export function DashboardOverview() {
         </Card>
       </div>
 
-      <WordQueryLatencyChart />
+      <WordQueryLatencyChart selection={selection} asOf={data.generatedAt} />
 
       <Card isBlurred className="bg-background/40">
         <CardBody className="space-y-4">
@@ -274,7 +297,7 @@ export function DashboardOverview() {
                   tickMargin={8}
                 />
                 <Tooltip content={<ChartTooltipContent valueFormatter={(value) => numberFormatter.format(Number(value))} />} />
-                <Bar dataKey="count" fill="var(--color-count)" radius={[0, 6, 6, 0]} />
+                <Bar dataKey="count" fill="var(--color-count)" radius={[0, 6, 6, 0]} isAnimationActive={false} />
               </BarChart>
             </ChartContainer>
           ) : (

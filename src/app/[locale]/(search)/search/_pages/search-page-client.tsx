@@ -17,6 +17,7 @@ import {
 import SearchContainer from "@/src/components/customs/search/search-container";
 import { useNavigationProgress } from "@/src/lib/navigation-progress";
 import OfflineSearchStateCard from "@/src/components/customs/search/offline-search-state-card";
+import { useSearchOutcomeResult } from "@/src/hooks/use-search-outcome";
 
 type SearchPageClientProps = {
     initialWord?: string;
@@ -57,10 +58,13 @@ export default function SearchPageClient({
         isOfflineLoading,
         offlineStatus,
         offlineError,
+        searchOutcome,
+        searchOutcomeSource,
     } = useWordSearch(
         wordName || '',
         { offlineOnly: shouldUseOfflineOnly },
     );
+    useSearchOutcomeResult({ word: wordName ?? "", outcome: phase === "loading" ? null : searchOutcome, source: searchOutcomeSource });
 
     if (!wordName) {
         return <>{children}</>;

@@ -21,6 +21,8 @@ import { oauthAccessTokens } from "@/db/schema/oauth";
 import { users } from "@/db/schema/users";
 import { RateLimitError } from "./rate-limit-error";
 import { getRateLimitRetryAt } from "@/src/lib/rate-limit-error";
+import { auditAdminMutation } from "@/src/server/admin-audit";
+import { ADMIN_AUDIT_REGISTRY } from "@/src/server/admin-audit-registry";
 
 type AuthSession = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
 
@@ -100,7 +102,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<typeof createTRPCContext>().meta<{ administrative?: boolean }>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
@@ -133,7 +135,7 @@ const BOT_USER_AGENTS = [
 /**
  * Check if the user-agent belongs to a known search engine bot
  */
-function isSearchBot(userAgent: string | null): boolean {
+export function isSearchBot(userAgent: string | null): boolean {
   if (!userAgent) return false;
   const lowerUA = userAgent.toLowerCase();
   return BOT_USER_AGENTS.some(bot => lowerUA.includes(bot));
@@ -153,6 +155,15 @@ const telemetryRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(30, "1 m"),
   analytics: false,
   prefix: "@upstash/search-telemetry",
+});
+
+// A resolved search emits both reports. Keep outcome collection from consuming
+// the existing latency-sample budget or biasing outcomes toward single reports.
+const outcomeRatelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(30, "1 m"),
+  analytics: false,
+  prefix: "@upstash/search-outcomes",
 });
 
 function isUpstashQuotaExceededError(error: unknown): boolean {
@@ -230,6 +241,7 @@ function createRateLimitMiddleware(limiter: Ratelimit, allowSearchBots: boolean)
 
 const rateLimitMiddleware = createRateLimitMiddleware(ratelimit, true);
 const telemetryRateLimitMiddleware = createRateLimitMiddleware(telemetryRatelimit, false);
+const outcomeRateLimitMiddleware = createRateLimitMiddleware(outcomeRatelimit, false);
 
 /**
  * Create a server-side caller.
@@ -291,6 +303,7 @@ export const publicProcedure = t.procedure
 
 /** Anonymous measurement ingestion has its own quota and no SEO bot exemption. */
 export const telemetryProcedure = t.procedure.use(telemetryRateLimitMiddleware);
+export const outcomeTelemetryProcedure = t.procedure.use(outcomeRateLimitMiddleware);
 
 /**
  * Protected (authenticated) procedure
@@ -327,6 +340,17 @@ const forceAdminMiddleware = t.middleware(async ({ ctx: { session }, next }) => 
   });
 })
 export const adminProcedure = t.procedure
+  .meta({ administrative: true })
   .use(dictionaryCacheInvalidation)
   .use(rateLimitMiddleware)
-  .use(forceAdminMiddleware);
+  .use(forceAdminMiddleware)
+  .use(async ({ ctx, path, type, getRawInput, next }) => {
+    if (type !== "mutation" || !ADMIN_AUDIT_REGISTRY[path]) return next();
+    return auditAdminMutation(ctx.db, path, await getRawInput(), ctx.session.user, async tx => {
+      const result = await next({ ctx: { db: tx as unknown as typeof db } });
+      // tRPC returns errors as values from next(); throwing is essential so the
+      // transaction rolls back rather than committing a failed resolver.
+      if (!result.ok) throw result.error;
+      return { result, output: result.data };
+    });
+  });

@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import { RequestHandler, RequestHandlerContext } from "./types";
 import { requests } from "@/db/schema/requests";
-import { db } from "@/db";
 import { TRPCError } from "@trpc/server";
 import { wordAttributes, wordsAttributes } from "@/db/schema/word_attributes";
 import { words } from "@/db/schema/words";
@@ -73,7 +72,7 @@ export class CreateWordHandler implements RequestHandler<void> {
 
         // Create root if language and root are provided
         if (wordData.language && wordData.root) {
-            const [language] = await db.select({ id: languages.id })
+            const [language] = await tx.select({ id: languages.id })
                 .from(languages)
                 .where(eq(languages.language_code, wordData.language));
             
@@ -180,11 +179,9 @@ export class UpdateWordHandler implements RequestHandler<void> {
         const pendingAttributes = attributes?.filter(attr => Number(attr) < 0)
         let newAttributeIds: number[] = existingAttributes?.map(attr => Number(attr)) || []
         if (pendingAttributes && pendingAttributes?.length > 0) {
-            pendingAttributes.forEach(async (attr) => {
+            for (const attr of pendingAttributes) {
                 const attributeId = Number(attr)
-                const requestedAttribute = await db.query.requests.findFirst({
-                    where: eq(requests.id, attributeId)
-                })
+                const [requestedAttribute] = await tx.select().from(requests).where(eq(requests.id, attributeId)).limit(1)
                 if (!requestedAttribute) {
                     throw new TRPCError({
                         code: "INTERNAL_SERVER_ERROR",
@@ -199,9 +196,9 @@ export class UpdateWordHandler implements RequestHandler<void> {
                 })
 
                 newAttributeIds.push(insertedAttributeId.id)
-            })
+            }
         }
-        newAttributeIds.forEach(async (attr) => {
+        for (const attr of newAttributeIds) {
             // Check that requestableId is not null before inserting
             if (requestableId !== null && requestableId !== undefined) {
                 await tx.insert(wordsAttributes).values({
@@ -209,8 +206,8 @@ export class UpdateWordHandler implements RequestHandler<void> {
                     attributeId: attr
                 })
             }
-        })
-        Object.keys(newData).forEach(async (key) => {
+        }
+        for (const key of Object.keys(newData)) {
             switch (key) {
                 case "wordName":
                     await tx.update(words).set({
@@ -233,12 +230,12 @@ export class UpdateWordHandler implements RequestHandler<void> {
                     }).where(eq(words.id, requestableId))
                     break
             }
-        })
+        }
         const newLanguageCode = newData.language as string
         if (!newLanguageCode) return
 
-        const [{ id: languageId }] = await db.select({ id: languages.id }).from(languages).where(eq(languages.language_code, newLanguageCode))
-        const [root] = await db.select({ id: roots.id }).from(roots).where(eq(roots.wordId, requestableId))
+        const [{ id: languageId }] = await tx.select({ id: languages.id }).from(languages).where(eq(languages.language_code, newLanguageCode))
+        const [root] = await tx.select({ id: roots.id }).from(roots).where(eq(roots.wordId, requestableId))
         if (!root) {
             await tx.insert(roots).values({
                 wordId: requestableId,
