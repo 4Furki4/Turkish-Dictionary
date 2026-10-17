@@ -1,4 +1,0 @@
-FROM postgres:17-alpine
-# This file is produced only from the guarded disposable CI database. PostgreSQL
-# substitutes the per-preview user/database when running its init scripts.
-COPY fixture.sql.gz /docker-entrypoint-initdb.d/10-preview.sql.gz

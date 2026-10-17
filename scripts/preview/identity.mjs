@@ -36,5 +36,5 @@ export function credential(secret, identity, purpose) {
 export function imageNames(repository, identity, sha) {
   if (!/^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*)+$/.test(repository ?? "")) throw new Error("Invalid preview image repository");
   if (!/^[a-f0-9]{40}$/.test(sha ?? "")) throw new Error("A full GitHub commit SHA is required");
-  return { app: `${repository}:preview-${identity.hash}-${sha}`, database: `${repository}:preview-db-${sha}` };
+  return { app: `${repository}:preview-${identity.hash}-${sha}` };
 }

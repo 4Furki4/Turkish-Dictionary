@@ -11,8 +11,9 @@ the same Raspberry Pi.
 ## Branch previews
 
 Feature branches deploy through GitHub Actions and
-[Coolify](https://coolify.furkan-cengiz.com), using a separate app and disposable
-test database for each branch. URLs use
+[Coolify](https://coolify.furkan-cengiz.com), using a separate app for each branch
+and sharing the existing development database through a private
+gateway. Preview writes affect development data. URLs use
 `dictionary-<branch>-<hash>.furkan-cengiz.com`.
 
 See [the preview runbook](coolify-previews.md) for setup, credentials, cleanup,

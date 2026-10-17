@@ -1,7 +1,7 @@
 import { appendFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { imageNames, isOwned, ownership, previewIdentity } from "./identity.mjs";
-import { previewCompose } from "./compose.mjs";
+import { DATABASE_KEYS, previewCompose } from "./compose.mjs";
 import { jsonClient } from "./client.mjs";
 
 export class StaleRun extends Error {}
@@ -49,8 +49,12 @@ export async function runLifecycle({ action, identity, sha, config, coolify, git
     // metadata 404 cannot prove that Docker cleanup has finished.
     return { outcome: "cleanup queued", url: identity.url };
   }
+  const shared = await coolify(`/api/v1/projects/${project}/environments/${environmentUuid}/envs`);
+  if (!Array.isArray(shared)) throw new Error("Unexpected Coolify shared-variable response");
+  const missing = DATABASE_KEYS.filter(key => !shared.some(variable => variable.key === key));
+  if (missing.length) throw new Error(`Configure development database shared variables in Coolify previews: ${missing.join(", ")}`);
   const images = imageNames(config.imageRepository, identity, sha);
-  const compose = previewCompose({ identity, images, sha, secret: config.secret });
+  const compose = previewCompose({ identity, images, sha, secret: config.secret, sharedKeys: shared.map(variable => variable.key) });
   const payload = {
     name: identity.name, description: ownership(identity, environmentUuid),
     docker_compose_raw: Buffer.from(JSON.stringify(compose)).toString("base64"),
@@ -96,7 +100,7 @@ export async function main(environment = process.env) {
     project: environment.PREVIEW_PROJECT || "dictionary", domain: environment.PREVIEW_BASE_DOMAIN || "furkan-cengiz.com" });
   if (environment.PREVIEW_ACTION === "identity") {
     const images = imageNames(environment.PREVIEW_IMAGE_REPOSITORY || "furki4/turkish-dictionary-app", identity, environment.PREVIEW_SHA);
-    if (environment.GITHUB_OUTPUT) appendFileSync(environment.GITHUB_OUTPUT, `identity=${identity.hash}\nurl=${identity.url}\napp_image=${images.app}\ndatabase_image=${images.database}\n`);
+    if (environment.GITHUB_OUTPUT) appendFileSync(environment.GITHUB_OUTPUT, `identity=${identity.hash}\nurl=${identity.url}\napp_image=${images.app}\n`);
     console.log(identity.url);
     return;
   }

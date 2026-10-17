@@ -24,8 +24,8 @@ The hash includes the repository and exact branch name, so names containing
 slashes, Unicode, or the same readable slug still receive different URLs. A
 later push keeps the URL and replaces its deployed revision.
 
-Deleting the branch queues deletion of that branch's owned Coolify service,
-including its disposable database. Missing resources count as successful
+Deleting the branch queues deletion of that branch's owned Coolify service.
+The shared development database and gateway are retained. Missing resources count as successful
 cleanup. If the branch exists again, cleanup skips it. Automatic deletion events
 use the workflow from the repository's default branch: **this workflow must be
 merged into that branch before automatic cleanup becomes active**. A preview
@@ -56,35 +56,24 @@ containers and the repository never receive this administrator password.
 
 ## Deployment boundaries
 
-Each preview is one Coolify custom Compose service containing:
+Each preview contains the standalone app built with its branch URL and a private
+HTTP fixture for the existing Upstash rate-limit protocol. The app has a 768 MiB
+limit and the fixture has a 64 MiB limit.
 
-- The standalone app image built with that branch's exact public URL.
-- PostgreSQL 17 with an isolated password in the preview's own Docker network.
-- A private HTTP fixture for the application's Upstash rate-limit boundary.
+All previews use the **existing development database**, through its PgBouncer
+and a private TCP gateway. They see development's full dataset. Writes from a
+preview affect development and other previews; they persist after the preview
+is removed. Branches must remain compatible with the development schema.
+Preview startup and deployment never run migrations, schema push, or fixture
+imports against this database. CI checks still use their own disposable database.
 
-The database is built from `scripts/ci/database.ts`'s disposable local database,
-using today's Drizzle schema and the synthetic `kitap` dictionary entry. It is
-exported **before** browser tests create synthetic accounts. No production or
-development snapshot, real user account, integration secret, or database
-credential is used. Legacy migration history cannot initialize an empty auth
-schema, so this fixture follows the existing guarded CI schema-push path rather
-than replaying historical migrations.
-
-Database data lives in a bounded 128 MiB `tmpfs`. A database container restart or
-replacement restores the fixture and discards preview edits. This makes each
-code revision safe to test against its own schema; previews are unsuitable for
-durable data. Limits are 768 MiB for the app, 256 MiB for PostgreSQL (including
-its data), and 64 MiB for the rate-limit fixture. Each preview consumes Pi
-resources until its branch is removed.
-
-Email delivery, OAuth provider credentials, upload credentials, Meilisearch,
-push delivery, and external cron scheduling are not configured. reCAPTCHA has
-its public build key but no real verification secret, so protected submission
-flows cannot pass verification. The private Upstash fixture accepts only the
-existing CI sliding-window protocol and does not enforce real visitor quotas.
-Use development or a separately configured integration environment to test those
-external services. Preview credentials are derived separately for each branch
-from a dedicated secret; they cannot authenticate to existing databases.
+Production credentials and production database connectivity are not configured.
+Authentication secrets and fixture tokens default to separate branch-derived
+values. OAuth, email, uploads, Meilisearch, and reCAPTCHA verification remain
+disabled until their runtime values and provider domain settings are configured.
+The default Upstash fixture accepts the existing CI sliding-window protocol and
+does not enforce real visitor quotas. Set a real Upstash URL/token to use a real
+rate limiter. External cron scheduling remains separate from preview deployment.
 
 Cloudflare terminates public HTTPS and forwards matching preview hostnames to
 the loopback Coolify HTTP proxy at `127.0.0.1:8088`. The origin sets
@@ -93,15 +82,61 @@ standard HTTPS URLs. Coolify routes the app to internal port `3000`; there
 are no published preview app or database ports. A response middleware adds
 `X-Robots-Tag: noindex, nofollow` and `X-Preview-Commit: <full-commit-sha>`.
 Deployment succeeds only when `/api/health` returns HTTP 200 with the expected
-commit header and noindex. These preview URLs are publicly reachable and contain
-only disposable synthetic data.
+commit header and noindex. These preview URLs are publicly reachable and use
+shared development data. Preview writes persist after branch deletion.
 
-Coolify attaches the proxy and all three containers to one network owned by that
-preview's resource UUID. Previews do not join the global `coolify` network or an
-existing application network. The Compose input deliberately declares no extra
-networks: Coolify's deletion API removes its UUID network but leaves additional
-Compose networks behind. The database has no published port or public router;
-its Docker network permits outbound connections.
+Coolify adds the resource's UUID network for routing and the fixture. The app
+also joins the external `dictionary-preview-development` network. Its database
+endpoint is `preview-development-db:5432`, which forwards to development
+PgBouncer. The gateway joins the existing application network; preview code does
+not join that network. No database or gateway ports are published to the host.
+The gateway and external network are shared infrastructure and survive branch
+cleanup. Coolify 4.4.6 removes only its resource UUID network during service
+cleanup; it does not own the external database network.
+
+## Manage environment variables
+
+For common settings, open **Shared Variables → Environment wide**, select
+**Turkish Dictionary → previews**, and edit the values there. The six
+`DATABASE_*` entries already point to development through the private gateway.
+Keep the URL and separate connection fields consistent when changing credentials;
+`localhost` inside an app container cannot reach the Pi's database.
+
+For a branch override, open **Projects → Turkish Dictionary → previews → the
+preview service → Configuration → Environment Variables**. Save the value and
+**Deploy/redeploy** the service. Runtime edits do not require rebuilding the
+image. Existing saved values survive later GitHub deployments: the Compose
+template provides initial defaults rather than rewriting those saved variables.
+Use the variable editor rather than editing generated Compose directly.
+
+To inherit a common value, set the branch variable to a shared reference:
+
+```dotenv
+RESEND_API_KEY={{environment.RESEND_API_KEY}}
+RECAPTCHA_SECRET_KEY={{environment.RECAPTCHA_SECRET_KEY}}
+```
+
+New previews automatically reference supported shared settings that exist when
+they are created, including the Upstash URL/token pair. Authentication and cron
+secrets start with separate branch-derived defaults; use a shared reference
+explicitly if those must be common. For existing previews, add the shared reference once if the
+field currently has a branch-local default. Adding a shared setting does not
+overwrite an existing override. After changing a common value, redeploy the
+previews that should consume it. Update references before deleting or renaming
+a shared key.
+
+Supported runtime fields include database settings, auth/provider secrets,
+reCAPTCHA verification, Resend, UploadThing, R2/S3, Meilisearch, Valkey, and
+Upstash. Private services other than the database also need suitable private
+connectivity; filling in a hostname does not attach the preview to their network.
+OAuth callback and reCAPTCHA domain allowlists must accept the preview hostname.
+The workflow owns the branch URL, hostname, and container port.
+
+`NEXT_PUBLIC_*` browser values are baked into the Next.js image. Their build
+inputs belong in GitHub Actions secrets/variables and the Docker build arguments;
+changing them only in Coolify cannot update the browser bundle. Push a commit
+after changing build inputs. The workflow generates each branch's public URL;
+the public asset origin remains `https://data.turkce-sozluk.com`.
 
 ## GitHub configuration
 
@@ -110,7 +145,7 @@ Configure these repository secrets without committing their values:
 | Secret | Purpose |
 | --- | --- |
 | `COOLIFY_TOKEN` | Dedicated Coolify API token with `read`, `write`, and `deploy` abilities |
-| `PREVIEW_SECRET` | Independently generated secret of at least 32 characters used to derive preview-only credentials |
+| `PREVIEW_SECRET` | Independently generated secret of at least 32 characters for branch auth/fixture credentials |
 | `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` | Existing Docker Hub image publishing credentials |
 | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Existing public Next.js build configuration |
 
@@ -130,8 +165,8 @@ nonsecret repository variables:
 
 Keep this project/environment dedicated to previews; do not add shared
 production environment variables there. The default Docker Hub repository must
-allow public image pulls. App tags are `preview-<branch-hash>-<full-sha>`;
-database tags are `preview-db-<full-sha>`. Neither `latest` nor `development` is
+allow public image pulls. App tags are `preview-<branch-hash>-<full-sha>`.
+Database images are no longer built or published. Neither `latest` nor `development` is
 modified by this workflow. Registry images are retained after branch deletion
 and can be pruned separately by tag prefix when no preview uses them.
 
@@ -173,6 +208,21 @@ The manager's forced daily Docker cleanup is disabled, its disk threshold is
 99%, and unused-volume/network pruning is disabled. Workflow cleanup requests
 also disable global Docker cleanup; they remove only the owned preview.
 
+The private database gateway lives in `/data/coolify/preview-database-gateway/`.
+Its source templates are `scripts/preview/development-gateway.compose.yml` and
+`development-gateway.cfg`. It uses a pinned official ARM64 HAProxy image, a
+64 MiB memory limit, no host ports, and Docker DNS to follow development
+PgBouncer after container recreation. Start it with:
+
+```bash
+sudo docker compose -f /data/coolify/preview-database-gateway/development-gateway.compose.yml up -d
+```
+
+The external development network name is installation-specific and currently
+`turkce-sozluk_default`. Installing the gateway does not recreate existing
+containers. Credentials stay in Coolify's encrypted shared-variable store,
+outside GitHub and the repository.
+
 For a failed preview, open its Actions run and Coolify service. API failures
 report only status codes to avoid printing response bodies containing secrets.
 Check image availability, the configured project/environment/destination UUIDs,
@@ -184,7 +234,10 @@ changing any marker; never bypass it by choosing another service UUID.
 To suspend previews, disable the **Branch previews** workflow and stop its
 owned services in Coolify. Do not stop the existing production or development
 Compose stacks. To remove Coolify, first remove its owned preview services,
-then stop only `/data/coolify/source/`'s Compose stack and its `coolify-proxy`.
+then stop the private gateway after all previews have detached from it. Remove
+only its `dictionary-preview-development` network; retain the existing
+`turkce-sozluk_default` application network and development database.
+Then stop only `/data/coolify/source/`'s Compose stack and its `coolify-proxy`.
 Remove only the added dashboard/wildcard ingress and DNS records, or restore the
 installation backup after checking for later Cloudflare changes. Leave existing
 exact ingress routes and DNS records intact. Keep `/data/coolify` until its

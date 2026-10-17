@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { credential, imageNames, ownership, previewIdentity } from "./identity.mjs";
-import { previewCompose } from "./compose.mjs";
+import { DATABASE_KEYS, previewCompose, SHARED_RUNTIME_DEFAULTS } from "./compose.mjs";
 import { ApiError, jsonClient } from "./client.mjs";
 import { assertCurrent, runLifecycle, StaleRun } from "./lifecycle.mjs";
 
@@ -24,6 +24,7 @@ function scenario({ existing = false, heads = [sha], onRequest, health = healthy
       const override = await onRequest(path, options);
       if (override !== undefined) return override;
     }
+    if (path.endsWith("/envs")) return DATABASE_KEYS.map(key => ({ key }));
     if (path.startsWith("/api/v1/projects/")) return { uuid: config.environmentUuid, services: existing ? [resource] : [] };
     if (options.method === "DELETE") { deleted = true; return { message: "Service deletion request queued." }; }
     if (options.method === "POST") return { uuid: resource.uuid };
@@ -63,26 +64,47 @@ describe("preview identity and isolation", () => {
     expect(() => imageNames(config.imageRepository, identity, "short")).toThrow();
     expect(() => credential("short", identity, "auth")).toThrow();
   });
-  test("generated Compose has no public database, real provider secrets or persistent data", () => {
-    const compose = previewCompose({ identity, images: imageNames(config.imageRepository, identity, sha), sha, secret: config.secret });
-    expect(compose.services.database.ports).toBeUndefined();
-    // Coolify adds its owned UUID network. Extra Compose networks survive its
-    // deletion API and would accumulate after repeated branch churn.
-    expect(compose.networks).toBeUndefined();
-    for (const service of Object.values(compose.services)) expect(service.networks).toBeUndefined();
-    expect(compose.services.database.tmpfs).toEqual(["/var/lib/postgresql/data:size=128m"]);
-    expect(compose.services.database.healthcheck.test).toContain("127.0.0.1");
+  test("generated Compose uses only the private shared database network and editable runtime references", () => {
+    const compose = previewCompose({ identity, images: imageNames(config.imageRepository, identity, sha), sha, secret: config.secret,
+      sharedKeys: [...Object.keys(SHARED_RUNTIME_DEFAULTS), "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"] });
+    expect(compose.services.database).toBeUndefined();
+    expect(compose.networks).toEqual({ development: { external: true, name: "dictionary-preview-development" } });
+    expect(compose.services.app.networks).toEqual(["development"]);
+    expect(compose.services.integrations.networks).toBeUndefined();
+    for (const service of Object.values(compose.services)) expect(service.ports).toBeUndefined();
+    for (const key of [...DATABASE_KEYS, ...Object.keys(SHARED_RUNTIME_DEFAULTS)]) {
+      expect(compose.services.app.environment[key]).toBe(`\${${key}:-{{environment.${key}}}}`);
+    }
     expect(compose.services.app.environment.BETTER_AUTH_URL).toBe(identity.url);
-    expect(compose.services.app.environment.RESEND_API_KEY).toBeUndefined();
-    expect(compose.services.app.environment.MEILI_MASTER_KEY).toBeUndefined();
-    expect(compose.services.app.environment.RECAPTCHA_SECRET_KEY).toBe("preview-disabled");
-    expect(compose.services.app.environment.UPSTASH_REDIS_REST_URL).toBe("http://integrations:8179");
-    expect(JSON.stringify(compose)).not.toContain("${");
+    expect(compose.services.app.environment.AUTH_SECRET).toStartWith("${AUTH_SECRET:-");
+    expect(compose.services.app.environment.BETTER_AUTH_SECRET).toBe("${AUTH_SECRET}");
+    expect(compose.services.app.environment.UPSTASH_REDIS_REST_URL).toBe("${UPSTASH_REDIS_REST_URL:-{{environment.UPSTASH_REDIS_REST_URL}}}");
+    expect(compose.services.app.environment.UPSTASH_REDIS_REST_TOKEN).toBe("${UPSTASH_REDIS_REST_TOKEN:-{{environment.UPSTASH_REDIS_REST_TOKEN}}}");
+    expect(compose.services.integrations.environment.PREVIEW_UPSTASH_TOKEN).toBe(compose.services.app.environment.UPSTASH_REDIS_REST_TOKEN);
+    expect(JSON.stringify(compose)).not.toContain("preview-db-");
     expect(Object.keys(compose.services.app.labels).some(key => key.endsWith("X-Robots-Tag"))).toBe(true);
+  });
+  test("unconfigured integrations use safe editable defaults rather than unresolved shared references", () => {
+    const compose = previewCompose({ identity, images: imageNames(config.imageRepository, identity, sha), sha, secret: config.secret });
+    expect(compose.services.app.environment.RESEND_API_KEY).toBe("${RESEND_API_KEY:-}");
+    expect(compose.services.app.environment.MEILI_HOST).toBe("${MEILI_HOST:-}");
+    expect(compose.services.app.environment.RECAPTCHA_SECRET_KEY).toBe("${RECAPTCHA_SECRET_KEY:-preview-disabled}");
+    expect(compose.services.app.environment.UPSTASH_REDIS_REST_URL).toBe("${UPSTASH_REDIS_REST_URL:-http://integrations:8179}");
+    expect(compose.services.app.environment.UPSTASH_REDIS_REST_TOKEN).not.toContain("{{environment.");
   });
 });
 
 describe("branch lifecycle", () => {
+  test("missing shared database configuration fails before any mutation", async () => {
+    const s = scenario({ onRequest: path => path.endsWith("/envs") ? [] : undefined });
+    await expect(s.run()).rejects.toThrow("Configure development database shared variables");
+    expect(s.calls.some(call => call.method)).toBe(false);
+  });
+  test("malformed shared-variable metadata fails before any mutation", async () => {
+    const s = scenario({ onRequest: path => path.endsWith("/envs") ? {} : undefined });
+    await expect(s.run()).rejects.toThrow("shared-variable response");
+    expect(s.calls.some(call => call.method)).toBe(false);
+  });
   test("creates one owned Compose resource with explicit HTTP upstream and starts it only after a head recheck", async () => {
     const s = scenario();
     expect((await s.run()).outcome).toBe("created");
@@ -147,6 +169,7 @@ describe("branch lifecycle", () => {
     const call = s.calls.find(call => call.method === "DELETE");
     expect(call.path).toContain("delete_volumes=true");
     expect(call.path).toContain("docker_cleanup=false");
+    expect(s.calls.some(call => call.path.endsWith("/envs"))).toBe(false);
   });
   test("ownership changes immediately before cleanup refuse deletion", async () => {
     const s = scenario({ existing: true, heads: [null], onRequest: path => path === "/api/v1/services/resource" ? { ...resource, description: "changed" } : undefined });

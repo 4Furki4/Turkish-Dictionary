@@ -37,7 +37,6 @@ jobs:
       identity: ${{ steps.identity.outputs.identity }}
       url: ${{ steps.identity.outputs.url }}
       app_image: ${{ steps.identity.outputs.app_image }}
-      database_image: ${{ steps.identity.outputs.database_image }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -95,15 +94,6 @@ jobs:
       - run: bun run test:pronunciations
       - run: bun test scripts/ci/env.test.mjs scripts/preview/*.test.mjs
       - run: bun run ci:db
-      - name: Export synthetic preview database before browser tests create accounts
-        env:
-          CI_DATABASE_CONTAINER: ${{ job.services.postgres.id }}
-        run: |
-          mkdir -p preview-database
-          docker exec -e PGPASSWORD=ci-only-password "$CI_DATABASE_CONTAINER" \
-            pg_dump --host=127.0.0.1 --username=postgres --dbname=turkish_dictionary_ci \
-            --no-owner --no-privileges | gzip > preview-database/fixture.sql.gz
-          cp scripts/preview/Dockerfile.database preview-database/Dockerfile
       - run: bun run ci:build
       - uses: actions/cache@v4
         with:
@@ -111,11 +101,6 @@ jobs:
           key: ${{ runner.os }}-chromium-${{ hashFiles('bun.lockb') }}
       - run: bunx --no-install playwright install --with-deps chromium
       - run: bun run test:e2e
-      - uses: actions/upload-artifact@v4
-        with:
-          name: synthetic-preview-database
-          path: preview-database/
-          retention-days: 1
       - name: Upload browser failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
@@ -147,10 +132,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - uses: actions/download-artifact@v4
-        with:
-          name: synthetic-preview-database
-          path: preview-database/
       - name: Reject superseded publishing heads
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -171,13 +152,6 @@ jobs:
         env:
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
         run: test -n "$NEXT_PUBLIC_RECAPTCHA_SITE_KEY"
-      - name: Build and push preview database
-        uses: docker/build-push-action@v6
-        with:
-          context: ./preview-database
-          platforms: linux/arm64
-          push: true
-          tags: ${{ needs.prepare.outputs.database_image }}
       - name: Build and push branch application
         uses: docker/build-push-action@v6
         with:
