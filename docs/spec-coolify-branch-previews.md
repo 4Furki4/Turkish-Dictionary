@@ -2,7 +2,7 @@
 title: Coolify branch previews on the Raspberry Pi
 type: feature
 created: 2026-10-17
-status: in-review
+status: done
 baseline_commit: f87aafdc24558fdd716be7825f1932b225704e05
 review_loop_iteration: 0
 context:
@@ -60,7 +60,7 @@ context:
 - [x] `.github/workflows/preview.yml` — build ARM64 app and disposable database images in Actions, deploy after successful checks, and clean up deleted branches; configure its GitHub secrets and variables.
 - [x] `scripts/preview/` tests — cover lifecycle decisions, naming boundaries, stale heads, failure handling, and cleanup ownership.
 - [x] `docs/coolify-previews.md` — document dashboard access, URL naming, administrator credential retrieval, lifecycle, limitations, and recovery.
-- [ ] Workflow branch — publish a reviewable branch/PR and verify a real preview deployment, repeat push, and disposable cleanup where permitted without merging.
+- [x] Workflow branch — publish a reviewable branch/PR and verify a real preview deployment, repeat push, and disposable cleanup where permitted without merging.
 
 **Acceptance Criteria:**
 - Given the configured Pi and repository, when a feature branch is pushed, then its HTTPS URL renders that branch and reports healthy application/database status.
@@ -90,7 +90,11 @@ Use first-level hostnames such as `dictionary-feature-search-a1b2c3d4.furkan-cen
 
 Local validation: production build through `bun run ci:build` passed; lint passed; 103 Jest suites and 645 tests passed (one suite and 15 tests skipped). Focused lifecycle tests pass. Current GitHub queue syntax is verified against GitHub documentation; actionlint's older schema is checked using a temporary copy removing only the two queue declarations.
 
-First live trial: GitHub's production build and all 186 browser cases passed. ARM64 images published successfully. After correcting the create-validator incompatibility, the lifecycle deployed commit `d17f97d` at the branch's HTTPS URL; app/database health, revision/noindex headers, and Turkish/English search for the synthetic `kitap` entry passed. The repeated-push and disposable cleanup trials remain in progress.
+Live verification completed at `94202065`: GitHub CI and the full preview workflow passed, including all 186 browser cases and ARM64 image publishing. The preview updated from `d17f97d` to `94202065` at the same HTTPS URL and Coolify UUID. App/database health, revision/noindex headers, and Turkish/English search for the synthetic `kitap` entry passed.
+
+The disposable `codex/coolify-cleanup-trial` branch passed its complete deployment workflow. After deleting that branch, the same lifecycle controller queued cleanup; direct Pi inspection confirmed all three containers and the resource network were absent. The implementation preview remained healthy. Production/development retained container IDs `3f90a803375d` / `5e5d64c23fb7`, and both health endpoints reported app/database `ok` afterward. Automatic delete events and manual dispatch still require the workflow on the default branch; the approved merge boundary remains in effect.
+
+Two follow-up reviews of `94202065` found no actionable correctness, security, or edge-case findings. Evidence: [preview update](https://github.com/4Furki4/Turkce-Sozluk/actions/runs/39045279491), [CI](https://github.com/4Furki4/Turkce-Sozluk/actions/runs/39045283023), and [disposable deployment](https://github.com/4Furki4/Turkce-Sozluk/actions/runs/39045334381).
 
 ## Suggested Review Order
 
