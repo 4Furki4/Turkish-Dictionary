@@ -147,8 +147,14 @@ export default function WordList() {
                 >
                   {t("Dashboard.Actions.Delete")}
                 </DropdownItem>
-                <DropdownItem key="Edit" textValue={t("Dashboard.Actions.Edit")} {...taskMenuLink({ pathname: "/dashboard/word-list/[wordId]/edit", params: { wordId: item.key } })}> <Edit3 />
-                  {t("Dashboard.Actions.Edit")}</DropdownItem>
+                <DropdownItem
+                  key="Edit"
+                  textValue={t("Dashboard.Actions.Edit")}
+                  startContent={<Edit3 />}
+                  {...taskMenuLink({ pathname: "/dashboard/word-list/[wordId]/edit", params: { wordId: item.key } })}
+                >
+                  {t("Dashboard.Actions.Edit")}
+                </DropdownItem>
               </DropdownSection>
             </DropdownMenu>
           </Dropdown>
@@ -192,11 +198,12 @@ export default function WordList() {
         topContent={
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <TaskButton href="/dashboard/create-word" className="w-fit" startContent={<Plus className="w-4 h-4" />} color="primary" size="lg">
+              <TaskButton href="/dashboard/create-word" className="w-fit shrink-0" startContent={<Plus className="h-4 w-4 shrink-0" />} color="primary" size="lg">
                 {t("Dashboard.CreateWord")}
               </TaskButton>
-              <CustomInput value={search} onValueChange={value => { setSearch(value); updateQuery({ search: value, page: 1 }); }} aria-label={t("SearchWord")} placeholder={t("SearchWord")} size="lg" />
+              <CustomInput className="min-w-0 sm:flex-1" value={search} onValueChange={value => { setSearch(value); updateQuery({ search: value, page: 1 }); }} aria-label={t("SearchWord")} placeholder={t("SearchWord")} size="lg" />
               <CustomSelect
+                className="min-w-0 sm:flex-1"
                 options={wordPerPageOptions.reduce((acc, option) => {
                   acc[option.key] = option.label;
                   return acc;
