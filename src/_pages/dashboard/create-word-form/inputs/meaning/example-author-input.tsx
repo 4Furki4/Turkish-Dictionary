@@ -1,4 +1,5 @@
 "use client"
+import { meaningSelectClasses } from "./field-styles";
 import AddAuthorModal from '@/src/components/customs/modals/add-author-inline';
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
@@ -65,7 +66,9 @@ export default function MeaningExampleSentenceAuthorInput({
                         selectionMode='single'
                         radius='md'
                         label={t('Author')}
-                        labelPlacement='outside'
+                        labelPlacement='outside-top'
+                        size='lg'
+                        classNames={meaningSelectClasses}
                         placeholder={t('SelectAuthor')}
                         description={t('Forms.ExampleSentence.Description')}
                         endContent={(

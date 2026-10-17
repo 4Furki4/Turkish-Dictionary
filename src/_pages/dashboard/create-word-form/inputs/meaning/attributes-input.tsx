@@ -1,4 +1,5 @@
 "use client"
+import { meaningSelectClasses } from "./field-styles";
 import AddMeaningAttributeModal from '@/src/components/customs/modals/add-meaning-attribute-inline';
 import { api } from '@/src/trpc/react';
 import { WordForm } from '@/types'
@@ -50,10 +51,9 @@ export default function MeaningAttributesInput({
                         tabIndex={0}
                         radius='md'
                         label={t('Attributes')}
-                        classNames={{
-                            trigger: "pl-1",
-                        }}
-                        labelPlacement='outside'
+                        classNames={{ ...meaningSelectClasses, trigger: "h-12 min-h-12 pl-1" }}
+                        labelPlacement='outside-top'
+                        size='lg'
                         description={t('Forms.MeaningAttributes.Description')}
                         placeholder={t('Forms.MeaningAttributes.Select')}
                         selectionMode='multiple'

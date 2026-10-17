@@ -1,4 +1,5 @@
 "use client"
+import { meaningSelectClasses } from "./field-styles";
 import { Select, SelectItem } from "@heroui/react"
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
@@ -24,7 +25,8 @@ export default function MeaningPartOfSpeechInput({
             render={({ field, fieldState: { error, isDirty } }) => (
                 <Select
                     label={t('PartOfSpeech')}
-                    labelPlacement='outside'
+                    labelPlacement='outside-top'
+                    size='lg'
                     description={t('Forms.PartOfSpeech.Description')}
                     placeholder={t('Forms.PartOfSpeech.Select')}
                     isInvalid={error !== undefined && isDirty}
@@ -36,9 +38,10 @@ export default function MeaningPartOfSpeechInput({
                     }}
                     radius='md'
                     classNames={{
+                        ...meaningSelectClasses,
                         listboxWrapper: 'rounded-md',
                         popoverContent: 'rounded-md',
-                        base: 'rounded-md',
+                        base: 'min-w-0 rounded-md',
                     }}
                 >
                     {partOfSpeeches.map((key) => (
