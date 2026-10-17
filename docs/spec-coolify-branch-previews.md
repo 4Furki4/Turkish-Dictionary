@@ -74,6 +74,8 @@ context:
 
 - Review patches: use only Coolify's automatically owned resource network so branch cleanup does not leak Compose networks; retain metadata when a server is unavailable and distinguish queued cleanup from completed runtime removal; retain pending lifecycle jobs with GitHub's maximum queue. Preserve URL identity, ownership checks, isolated credentials, and existing release channels.
 
+- Live API correction: Coolify 4.4.6's outer create validator rejects `connect_to_docker_network` despite its inner Compose validator allowing it. Omit that field on creation, where the server defaults it to `false`; explicitly retain `false` on updates. Verified the deployed containers join only their resource network.
+
 ## Design Notes
 
 Use first-level hostnames such as `dictionary-feature-search-a1b2c3d4.furkan-cengiz.com` so ordinary domain certificates cover the previews. Coolify's own PR-number preview templates do not provide arbitrary branch creation and naming; the Actions lifecycle owns that mapping. The dashboard is `coolify.furkan-cengiz.com`. Existing services continue using their direct tunnel routes. New preview data is disposable and contains no real user accounts or production integration secrets.
@@ -86,7 +88,9 @@ Use first-level hostnames such as `dictionary-feature-search-a1b2c3d4.furkan-cen
 - Public HTTPS preview, locale routes, and `/api/health` respond correctly.
 - Existing production/development `/api/health` endpoints remain healthy after installation and tunnel routing changes.
 
-Local validation: production build through `bun run ci:build` passed; lint passed; 103 Jest suites and 645 tests passed (one suite and 15 tests skipped). Focused lifecycle tests pass. Current GitHub queue syntax is verified against GitHub documentation; actionlint's older schema is checked using a temporary copy removing only the two queue declarations. Live workflow verification remains in progress.
+Local validation: production build through `bun run ci:build` passed; lint passed; 103 Jest suites and 645 tests passed (one suite and 15 tests skipped). Focused lifecycle tests pass. Current GitHub queue syntax is verified against GitHub documentation; actionlint's older schema is checked using a temporary copy removing only the two queue declarations.
+
+First live trial: GitHub's production build and all 186 browser cases passed. ARM64 images published successfully. After correcting the create-validator incompatibility, the lifecycle deployed commit `d17f97d` at the branch's HTTPS URL; app/database health, revision/noindex headers, and Turkish/English search for the synthetic `kitap` entry passed. The repeated-push and disposable cleanup trials remain in progress.
 
 ## Suggested Review Order
 

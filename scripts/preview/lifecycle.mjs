@@ -56,7 +56,6 @@ export async function runLifecycle({ action, identity, sha, config, coolify, git
     docker_compose_raw: Buffer.from(JSON.stringify(compose)).toString("base64"),
     urls: [{ name: "app", url: `http://${identity.hostname}:3000` }],
     instant_deploy: false, is_container_label_escape_enabled: true,
-    connect_to_docker_network: false,
   };
   await guard();
   let uuid;
@@ -65,8 +64,10 @@ export async function runLifecycle({ action, identity, sha, config, coolify, git
     const current = await coolify(`/api/v1/services/${uuid}`);
     if (!isOwned(current, identity, environmentUuid)) throw new Error("Preview ownership changed; update refused");
     await guard();
-    await coolify(`/api/v1/services/${uuid}`, { method: "PATCH", body: payload });
+    await coolify(`/api/v1/services/${uuid}`, { method: "PATCH", body: { ...payload, connect_to_docker_network: false } });
   } else {
+    // Coolify 4.4.6 defaults this network flag to false on creation, but its
+    // outer POST validator rejects the field. PATCH explicitly accepts it.
     const created = await coolify("/api/v1/services", { method: "POST", body: {
       ...payload, project_uuid: project, environment_uuid: environmentUuid, server_uuid: server,
       ...(config.destinationUuid ? { destination_uuid: validateUuid(config.destinationUuid) } : {}),

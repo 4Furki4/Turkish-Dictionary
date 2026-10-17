@@ -13,6 +13,12 @@ Actions workflow checks the branch, builds ARM64 images on GitHub runners, and
 creates or updates its service in the dedicated Coolify preview environment.
 The final deployment step links to the URL in the Actions run summary.
 
+Push workflows run from the pushed branch. A branch must contain
+`.github/workflows/preview.yml` and `scripts/preview/` to participate. After
+introducing this workflow, merge or rebase long-lived branches onto the updated
+base. If feature branches start from `develop`, include this setup in `develop`
+as well. Merely adding the workflow to `main` does not retrofit older branches.
+
 URLs use `dictionary-<readable-branch>-<12-character-hash>.furkan-cengiz.com`.
 The hash includes the repository and exact branch name, so names containing
 slashes, Unicode, or the same readable slug still receive different URLs. A
@@ -82,7 +88,8 @@ from a dedicated secret; they cannot authenticate to existing databases.
 
 Cloudflare terminates public HTTPS and forwards matching preview hostnames to
 the loopback Coolify HTTP proxy at `127.0.0.1:8088`. The origin sets
-`X-Forwarded-Proto: https`. Coolify routes the app to internal port `3000`; there
+`X-Forwarded-Proto: https` and `X-Forwarded-Port: 443` so redirects preserve
+standard HTTPS URLs. Coolify routes the app to internal port `3000`; there
 are no published preview app or database ports. A response middleware adds
 `X-Robots-Tag: noindex, nofollow` and `X-Preview-Commit: <full-commit-sha>`.
 Deployment succeeds only when `/api/health` returns HTTP 200 with the expected
@@ -162,6 +169,9 @@ network and separate persistent storage. The installation backs up the prior
 Cloudflare configuration before adding the dashboard and wildcard preview
 ingress rules after all existing exact hostnames. Wildcard DNS points at the
 existing named tunnel; existing service DNS records remain authoritative.
+The manager's forced daily Docker cleanup is disabled, its disk threshold is
+99%, and unused-volume/network pruning is disabled. Workflow cleanup requests
+also disable global Docker cleanup; they remove only the owned preview.
 
 For a failed preview, open its Actions run and Coolify service. API failures
 report only status codes to avoid printing response bodies containing secrets.

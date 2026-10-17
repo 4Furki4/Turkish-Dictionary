@@ -89,7 +89,7 @@ describe("branch lifecycle", () => {
     const create = s.calls.find(call => call.method === "POST");
     expect(create.body.environment_uuid).toBe(config.environmentUuid);
     expect(create.body.instant_deploy).toBe(false);
-    expect(create.body.connect_to_docker_network).toBe(false);
+    expect(create.body).not.toHaveProperty("connect_to_docker_network");
     expect(create.body.urls).toEqual([{ name: "app", url: `http://${identity.hostname}:3000` }]);
     const compose = JSON.parse(Buffer.from(create.body.docker_compose_raw, "base64").toString());
     expect(compose.services.app.image).toEndWith(sha);
@@ -102,6 +102,7 @@ describe("branch lifecycle", () => {
     expect(result.url).toBe(identity.url);
     expect(s.calls.some(call => call.method === "POST")).toBe(false);
     expect(s.calls.filter(call => call.method === "PATCH").every(call => call.path === "/api/v1/services/resource")).toBe(true);
+    expect(s.calls.find(call => call.method === "PATCH").body.connect_to_docker_network).toBe(false);
   });
   test("a stale or deleted push performs no mutation", async () => {
     for (const heads of [["b".repeat(40)], [null], [sha, "b".repeat(40)]]) {
