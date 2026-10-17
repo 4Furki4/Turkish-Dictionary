@@ -55,7 +55,7 @@ context:
 
 **Execution:**
 - [x] Pi `/data/coolify/source/` — install a pinned current release with private management ports, persistent storage, and an initial administrator; verify host connection and proxy.
-- [x] Pi `/etc/cloudflared/config.yml` and Cloudflare DNS — add `coolify.turkce-sozluk.com` and wildcard preview routing without replacing existing hostnames; validate configuration and back it up first.
+- [x] Pi `/etc/cloudflared/config.yml` and Cloudflare DNS — add `coolify.furkan-cengiz.com` and wildcard preview routing without replacing existing hostnames; validate configuration and back it up first.
 - [x] `scripts/preview/` — implement deterministic naming and Coolify create/update/delete lifecycle with precise ownership checks, stale-head protection, safe diagnostics, and preview-only database configuration.
 - [x] `.github/workflows/preview.yml` — build ARM64 app and disposable database images in Actions, deploy after successful checks, and clean up deleted branches; configure its GitHub secrets and variables.
 - [x] `scripts/preview/` tests — cover lifecycle decisions, naming boundaries, stale heads, failure handling, and cleanup ownership.
@@ -70,11 +70,13 @@ context:
 
 ## Spec Change Log
 
+- User steering: move the dashboard and all branch preview hostnames to `furkan-cengiz.com`; preserve the dictionary's existing production domains and asset origin.
+
 - Review patches: use only Coolify's automatically owned resource network so branch cleanup does not leak Compose networks; retain metadata when a server is unavailable and distinguish queued cleanup from completed runtime removal; retain pending lifecycle jobs with GitHub's maximum queue. Preserve URL identity, ownership checks, isolated credentials, and existing release channels.
 
 ## Design Notes
 
-Use first-level hostnames such as `dictionary-feature-search-a1b2c3d4.turkce-sozluk.com` so ordinary domain certificates cover the previews. Coolify's own PR-number preview templates do not provide arbitrary branch creation and naming; the Actions lifecycle owns that mapping. The dashboard is `coolify.turkce-sozluk.com`. Existing services continue using their direct tunnel routes. New preview data is disposable and contains no real user accounts or production integration secrets.
+Use first-level hostnames such as `dictionary-feature-search-a1b2c3d4.furkan-cengiz.com` so ordinary domain certificates cover the previews. Coolify's own PR-number preview templates do not provide arbitrary branch creation and naming; the Actions lifecycle owns that mapping. The dashboard is `coolify.furkan-cengiz.com`. Existing services continue using their direct tunnel routes. New preview data is disposable and contains no real user accounts or production integration secrets.
 
 ## Verification
 

@@ -92,7 +92,7 @@ export async function runLifecycle({ action, identity, sha, config, coolify, git
 
 export async function main(environment = process.env) {
   const identity = previewIdentity({ repository: environment.GITHUB_REPOSITORY, branch: environment.PREVIEW_BRANCH,
-    project: environment.PREVIEW_PROJECT || "dictionary", domain: environment.PREVIEW_BASE_DOMAIN || "turkce-sozluk.com" });
+    project: environment.PREVIEW_PROJECT || "dictionary", domain: environment.PREVIEW_BASE_DOMAIN || "furkan-cengiz.com" });
   if (environment.PREVIEW_ACTION === "identity") {
     const images = imageNames(environment.PREVIEW_IMAGE_REPOSITORY || "furki4/turkish-dictionary-app", identity, environment.PREVIEW_SHA);
     if (environment.GITHUB_OUTPUT) appendFileSync(environment.GITHUB_OUTPUT, `identity=${identity.hash}\nurl=${identity.url}\napp_image=${images.app}\ndatabase_image=${images.database}\n`);

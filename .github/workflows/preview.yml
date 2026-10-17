@@ -22,7 +22,7 @@ permissions:
 
 env:
   PREVIEW_PROJECT: ${{ vars.PREVIEW_PROJECT || 'dictionary' }}
-  PREVIEW_BASE_DOMAIN: ${{ vars.PREVIEW_BASE_DOMAIN || 'turkce-sozluk.com' }}
+  PREVIEW_BASE_DOMAIN: ${{ vars.PREVIEW_BASE_DOMAIN || 'furkan-cengiz.com' }}
   PREVIEW_IMAGE_REPOSITORY: ${{ vars.PREVIEW_IMAGE_REPOSITORY || 'furki4/turkish-dictionary-app' }}
   PREVIEW_BRANCH: ${{ github.event_name == 'delete' && github.event.ref || inputs.branch || github.ref_name }}
   PREVIEW_ACTION: ${{ github.event_name == 'delete' && 'delete' || inputs.action || 'deploy' }}

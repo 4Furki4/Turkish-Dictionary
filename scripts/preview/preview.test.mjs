@@ -35,6 +35,7 @@ function scenario({ existing = false, heads = [sha], onRequest, health = healthy
 
 describe("preview identity and isolation", () => {
   test("stable labels remain distinct when readable slugs collide", () => {
+    expect(identity.url).toEndWith(".furkan-cengiz.com");
     const inputs = ["feature/a-b", "feature/a/b", "Feature/a/b", "özellik/arama", "🔥", "f/" + "x".repeat(240)];
     const values = inputs.map(branch => previewIdentity({ repository: "owner/dictionary", branch }));
     expect(new Set(values.map(value => value.hostname)).size).toBe(inputs.length);

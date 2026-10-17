@@ -1,7 +1,7 @@
 # Branch previews on the Raspberry Pi
 
 Coolify manages disposable feature-branch deployments at
-[`coolify.turkce-sozluk.com`](https://coolify.turkce-sozluk.com). Production and
+[`coolify.furkan-cengiz.com`](https://coolify.furkan-cengiz.com). Production and
 development keep their existing Compose stacks, Watchtower image channels, cron
 jobs, databases, and exact Cloudflare Tunnel routes. They are not managed by
 Coolify.
@@ -13,7 +13,7 @@ Actions workflow checks the branch, builds ARM64 images on GitHub runners, and
 creates or updates its service in the dedicated Coolify preview environment.
 The final deployment step links to the URL in the Actions run summary.
 
-URLs use `dictionary-<readable-branch>-<12-character-hash>.turkce-sozluk.com`.
+URLs use `dictionary-<readable-branch>-<12-character-hash>.furkan-cengiz.com`.
 The hash includes the repository and exact branch name, so names containing
 slashes, Unicode, or the same readable slug still receive different URLs. A
 later push keeps the URL and replaces its deployed revision.
@@ -112,13 +112,13 @@ nonsecret repository variables:
 
 | Variable | Value or role |
 | --- | --- |
-| `COOLIFY_URL` | `https://coolify.turkce-sozluk.com` |
+| `COOLIFY_URL` | `https://coolify.furkan-cengiz.com` |
 | `COOLIFY_PROJECT_UUID` | Dedicated preview project UUID |
 | `COOLIFY_ENVIRONMENT_UUID` | Dedicated preview environment UUID |
 | `COOLIFY_SERVER_UUID` | Pi server UUID |
 | `COOLIFY_DESTINATION_UUID` | Pi Docker destination UUID, required when the server has multiple destinations |
 | `PREVIEW_PROJECT` | `dictionary` (default) |
-| `PREVIEW_BASE_DOMAIN` | `turkce-sozluk.com` (default) |
+| `PREVIEW_BASE_DOMAIN` | `furkan-cengiz.com` (default) |
 | `PREVIEW_IMAGE_REPOSITORY` | `furki4/turkish-dictionary-app` (default) |
 
 Keep this project/environment dedicated to previews; do not add shared
@@ -184,8 +184,7 @@ longer needed.
 The API contract is checked against the pinned release's
 [service controller](https://github.com/coollabsio/coolify/blob/v4.4.6/app/Http/Controllers/Api/ServicesController.php)
 and [routing](https://github.com/coollabsio/coolify/blob/v4.4.6/routes/api.php).
-Run `bun test scripts/preview/*.test.mjs` for lifecycle/ownership edge cases and
-workflow validation. Keep the full repository build/browser checks green before
+Run `bun test scripts/preview/*.test.mjs` for lifecycle and ownership edge cases. Keep the full repository build/browser checks green before
 publishing preview images. GitHub's documented
 [`queue: max`](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)
 is newer than actionlint 1.7.12's schema. Validate all remaining workflow syntax

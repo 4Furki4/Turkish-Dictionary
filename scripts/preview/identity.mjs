@@ -2,7 +2,7 @@ import { createHash, createHmac } from "node:crypto";
 
 export const MANAGER = "dictionary-branch-previews-v1";
 
-export function previewIdentity({ repository, branch, project = "dictionary", domain = "turkce-sozluk.com" }) {
+export function previewIdentity({ repository, branch, project = "dictionary", domain = "furkan-cengiz.com" }) {
   if (!/^[\w.-]+\/[\w.-]+$/.test(repository ?? "")) throw new Error("Invalid GitHub repository");
   if (!branch || /[\x00-\x20\x7f]/.test(branch) || ["main", "develop"].includes(branch.toLowerCase())) {
     throw new Error("A feature branch is required; main and develop are excluded");
