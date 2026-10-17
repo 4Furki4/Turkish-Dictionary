@@ -48,82 +48,76 @@ export function BentoCommonMistake({
   const item = data?.data[0];
 
   return (
-    <CustomCard className="h-[200px] dark:bg-background/50 bg-background/50 group relative overflow-hidden flex flex-col justify-center">
-      <div className="absolute inset-0 dark:bg-gradient-to-b dark:from-transparent dark:from-10% dark:to-primary/20 bg-gradient-to-b from-transparent to-primary/20 pointer-events-none" />
-
-      <CardHeader className="absolute top-0 left-0 pt-4 px-6 z-50 w-full flex flex-row justify-between items-center">
+    <CustomCard className="min-h-52 min-w-0 bg-background/40 flex flex-col">
+      <CardHeader className="px-5 pt-2 pb-0 sm:px-6">
         <Link
           href="/sik-yapilan-yanlislar"
-          className="flex items-center gap-2 text-xs font-mono text-zinc-500 uppercase tracking-widest hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+          className="inline-flex min-h-11 min-w-0 items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide hover:text-foreground transition-colors"
         >
-          <div className="w-2 h-2 rounded-md bg-orange-500 animate-pulse" />
+          <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-orange-500" />
           {t("HomeExtras.misspellingsTitle")}
         </Link>
       </CardHeader>
 
-      {item && (data?.total ?? 0) > 1 ? (
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-4">
-        <Button
-          isIconOnly
-          size="sm"
-          variant="light"
-          aria-label={t("HomeExtras.previous")}
-          className="h-11 min-w-11 text-muted-foreground hover:text-foreground"
-          onPress={handlePrev}
-          isDisabled={offset === 0}
-        >
-          <ArrowRight className="w-4 h-4 rotate-180" />
-        </Button>
-        <Button
-          isIconOnly
-          size="sm"
-          variant="light"
-          aria-label={t("HomeExtras.next")}
-          className="h-11 min-w-11 text-muted-foreground hover:text-foreground"
-          onPress={handleNext}
-          isDisabled={!data?.total || offset >= data.total - 1}
-        >
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </div>
-
-      ) : null}
-
-      <CardBody className="flex flex-row items-center justify-center gap-8 z-10">
+      <CardBody className="flex min-w-0 flex-1 justify-center px-5 py-4 sm:px-6" aria-busy={isLoading}>
         {isLoading ? (
-          <div className="flex items-center gap-8 w-full justify-center">
-            <div className="flex flex-col items-center gap-2 w-1/3">
-              <div className="w-24 h-8 bg-zinc-800/10 dark:bg-zinc-800/50 rounded animate-pulse" />
-            </div>
-            <div className="w-px h-12 bg-zinc-800/20" />
-            <div className="flex flex-col items-center gap-2 w-1/3">
-              <div className="w-24 h-8 bg-zinc-800/10 dark:bg-zinc-800/50 rounded animate-pulse" />
-            </div>
+          <div className="grid w-full grid-cols-2 gap-4" aria-hidden>
+            <div className="mx-auto h-8 w-full max-w-24 rounded bg-muted motion-safe:animate-pulse" />
+            <div className="mx-auto h-8 w-full max-w-24 rounded bg-muted motion-safe:animate-pulse" />
           </div>
         ) : item ? (
-          <>
-            <div className="flex flex-col items-center gap-2 group/wrong opacity-75">
-              <span className="text-2xl sm:text-3xl font-serif text-zinc-400 line-through decoration-danger decoration-2 text-center">
+          <div className="grid min-w-0 grid-cols-2 divide-x divide-border">
+            <div className="flex min-w-0 flex-col items-center gap-2 pr-4">
+              <span lang="tr" className="dictionary-prose text-center font-serif text-2xl leading-tight text-muted-foreground line-through decoration-danger/70 decoration-2">
                 {item.wrong}
               </span>
-              <XCircle className="w-5 h-5 text-danger" />
+              <XCircle aria-hidden className="h-4 w-4 shrink-0 text-danger" />
             </div>
-
-            <div className="w-px h-12 bg-zinc-800" />
-
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-2xl sm:text-3xl font-serif font-semibold text-foreground text-center">
+            <div className="flex min-w-0 flex-col items-center gap-2 pl-4">
+              <span lang="tr" className="dictionary-prose text-center font-serif text-2xl font-semibold leading-tight text-foreground">
                 {item.correct}
               </span>
-              <CheckCircle2 className="w-5 h-5 text-success" />
+              <CheckCircle2 aria-hidden className="h-4 w-4 shrink-0 text-success" />
             </div>
-          </>
-        ) : (
-          <div className="text-muted-foreground text-sm">
-            {t("HomeExtras.noMisspellingsFound")}
           </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {t("HomeExtras.noMisspellingsFound")}
+          </p>
         )}
       </CardBody>
+
+      {item && (data?.total ?? 0) > 1 ? (
+        <CardFooter className="flex items-center justify-between gap-3 px-3 pb-2 pt-0 sm:px-4">
+          <div className="flex items-center">
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              aria-label={t("HomeExtras.previous")}
+              className="h-11 min-w-11 text-muted-foreground hover:text-foreground"
+              onPress={handlePrev}
+              isDisabled={offset === 0}
+            >
+              <ArrowRight className="w-4 h-4 rotate-180" />
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              aria-label={t("HomeExtras.next")}
+              className="h-11 min-w-11 text-muted-foreground hover:text-foreground"
+              onPress={handleNext}
+              isDisabled={!data?.total || offset >= data.total - 1}
+            >
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+          <span className="pr-2 text-xs tabular-nums text-muted-foreground">
+            {offset + 1} / {data?.total}
+          </span>
+        </CardFooter>
+      ) : null}
     </CustomCard>
   );
 }
@@ -165,42 +159,38 @@ export function BentoGalatiMeshur({
     : "";
 
   return (
-    <CustomCard className="dark:bg-background/50 bg-background/50 group relative overflow-hidden flex flex-col">
-      <div className="absolute top-0 right-0 p-4 opacity-50 transition-opacity">
-        <BookOpen className="w-16 h-16 text-amber-500" />
-      </div>
-
-      <CardHeader className="pt-4 px-6 z-10 flex flex-row justify-between items-center">
+    <CustomCard className="min-h-60 min-w-0 bg-background/40 flex flex-col">
+      <CardHeader className="px-5 pt-2 pb-0 sm:px-6">
         <Link
           href="/galati-meshur"
-          className="text-xs font-bold text-amber-700 dark:text-amber-500 uppercase tracking-widest flex items-center gap-2 hover:text-amber-800 dark:hover:text-amber-400 transition-colors"
+          className="inline-flex min-h-11 min-w-0 items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-500 uppercase tracking-wide hover:text-amber-800 dark:hover:text-amber-400 transition-colors"
         >
-          <BookOpen className="w-3 h-3" />
+          <BookOpen aria-hidden className="h-4 w-4 shrink-0" />
           {t("HomeExtras.galatiMeshurTitle")}
         </Link>
       </CardHeader>
 
-      <CardBody className="px-6 py-2 z-10 flex-1 flex flex-col justify-center gap-3 overflow-hidden">
+      <CardBody className="min-w-0 px-5 py-3 sm:px-6 flex-1 flex flex-col justify-center" aria-busy={isLoading}>
         {isLoading ? (
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 w-full pr-10">
-              <div className="h-6 w-3/4 bg-zinc-800/10 dark:bg-zinc-800/50 rounded animate-pulse" />
+          <div className="flex flex-col gap-4" aria-hidden>
+            <div className="flex w-full items-center gap-2">
+              <div className="h-6 w-3/4 rounded bg-muted motion-safe:animate-pulse" />
             </div>
-            <div className="w-full pr-10 space-y-2">
-              <div className="h-4 w-full bg-zinc-800/10 dark:bg-zinc-800/50 rounded animate-pulse" />
-              <div className="h-4 w-5/6 bg-zinc-800/10 dark:bg-zinc-800/50 rounded animate-pulse" />
-              <div className="h-4 w-2/3 bg-zinc-800/10 dark:bg-zinc-800/50 rounded animate-pulse" />
+            <div className="w-full space-y-2">
+              <div className="h-4 w-full rounded bg-muted motion-safe:animate-pulse" />
+              <div className="h-4 w-5/6 rounded bg-muted motion-safe:animate-pulse" />
+              <div className="h-4 w-2/3 rounded bg-muted motion-safe:animate-pulse" />
             </div>
           </div>
         ) : item ? (
-          <div className="rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2 pr-10">
-            <p className="text-lg font-serif font-semibold text-foreground line-clamp-1 mb-2">
+          <div className="min-w-0 space-y-2">
+            <p lang="tr" className="dictionary-prose text-2xl font-serif font-semibold leading-tight text-foreground">
               {item.word}
             </p>
-            <p className="text-[11px] font-mono uppercase tracking-wide text-amber-700 dark:text-amber-500 mb-1">
+            <p className="text-xs font-medium text-amber-700 dark:text-amber-500">
               {t("HomeExtras.explanation")}
             </p>
-            <p className="text-[15px] leading-relaxed text-foreground/85 line-clamp-2">
+            <p lang="tr" className="dictionary-prose text-sm leading-relaxed text-muted-foreground line-clamp-2">
               {explanationPreview}
             </p>
           </div>
@@ -211,54 +201,48 @@ export function BentoGalatiMeshur({
         )}
       </CardBody>
 
-      {item ? <CardFooter className="pt-0 pb-3 px-6 z-10 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1">
-          <Button
-            isIconOnly
-            size="sm"
-            variant="light"
-            aria-label={t("HomeExtras.previous")}
-            className="text-amber-700 dark:text-amber-500 hover:text-amber-800 dark:hover:text-amber-400"
-            onPress={handlePrev}
-            isDisabled={offset === 0}
-          >
-            <ArrowRight className="w-4 h-4 rotate-180" />
-          </Button>
-          <Button
-            isIconOnly
-            size="sm"
-            variant="light"
-            aria-label={t("HomeExtras.next")}
-            className="text-amber-700 dark:text-amber-500 hover:text-amber-800 dark:hover:text-amber-400"
-            onPress={handleNext}
-            isDisabled={!data?.total || offset >= data.total - 1}
-          >
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
+      {item ? (
+        <CardFooter className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 pb-2 pt-0 sm:px-4">
+          <div className="flex items-center">
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              aria-label={t("HomeExtras.previous")}
+              className="h-11 min-w-11 text-muted-foreground hover:text-foreground"
+              onPress={handlePrev}
+              isDisabled={offset === 0}
+            >
+              <ArrowRight className="w-4 h-4 rotate-180" />
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              aria-label={t("HomeExtras.next")}
+              className="h-11 min-w-11 text-muted-foreground hover:text-foreground"
+              onPress={handleNext}
+              isDisabled={!data?.total || offset >= data.total - 1}
+            >
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
 
-        <span className="text-[11px] font-mono text-muted-foreground">
-          {data?.total ? `${offset + 1}/${data.total}` : "0/0"}
-        </span>
+          <span className="text-xs tabular-nums text-muted-foreground">
+            {data?.total ? `${offset + 1} / ${data.total}` : "0 / 0"}
+          </span>
 
-        {item ? (
           <Link
             href={{
               pathname: "/galati-meshur/[id]",
-              params: {
-                id: item.id.toString(),
-              },
+              params: { id: item.id.toString() },
             }}
-            className="text-sm font-medium text-amber-700 dark:text-amber-500 hover:text-amber-800 dark:hover:text-amber-400 transition-colors"
+            className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-amber-700 dark:text-amber-500 hover:text-amber-800 dark:hover:text-amber-400 transition-colors"
           >
             {t("HomeExtras.readMore")}
           </Link>
-        ) : (
-          <span className="text-xs text-muted-foreground">
-            {t("HomeExtras.readMore")}
-          </span>
-        )}
-      </CardFooter> : null}
+        </CardFooter>
+      ) : null}
     </CustomCard>
   );
 }
