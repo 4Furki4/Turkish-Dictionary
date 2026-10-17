@@ -172,15 +172,15 @@ export default async function Hero({
 
       <div className="absolute inset-0 -z-20 h-full w-full bg-[radial-gradient(#e5e7eb_2px,transparent_2px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] pointer-events-none opacity-35" />
 
-      <div className="mx-auto max-w-7xl px-4 pb-12 pt-6 sm:pt-10 sm:pb-16 lg:px-8 w-full">
-        <div className="mx-auto text-center space-y-6 mb-16">
+      <div className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:pt-12 sm:pb-16 lg:px-8 w-full">
+        <div className="mx-auto mb-10 space-y-6 text-center sm:mb-12 sm:space-y-8">
           <div className="mx-auto max-w-3xl space-y-4">
-            <h1 className="font-bold tracking-tight text-fs-4 sm:text-fs-6 text-foreground">
+            <h1 className="text-balance font-bold tracking-tight text-fs-4 sm:text-fs-6 leading-[1.1] text-foreground">
               {t.rich("hero.title", {
                 red: (chunks) => <span className="text-primary">{chunks}</span>,
               })}
             </h1>
-            <p className="text-fs-1 sm:text-fs-2 leading-relaxed text-muted-foreground font-sans text-balance">
+            <p className="text-fs-0 sm:text-fs-1 leading-relaxed text-muted-foreground font-sans text-balance">
               {t("hero.motto")}
             </p>
           </div>
@@ -193,22 +193,22 @@ export default async function Hero({
           </div>
         </div>
 
-        <div className="mb-12">{children}</div>
+        {children ? <div className="mb-10 sm:mb-12">{children}</div> : null}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-          <div className="md:col-span-2">
+        <div className="grid min-w-0 grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12">
+          <div className="min-w-0 lg:col-span-7">
             <BentoWordOfTheDay
               initialWordOfTheDay={initialWordOfTheDay}
               labels={wordOfTheDayLabels}
             />
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:col-span-5 lg:grid-cols-1">
             <BentoCommonMistake initialData={initialMisspellings} />
             <BentoGalatiMeshur initialData={initialGalatiMeshur} />
           </div>
 
-          <div className="md:col-span-3">
+          <div className="min-w-0 mt-2 sm:mt-4 lg:col-span-12">
             <BentoFeatures features={features} />
           </div>
         </div>
@@ -234,10 +234,10 @@ function BentoWordOfTheDay({
     : labels.mock;
 
   return (
-    <CustomCard className="h-full min-h-[300px] shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+    <CustomCard className="h-full min-h-80 bg-background/40 group relative overflow-hidden">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-md blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors duration-500" />
 
-      <CardHeader className="flex flex-row flex-wrap justify-between items-start gap-3 pt-6 px-5 sm:px-8 relative z-10">
+      <CardHeader className="flex flex-row flex-wrap justify-between items-center gap-x-3 gap-y-1 pt-4 px-5 sm:px-8 relative z-10">
         <div className="space-y-1">
           <span className="text-xs font-mono text-primary uppercase tracking-widest bg-primary/10 px-2 py-1 rounded-md">
             {initialWordOfTheDay ? labels.title : labels.example}
@@ -251,7 +251,7 @@ function BentoWordOfTheDay({
         </Link>
       </CardHeader>
 
-      <CardBody className="min-w-0 px-5 sm:px-8 py-4 flex flex-col justify-center gap-4 relative z-10">
+      <CardBody className="min-w-0 px-5 sm:px-8 py-6 sm:py-8 flex flex-col justify-center gap-5 relative z-10">
         <div className="dictionary-headword-container">
           <h2 {...getHeadwordProps(wordData.word)} lang="tr" className="dictionary-headword [--headword-max:var(--step-4)] sm:[--headword-max:var(--step-5)] lg:[--headword-max:var(--step-6)] text-fs-4 sm:text-fs-5 lg:text-fs-6 font-serif font-bold leading-[1.1] text-foreground mb-4">
             <Link href={{ pathname: "/search/[word]", params: { word: wordData.word } }} className="hover:text-primary underline-offset-8 hover:underline transition-colors">{wordData.word}</Link>
@@ -265,13 +265,13 @@ function BentoWordOfTheDay({
           </div>
         </div>
 
-        <p lang={initialWordOfTheDay ? "tr" : undefined} className="dictionary-prose max-w-[65ch] text-xl sm:text-2xl text-foreground/85 italic leading-relaxed line-clamp-3">
+        <p lang={initialWordOfTheDay ? "tr" : undefined} className="dictionary-prose max-w-prose text-lg sm:text-xl lg:text-2xl text-foreground/85 italic leading-relaxed line-clamp-3">
           &ldquo;{wordData.meaning}&rdquo;
         </p>
       </CardBody>
 
       <CardFooter className="px-5 sm:px-8 pb-6 sm:pb-8 pt-0 relative z-10">
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent opacity-50" />
+        <div className="h-px w-full bg-border" />
       </CardFooter>
     </CustomCard>
   );
@@ -280,19 +280,19 @@ function BentoWordOfTheDay({
 
 function BentoFeatures({ features }: { features: FeatureItem[] }) {
   return (
-    <CustomCard className="grid grid-cols-1 md:grid-cols-3 border-1">
+    <CustomCard className="grid grid-cols-1 p-0 md:grid-cols-3">
       {features.map((feature, index) => (
-        <div key={feature.title} className="h-full bg-background/50 p-0 flex flex-col md:flex-row">
+        <div key={feature.title} className="h-full min-w-0 p-0 flex flex-col md:flex-row">
           {index === 0 ? null : (
             <>
               <Divider className="hidden md:block" orientation="vertical" />
               <Divider className="block md:hidden" orientation="horizontal" />
             </>
           )}
-          <div className="flex min-w-0 flex-1 flex-col p-6 relative overflow-hidden">
+          <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6 lg:p-8 relative overflow-hidden">
             <div className={`absolute top-0 right-0 w-full h-full bg-gradient-to-bl ${feature.gradient} dark:opacity-30 opacity-40 rounded-bl-full pointer-events-none`} />
             <div className="mb-4">{feature.icon}</div>
-            <h3 className="text-lg font-bold text-foreground mb-2">{feature.title}</h3>
+            <h3 className="text-base font-semibold text-foreground mb-2">{feature.title}</h3>
             <p className="text-sm text-balance text-muted-foreground leading-relaxed">
               {feature.description}
             </p>
