@@ -28,12 +28,13 @@ export default function SavedWordCollections({ collections, selectedId, totalCou
   const [draft, setDraft] = useState("");
   const [formError, setFormError] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const create = api.user.createSavedWordCollection.useMutation();
   const rename = api.user.renameSavedWordCollection.useMutation();
   const remove = api.user.deleteSavedWordCollection.useMutation();
   const selected = collections.find((collection) => collection.id === selectedId);
-  const busy = disabled || create.isPending || rename.isPending || remove.isPending;
+  const busy = disabled || processing || create.isPending || rename.isPending || remove.isPending;
 
   useEffect(() => {
     setEditing(null);
@@ -53,6 +54,7 @@ export default function SavedWordCollections({ collections, selectedId, totalCou
     event.preventDefault();
     if (!draft.trim() || !editing || busy) return;
     setFormError("");
+    setProcessing(true);
     try {
       const collection = editing === "new" ? await create.mutateAsync({ name: draft.trim() }) : await rename.mutateAsync({ collectionId: editing, name: draft.trim() });
       await onChanged();
@@ -62,10 +64,11 @@ export default function SavedWordCollections({ collections, selectedId, totalCou
     } catch (error) {
       const code = (error as { data?: { code?: string } })?.data?.code;
       setFormError(t(code === "CONFLICT" ? "nameConflict" : "requestFailed"));
-    }
+    } finally { setProcessing(false); }
   };
   const deleteCollection = async () => {
     if (!selected || busy) return;
+    setProcessing(true);
     try {
       await remove.mutateAsync({ collectionId: selected.id });
       await onChanged();
@@ -73,6 +76,7 @@ export default function SavedWordCollections({ collections, selectedId, totalCou
       onSelect(undefined);
       toast.success(t("collectionDeleted"));
     } catch { toast.error(t("requestFailed")); }
+    finally { setProcessing(false); }
   };
 
   return <section className="min-w-0 space-y-3" aria-label={t("collections")}>
@@ -101,17 +105,17 @@ export default function SavedWordCollections({ collections, selectedId, totalCou
     </div>}
     {editing && <form onSubmit={submit} className="flex min-w-0 flex-wrap items-end gap-3 rounded-lg border border-border bg-background/40 p-4">
       <CustomInput ref={inputRef} label={t("collectionName")} labelPlacement="outside" placeholder={t("collectionNamePlaceholder")}
-        value={draft} onValueChange={(value) => { setDraft(value); setFormError(""); }} maxLength={80} isRequired
+        value={draft} onValueChange={(value) => { setDraft(value); setFormError(""); }} maxLength={80} isRequired isDisabled={busy}
         className="min-w-0 flex-1 basis-60" isInvalid={Boolean(formError)} errorMessage={formError}
         classNames={{ inputWrapper: "h-12 min-h-12 border border-border shadow-none" }} />
-      <Button type="submit" color="primary" className="h-12 min-h-12" isDisabled={busy || !draft.trim()} isLoading={create.isPending || rename.isPending}>{t("saveCollection")}</Button>
+      <Button type="submit" color="primary" className="h-12 min-h-12" isDisabled={busy || !draft.trim()} isLoading={processing}>{t("saveCollection")}</Button>
       <Button variant="light" className="h-12 min-h-12" onPress={() => { setEditing(null); setFormError(""); }} isDisabled={busy}>{t("cancel")}</Button>
     </form>}
     {deleting && selected && <div className="rounded-lg border border-border bg-background/40 p-4" role="alert">
       <p className="font-medium [overflow-wrap:anywhere]">{t("deleteCollectionPrompt", { name: selected.name })}</p>
       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("deleteCollectionHint")}</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button color="danger" className="min-h-11" isDisabled={busy} isLoading={remove.isPending} onPress={() => void deleteCollection()}>{t("confirmDelete")}</Button>
+        <Button color="danger" className="min-h-11" isDisabled={busy} isLoading={processing} onPress={() => void deleteCollection()}>{t("confirmDelete")}</Button>
         <Button variant="light" className="min-h-11" isDisabled={busy} onPress={() => setDeleting(false)}>{t("cancel")}</Button>
       </div>
     </div>}

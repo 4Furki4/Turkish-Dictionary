@@ -23,7 +23,7 @@ jest.mock("@heroui/react", () => ({
   ModalContent: ({ children }: any) => <div>{children}</div>,
 }));
 jest.mock("../heroui/custom-modal", () => ({ CustomModal: ({ isOpen, children, "aria-label": label }: any) => isOpen ? <div role="dialog" aria-label={label}>{children}</div> : null }));
-jest.mock("../heroui/custom-input", () => ({ CustomInput: require("react").forwardRef(({ value, onValueChange, label, type = "text", maxLength, isRequired }: any, ref: any) => <input ref={ref} type={type} aria-label={label} maxLength={maxLength} required={isRequired} value={value} onChange={event => onValueChange(event.target.value)} />) }));
+jest.mock("../heroui/custom-input", () => ({ CustomInput: require("react").forwardRef(({ value, onValueChange, label, type = "text", maxLength, isRequired, isDisabled }: any, ref: any) => <input ref={ref} type={type} aria-label={label} maxLength={maxLength} required={isRequired} disabled={isDisabled} value={value} onChange={event => onValueChange(event.target.value)} />) }));
 jest.mock("../heroui/custom-select", () => ({ CustomSelect: ({ label, options, selectedKeys, onChange, isDisabled }: any) => <select aria-label={label} value={selectedKeys?.[0] ?? ""} onChange={onChange} disabled={isDisabled}><option value="" />{Object.entries(options).map(([key, value]) => <option key={key} value={key}>{String(value)}</option>)}</select> }));
 jest.mock("../saved-word-preview", () => ({ __esModule: true, default: ({ word }: any) => <div>{word ? `Preview: ${word.word_name}` : "previewHint"}</div> }));
 jest.mock("../heroui/custom-pagination", () => ({ CustomPagination: ({ total, page, onChange }: any) => <div>Pages: {total}<span>Page: {page}</span>{total > 1 && <button onClick={() => onChange(2)}>Go to page 2</button>}</div> }));
@@ -39,7 +39,7 @@ beforeEach(() => {
   Object.defineProperty(window, "matchMedia", { configurable: true, value: jest.fn(() => ({ matches: true, addEventListener: jest.fn(), removeEventListener: jest.fn() })) });
 });
 
-function setup(initialSize: number, options: { collectionWords?: number[]; url?: string; failList?: boolean; unsaveDelayMs?: number; collectionDelayMs?: number } = {}) {
+function setup(initialSize: number, options: { collectionWords?: number[]; url?: string; failList?: boolean; unsaveDelayMs?: number; collectionDelayMs?: number; collectionRefreshDelayMs?: number } = {}) {
   if (options.url) window.history.replaceState({ nextInternal: true }, "", options.url);
   const initial = readSavedWordsState(new URLSearchParams(window.location.search));
   const collections = [{ id: collectionId, name: "Reading" }, { id: secondCollectionId, name: "Writing" }];
@@ -103,6 +103,10 @@ function setup(initialSize: number, options: { collectionWords?: number[]; url?:
     }
     if (op.path === "user.createSavedWordCollection" && options.collectionDelayMs) {
       const timer = setTimeout(emit, options.collectionDelayMs);
+      return () => clearTimeout(timer);
+    }
+    if (op.path === "user.getSavedWordCollections" && options.collectionRefreshDelayMs) {
+      const timer = setTimeout(emit, options.collectionRefreshDelayMs);
       return () => clearTimeout(timer);
     }
     emit();
@@ -210,6 +214,24 @@ test("finishing a delayed collection creation preserves a newer search", async (
   await waitFor(() => expect(window.location.search).toContain("collectionId=00000000-0000-4000-8000-000000000003"));
   expect(window.location.search).toContain("search=word-1");
   expect(screen.getByRole("searchbox", { name: "searchLabel", exact: true })).toHaveValue("word-1");
+  test.cleanup();
+});
+
+test("collection controls stay busy until refreshed data and selection finish", async () => {
+  const test = setup(2, { collectionRefreshDelayMs: 250 });
+  fireEvent.click(screen.getByRole("button", { name: "newCollection", exact: true }));
+  fireEvent.change(screen.getByRole("textbox", { name: "collectionName", exact: true }), { target: { value: "Books" } });
+  fireEvent.click(screen.getByRole("button", { name: "saveCollection", exact: true }));
+  await waitFor(() => expect(test.requests.some(request => request.path === "user.getSavedWordCollections")).toBe(true));
+  expect(screen.getByRole("button", { name: "allWords", exact: true })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "saveCollection", exact: true })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "cancel", exact: true })).toBeDisabled();
+  expect(screen.getByRole("textbox", { name: "collectionName", exact: true })).toBeDisabled();
+  await waitFor(() => expect(screen.getByRole("button", { name: "Books", exact: true })).toHaveAttribute("aria-pressed", "true"));
+  await waitFor(() => expect(screen.getByRole("button", { name: "allWords", exact: true })).toBeEnabled());
+  fireEvent.click(screen.getByRole("button", { name: "allWords", exact: true }));
+  await screen.findByRole("button", { name: "previewWord word-2", exact: true });
+  expect(window.location.search).not.toContain("collectionId");
   test.cleanup();
 });
 
